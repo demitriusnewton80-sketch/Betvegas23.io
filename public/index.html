@@ -785,6 +785,51 @@
             games = data.games;
             renderLiveStreams();
             renderGames();
+            renderSportsDropdowns();
+        }
+
+        function renderGames() {
+            const grid = document.getElementById('gamesGrid');
+            grid.innerHTML = games.map(game => {
+                const hasDrawOdds = game.odds.draw !== undefined;
+                return `
+                    <div class="game-card">
+                        <div class="game-header">
+                            <div class="sport-tag">${game.sport}</div>
+                            ${game.status === 'live' ? '<div class="live-badge"><div class="live-dot"></div><span>LIVE</span></div>' : ''}
+                        </div>
+                        <div class="teams">${game.homeTeam} vs ${game.awayTeam}</div>
+                        ${game.status === 'live' ? `
+                            <div class="score-display" id="score-${game.id}">
+                                <div class="score-main">Loading...</div>
+                                <div class="score-info">--</div>
+                            </div>
+                        ` : ''}
+                        <div class="odds-grid">
+                            <button class="odd-button" onclick="selectBet('${game.id}', 'home', ${game.odds.home})" id="odd-${game.id}-home">
+                                <div class="odd-team">${game.homeTeam}</div>
+                                <div class="odd-value">${game.odds.home > 0 ? '+' : ''}${game.odds.home}</div>
+                            </button>
+                            ${hasDrawOdds ? `
+                                <button class="odd-button" onclick="selectBet('${game.id}', 'draw', ${game.odds.draw})" id="odd-${game.id}-draw">
+                                    <div class="odd-team">Draw</div>
+                                    <div class="odd-value">+${game.odds.draw}</div>
+                                </button>
+                            ` : ''}
+                            <button class="odd-button" onclick="selectBet('${game.id}', 'away', ${game.odds.away})" id="odd-${game.id}-away">
+                                <div class="odd-team">${game.awayTeam}</div>
+                                <div class="odd-value">${game.odds.away > 0 ? '+' : ''}${game.odds.away}</div>
+                            </button>
+                        </div>
+                        <div class="bet-input-section">
+                            <input type="number" id="amount-${game.id}" placeholder="Enter bet amount" min="1">
+                            <button onclick="placeBet('${game.id}')">Place Bet</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            games.filter(g => g.status === 'live').forEach(game => startLiveStream(game.id));
         }
 
         async function loadWallet() {
@@ -840,6 +885,39 @@
             const data = await response.json();
             userBets = data.bets;
             renderBets();
+        }
+
+        function renderBets() {
+            const betsList = document.getElementById('betsList');
+            
+            if (userBets.length === 0) {
+                betsList.innerHTML = '<div class="empty-state">No active bets. Place a bet to get started!</div>';
+                return;
+            }
+
+            betsList.innerHTML = userBets.map(bet => {
+                const game = games.find(g => g.id === bet.gameId);
+                if (!game) return '';
+
+                return `
+                    <div class="bet-item">
+                        <div class="bet-details">
+                            <div class="bet-game">${game.homeTeam} vs ${game.awayTeam}</div>
+                            <div class="bet-info">
+                                <span>Bet on: ${bet.team === 'home' ? game.homeTeam : bet.team === 'away' ? game.awayTeam : 'Draw'}</span> • 
+                                <span class="bet-amount">$${bet.amount.toFixed(2)}</span> • 
+                                <span>Potential win: $${bet.potentialWin.toFixed(2)}</span>
+                            </div>
+                        </div>
+                        <div class="bet-actions">
+                            <span class="status-badge ${bet.status}">${bet.status.replace('_', ' ')}</span>
+                            ${bet.status === 'pending' && game.status === 'live' ? 
+                                `<button class="cashout-btn" onclick="cashOut('${bet.id}')">Cash Out Early</button>` : 
+                                ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function renderLiveStreams() {
@@ -1112,63 +1190,6 @@
             }
         }
 
-        function renderGames() {
-            const grid = document.getElementById('gamesGrid');
-            grid.innerHTML = games.map(game => {
-                const hasDrawOdds = game.odds.draw !== undefined;
-                return `
-                    <div class="game-card">
-                        <div class="game-header">
-                            <div class="sport-tag">${game.sport}</div>
-                            ${game.status === 'live' ? '<div class="live-badge"><div class="live-dot"></div><span>LIVE</span></div>' : ''}
-                        </div>
-                        <div class="teams">${game.awayTeam} vs ${game.homeTeam}</div>
-                        <div class="game-time">${new Date(game.startTime).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'})}</div>
-                        ${game.status === 'live' ? `
-                            <div class="score-display" id="score-${game.id}">
-                                <div class="score-main">Loading...</div>
-                                <div class="score-info">--</div>
-                            </div>
-                        ` : ''}
-                        <div class="odds-grid">
-                            <button class="odd-button" onclick="selectBet('${game.id}', 'away', ${game.odds.away})" id="odd-${game.id}-away">
-                                <div class="odd-team">${game.awayTeam}</div>
-                                <div class="odd-value">${game.odds.away > 0 ? '+' : ''}${game.odds.away}</div>
-                            </button>
-                            ${hasDrawOdds ? `
-                                <button class="odd-button" onclick="selectBet('${game.id}', 'draw', ${game.odds.draw})" id="odd-${game.id}-draw">
-                                    <div class="odd-team">Draw</div>
-                                    <div class="odd-value">+${game.odds.draw}</div>
-                                </button>
-                            ` : ''}
-                            <button class="odd-button" onclick="selectBet('${game.id}', 'home', ${game.odds.home})" id="odd-${game.id}-home">
-                                <div class="odd-team">${game.homeTeam}</div>
-                                <div class="odd-value">${game.odds.home > 0 ? '+' : ''}${game.odds.home}</div>
-                            </button>
-                        </div>
-                        ${selectedBets.has(game.id) ? `
-                            <div class="bet-input-section">
-                                <input type="number" id="amount-${game.id}" placeholder="Bet amount" min="1">
-                                <button onclick="placeBet('${game.id}')">Place Bet</button>
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-            }).join('');
-
-            games.filter(g => g.status === 'live').forEach(game => startLiveStream(game.id));
-        }
-
-        const games = [
-            { id: '1', sport: 'NBA', homeTeam: 'Lakers', awayTeam: 'Warriors', odds: { home: 1.85, away: 2.10 }, status: 'upcoming', date: new Date().toISOString().split('T')[0] },
-            { id: '2', sport: 'NFL', homeTeam: 'Patriots', awayTeam: 'Chiefs', odds: { home: 1.95, away: 1.95 }, status: 'upcoming', date: new Date().toISOString().split('T')[0] },
-            { id: '3', sport: 'Premier League', homeTeam: 'Man United', awayTeam: 'Chelsea', odds: { home: 2.30, away: 2.80, draw: 3.20 }, status: 'upcoming', date: new Date().toISOString().split('T')[0] },
-            { id: '4', sport: 'NHL', homeTeam: 'Bruins', awayTeam: 'Maple Leafs', odds: { home: 2.05, away: 1.85 }, status: 'live', date: new Date().toISOString().split('T')[0] },
-            { id: '5', sport: 'NBA', homeTeam: 'Heat', awayTeam: 'Celtics', odds: { home: 1.75, away: 2.20 }, status: 'live', date: new Date().toISOString().split('T')[0] },
-            { id: '6', sport: 'MLB', homeTeam: 'Yankees', awayTeam: 'Red Sox', odds: { home: 1.90, away: 2.00 }, status: 'upcoming', date: new Date().toISOString().split('T')[0] },
-            { id: '7', sport: 'Premier League', homeTeam: 'Liverpool', awayTeam: 'Arsenal', odds: { home: 2.10, away: 2.50, draw: 3.40 }, status: 'upcoming', date: new Date().toISOString().split('T')[0] }
-        ];
-
         function renderSportsDropdowns() {
             const sportCategories = {};
             const today = new Date().toISOString().split('T')[0];
@@ -1197,7 +1218,7 @@
                             <div class="date-group">
                                 <div class="date-header">
                                     <span class="date-icon">📅</span>
-                                    <span>${today === new Date().toISOString().split('T')[0] ? 'Today' : new Date(today).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</span>
+                                    <span>${formatGameDate(today)}</span>
                                 </div>
                                 <div class="games-grid">
                                     ${sportGames.map(game => {
@@ -1208,12 +1229,7 @@
                                                     <span class="sport-tag">${game.sport}</span>
                                                     ${game.status === 'live' ? '<span class="live-badge"><div class="live-dot"></div>LIVE</span>' : ''}
                                                 </div>
-                                                <div class="teams">
-                                                    <div class="team">${game.awayTeam}</div>
-                                                    <div class="vs">@</div>
-                                                    <div class="team">${game.homeTeam}</div>
-                                                </div>
-                                                <div class="game-time">${new Date(game.startTime).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'})}</div>
+                                                <div class="teams">${game.homeTeam} vs ${game.awayTeam}</div>
                                                 ${game.status === 'live' ? `
                                                     <div class="score-display" id="score-dropdown-${game.id}">
                                                         <div class="score-main">Loading...</div>
@@ -1221,27 +1237,25 @@
                                                     </div>
                                                 ` : ''}
                                                 <div class="odds-grid">
-                                                    <button class="odd-button" onclick="selectBet('${game.id}', 'away', ${game.odds.away})">
-                                                        <div class="odd-label">${game.awayTeam}</div>
-                                                        <div class="odd-value">${game.odds.away > 0 ? '+' : ''}${game.odds.away.toFixed(2)}</div>
+                                                    <button class="odd-button" onclick="selectBet('${game.id}', 'home', ${game.odds.home})" id="odd-dropdown-${game.id}-home">
+                                                        <div class="odd-team">${game.homeTeam}</div>
+                                                        <div class="odd-value">${game.odds.home > 0 ? '+' : ''}${game.odds.home}</div>
                                                     </button>
                                                     ${hasDrawOdds ? `
-                                                        <button class="odd-button" onclick="selectBet('${game.id}', 'draw', ${game.odds.draw})">
-                                                            <div class="odd-label">Draw</div>
-                                                            <div class="odd-value">+${game.odds.draw.toFixed(2)}</div>
+                                                        <button class="odd-button" onclick="selectBet('${game.id}', 'draw', ${game.odds.draw})" id="odd-dropdown-${game.id}-draw">
+                                                            <div class="odd-team">Draw</div>
+                                                            <div class="odd-value">+${game.odds.draw}</div>
                                                         </button>
                                                     ` : ''}
-                                                    <button class="odd-button" onclick="selectBet('${game.id}', 'home', ${game.odds.home})">
-                                                        <div class="odd-label">${game.homeTeam}</div>
-                                                        <div class="odd-value">${game.odds.home > 0 ? '+' : ''}${game.odds.home.toFixed(2)}</div>
+                                                    <button class="odd-button" onclick="selectBet('${game.id}', 'away', ${game.odds.away})" id="odd-dropdown-${game.id}-away">
+                                                        <div class="odd-team">${game.awayTeam}</div>
+                                                        <div class="odd-value">${game.odds.away > 0 ? '+' : ''}${game.odds.away}</div>
                                                     </button>
                                                 </div>
-                                                ${selectedBets.has(game.id) ? `
-                                                    <div class="bet-input-section">
-                                                        <input type="number" id="betAmount-${game.id}" placeholder="Bet amount" min="1">
-                                                        <button onclick="placeBet('${game.id}')">Place Bet</button>
-                                                    </div>
-                                                ` : ''}
+                                                <div class="bet-input-section">
+                                                    <input type="number" id="amount-dropdown-${game.id}" placeholder="Enter bet amount" min="1">
+                                                    <button onclick="placeBet('${game.id}')">Place Bet</button>
+                                                </div>
                                             </div>
                                         `;
                                     }).join('')}
@@ -1252,7 +1266,10 @@
                 `;
             }).join('');
 
-            sportGames.filter(g => g.status === 'live').forEach(game => startDropdownStream(game.id));
+            // Start streams for live games in dropdowns
+            Object.values(sportCategories).flat().filter(g => g.status === 'live').forEach(game => {
+                startDropdownStream(game.id);
+            });
         }
 
         function toggleSportSection(sport) {
@@ -1306,7 +1323,6 @@
         async function initialize() {
             await loadGames();
             await loadUserData();
-            renderSportsDropdowns();
 
             // Check if redirected from SSO
             const urlParams = new URLSearchParams(window.location.search);
