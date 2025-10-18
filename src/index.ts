@@ -1,7 +1,9 @@
 
 import express, { Request, Response } from 'express';
+import cookieParser from 'cookie-parser';
 import sportsbookRouter from './routes/sportsbook.js';
 import streamingRouter from './routes/streaming.js';
+import authRouter from './routes/auth.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -9,6 +11,9 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Trust proxy for production HTTPS
 app.set('trust proxy', 1);
+
+// Cookie parser for session management
+app.use(cookieParser());
 
 // Force HTTPS in production
 app.use((req: Request, res: Response, next) => {
@@ -39,6 +44,11 @@ app.get('/', (req: Request, res: Response) => {
     status: 'running',
     endpoints: {
       health: '/health',
+      ssoLogin: '/auth/login',
+      ssoCallback: '/auth/callback',
+      ssoStatus: '/auth/status',
+      currentUser: '/auth/me',
+      logout: 'POST /auth/logout',
       sportsbook: '/sportsbook',
       games: '/sportsbook/games',
       placeBet: 'POST /sportsbook/bet',
@@ -58,6 +68,7 @@ app.get('/health', (req: Request, res: Response) => {
 
 app.use('/sportsbook', sportsbookRouter);
 app.use('/streaming', streamingRouter);
+app.use('/auth', authRouter);
 
 // CORS configuration for cross-origin requests
 app.use((req: Request, res: Response, next) => {

@@ -47,6 +47,48 @@
             font-size: 1.3em;
         }
         
+        .auth-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #8b949e;
+            font-size: 0.9em;
+        }
+        
+        .user-email {
+            color: #58a6ff;
+        }
+        
+        .auth-btn {
+            padding: 8px 16px;
+            background: #238636;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .auth-btn:hover {
+            background: #2ea043;
+        }
+        
+        .auth-btn.logout {
+            background: #da3633;
+        }
+        
+        .auth-btn.logout:hover {
+            background: #f85149;
+        }
+        
         .nav-menu {
             display: flex;
             gap: 30px;
@@ -546,11 +588,16 @@
                 <span class="logo-icon">⚡</span>
                 <span>SportsBet Pro</span>
             </div>
-            <ul class="nav-menu">
-                <li><a href="#" class="active">Live Betting</a></li>
-                <li><a href="#">My Bets</a></li>
-                <li><a href="#">Promotions</a></li>
-            </ul>
+            <div style="display: flex; align-items: center; gap: 30px;">
+                <ul class="nav-menu">
+                    <li><a href="#" class="active">Live Betting</a></li>
+                    <li><a href="#">My Bets</a></li>
+                    <li><a href="#">Promotions</a></li>
+                </ul>
+                <div class="auth-section" id="authSection">
+                    <button class="auth-btn" onclick="loginSSO()">SSO Login</button>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -591,10 +638,56 @@
     </div>
     
     <script>
+        let currentUser = null;
         const userId = 'demo-user';
         let games = [];
         let userBets = [];
         let selectedBets = new Map();
+        
+        // Check authentication status on load
+        async function checkAuth() {
+            try {
+                const response = await fetch('/auth/me');
+                if (response.ok) {
+                    const data = await response.json();
+                    currentUser = data.user;
+                    updateAuthUI();
+                }
+            } catch (error) {
+                console.log('Not authenticated');
+            }
+        }
+        
+        // Update authentication UI
+        function updateAuthUI() {
+            const authSection = document.getElementById('authSection');
+            if (currentUser) {
+                authSection.innerHTML = `
+                    <div class="user-info">
+                        <span>👤</span>
+                        <span class="user-email">${currentUser.email}</span>
+                    </div>
+                    <button class="auth-btn logout" onclick="logoutSSO()">Logout</button>
+                `;
+            } else {
+                authSection.innerHTML = `
+                    <button class="auth-btn" onclick="loginSSO()">SSO Login</button>
+                `;
+            }
+        }
+        
+        // SSO Login
+        function loginSSO() {
+            window.location.href = '/auth/login';
+        }
+        
+        // SSO Logout
+        async function logoutSSO() {
+            await fetch('/auth/logout', { method: 'POST' });
+            currentUser = null;
+            updateAuthUI();
+            alert('Logged out successfully');
+        }
         
         async function loadGames() {
             const response = await fetch('/sportsbook/games');
@@ -919,9 +1012,16 @@
         }
         
         async function initialize() {
+            await checkAuth();
             await loadGames();
             await loadWallet();
             await loadBets();
+            
+            // Check if redirected from SSO
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('authenticated') === 'true') {
+                window.history.replaceState({}, document.title, '/');
+            }
         }
         
         initialize();
