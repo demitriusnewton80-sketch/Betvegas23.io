@@ -338,6 +338,92 @@
             color: #e6edf3;
         }
         
+        .sport-section {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .sport-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+        }
+        
+        .sport-section-header:hover {
+            background: rgba(88, 166, 255, 0.05);
+        }
+        
+        .sport-section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .sport-icon {
+            font-size: 1.5em;
+        }
+        
+        .sport-name {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #e6edf3;
+        }
+        
+        .game-count {
+            background: #21262d;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            color: #8b949e;
+            border: 1px solid #30363d;
+        }
+        
+        .collapse-icon {
+            font-size: 1.2em;
+            color: #8b949e;
+            transition: transform 0.3s;
+        }
+        
+        .collapse-icon.collapsed {
+            transform: rotate(-90deg);
+        }
+        
+        .sport-section-content {
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .sport-section-content.collapsed {
+            max-height: 0;
+        }
+        
+        .date-group {
+            border-top: 1px solid #30363d;
+            padding: 20px;
+        }
+        
+        .date-header {
+            font-size: 1em;
+            font-weight: 600;
+            color: #58a6ff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .date-icon {
+            font-size: 0.9em;
+        }
+        
         .games-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
@@ -627,7 +713,7 @@
         <div class="section-header">
             <h2>Available Games</h2>
         </div>
-        <div class="games-grid" id="gamesGrid"></div>
+        <div id="sportsSections"></div>
         
         <div class="bets-section">
             <div class="section-header" style="border: none; padding-bottom: 0;">
@@ -701,6 +787,48 @@
             const response = await fetch(`/sportsbook/user/${userId}/wallet`);
             const data = await response.json();
             document.getElementById('balance').textContent = `$${data.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        }
+        
+        function getSportIcon(sport) {
+            const icons = {
+                'NFL': '🏈',
+                'NBA': '🏀',
+                'NHL': '🏒',
+                'Soccer': '⚽',
+                'MLB': '⚾',
+                'Tennis': '🎾',
+                'Boxing': '🥊',
+                'MMA': '🥋'
+            };
+            return icons[sport] || '🎯';
+        }
+        
+        function formatGameDate(dateString) {
+            const date = new Date(dateString);
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            today.setHours(0, 0, 0, 0);
+            tomorrow.setHours(0, 0, 0, 0);
+            const gameDate = new Date(date);
+            gameDate.setHours(0, 0, 0, 0);
+            
+            if (gameDate.getTime() === today.getTime()) {
+                return 'Today';
+            } else if (gameDate.getTime() === tomorrow.getTime()) {
+                return 'Tomorrow';
+            } else {
+                return date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+            }
+        }
+        
+        function toggleSportSection(sport) {
+            const content = document.getElementById(`sport-content-${sport}`);
+            const icon = document.getElementById(`collapse-icon-${sport}`);
+            
+            content.classList.toggle('collapsed');
+            icon.classList.toggle('collapsed');
         }
         
         async function loadBets() {
@@ -978,6 +1106,102 @@
             } else {
                 alert('Error: ' + data.error);
             }
+        }
+        
+        function renderGames() {
+            const sportsSections = document.getElementById('sportsSections');
+            
+            // Group games by sport
+            const gamesBySport = {};
+            games.forEach(game => {
+                if (!gamesBySport[game.sport]) {
+                    gamesBySport[game.sport] = [];
+                }
+                gamesBySport[game.sport].push(game);
+            });
+            
+            // Sort sports alphabetically
+            const sortedSports = Object.keys(gamesBySport).sort();
+            
+            sportsSections.innerHTML = sortedSports.map(sport => {
+                const sportGames = gamesBySport[sport];
+                
+                // Group games by date
+                const gamesByDate = {};
+                sportGames.forEach(game => {
+                    const dateKey = formatGameDate(game.startTime);
+                    if (!gamesByDate[dateKey]) {
+                        gamesByDate[dateKey] = [];
+                    }
+                    gamesByDate[dateKey].push(game);
+                });
+                
+                const dateGroupsHtml = Object.keys(gamesByDate).map(dateKey => {
+                    const dateGames = gamesByDate[dateKey];
+                    return `
+                        <div class="date-group">
+                            <div class="date-header">
+                                <span class="date-icon">📅</span>
+                                <span>${dateKey}</span>
+                            </div>
+                            <div class="games-grid">
+                                ${dateGames.map(game => `
+                                    <div class="game-card">
+                                        <div class="game-header">
+                                            <span class="sport-tag">${game.sport}</span>
+                                            ${game.status === 'live' ? '<span class="live-badge"><div class="live-dot"></div>LIVE</span>' : ''}
+                                        </div>
+                                        <div class="teams">
+                                            <div class="team">${game.awayTeam}</div>
+                                            <div class="vs">@</div>
+                                            <div class="team">${game.homeTeam}</div>
+                                        </div>
+                                        <div class="game-time">${new Date(game.startTime).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'})}</div>
+                                        <div class="odds-grid">
+                                            <button class="odd-button" onclick="selectBet('${game.id}', 'away', ${game.odds.away})">
+                                                <div class="odd-label">${game.awayTeam}</div>
+                                                <div class="odd-value">${game.odds.away > 0 ? '+' : ''}${game.odds.away}</div>
+                                            </button>
+                                            ${game.odds.draw ? `
+                                                <button class="odd-button" onclick="selectBet('${game.id}', 'draw', ${game.odds.draw})">
+                                                    <div class="odd-label">Draw</div>
+                                                    <div class="odd-value">+${game.odds.draw}</div>
+                                                </button>
+                                            ` : ''}
+                                            <button class="odd-button" onclick="selectBet('${game.id}', 'home', ${game.odds.home})">
+                                                <div class="odd-label">${game.homeTeam}</div>
+                                                <div class="odd-value">${game.odds.home > 0 ? '+' : ''}${game.odds.home}</div>
+                                            </button>
+                                        </div>
+                                        ${selectedBets.has(game.id) ? `
+                                            <div class="bet-input-section">
+                                                <input type="number" id="betAmount-${game.id}" placeholder="Bet amount" min="1">
+                                                <button onclick="placeBet('${game.id}')">Place Bet</button>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                return `
+                    <div class="sport-section">
+                        <div class="sport-section-header" onclick="toggleSportSection('${sport}')">
+                            <div class="sport-section-title">
+                                <span class="sport-icon">${getSportIcon(sport)}</span>
+                                <span class="sport-name">${sport}</span>
+                                <span class="game-count">${sportGames.length} ${sportGames.length === 1 ? 'game' : 'games'}</span>
+                            </div>
+                            <span class="collapse-icon" id="collapse-icon-${sport}">▼</span>
+                        </div>
+                        <div class="sport-section-content" id="sport-content-${sport}">
+                            ${dateGroupsHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
         
         function renderBets() {
