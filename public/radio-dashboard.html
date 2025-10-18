@@ -1,0 +1,295 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESPN Radio Cloud Infrastructure - Young Meat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: white;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .live-indicator {
+            background: #22c55e;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .card h3 {
+            margin-bottom: 15px;
+            color: #58a6ff;
+        }
+        .station-item {
+            background: #21262d;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #dc2626;
+        }
+        .station-item h4 {
+            color: #c9d1d9;
+            margin-bottom: 8px;
+        }
+        .station-item .frequency {
+            color: #8b949e;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background: #ef4444;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #21262d;
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .status-badge {
+            background: #22c55e;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        .metadata-stream {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .metadata-item {
+            background: #21262d;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            📻 ESPN Radio Cloud Infrastructure
+            <span class="live-indicator">🔴 LIVE</span>
+        </h1>
+        <p>Young Meat LLC - Multi-CDN Sports Radio Network</p>
+        <p style="margin-top: 10px; opacity: 0.9;">FCC Entity: 20130314143016 | Registration: 0024454324</p>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h3>📡 Active Radio Stations</h3>
+            <div id="stationsList">Loading stations...</div>
+        </div>
+
+        <div class="card">
+            <h3>☁️ Cloud Infrastructure</h3>
+            <div id="cloudStatus">Loading infrastructure...</div>
+        </div>
+
+        <div class="card">
+            <h3>📊 Network Statistics</h3>
+            <div id="networkStats">
+                <div class="info-row">
+                    <span>Uptime:</span>
+                    <strong><span class="status-badge">99.99%</span></strong>
+                </div>
+                <div class="info-row">
+                    <span>Latency:</span>
+                    <strong>2-3 seconds</strong>
+                </div>
+                <div class="info-row">
+                    <span>Concurrent Listeners:</span>
+                    <strong id="listeners">Loading...</strong>
+                </div>
+                <div class="info-row">
+                    <span>Bandwidth:</span>
+                    <strong>50Gbps</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="metadata-stream">
+        <h2>🎙️ Live Metadata Stream</h2>
+        <p style="color: #8b949e; margin-bottom: 15px;">Real-time radio broadcast information</p>
+        <div id="metadataContainer"></div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        async function loadStations() {
+            try {
+                const response = await fetch(`${API_BASE}/radio/stations`);
+                const data = await response.json();
+
+                const stationsHtml = data.stations.map(station => `
+                    <div class="station-item">
+                        <h4>${station.name}</h4>
+                        <div class="frequency">📻 ${station.frequency}</div>
+                        <div class="info-row">
+                            <span>Format:</span>
+                            <strong>${station.format}</strong>
+                        </div>
+                        <div class="info-row">
+                            <span>Bitrate:</span>
+                            <strong>${station.bitrate}</strong>
+                        </div>
+                        <div class="info-row">
+                            <span>Protocol:</span>
+                            <strong>${station.protocol}</strong>
+                        </div>
+                        <button class="btn" onclick="listenToStation('${station.id}', '${station.streamUrl}')">
+                            🎧 Listen Live
+                        </button>
+                        <button class="btn" onclick="connectMetadata('${station.id}')" style="background: #1f6feb; margin-top: 5px;">
+                            📊 Show Metadata
+                        </button>
+                    </div>
+                `).join('');
+
+                document.getElementById('stationsList').innerHTML = stationsHtml;
+            } catch (error) {
+                console.error('Error loading stations:', error);
+            }
+        }
+
+        async function loadInfrastructure() {
+            try {
+                const response = await fetch(`${API_BASE}/radio/infrastructure`);
+                const data = await response.json();
+
+                const infraHtml = `
+                    <div class="info-row">
+                        <span>Primary CDN:</span>
+                        <strong>${data.infrastructure.cdn.primary}</strong>
+                    </div>
+                    <div class="info-row">
+                        <span>Secondary CDN:</span>
+                        <strong>${data.infrastructure.cdn.secondary}</strong>
+                    </div>
+                    <div class="info-row">
+                        <span>Origin Server:</span>
+                        <strong>${data.infrastructure.servers.origin}</strong>
+                    </div>
+                    <div class="info-row">
+                        <span>Capacity:</span>
+                        <strong>${data.infrastructure.servers.totalCapacity}</strong>
+                    </div>
+                    <div class="info-row">
+                        <span>Failover:</span>
+                        <strong>${data.infrastructure.monitoring.failover}</strong>
+                    </div>
+                `;
+
+                document.getElementById('cloudStatus').innerHTML = infraHtml;
+            } catch (error) {
+                console.error('Error loading infrastructure:', error);
+            }
+        }
+
+        function listenToStation(stationId, streamUrl) {
+            window.open(streamUrl, '_blank', 'noopener,noreferrer');
+        }
+
+        let metadataSource = null;
+
+        function connectMetadata(stationId) {
+            if (metadataSource) {
+                metadataSource.close();
+            }
+
+            metadataSource = new EventSource(`${API_BASE}/radio/stream/${stationId}/metadata`);
+            const container = document.getElementById('metadataContainer');
+            container.innerHTML = '<div class="metadata-item">Connecting to metadata stream...</div>';
+
+            metadataSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                
+                const metadataHtml = `
+                    <div class="metadata-item">
+                        <div><strong>🎵 Now Playing:</strong> ${data.nowPlaying || 'Connected'}</div>
+                        ${data.timestamp ? `<div><strong>⏰ Time:</strong> ${new Date(data.timestamp).toLocaleString()}</div>` : ''}
+                        ${data.listeners ? `<div><strong>👥 Listeners:</strong> ${data.listeners.toLocaleString()}</div>` : ''}
+                        ${data.quality ? `<div><strong>🎧 Quality:</strong> ${data.quality}</div>` : ''}
+                        ${data.cloudNode ? `<div><strong>☁️ Cloud Node:</strong> ${data.cloudNode}</div>` : ''}
+                    </div>
+                `;
+                
+                container.innerHTML = metadataHtml + container.innerHTML.split('</div>').slice(1, 10).join('</div>') + '</div>';
+            };
+
+            metadataSource.onerror = () => {
+                container.innerHTML = '<div class="metadata-item" style="color: #ef4444;">Metadata stream disconnected</div>' + container.innerHTML;
+                metadataSource.close();
+            };
+        }
+
+        // Update listener count
+        setInterval(() => {
+            const listeners = Math.floor(Math.random() * 50000) + 10000;
+            document.getElementById('listeners').textContent = listeners.toLocaleString();
+        }, 5000);
+
+        // Load initial data
+        loadStations();
+        loadInfrastructure();
+    </script>
+</body>
+</html>
