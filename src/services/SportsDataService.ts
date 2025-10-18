@@ -36,7 +36,7 @@ class SportsDataService extends EventEmitter {
       startTime: new Date(Date.now() + 86400000).toISOString(),
       status: 'upcoming',
       moneyLine: { home: -150, away: +130 },
-      radioLink: 'https://player.radio.com/listen/station/nfl-live'
+      radioLink: 'https://www.iheart.com/live/espn-radio-3959/'
     });
 
     this.addEvent({
@@ -47,7 +47,7 @@ class SportsDataService extends EventEmitter {
       startTime: new Date(Date.now() + 172800000).toISOString(),
       status: 'upcoming',
       moneyLine: { home: -110, away: -110 },
-      radioLink: 'https://player.radio.com/listen/station/nfl-live'
+      radioLink: 'https://tunein.com/radio/ESPN-Radio-s20368/'
     });
 
     // NBA Events
