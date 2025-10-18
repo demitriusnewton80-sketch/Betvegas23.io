@@ -12,29 +12,57 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --border-color: #30363d;
+            --text-primary: #ffffff;
+            --text-secondary: #c9d1d9;
+            --text-muted: #8b949e;
+            --accent-color: #53c451;
+        }
+
+        body.light-mode {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f6f8fa;
+            --bg-tertiary: #eaeef2;
+            --border-color: #d0d7de;
+            --text-primary: #1f2328;
+            --text-secondary: #57606a;
+            --text-muted: #656d76;
+            --accent-color: #2e7d32;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-            background: #0d1117;
-            color: #ffffff;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             line-height: 1.5;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         /* Header */
         .header {
-            background: linear-gradient(135deg, #1a1f2e 0%, #0d1117 100%);
-            border-bottom: 1px solid #21262d;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
             padding: 0;
             position: sticky;
             top: 0;
             z-index: 1000;
         }
 
+        body.light-mode .header {
+            background: var(--bg-primary);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
         .top-bar {
-            background: #000000;
+            background: var(--bg-tertiary);
             padding: 8px 0;
             font-size: 12px;
             text-align: center;
-            color: #8b949e;
+            color: var(--text-muted);
         }
 
         .nav-container {
@@ -75,6 +103,25 @@
             color: #53c451;
         }
 
+        .theme-toggle {
+            background: #21262d;
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 6px;
+            border: 1px solid #30363d;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            background: #30363d;
+            transform: translateY(-1px);
+        }
+
         .wallet-btn {
             background: #53c451;
             color: #000;
@@ -108,7 +155,8 @@
         }
 
         .sidebar {
-            background: #161b22;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 16px;
             height: fit-content;
@@ -119,7 +167,7 @@
         .sidebar-title {
             font-size: 12px;
             font-weight: 700;
-            color: #8b949e;
+            color: var(--text-muted);
             text-transform: uppercase;
             margin-bottom: 12px;
             letter-spacing: 0.5px;
@@ -140,16 +188,16 @@
             align-items: center;
             gap: 10px;
             font-size: 14px;
-            color: #c9d1d9;
+            color: var(--text-secondary);
         }
 
         .sport-item:hover {
-            background: #21262d;
+            background: var(--bg-tertiary);
         }
 
         .sport-item.active {
-            background: #53c451;
-            color: #000;
+            background: var(--accent-color);
+            color: #ffffff;
             font-weight: 600;
         }
 
@@ -198,15 +246,15 @@
         }
 
         .game-card {
-            background: #161b22;
-            border: 1px solid #21262d;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 20px;
             transition: all 0.2s;
         }
 
         .game-card:hover {
-            border-color: #53c451;
+            border-color: var(--accent-color);
             box-shadow: 0 8px 24px rgba(83, 196, 81, 0.15);
         }
 
@@ -220,8 +268,8 @@
         }
 
         .sport-tag {
-            background: #21262d;
-            color: #8b949e;
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
             padding: 4px 12px;
             border-radius: 4px;
             font-size: 12px;
@@ -231,7 +279,7 @@
 
         .game-time {
             font-size: 13px;
-            color: #8b949e;
+            color: var(--text-muted);
         }
 
         .teams-matchup {
@@ -258,13 +306,13 @@
         .team-name {
             font-size: 16px;
             font-weight: 600;
-            color: #c9d1d9;
+            color: var(--text-secondary);
         }
 
         .live-score {
             font-size: 24px;
             font-weight: 700;
-            color: #53c451;
+            color: var(--accent-color);
         }
 
         /* Betting Markets */
@@ -275,8 +323,8 @@
         }
 
         .bet-button {
-            background: #0d1117;
-            border: 1px solid #30363d;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
             border-radius: 6px;
             padding: 12px;
             cursor: pointer;
@@ -285,8 +333,8 @@
         }
 
         .bet-button:hover {
-            background: #21262d;
-            border-color: #53c451;
+            background: var(--bg-tertiary);
+            border-color: var(--accent-color);
         }
 
         .bet-button:active {
@@ -324,8 +372,8 @@
         }
 
         .modal-content {
-            background: #161b22;
-            border: 1px solid #21262d;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 32px;
             max-width: 500px;
@@ -392,17 +440,17 @@
 
         input[type="number"] {
             width: 100%;
-            background: #0d1117;
-            border: 1px solid #30363d;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
             border-radius: 6px;
             padding: 12px;
-            color: #fff;
+            color: var(--text-primary);
             font-size: 16px;
         }
 
         input[type="number"]:focus {
             outline: none;
-            border-color: #53c451;
+            border-color: var(--accent-color);
         }
 
         .btn-primary {
@@ -428,8 +476,8 @@
             right: 24px;
             bottom: 24px;
             width: 320px;
-            background: #161b22;
-            border: 1px solid #21262d;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
@@ -440,17 +488,17 @@
             font-weight: 700;
             margin-bottom: 16px;
             padding-bottom: 12px;
-            border-bottom: 1px solid #21262d;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .bet-slip-empty {
             text-align: center;
-            color: #8b949e;
+            color: var(--text-muted);
             padding: 20px;
         }
 
         .bet-item {
-            background: #0d1117;
+            background: var(--bg-primary);
             padding: 12px;
             border-radius: 6px;
             margin-bottom: 12px;
@@ -498,8 +546,8 @@
         }
 
         .bet-history-item {
-            background: #161b22;
-            border: 1px solid #21262d;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 16px;
             margin-bottom: 12px;
@@ -565,6 +613,9 @@
                 <a href="#" class="nav-link active">Sportsbook</a>
                 <a href="#" class="nav-link">Live Betting</a>
                 <a href="#" class="nav-link">My Bets</a>
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                    <span id="themeIcon">🌙</span>
+                </button>
                 <button class="wallet-btn" onclick="openWalletModal()">
                     💰 <span id="headerBalance">$0.00</span>
                 </button>
@@ -988,8 +1039,37 @@
             }
         }
 
+        // Theme Toggle
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            
+            body.classList.toggle('light-mode');
+            
+            if (body.classList.contains('light-mode')) {
+                themeIcon.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeIcon.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                themeIcon.textContent = '☀️';
+            } else {
+                themeIcon.textContent = '🌙';
+            }
+        }
+
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
             loadWallet();
             loadGames();
             loadBetHistory();
