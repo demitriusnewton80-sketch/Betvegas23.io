@@ -143,6 +143,21 @@ router.get('/my-streams/:userId', (req: Request, res: Response) => {
 export default router;
 
 
+// Get radio stream info for a game
+router.get('/radio/:gameId', async (req: Request, res: Response) => {
+  const { gameId } = req.params;
+  
+  // NFL games use radio.com
+  const radioUrl = 'https://player.radio.com/listen/station/nfl-live';
+  
+  res.json({
+    gameId,
+    radioUrl,
+    streamType: 'NFL Live Radio',
+    provider: 'Radio.com'
+  });
+});
+
 // Get IP address for radio stream URL
 router.get('/radio/ip-lookup', async (req: Request, res: Response) => {
   const { url } = req.query;
