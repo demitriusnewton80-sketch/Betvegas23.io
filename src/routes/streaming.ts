@@ -141,3 +141,39 @@ router.get('/my-streams/:userId', (req: Request, res: Response) => {
 });
 
 export default router;
+
+
+// Get IP address for radio stream URL
+router.get('/radio/ip-lookup', async (req: Request, res: Response) => {
+  const { url } = req.query;
+  
+  if (!url || typeof url !== 'string') {
+    return res.status(400).json({ error: 'URL parameter required' });
+  }
+  
+  try {
+    const urlObj = new URL(url);
+    const hostname = urlObj.hostname;
+    
+    // Use DNS lookup
+    const dns = await import('dns');
+    const { promisify } = await import('util');
+    const lookup = promisify(dns.lookup);
+    
+    const result = await lookup(hostname);
+    
+    res.json({
+      url: url,
+      hostname: hostname,
+      ipAddress: result.address,
+      family: result.family === 4 ? 'IPv4' : 'IPv6',
+      note: 'IP addresses for streaming services may change. Consider using the hostname instead.'
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      error: 'Failed to lookup IP address',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
