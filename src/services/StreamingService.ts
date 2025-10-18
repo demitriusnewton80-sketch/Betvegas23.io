@@ -22,52 +22,30 @@ class StreamingService extends EventEmitter {
       return;
     }
 
-    // Simulate live game updates every 5 seconds
-    const interval = setInterval(() => {
-      const update: LiveGameUpdate = {
-        gameId,
-        score: {
-          home: Math.floor(Math.random() * 50),
-          away: Math.floor(Math.random() * 50)
-        },
-        quarter: `Q${Math.floor(Math.random() * 4) + 1}`,
-        timeRemaining: `${Math.floor(Math.random() * 12)}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
-        lastPlay: this.generateRandomPlay(),
-        timestamp: new Date().toISOString()
-      };
+    // Ready for real-time streaming integration
+    // Connect to your actual data source here (e.g., sports API, WebSocket, etc.)
+    console.log(`Live stream started for game ${gameId}`);
+    
+    // Placeholder - replace with actual data source integration
+    this.activeStreams.set(gameId, undefined as any);
+  }
 
-      this.emit('gameUpdate', update);
-    }, 5000);
-
-    this.activeStreams.set(gameId, interval);
+  // Method to push live updates from external source
+  pushGameUpdate(update: LiveGameUpdate): void {
+    this.emit('gameUpdate', update);
   }
 
   stopGameStream(gameId: string): void {
-    const interval = this.activeStreams.get(gameId);
-    if (interval) {
-      clearInterval(interval);
+    if (this.activeStreams.has(gameId)) {
+      console.log(`Live stream stopped for game ${gameId}`);
       this.activeStreams.delete(gameId);
     }
   }
 
-  private generateRandomPlay(): string {
-    const plays = [
-      'Touchdown!',
-      'Field Goal',
-      '3-pointer!',
-      'Turnover',
-      'Penalty',
-      'Interception',
-      'Fumble recovered',
-      'Basket made',
-      'Free throw',
-      'Goal scored!'
-    ];
-    return plays[Math.floor(Math.random() * plays.length)];
-  }
-
   stopAllStreams(): void {
-    this.activeStreams.forEach((interval) => clearInterval(interval));
+    this.activeStreams.forEach((_, gameId) => {
+      console.log(`Stopping stream for game ${gameId}`);
+    });
     this.activeStreams.clear();
   }
 }

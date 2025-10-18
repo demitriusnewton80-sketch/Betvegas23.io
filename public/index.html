@@ -206,6 +206,98 @@
         .status.cashed_out {
             background: #2196F3;
         }
+        
+        .live-streams {
+            margin-bottom: 30px;
+        }
+        
+        .stream-container {
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .stream-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .stream-title {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        
+        .stream-video {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stream-placeholder {
+            text-align: center;
+            color: #888;
+        }
+        
+        .stream-stats {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.8);
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 200px;
+        }
+        
+        .stream-score {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 10px 0;
+            text-align: center;
+        }
+        
+        .stream-info {
+            font-size: 0.9em;
+            margin: 5px 0;
+        }
+        
+        .play-by-play {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 0.95em;
+        }
+        
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .video-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body>
@@ -226,6 +318,9 @@
             </div>
         </div>
         
+        <h2>🔴 Live Streams</h2>
+        <div class="live-streams" id="liveStreams"></div>
+        
         <h2>Live Games</h2>
         <div class="games-grid" id="gamesGrid"></div>
         
@@ -244,6 +339,7 @@
             const response = await fetch('/sportsbook/games');
             const data = await response.json();
             games = data.games;
+            renderLiveStreams();
             renderGames();
         }
         
@@ -258,6 +354,44 @@
             const data = await response.json();
             userBets = data.bets;
             renderBets();
+        }
+        
+        function renderLiveStreams() {
+            const liveGames = games.filter(g => g.status === 'live');
+            const streamsContainer = document.getElementById('liveStreams');
+            
+            if (liveGames.length === 0) {
+                streamsContainer.innerHTML = '<p style="text-align: center; opacity: 0.6;">No live games at the moment</p>';
+                return;
+            }
+            
+            streamsContainer.innerHTML = liveGames.map(game => `
+                <div class="stream-container">
+                    <div class="stream-header">
+                        <div class="stream-title">
+                            ${game.homeTeam} vs ${game.awayTeam}
+                        </div>
+                        <span class="live-indicator">🔴 LIVE</span>
+                    </div>
+                    <div class="stream-video" id="stream-${game.id}">
+                        <div class="video-overlay">
+                            <div class="video-icon">📺</div>
+                            <div>Live Game Stream</div>
+                        </div>
+                        <div class="stream-stats" id="stats-${game.id}">
+                            <div style="text-align: center; opacity: 0.6;">Loading...</div>
+                        </div>
+                        <div class="play-by-play" id="play-${game.id}">
+                            <strong>Latest Play:</strong> <span id="latest-play-${game.id}">Waiting for updates...</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Start streams for all live games
+            liveGames.forEach(game => {
+                startLiveStreamStats(game.id);
+            });
         }
         
         function renderGames() {
@@ -315,6 +449,46 @@
                         <small>${update.lastPlay}</small>
                     `;
                 }
+            };
+        }
+        
+        function startLiveStreamStats(gameId) {
+            const eventSource = new EventSource(`/streaming/stream/${gameId}`);
+            const game = games.find(g => g.id === gameId);
+            
+            eventSource.onmessage = (event) => {
+                const update = JSON.parse(event.data);
+                
+                // Update stats overlay
+                const statsDiv = document.getElementById(`stats-${gameId}`);
+                if (statsDiv) {
+                    statsDiv.innerHTML = `
+                        <div style="text-align: center; font-size: 0.85em; margin-bottom: 5px;">
+                            ${update.quarter || update.period} - ${update.timeRemaining}
+                        </div>
+                        <div class="stream-score">
+                            ${update.score.home} - ${update.score.away}
+                        </div>
+                        <div style="text-align: center; font-size: 0.9em; opacity: 0.8;">
+                            ${game.homeTeam} vs ${game.awayTeam}
+                        </div>
+                    `;
+                }
+                
+                // Update play-by-play
+                const playDiv = document.getElementById(`latest-play-${gameId}`);
+                if (playDiv) {
+                    playDiv.textContent = update.lastPlay;
+                    // Add flash effect
+                    playDiv.style.color = '#4CAF50';
+                    setTimeout(() => {
+                        playDiv.style.color = '#fff';
+                    }, 500);
+                }
+            };
+            
+            eventSource.onerror = () => {
+                console.error(`Stream error for game ${gameId}`);
             };
         }
         
@@ -431,9 +605,14 @@
         }
         
         // Initialize
-        loadGames();
-        loadWallet();
-        loadBets();
+        async function initialize() {
+            await loadGames();
+            renderLiveStreams();
+            loadWallet();
+            loadBets();
+        }
+        
+        initialize();
         
         // Refresh bets every 10 seconds
         setInterval(loadBets, 10000);
