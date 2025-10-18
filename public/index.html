@@ -703,6 +703,30 @@
         function startLiveStream(gameId) {
             const eventSource = new EventSource(`/streaming/stream/${gameId}`);
             
+            eventSource.onerror = async (error) => {
+                console.error(`Stream error for game ${gameId}`);
+                
+                // Report failure to activate stream sharing
+                await fetch(`/streaming/stream/${gameId}/report-failure`, {
+                    method: 'POST'
+                });
+                
+                // Check sharing status
+                const response = await fetch(`/streaming/stream/${gameId}/sharing`);
+                const sharingStatus = await response.json();
+                
+                if (sharingStatus.isShared) {
+                    const scoreDiv = document.getElementById(`score-${gameId}`);
+                    if (scoreDiv) {
+                        scoreDiv.innerHTML += `
+                            <div style="font-size: 0.75em; color: #58a6ff; margin-top: 5px;">
+                                📡 Stream shared with ${sharingStatus.sportsbooksCount} partners
+                            </div>
+                        `;
+                    }
+                }
+            };
+            
             eventSource.onmessage = (event) => {
                 const update = JSON.parse(event.data);
                 const scoreDiv = document.getElementById(`score-${gameId}`);
@@ -718,6 +742,28 @@
         function startLiveStreamStats(gameId) {
             const eventSource = new EventSource(`/streaming/stream/${gameId}`);
             const game = games.find(g => g.id === gameId);
+            
+            eventSource.onerror = async (error) => {
+                console.error(`Stream error for game ${gameId}`);
+                
+                await fetch(`/streaming/stream/${gameId}/report-failure`, {
+                    method: 'POST'
+                });
+                
+                const response = await fetch(`/streaming/stream/${gameId}/sharing`);
+                const sharingStatus = await response.json();
+                
+                if (sharingStatus.isShared) {
+                    const statsDiv = document.getElementById(`stats-${gameId}`);
+                    if (statsDiv) {
+                        const sharingBadge = document.createElement('div');
+                        sharingBadge.style.cssText = 'position: absolute; top: 10px; right: 10px; background: rgba(88, 166, 255, 0.2); color: #58a6ff; padding: 4px 12px; border-radius: 12px; font-size: 0.75em; border: 1px solid #58a6ff;';
+                        sharingBadge.innerHTML = `📡 Shared with ${sharingStatus.sportsbooksCount} partners`;
+                        statsDiv.parentElement.style.position = 'relative';
+                        statsDiv.parentElement.appendChild(sharingBadge);
+                    }
+                }
+            };
             
             eventSource.onmessage = (event) => {
                 const update = JSON.parse(event.data);
