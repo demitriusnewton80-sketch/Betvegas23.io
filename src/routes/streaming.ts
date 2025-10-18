@@ -106,4 +106,74 @@ router.post('/partners', (req: Request, res: Response) => {
   });
 });
 
+// Get Amazon Prime stream access for user
+router.get('/amazon-prime/:userId/:gameId', (req: Request, res: Response) => {
+  const { userId, gameId } = req.params;
+  
+  const hasAccess = streamingService.hasStreamAccess(userId, gameId);
+  
+  if (!hasAccess) {
+    return res.status(403).json({ 
+      error: 'No stream access. Place a bet on this game to watch on Amazon Prime.',
+      hasAccess: false
+    });
+  }
+  
+  const amazonPrimeUrl = streamingService.getAmazonPrimeUrl(userId, gameId);
+  
+  res.json({
+    hasAccess: true,
+    gameId,
+    amazonPrimeUrl,
+    message: 'Amazon Prime stream access granted via Young Meat LLC partnership'
+  });
+});
+
+// Get all stream access for user
+router.get('/my-streams/:userId', (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const streams = streamingService.getUserStreamAccess(userId);
+  
+  res.json({
+    streams,
+    count: streams.length
+  });
+});
+
 export default router;
+
+
+// Get IP address for radio stream URL
+router.get('/radio/ip-lookup', async (req: Request, res: Response) => {
+  const { url } = req.query;
+  
+  if (!url || typeof url !== 'string') {
+    return res.status(400).json({ error: 'URL parameter required' });
+  }
+  
+  try {
+    const urlObj = new URL(url);
+    const hostname = urlObj.hostname;
+    
+    // Use DNS lookup
+    const dns = await import('dns');
+    const { promisify } = await import('util');
+    const lookup = promisify(dns.lookup);
+    
+    const result = await lookup(hostname);
+    
+    res.json({
+      url: url,
+      hostname: hostname,
+      ipAddress: result.address,
+      family: result.family === 4 ? 'IPv4' : 'IPv6',
+      note: 'IP addresses for streaming services may change. Consider using the hostname instead.'
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      error: 'Failed to lookup IP address',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+

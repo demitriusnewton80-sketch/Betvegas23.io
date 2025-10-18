@@ -12,6 +12,15 @@ export interface LiveGameUpdate {
   timeRemaining?: string;
   lastPlay?: string;
   timestamp: string;
+  amazonPrimeUrl?: string;
+}
+
+interface StreamAccess {
+  userId: string;
+  gameId: string;
+  accessGrantedAt: string;
+  betId: string;
+  amazonPrimeStreamUrl: string;
 }
 
 interface ExternalSportsbook {
@@ -30,6 +39,7 @@ class StreamingService extends EventEmitter {
   private streamFailures: Map<string, number> = new Map();
   private externalSportsbooks: Map<string, ExternalSportsbook> = new Map();
   private sharedStreams: Map<string, Set<string>> = new Map(); // gameId -> Set of sportsbook IDs
+  private streamAccess: Map<string, StreamAccess[]> = new Map(); // userId -> StreamAccess[]
 
   constructor() {
     super();
@@ -231,6 +241,62 @@ class StreamingService extends EventEmitter {
     this.activeStreams.clear();
     this.sharedStreams.clear();
     this.streamFailures.clear();
+  }
+
+  // Grant Amazon Prime stream access when user places a bet
+  grantStreamAccess(userId: string, gameId: string, betId: string): StreamAccess {
+    const amazonPrimeStreamUrl = this.generateAmazonPrimeUrl(gameId);
+    
+    const access: StreamAccess = {
+      userId,
+      gameId,
+      accessGrantedAt: new Date().toISOString(),
+      betId,
+      amazonPrimeStreamUrl
+    };
+
+    if (!this.streamAccess.has(userId)) {
+      this.streamAccess.set(userId, []);
+    }
+    
+    this.streamAccess.get(userId)!.push(access);
+    
+    console.log(`Amazon Prime stream access granted to user ${userId} for game ${gameId}`);
+    this.emit('streamAccessGranted', access);
+    
+    return access;
+  }
+
+  // Generate Amazon Prime Video URL for game stream
+  private generateAmazonPrimeUrl(gameId: string): string {
+    // In production, this would integrate with Amazon Prime Video API
+    // Using independent writer partnership deal credentials
+    const baseUrl = 'https://www.amazon.com/gp/video/detail';
+    const streamToken = Buffer.from(`youngmeat-${gameId}-${Date.now()}`).toString('base64');
+    
+    return `${baseUrl}/${gameId}?autoplay=1&token=${streamToken}&partner=youngmeat-llc`;
+  }
+
+  // Check if user has stream access for a game
+  hasStreamAccess(userId: string, gameId: string): boolean {
+    const userAccess = this.streamAccess.get(userId);
+    if (!userAccess) return false;
+    
+    return userAccess.some(access => access.gameId === gameId);
+  }
+
+  // Get Amazon Prime stream URL for user and game
+  getAmazonPrimeUrl(userId: string, gameId: string): string | null {
+    const userAccess = this.streamAccess.get(userId);
+    if (!userAccess) return null;
+    
+    const access = userAccess.find(a => a.gameId === gameId);
+    return access ? access.amazonPrimeStreamUrl : null;
+  }
+
+  // Get all stream access for a user
+  getUserStreamAccess(userId: string): StreamAccess[] {
+    return this.streamAccess.get(userId) || [];
   }
 }
 
