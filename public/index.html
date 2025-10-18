@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,20 +10,20 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: #e4e4e4;
             line-height: 1.6;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-        
+
         header {
             text-align: center;
             padding: 40px 0;
@@ -32,18 +31,18 @@
             border-radius: 10px;
             margin-bottom: 30px;
         }
-        
+
         h1 {
             color: #00adb5;
             font-size: 2.5em;
             margin-bottom: 10px;
         }
-        
+
         .subtitle {
             color: #aaa;
             font-size: 1.1em;
         }
-        
+
         .section {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
@@ -51,14 +50,14 @@
             margin-bottom: 25px;
             border: 1px solid rgba(0, 173, 181, 0.3);
         }
-        
+
         h2 {
             color: #00adb5;
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 2px solid rgba(0, 173, 181, 0.3);
         }
-        
+
         .game-card {
             background: rgba(0, 0, 0, 0.3);
             padding: 20px;
@@ -67,24 +66,24 @@
             border-left: 4px solid #00adb5;
             transition: transform 0.2s;
         }
-        
+
         .game-card:hover {
             transform: translateX(5px);
             background: rgba(0, 173, 181, 0.1);
         }
-        
+
         .game-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
         }
-        
+
         .teams {
             font-size: 1.2em;
             font-weight: bold;
         }
-        
+
         .teams-container {
             display: flex;
             justify-content: space-around;
@@ -92,36 +91,36 @@
             margin: 15px 0;
             gap: 10px;
         }
-        
+
         .team {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 8px;
         }
-        
+
         .team-logo {
             font-size: 1.8em;
             filter: drop-shadow(0 2px 4px rgba(0, 173, 181, 0.3));
         }
-        
+
         .team-name {
             font-size: 0.9em;
             font-weight: bold;
             text-align: center;
         }
-        
+
         .vs {
             font-size: 0.9em;
             color: #00adb5;
             font-weight: bold;
         }
-        
+
         .odd-logo {
             font-size: 1.2em;
             margin-bottom: 5px;
         }
-        
+
         .sport-badge {
             background: #00adb5;
             color: #1a1a2e;
@@ -130,7 +129,7 @@
             font-size: 0.9em;
             font-weight: bold;
         }
-        
+
         .status-badge {
             padding: 5px 15px;
             border-radius: 20px;
@@ -138,29 +137,29 @@
             font-weight: bold;
             text-transform: uppercase;
         }
-        
+
         .status-live {
             background: #ff6b6b;
             color: white;
             animation: pulse 2s infinite;
         }
-        
+
         .status-upcoming {
             background: #4ecdc4;
             color: #1a1a2e;
         }
-        
+
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
         }
-        
+
         .odds {
             display: flex;
             gap: 15px;
             margin: 15px 0;
         }
-        
+
         .odd-button {
             flex: 1;
             padding: 12px;
@@ -171,19 +170,19 @@
             transition: all 0.3s;
             text-align: center;
         }
-        
+
         .odd-button:hover {
             background: #00adb5;
             transform: scale(1.05);
         }
-        
+
         .live-score {
             font-size: 1.5em;
             font-weight: bold;
             color: #00adb5;
             margin: 10px 0;
         }
-        
+
         .stream-info {
             background: rgba(255, 107, 107, 0.1);
             padding: 10px;
@@ -192,7 +191,7 @@
             font-size: 0.9em;
             border-left: 3px solid #ff6b6b;
         }
-        
+
         button {
             background: #00adb5;
             color: #1a1a2e;
@@ -205,19 +204,19 @@
             transition: all 0.3s;
             margin: 5px;
         }
-        
+
         button:hover {
             background: #00d4dd;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 173, 181, 0.3);
         }
-        
+
         button:disabled {
             background: #555;
             cursor: not-allowed;
             transform: none;
         }
-        
+
         .wallet-display {
             background: linear-gradient(135deg, #00adb5 0%, #00d4dd 100%);
             color: #1a1a2e;
@@ -228,7 +227,7 @@
             text-align: center;
             margin-bottom: 20px;
         }
-        
+
         input {
             background: rgba(0, 0, 0, 0.3);
             border: 2px solid #00adb5;
@@ -239,12 +238,12 @@
             margin: 5px;
             width: calc(100% - 10px);
         }
-        
+
         .bet-history {
             max-height: 400px;
             overflow-y: auto;
         }
-        
+
         .bet-item {
             background: rgba(0, 0, 0, 0.3);
             padding: 15px;
@@ -252,19 +251,19 @@
             border-radius: 6px;
             border-left: 4px solid #00adb5;
         }
-        
+
         .bet-won {
             border-left-color: #4ecdc4;
         }
-        
+
         .bet-lost {
             border-left-color: #ff6b6b;
         }
-        
+
         .bet-pending {
             border-left-color: #f9ca24;
         }
-        
+
         .api-docs {
             background: rgba(0, 0, 0, 0.3);
             padding: 15px;
@@ -273,25 +272,25 @@
             font-size: 0.9em;
             margin-top: 10px;
         }
-        
+
         .endpoint {
             color: #00adb5;
             margin: 5px 0;
         }
-        
+
         .method {
             color: #4ecdc4;
             font-weight: bold;
             margin-right: 10px;
         }
-        
+
         footer {
             text-align: center;
             padding: 30px;
             color: #888;
             margin-top: 50px;
         }
-        
+
         .integration-badges {
             display: flex;
             justify-content: center;
@@ -299,7 +298,7 @@
             margin: 20px 0;
             flex-wrap: wrap;
         }
-        
+
         .badge {
             background: rgba(0, 173, 181, 0.2);
             border: 1px solid #00adb5;
@@ -307,7 +306,7 @@
             border-radius: 20px;
             font-size: 0.9em;
         }
-        
+
         .error {
             background: rgba(255, 107, 107, 0.2);
             border: 1px solid #ff6b6b;
@@ -315,7 +314,7 @@
             border-radius: 6px;
             margin: 10px 0;
         }
-        
+
         .success {
             background: rgba(78, 205, 196, 0.2);
             border: 1px solid #4ecdc4;
@@ -323,27 +322,27 @@
             border-radius: 6px;
             margin: 10px 0;
         }
-        
+
         .collapsible {
             cursor: pointer;
             user-select: none;
         }
-        
+
         .collapsible:hover {
             color: #00d4dd;
         }
-        
+
         .content {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease-out;
         }
-        
+
         .content.active {
             max-height: 2000px;
             margin-top: 5px;
         }
-        
+
         .collapsed {
             display: none;
         }
@@ -377,11 +376,6 @@
         <div class="section">
             <h2>📊 Your Bets</h2>
             <div class="bet-history" id="betHistory">Loading bet history...</div>
-        </div>
-
-        <div class="section">
-            <h2 class="collapsible" onclick="toggleSection('apiDocs')">📡 API Documentation ▼</h2>
-            <div id="apiDocs" class="content"></div>
         </div>
 
         <footer>
@@ -420,7 +414,7 @@
                     body: JSON.stringify({ amount })
                 });
                 const data = await response.json();
-                
+
                 if (response.ok) {
                     alert(`Deposited $${amount}. New balance: $${data.newBalance}`);
                     loadWallet();
@@ -438,14 +432,14 @@
             try {
                 const response = await fetch(`${API_BASE}/sportsbook/games`);
                 const data = await response.json();
-                
+
                 const container = document.getElementById('gamesContainer');
                 container.innerHTML = '';
 
                 data.games.forEach(gameItem => {
                     const card = createGameCard(gameItem);
                     container.appendChild(card);
-                    
+
                     if (gameItem.status === 'live') {
                         startLiveStream(gameItem.id);
                     }
@@ -460,9 +454,9 @@
             const card = document.createElement('div');
             card.className = 'game-card';
             card.id = `game-${game.id}`;
-            
+
             const statusClass = game.status === 'live' ? 'status-live' : 'status-upcoming';
-            
+
             card.innerHTML = `
                 <div class="game-header">
                     <span class="sport-badge">${game.sport}</span>
@@ -498,7 +492,7 @@
                 <div id="stream-info-${game.id}"></div>
                 ${game.status === 'live' ? `<button onclick="toggleStream('${game.id}')">📺 Toggle Stream</button>` : ''}
             `;
-            
+
             return card;
         }
 
@@ -517,10 +511,10 @@
 
         function startLiveStream(gameId) {
             if (activeStreams.has(gameId)) return;
-            
+
             activeStreams.add(gameId);
             const eventSource = new EventSource(`${API_BASE}/streaming/stream/${gameId}`);
-            
+
             eventSource.onmessage = (event) => {
                 try {
                     const update = JSON.parse(event.data);
@@ -529,7 +523,7 @@
                     console.error('Stream error for game', gameId, error);
                 }
             };
-            
+
             eventSource.onerror = () => {
                 console.log(`Stream error for game ${gameId}`);
                 activeStreams.delete(gameId);
@@ -555,7 +549,7 @@
             try {
                 const action = activeStreams.has(gameId) ? 'stop' : 'start';
                 await fetch(`${API_BASE}/streaming/stream/${gameId}/${action}`, { method: 'POST' });
-                
+
                 if (action === 'start') {
                     startLiveStream(gameId);
                 } else {
@@ -576,9 +570,9 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ userId, gameId, team, amount: parseFloat(amount) })
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (response.ok) {
                     alert(`Bet placed! Potential win: $${data.bet.potentialWin.toFixed(2)}`);
                     loadWallet();
@@ -596,14 +590,14 @@
             try {
                 const response = await fetch(`${API_BASE}/sportsbook/user/${userId}/bets`);
                 const data = await response.json();
-                
+
                 const container = document.getElementById('betHistory');
-                
+
                 if (data.bets.length === 0) {
                     container.innerHTML = '<p>No bets yet. Place your first bet!</p>';
                     return;
                 }
-                
+
                 container.innerHTML = data.bets.map(bet => `
                     <div class="bet-item bet-${bet.status}">
                         <strong>Game ${bet.gameId}</strong> - ${bet.team}<br>
@@ -624,7 +618,7 @@
             try {
                 const response = await fetch(`${API_BASE}/sportsbook/cashout/${betId}`, { method: 'POST' });
                 const data = await response.json();
-                
+
                 if (response.ok) {
                     alert(`Cashed out for $${data.amount.toFixed(2)}`);
                     loadWallet();
@@ -642,7 +636,7 @@
             try {
                 const response = await fetch(`${API_BASE}/api`);
                 const data = await response.json();
-                
+
                 const container = document.getElementById('apiDocs');
                 container.innerHTML = `
                     <div class="api-docs">
@@ -679,7 +673,7 @@
             loadGames();
             loadBetHistory();
             loadAPIDocs();
-            
+
             // Refresh data every 30 seconds
             setInterval(() => {
                 loadWallet();

@@ -45,71 +45,7 @@ app.get('/health', (req: Request, res: Response) => {
   });
 });
 
-// API Documentation endpoint
-app.get('/api', (req: Request, res: Response) => {
-  res.json({
-    service: 'Young Meat LLC Sports Betting API',
-    version: '1.0.0',
-    endpoints: {
-      health: 'GET /health',
-      sportsbook: {
-        games: 'GET /sportsbook/games',
-        bet: 'POST /sportsbook/bet',
-        wallet: 'GET /sportsbook/user/:userId/wallet',
-        deposit: 'POST /sportsbook/user/:userId/deposit',
-        bets: 'GET /sportsbook/user/:userId/bets',
-        cashout: 'POST /sportsbook/cashout/:betId'
-      },
-      streaming: {
-        stream: 'GET /streaming/stream/:gameId',
-        start: 'POST /streaming/stream/:gameId/start',
-        stop: 'POST /streaming/stream/:gameId/stop',
-        sharing: 'GET /streaming/stream/:gameId/sharing',
-        partners: 'GET /streaming/partners',
-        addPartner: 'POST /streaming/partners'
-      },
-      auth: {
-        login: 'GET /auth/login',
-        callback: 'GET /auth/callback',
-        me: 'GET /auth/me',
-        logout: 'POST /auth/logout',
-        status: 'GET /auth/status'
-      },
-      webhooks: {
-        receive: 'POST /webhooks/receive/:sportsbookId',
-        test: 'POST /webhooks/test/:sportsbookId'
-      },
-      account: {
-        register: 'POST /account/register',
-        profile: 'GET /account/profile/:accountId',
-        updateProfile: 'PUT /account/profile/:accountId',
-        balance: 'GET /account/balance/:accountId',
-        deposit: 'POST /account/deposit/:accountId',
-        withdraw: 'POST /account/withdraw/:accountId',
-        stats: 'GET /account/stats/:accountId',
-        bets: 'GET /account/bets/:accountId',
-        preferences: 'PUT /account/preferences/:accountId',
-        deactivate: 'POST /account/deactivate/:accountId',
-        reactivate: 'POST /account/reactivate/:accountId'
-      }
-    },
-    integrations: {
-      aws: {
-        description: 'AWS integration for cloud deployment and scaling',
-        status: 'active'
-      },
-      github: {
-        description: 'GitHub integration for version control and CI/CD',
-        repository: 'https://github.com/betvages23/betvages23.in',
-        status: 'connected'
-      },
-      fcc: {
-        description: 'FCC-compliant streaming and authentication',
-        status: 'enabled'
-      }
-    }
-  });
-});
+// API Documentation endpoint removed for security
 
 // API Routes with proper error handling
 app.use('/sportsbook', sportsbookRouter);
@@ -130,8 +66,7 @@ console.log('   - /account');
 app.use((req: Request, res: Response) => {
   res.status(404).json({
     error: 'Endpoint not found',
-    message: `Cannot ${req.method} ${req.path}`,
-    availableEndpoints: '/api'
+    message: `Cannot ${req.method} ${req.path}`
   });
 });
 
@@ -152,7 +87,6 @@ app.listen(PORT, HOST, () => {
   console.log(`☁️  AWS Integration: Active`);
   console.log(`🐙 GitHub Integration: Connected`);
   console.log(`📺 FCC Streaming: Enabled`);
-  console.log(`🌐 API Documentation: http://${HOST}:${PORT}/api`);
   console.log(`💚 Health Check: http://${HOST}:${PORT}/health`);
 });
 
