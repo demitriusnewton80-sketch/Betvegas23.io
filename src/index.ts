@@ -94,11 +94,18 @@ app.get('/api', (req: Request, res: Response) => {
   });
 });
 
-// API Routes
+// API Routes with proper error handling
 app.use('/sportsbook', sportsbookRouter);
 app.use('/streaming', streamingRouter);
 app.use('/auth', authRouter);
 app.use('/webhooks', webhooksRouter);
+
+// Ensure all routes are mounted
+console.log('📍 Routes registered:');
+console.log('   - /sportsbook');
+console.log('   - /streaming');
+console.log('   - /auth');
+console.log('   - /webhooks');
 
 // 404 handler for API
 app.use((req: Request, res: Response) => {

@@ -1,0 +1,629 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Young Meat LLC - Sports Betting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e4e4e4;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: rgba(0, 173, 181, 0.1);
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #00adb5;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #aaa;
+            font-size: 1.1em;
+        }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 173, 181, 0.3);
+        }
+        
+        h2 {
+            color: #00adb5;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(0, 173, 181, 0.3);
+        }
+        
+        .game-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #00adb5;
+            transition: transform 0.2s;
+        }
+        
+        .game-card:hover {
+            transform: translateX(5px);
+            background: rgba(0, 173, 181, 0.1);
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .teams {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .sport-badge {
+            background: #00adb5;
+            color: #1a1a2e;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-live {
+            background: #ff6b6b;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-upcoming {
+            background: #4ecdc4;
+            color: #1a1a2e;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .odds {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .odd-button {
+            flex: 1;
+            padding: 12px;
+            background: rgba(0, 173, 181, 0.2);
+            border: 2px solid #00adb5;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .odd-button:hover {
+            background: #00adb5;
+            transform: scale(1.05);
+        }
+        
+        .live-score {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #00adb5;
+            margin: 10px 0;
+        }
+        
+        .stream-info {
+            background: rgba(255, 107, 107, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            border-left: 3px solid #ff6b6b;
+        }
+        
+        button {
+            background: #00adb5;
+            color: #1a1a2e;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        
+        button:hover {
+            background: #00d4dd;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 173, 181, 0.3);
+        }
+        
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .wallet-display {
+            background: linear-gradient(135deg, #00adb5 0%, #00d4dd 100%);
+            color: #1a1a2e;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.3em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #00adb5;
+            color: #e4e4e4;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 1em;
+            margin: 5px;
+            width: calc(100% - 10px);
+        }
+        
+        .bet-history {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .bet-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #00adb5;
+        }
+        
+        .bet-won {
+            border-left-color: #4ecdc4;
+        }
+        
+        .bet-lost {
+            border-left-color: #ff6b6b;
+        }
+        
+        .bet-pending {
+            border-left-color: #f9ca24;
+        }
+        
+        .api-docs {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        
+        .endpoint {
+            color: #00adb5;
+            margin: 5px 0;
+        }
+        
+        .method {
+            color: #4ecdc4;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #888;
+            margin-top: 50px;
+        }
+        
+        .integration-badges {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            background: rgba(0, 173, 181, 0.2);
+            border: 1px solid #00adb5;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        
+        .error {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid #ff6b6b;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        
+        .success {
+            background: rgba(78, 205, 196, 0.2);
+            border: 1px solid #4ecdc4;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        
+        .collapsible {
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .collapsible:hover {
+            color: #00d4dd;
+        }
+        
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .content.active {
+            max-height: 2000px;
+            margin-top: 5px;
+        }
+        
+        .collapsed {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🥩 Young Meat LLC</h1>
+            <p class="subtitle">Next-Gen Sports Betting Platform</p>
+            <div class="integration-badges">
+                <span class="badge">☁️ AWS Ready</span>
+                <span class="badge">🐙 GitHub Connected</span>
+                <span class="badge">📺 FCC Streaming</span>
+                <span class="badge">🔗 QuickNode Integrated</span>
+            </div>
+        </header>
+
+        <div class="section">
+            <h2>💰 Your Wallet</h2>
+            <div class="wallet-display" id="walletBalance">Loading...</div>
+            <input type="number" id="depositAmount" placeholder="Amount to deposit" min="1">
+            <button onclick="deposit()">💵 Deposit Funds</button>
+        </div>
+
+        <div class="section">
+            <h2>🏈 Live Games</h2>
+            <div id="gamesContainer">Loading games...</div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Your Bets</h2>
+            <div class="bet-history" id="betHistory">Loading bet history...</div>
+        </div>
+
+        <div class="section">
+            <h2 class="collapsible" onclick="toggleSection('apiDocs')">📡 API Documentation ▼</h2>
+            <div id="apiDocs" class="content"></div>
+        </div>
+
+        <footer>
+            <p>Young Meat LLC - Professional Sports Betting Platform</p>
+            <p>Powered by AWS, GitHub & FCC Technology</p>
+        </footer>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        const userId = 'demo-user';
+        let activeStreams = new Set();
+
+        async function loadWallet() {
+            try {
+                const response = await fetch(`${API_BASE}/sportsbook/user/${userId}/wallet`);
+                const data = await response.json();
+                document.getElementById('walletBalance').textContent = `$${data.balance.toFixed(2)}`;
+            } catch (error) {
+                console.error('Error loading wallet:', error);
+                document.getElementById('walletBalance').textContent = 'Error loading wallet';
+            }
+        }
+
+        async function deposit() {
+            const amount = parseFloat(document.getElementById('depositAmount').value);
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/sportsbook/user/${userId}/deposit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount })
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert(`Deposited $${amount}. New balance: $${data.newBalance}`);
+                    loadWallet();
+                    document.getElementById('depositAmount').value = '';
+                } else {
+                    alert(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error depositing:', error);
+                alert('Failed to deposit funds');
+            }
+        }
+
+        async function loadGames() {
+            try {
+                const response = await fetch(`${API_BASE}/sportsbook/games`);
+                const data = await response.json();
+                
+                const container = document.getElementById('gamesContainer');
+                container.innerHTML = '';
+
+                data.games.forEach(game => {
+                    const card = createGameCard(game);
+                    container.appendChild(card);
+                    
+                    if (game.status === 'live') {
+                        startLiveStream(game.id);
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading games:', error);
+                document.getElementById('gamesContainer').innerHTML = '<p class="error">Failed to load games</p>';
+            }
+        }
+
+        function createGameCard(game) {
+            const card = document.createElement('div');
+            card.className = 'game-card';
+            card.id = `game-${game.id}`;
+            
+            const statusClass = game.status === 'live' ? 'status-live' : 'status-upcoming';
+            
+            card.innerHTML = `
+                <div class="game-header">
+                    <span class="sport-badge">${game.sport}</span>
+                    <span class="status-badge ${statusClass}">${game.status}</span>
+                </div>
+                <div class="teams">${game.awayTeam} @ ${game.homeTeam}</div>
+                <div id="score-${game.id}"></div>
+                <div class="odds">
+                    <div class="odd-button" onclick="placeBet('${game.id}', 'away', ${game.odds.away})">
+                        ${game.awayTeam}<br><strong>${game.odds.away > 0 ? '+' : ''}${game.odds.away}</strong>
+                    </div>
+                    ${game.odds.draw ? `
+                        <div class="odd-button" onclick="placeBet('${game.id}', 'draw', ${game.odds.draw})">
+                            Draw<br><strong>+${game.odds.draw}</strong>
+                        </div>
+                    ` : ''}
+                    <div class="odd-button" onclick="placeBet('${game.id}', 'home', ${game.odds.home})">
+                        ${game.homeTeam}<br><strong>${game.odds.home > 0 ? '+' : ''}${game.odds.home}</strong>
+                    </div>
+                </div>
+                <div id="stream-info-${game.id}"></div>
+                ${game.status === 'live' ? `<button onclick="toggleStream('${game.id}')">📺 Toggle Stream</button>` : ''}
+            `;
+            
+            return card;
+        }
+
+        function startLiveStream(gameId) {
+            if (activeStreams.has(gameId)) return;
+            
+            activeStreams.add(gameId);
+            const eventSource = new EventSource(`${API_BASE}/streaming/stream/${gameId}`);
+            
+            eventSource.onmessage = (event) => {
+                try {
+                    const update = JSON.parse(event.data);
+                    updateGameScore(update);
+                } catch (error) {
+                    console.error('Stream error for game', gameId, error);
+                }
+            };
+            
+            eventSource.onerror = () => {
+                console.log(`Stream error for game ${gameId}`);
+                activeStreams.delete(gameId);
+                eventSource.close();
+            };
+        }
+
+        function updateGameScore(update) {
+            const scoreElement = document.getElementById(`score-${update.gameId}`);
+            if (scoreElement) {
+                scoreElement.innerHTML = `
+                    <div class="live-score">
+                        ${update.score.away} - ${update.score.home}
+                    </div>
+                    <div style="font-size: 0.9em; color: #aaa;">
+                        ${update.quarter || ''} ${update.timeRemaining || ''}
+                    </div>
+                `;
+            }
+        }
+
+        async function toggleStream(gameId) {
+            try {
+                const action = activeStreams.has(gameId) ? 'stop' : 'start';
+                await fetch(`${API_BASE}/streaming/stream/${gameId}/${action}`, { method: 'POST' });
+                
+                if (action === 'start') {
+                    startLiveStream(gameId);
+                } else {
+                    activeStreams.delete(gameId);
+                }
+            } catch (error) {
+                console.error('Error toggling stream:', error);
+            }
+        }
+
+        async function placeBet(gameId, team, odds) {
+            const amount = prompt('Enter bet amount:');
+            if (!amount || isNaN(amount) || amount <= 0) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/sportsbook/bet`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, gameId, team, amount: parseFloat(amount) })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert(`Bet placed! Potential win: $${data.bet.potentialWin.toFixed(2)}`);
+                    loadWallet();
+                    loadBetHistory();
+                } else {
+                    alert(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error placing bet:', error);
+                alert('Failed to place bet');
+            }
+        }
+
+        async function loadBetHistory() {
+            try {
+                const response = await fetch(`${API_BASE}/sportsbook/user/${userId}/bets`);
+                const data = await response.json();
+                
+                const container = document.getElementById('betHistory');
+                
+                if (data.bets.length === 0) {
+                    container.innerHTML = '<p>No bets yet. Place your first bet!</p>';
+                    return;
+                }
+                
+                container.innerHTML = data.bets.map(bet => `
+                    <div class="bet-item bet-${bet.status}">
+                        <strong>Game ${bet.gameId}</strong> - ${bet.team}<br>
+                        Amount: $${bet.amount.toFixed(2)} | Potential Win: $${bet.potentialWin.toFixed(2)}<br>
+                        Status: ${bet.status.toUpperCase()}<br>
+                        ${bet.status === 'pending' ? `<button onclick="cashOut('${bet.id}')">💸 Cash Out</button>` : ''}
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading bet history:', error);
+                document.getElementById('betHistory').innerHTML = '<p class="error">Failed to load bet history</p>';
+            }
+        }
+
+        async function cashOut(betId) {
+            if (!confirm('Are you sure you want to cash out this bet?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/sportsbook/cashout/${betId}`, { method: 'POST' });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert(`Cashed out for $${data.amount.toFixed(2)}`);
+                    loadWallet();
+                    loadBetHistory();
+                } else {
+                    alert(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error cashing out:', error);
+                alert('Failed to cash out');
+            }
+        }
+
+        async function loadAPIDocs() {
+            try {
+                const response = await fetch(`${API_BASE}/api`);
+                const data = await response.json();
+                
+                const container = document.getElementById('apiDocs');
+                container.innerHTML = `
+                    <div class="api-docs">
+                        <h3>${data.service} v${data.version}</h3>
+                        <h4>Endpoints:</h4>
+                        ${Object.entries(data.endpoints).map(([category, endpoints]) => `
+                            <div style="margin: 15px 0;">
+                                <strong style="color: #00adb5;">${category.toUpperCase()}</strong>
+                                ${typeof endpoints === 'object' && !Array.isArray(endpoints) ? 
+                                    Object.entries(endpoints).map(([name, endpoint]) => `
+                                        <div class="endpoint">
+                                            <span class="method">${endpoint.split(' ')[0]}</span>
+                                            ${endpoint.split(' ')[1]}
+                                        </div>
+                                    `).join('') 
+                                : `<div class="endpoint">${endpoints}</div>`}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading API docs:', error);
+            }
+        }
+
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.classList.toggle('active');
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadWallet();
+            loadGames();
+            loadBetHistory();
+            loadAPIDocs();
+            
+            // Refresh data every 30 seconds
+            setInterval(() => {
+                loadWallet();
+                loadBetHistory();
+            }, 30000);
+        });
+    </script>
+</body>
+</html>

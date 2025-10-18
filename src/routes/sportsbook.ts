@@ -1,6 +1,7 @@
 
 import express, { Request, Response } from 'express';
 import { bettingService } from '../services/BettingService.js';
+import { quickNodeService } from '../services/QuickNodeService.js';
 
 const router = express.Router();
 
@@ -86,6 +87,42 @@ router.get('/games', (req: Request, res: Response) => {
     games: filteredGames,
     count: filteredGames.length
   });
+});
+
+router.get('/external-data', async (req: Request, res: Response) => {
+  try {
+    const aggregatedData = await quickNodeService.aggregateSportsData();
+    
+    res.json({
+      success: true,
+      sources: aggregatedData.length,
+      data: aggregatedData,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch external data'
+    });
+  }
+});
+
+router.get('/blockchain-data', async (req: Request, res: Response) => {
+  try {
+    const blockchainData = await quickNodeService.getBlockchainSportsData();
+    
+    res.json({
+      success: true,
+      quicknode: 'connected',
+      endpoint: 'Polygon Network',
+      data: blockchainData
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch blockchain data'
+    });
+  }
 });
 
 router.get('/games/:id', (req: Request, res: Response) => {
