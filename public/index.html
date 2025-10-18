@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Young Meat LLC - Sports Betting</title>
+    <title>Young Meat Sports | Live Sports Betting</title>
     <style>
         * {
             margin: 0;
@@ -12,141 +13,177 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #e4e4e4;
-            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            background: #0d1117;
+            color: #ffffff;
+            line-height: 1.5;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a1f2e 0%, #0d1117 100%);
+            border-bottom: 1px solid #21262d;
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        header {
+        .top-bar {
+            background: #000000;
+            padding: 8px 0;
+            font-size: 12px;
             text-align: center;
-            padding: 40px 0;
-            background: rgba(0, 173, 181, 0.1);
-            border-radius: 10px;
-            margin-bottom: 30px;
+            color: #8b949e;
         }
 
-        h1 {
-            color: #00adb5;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            color: #aaa;
-            font-size: 1.1em;
-        }
-
-        .section {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(0, 173, 181, 0.3);
-        }
-
-        h2 {
-            color: #00adb5;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid rgba(0, 173, 181, 0.3);
-        }
-
-        .game-card {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border-left: 4px solid #00adb5;
-            transition: transform 0.2s;
-        }
-
-        .game-card:hover {
-            transform: translateX(5px);
-            background: rgba(0, 173, 181, 0.1);
-        }
-
-        .game-header {
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 16px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
         }
 
-        .teams {
-            font-size: 1.2em;
-            font-weight: bold;
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #53c451 0%, #2e7d32 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .teams-container {
+        .nav-links {
             display: flex;
-            justify-content: space-around;
+            gap: 32px;
             align-items: center;
-            margin: 15px 0;
-            gap: 10px;
         }
 
-        .team {
+        .nav-link {
+            color: #8b949e;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #53c451;
+        }
+
+        .wallet-btn {
+            background: #53c451;
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .wallet-btn:hover {
+            background: #66d964;
+            transform: translateY(-1px);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Sidebar + Main Layout */
+        .layout {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .sidebar {
+            background: #161b22;
+            border-radius: 8px;
+            padding: 16px;
+            height: fit-content;
+            position: sticky;
+            top: 80px;
+        }
+
+        .sidebar-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #8b949e;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .sport-filter {
             display: flex;
             flex-direction: column;
+            gap: 4px;
+        }
+
+        .sport-item {
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-size: 14px;
+            color: #c9d1d9;
         }
 
-        .team-logo {
-            font-size: 1.8em;
-            filter: drop-shadow(0 2px 4px rgba(0, 173, 181, 0.3));
+        .sport-item:hover {
+            background: #21262d;
         }
 
-        .team-name {
-            font-size: 0.9em;
-            font-weight: bold;
-            text-align: center;
+        .sport-item.active {
+            background: #53c451;
+            color: #000;
+            font-weight: 600;
         }
 
-        .vs {
-            font-size: 0.9em;
-            color: #00adb5;
-            font-weight: bold;
+        .sport-icon {
+            font-size: 18px;
         }
 
-        .odd-logo {
-            font-size: 1.2em;
-            margin-bottom: 5px;
+        /* Main Content */
+        .main-content {
+            min-height: 100vh;
         }
 
-        .sport-badge {
-            background: #00adb5;
-            color: #1a1a2e;
-            padding: 5px 15px;
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .live-badge {
+            background: #f85149;
+            color: #fff;
+            padding: 4px 12px;
             border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: bold;
-        }
-
-        .status-badge {
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: bold;
+            font-size: 12px;
+            font-weight: 700;
             text-transform: uppercase;
-        }
-
-        .status-live {
-            background: #ff6b6b;
-            color: white;
             animation: pulse 2s infinite;
-        }
-
-        .status-upcoming {
-            background: #4ecdc4;
-            color: #1a1a2e;
         }
 
         @keyframes pulse {
@@ -154,250 +191,501 @@
             50% { opacity: 0.7; }
         }
 
-        .odds {
-            display: flex;
-            gap: 15px;
-            margin: 15px 0;
+        /* Game Cards */
+        .games-grid {
+            display: grid;
+            gap: 16px;
         }
 
-        .odd-button {
-            flex: 1;
-            padding: 12px;
-            background: rgba(0, 173, 181, 0.2);
-            border: 2px solid #00adb5;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-        }
-
-        .odd-button:hover {
-            background: #00adb5;
-            transform: scale(1.05);
-        }
-
-        .live-score {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #00adb5;
-            margin: 10px 0;
-        }
-
-        .stream-info {
-            background: rgba(255, 107, 107, 0.1);
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-            font-size: 0.9em;
-            border-left: 3px solid #ff6b6b;
-        }
-
-        button {
-            background: #00adb5;
-            color: #1a1a2e;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: bold;
-            transition: all 0.3s;
-            margin: 5px;
-        }
-
-        button:hover {
-            background: #00d4dd;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 173, 181, 0.3);
-        }
-
-        button:disabled {
-            background: #555;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .wallet-display {
-            background: linear-gradient(135deg, #00adb5 0%, #00d4dd 100%);
-            color: #1a1a2e;
+        .game-card {
+            background: #161b22;
+            border: 1px solid #21262d;
+            border-radius: 8px;
             padding: 20px;
-            border-radius: 10px;
-            font-size: 1.3em;
-            font-weight: bold;
-            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .game-card:hover {
+            border-color: #53c451;
+            box-shadow: 0 8px 24px rgba(83, 196, 81, 0.15);
+        }
+
+        .game-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #21262d;
+        }
+
+        .sport-tag {
+            background: #21262d;
+            color: #8b949e;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .game-time {
+            font-size: 13px;
+            color: #8b949e;
+        }
+
+        .teams-matchup {
             margin-bottom: 20px;
         }
 
-        input {
-            background: rgba(0, 0, 0, 0.3);
-            border: 2px solid #00adb5;
-            color: #e4e4e4;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 1em;
-            margin: 5px;
-            width: calc(100% - 10px);
+        .team-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
         }
 
-        .bet-history {
-            max-height: 400px;
-            overflow-y: auto;
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .team-logo {
+            font-size: 32px;
+        }
+
+        .team-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #c9d1d9;
+        }
+
+        .live-score {
+            font-size: 24px;
+            font-weight: 700;
+            color: #53c451;
+        }
+
+        /* Betting Markets */
+        .betting-markets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .bet-button {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .bet-button:hover {
+            background: #21262d;
+            border-color: #53c451;
+        }
+
+        .bet-button:active {
+            transform: scale(0.98);
+        }
+
+        .bet-label {
+            font-size: 12px;
+            color: #8b949e;
+            margin-bottom: 4px;
+        }
+
+        .bet-odds {
+            font-size: 18px;
+            font-weight: 700;
+            color: #53c451;
+        }
+
+        /* Wallet Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #161b22;
+            border: 1px solid #21262d;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #8b949e;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+        }
+
+        .close-btn:hover {
+            color: #fff;
+        }
+
+        .balance-display {
+            background: linear-gradient(135deg, #53c451 0%, #2e7d32 100%);
+            padding: 24px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .balance-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .balance-amount {
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #c9d1d9;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 12px;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #53c451;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: #53c451;
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #66d964;
+        }
+
+        /* Bet Slip */
+        .bet-slip {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            width: 320px;
+            background: #161b22;
+            border: 1px solid #21262d;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .bet-slip-header {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #21262d;
+        }
+
+        .bet-slip-empty {
+            text-align: center;
+            color: #8b949e;
+            padding: 20px;
         }
 
         .bet-item {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            margin-bottom: 10px;
+            background: #0d1117;
+            padding: 12px;
             border-radius: 6px;
-            border-left: 4px solid #00adb5;
+            margin-bottom: 12px;
         }
 
-        .bet-won {
-            border-left-color: #4ecdc4;
-        }
-
-        .bet-lost {
-            border-left-color: #ff6b6b;
-        }
-
-        .bet-pending {
-            border-left-color: #f9ca24;
-        }
-
-        .api-docs {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            border-radius: 6px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-            margin-top: 10px;
-        }
-
-        .endpoint {
-            color: #00adb5;
-            margin: 5px 0;
-        }
-
-        .method {
-            color: #4ecdc4;
-            font-weight: bold;
-            margin-right: 10px;
-        }
-
-        footer {
-            text-align: center;
-            padding: 30px;
-            color: #888;
-            margin-top: 50px;
-        }
-
-        .integration-badges {
+        .bet-item-header {
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
         }
 
-        .badge {
-            background: rgba(0, 173, 181, 0.2);
-            border: 1px solid #00adb5;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9em;
+        .bet-item-detail {
+            font-size: 12px;
+            color: #8b949e;
         }
 
-        .error {
-            background: rgba(255, 107, 107, 0.2);
-            border: 1px solid #ff6b6b;
-            padding: 15px;
-            border-radius: 6px;
-            margin: 10px 0;
+        .quick-amounts {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin: 12px 0;
         }
 
-        .success {
-            background: rgba(78, 205, 196, 0.2);
-            border: 1px solid #4ecdc4;
-            padding: 15px;
-            border-radius: 6px;
-            margin: 10px 0;
-        }
-
-        .collapsible {
+        .quick-amount-btn {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            padding: 8px;
+            color: #c9d1d9;
+            font-size: 12px;
             cursor: pointer;
-            user-select: none;
+            transition: all 0.2s;
         }
 
-        .collapsible:hover {
-            color: #00d4dd;
+        .quick-amount-btn:hover {
+            border-color: #53c451;
+            color: #53c451;
         }
 
-        .content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
+        /* Bet History */
+        .bet-history {
+            margin-top: 24px;
         }
 
-        .content.active {
-            max-height: 2000px;
-            margin-top: 5px;
+        .bet-history-item {
+            background: #161b22;
+            border: 1px solid #21262d;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
         }
 
-        .collapsed {
-            display: none;
+        .bet-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .bet-status.won {
+            background: rgba(83, 196, 81, 0.2);
+            color: #53c451;
+        }
+
+        .bet-status.lost {
+            background: rgba(248, 81, 73, 0.2);
+            color: #f85149;
+        }
+
+        .bet-status.pending {
+            background: rgba(139, 148, 158, 0.2);
+            color: #8b949e;
+        }
+
+        @media (max-width: 1024px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+            }
+
+            .sport-filter {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .bet-slip {
+                bottom: 0;
+                right: 0;
+                left: 0;
+                width: 100%;
+                border-radius: 12px 12px 0 0;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🥩 Young Meat LLC</h1>
-            <p class="subtitle">Next-Gen Sports Betting Platform</p>
-            <div class="integration-badges">
-                <span class="badge">☁️ AWS Ready</span>
-                <span class="badge">🐙 GitHub Connected</span>
-                <span class="badge">📺 FCC Streaming</span>
-                <span class="badge">🔗 QuickNode Integrated</span>
+    <!-- Header -->
+    <div class="header">
+        <div class="top-bar">
+            🏆 Welcome to Young Meat Sports | Professional Betting Platform
+        </div>
+        <div class="nav-container">
+            <div class="logo">🥩 YOUNG MEAT</div>
+            <div class="nav-links">
+                <a href="#" class="nav-link active">Sportsbook</a>
+                <a href="#" class="nav-link">Live Betting</a>
+                <a href="#" class="nav-link">My Bets</a>
+                <button class="wallet-btn" onclick="openWalletModal()">
+                    💰 <span id="headerBalance">$0.00</span>
+                </button>
             </div>
-        </header>
-
-        <div class="section">
-            <h2>💰 Your Wallet</h2>
-            <div class="wallet-display" id="walletBalance">Loading...</div>
-            <input type="number" id="depositAmount" placeholder="Amount to deposit" min="1">
-            <button onclick="deposit()">💵 Deposit Funds</button>
         </div>
+    </div>
 
-        <div class="section">
-            <h2>🏈 Live Games</h2>
-            <div id="gamesContainer">Loading games...</div>
+    <!-- Main Container -->
+    <div class="container">
+        <div class="layout">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-title">Sports</div>
+                <div class="sport-filter">
+                    <div class="sport-item active" onclick="filterBySport('all')">
+                        <span class="sport-icon">🏆</span>
+                        <span>All Sports</span>
+                    </div>
+                    <div class="sport-item" onclick="filterBySport('NFL')">
+                        <span class="sport-icon">🏈</span>
+                        <span>NFL</span>
+                    </div>
+                    <div class="sport-item" onclick="filterBySport('NBA')">
+                        <span class="sport-icon">🏀</span>
+                        <span>NBA</span>
+                    </div>
+                    <div class="sport-item" onclick="filterBySport('NHL')">
+                        <span class="sport-icon">🏒</span>
+                        <span>NHL</span>
+                    </div>
+                    <div class="sport-item" onclick="filterBySport('Soccer')">
+                        <span class="sport-icon">⚽</span>
+                        <span>Soccer</span>
+                    </div>
+                    <div class="sport-item" onclick="filterBySport('MLB')">
+                        <span class="sport-icon">⚾</span>
+                        <span>MLB</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="section-header">
+                    <h1 class="section-title">Live & Upcoming Games</h1>
+                </div>
+                <div class="games-grid" id="gamesContainer">
+                    <!-- Games will be loaded here -->
+                </div>
+
+                <!-- Bet History Section -->
+                <div class="bet-history" style="margin-top: 48px;">
+                    <h2 class="section-title" style="margin-bottom: 20px;">My Bets</h2>
+                    <div id="betHistoryContainer"></div>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <div class="section">
-            <h2>📊 Your Bets</h2>
-            <div class="bet-history" id="betHistory">Loading bet history...</div>
+    <!-- Wallet Modal -->
+    <div class="modal" id="walletModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">My Wallet</h2>
+                <button class="close-btn" onclick="closeWalletModal()">×</button>
+            </div>
+            <div class="balance-display">
+                <div class="balance-label">Available Balance</div>
+                <div class="balance-amount" id="modalBalance">$0.00</div>
+            </div>
+            <div class="input-group">
+                <label class="input-label">Deposit Amount</label>
+                <input type="number" id="depositAmount" placeholder="Enter amount" min="1" step="0.01">
+            </div>
+            <div class="quick-amounts">
+                <button class="quick-amount-btn" onclick="setDepositAmount(50)">$50</button>
+                <button class="quick-amount-btn" onclick="setDepositAmount(100)">$100</button>
+                <button class="quick-amount-btn" onclick="setDepositAmount(250)">$250</button>
+            </div>
+            <button class="btn-primary" onclick="deposit()">Deposit Funds</button>
         </div>
+    </div>
 
-        <footer>
-            <p>Young Meat LLC - Professional Sports Betting Platform</p>
-            <p>Powered by AWS, GitHub & FCC Technology</p>
-        </footer>
+    <!-- Bet Slip -->
+    <div class="bet-slip" id="betSlip" style="display: none;">
+        <div class="bet-slip-header">Bet Slip</div>
+        <div id="betSlipContent" class="bet-slip-empty">
+            Click on odds to add bets
+        </div>
     </div>
 
     <script>
         const API_BASE = window.location.origin;
         const userId = 'demo-user';
+        let currentFilter = 'all';
+        let currentBetSlip = null;
         let activeStreams = new Set();
 
+        // Wallet Functions
         async function loadWallet() {
             try {
                 const response = await fetch(`${API_BASE}/sportsbook/user/${userId}/wallet`);
                 const data = await response.json();
-                document.getElementById('walletBalance').textContent = `$${data.balance.toFixed(2)}`;
+                const balance = data.balance.toFixed(2);
+                document.getElementById('headerBalance').textContent = `$${balance}`;
+                document.getElementById('modalBalance').textContent = `$${balance}`;
             } catch (error) {
                 console.error('Error loading wallet:', error);
-                document.getElementById('walletBalance').textContent = 'Error loading wallet';
             }
+        }
+
+        function openWalletModal() {
+            document.getElementById('walletModal').classList.add('active');
+        }
+
+        function closeWalletModal() {
+            document.getElementById('walletModal').classList.remove('active');
+        }
+
+        function setDepositAmount(amount) {
+            document.getElementById('depositAmount').value = amount;
         }
 
         async function deposit() {
@@ -416,9 +704,10 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    alert(`Deposited $${amount}. New balance: $${data.newBalance}`);
+                    alert(`✅ Deposited $${amount.toFixed(2)}`);
                     loadWallet();
                     document.getElementById('depositAmount').value = '';
+                    closeWalletModal();
                 } else {
                     alert(`Error: ${data.error}`);
                 }
@@ -428,87 +717,122 @@
             }
         }
 
+        // Game Functions
         async function loadGames() {
             try {
                 const response = await fetch(`${API_BASE}/sportsbook/games`);
                 const data = await response.json();
 
-                const container = document.getElementById('gamesContainer');
-                container.innerHTML = '';
+                renderGames(data.games);
 
-                data.games.forEach(gameItem => {
-                    const card = createGameCard(gameItem);
-                    container.appendChild(card);
-
-                    if (gameItem.status === 'live') {
-                        startLiveStream(gameItem.id);
+                data.games.forEach(game => {
+                    if (game.status === 'live') {
+                        startLiveStream(game.id);
                     }
                 });
             } catch (error) {
                 console.error('Error loading games:', error);
-                document.getElementById('gamesContainer').innerHTML = '<p class="error">Failed to load games</p>';
             }
         }
 
-        function createGameCard(game) {
-            const card = document.createElement('div');
-            card.className = 'game-card';
-            card.id = `game-${game.id}`;
+        function renderGames(games) {
+            const container = document.getElementById('gamesContainer');
+            
+            let filteredGames = games;
+            if (currentFilter !== 'all') {
+                filteredGames = games.filter(g => g.sport === currentFilter);
+            }
 
-            const statusClass = game.status === 'live' ? 'status-live' : 'status-upcoming';
+            if (filteredGames.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #8b949e; padding: 40px;">No games available</p>';
+                return;
+            }
 
-            card.innerHTML = `
-                <div class="game-header">
-                    <span class="sport-badge">${game.sport}</span>
-                    <span class="status-badge ${statusClass}">${game.status}</span>
-                </div>
-                <div class="teams-container">
-                    <div class="team">
-                        <div class="team-logo">${getTeamLogo(game.awayTeam, game.sport)}</div>
-                        <div class="team-name">${game.awayTeam}</div>
-                    </div>
-                    <div class="vs">@</div>
-                    <div class="team">
-                        <div class="team-logo">${getTeamLogo(game.homeTeam, game.sport)}</div>
-                        <div class="team-name">${game.homeTeam}</div>
-                    </div>
-                </div>
-                <div id="score-${game.id}"></div>
-                <div class="odds">
-                    <div class="odd-button" onclick="placeBet('${game.id}', 'away', ${game.odds.away})">
-                        <div class="odd-logo">${getTeamLogo(game.awayTeam, game.sport)}</div>
-                        ${game.awayTeam}<br><strong>${game.odds.away > 0 ? '+' : ''}${game.odds.away}</strong>
-                    </div>
-                    ${game.odds.draw ? `
-                        <div class="odd-button" onclick="placeBet('${game.id}', 'draw', ${game.odds.draw})">
-                            Draw<br><strong>+${game.odds.draw}</strong>
-                        </div>
-                    ` : ''}
-                    <div class="odd-button" onclick="placeBet('${game.id}', 'home', ${game.odds.home})">
-                        <div class="odd-logo">${getTeamLogo(game.homeTeam, game.sport)}</div>
-                        ${game.homeTeam}<br><strong>${game.odds.home > 0 ? '+' : ''}${game.odds.home}</strong>
-                    </div>
-                </div>
-                <div id="stream-info-${game.id}"></div>
-                ${game.status === 'live' ? `<button onclick="toggleStream('${game.id}')">📺 Toggle Stream</button>` : ''}
-            `;
-
-            return card;
+            container.innerHTML = filteredGames.map(game => createGameCard(game)).join('');
         }
 
-        function getTeamLogo(teamName, sport) {
-            const sportEmojis = {
+        function createGameCard(game) {
+            const isLive = game.status === 'live';
+            const statusBadge = isLive ? '<span class="live-badge">● LIVE</span>' : '';
+            
+            return `
+                <div class="game-card" id="game-${game.id}">
+                    <div class="game-meta">
+                        <span class="sport-tag">${game.sport}</span>
+                        ${statusBadge}
+                        <span class="game-time">${formatGameTime(game.startTime)}</span>
+                    </div>
+                    
+                    <div class="teams-matchup">
+                        <div class="team-row">
+                            <div class="team-info">
+                                <span class="team-logo">${getTeamLogo(game.sport)}</span>
+                                <span class="team-name">${game.awayTeam}</span>
+                            </div>
+                            <span class="live-score" id="score-away-${game.id}"></span>
+                        </div>
+                        <div class="team-row">
+                            <div class="team-info">
+                                <span class="team-logo">${getTeamLogo(game.sport)}</span>
+                                <span class="team-name">${game.homeTeam}</span>
+                            </div>
+                            <span class="live-score" id="score-home-${game.id}"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="betting-markets">
+                        <div class="bet-button" onclick="addToBetSlip('${game.id}', '${game.awayTeam}', 'away', ${game.odds.away})">
+                            <div class="bet-label">${game.awayTeam}</div>
+                            <div class="bet-odds">${formatOdds(game.odds.away)}</div>
+                        </div>
+                        ${game.odds.draw ? `
+                            <div class="bet-button" onclick="addToBetSlip('${game.id}', 'Draw', 'draw', ${game.odds.draw})">
+                                <div class="bet-label">Draw</div>
+                                <div class="bet-odds">${formatOdds(game.odds.draw)}</div>
+                            </div>
+                        ` : ''}
+                        <div class="bet-button" onclick="addToBetSlip('${game.id}', '${game.homeTeam}', 'home', ${game.odds.home})">
+                            <div class="bet-label">${game.homeTeam}</div>
+                            <div class="bet-odds">${formatOdds(game.odds.home)}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getTeamLogo(sport) {
+            const logos = {
                 'NFL': '🏈',
                 'NBA': '🏀',
                 'MLB': '⚾',
                 'NHL': '🏒',
                 'Soccer': '⚽',
-                'MMA': '🥊',
-                'Boxing': '🥊'
+                'MMA': '🥊'
             };
-            return sportEmojis[sport] || '🏆';
+            return logos[sport] || '🏆';
         }
 
+        function formatOdds(odds) {
+            return odds > 0 ? `+${odds}` : odds;
+        }
+
+        function formatGameTime(timeString) {
+            const date = new Date(timeString);
+            return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        }
+
+        function filterBySport(sport) {
+            currentFilter = sport;
+            
+            document.querySelectorAll('.sport-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.sport-item').classList.add('active');
+            
+            loadGames();
+        }
+
+        // Live Streaming
         function startLiveStream(gameId) {
             if (activeStreams.has(gameId)) return;
 
@@ -520,61 +844,85 @@
                     const update = JSON.parse(event.data);
                     updateGameScore(update);
                 } catch (error) {
-                    console.error('Stream error for game', gameId, error);
+                    console.error('Stream error for game', gameId);
                 }
             };
 
             eventSource.onerror = () => {
-                console.log(`Stream error for game ${gameId}`);
                 activeStreams.delete(gameId);
                 eventSource.close();
             };
         }
 
         function updateGameScore(update) {
-            const scoreElement = document.getElementById(`score-${update.gameId}`);
-            if (scoreElement) {
-                scoreElement.innerHTML = `
-                    <div class="live-score">
-                        ${update.score.away} - ${update.score.home}
-                    </div>
-                    <div style="font-size: 0.9em; color: #aaa;">
-                        ${update.quarter || ''} ${update.timeRemaining || ''}
-                    </div>
-                `;
+            const awayScore = document.getElementById(`score-away-${update.gameId}`);
+            const homeScore = document.getElementById(`score-home-${update.gameId}`);
+            
+            if (awayScore && homeScore) {
+                awayScore.textContent = update.score.away;
+                homeScore.textContent = update.score.home;
             }
         }
 
-        async function toggleStream(gameId) {
-            try {
-                const action = activeStreams.has(gameId) ? 'stop' : 'start';
-                await fetch(`${API_BASE}/streaming/stream/${gameId}/${action}`, { method: 'POST' });
-
-                if (action === 'start') {
-                    startLiveStream(gameId);
-                } else {
-                    activeStreams.delete(gameId);
-                }
-            } catch (error) {
-                console.error('Error toggling stream:', error);
-            }
+        // Bet Slip
+        function addToBetSlip(gameId, teamName, team, odds) {
+            currentBetSlip = { gameId, teamName, team, odds };
+            
+            const betSlip = document.getElementById('betSlip');
+            betSlip.style.display = 'block';
+            
+            document.getElementById('betSlipContent').innerHTML = `
+                <div class="bet-item">
+                    <div class="bet-item-header">
+                        <span>${teamName}</span>
+                        <span>${formatOdds(odds)}</span>
+                    </div>
+                    <div class="bet-item-detail">Game ${gameId}</div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Bet Amount</label>
+                    <input type="number" id="betAmount" placeholder="Enter amount" min="1" step="0.01">
+                </div>
+                <div class="quick-amounts">
+                    <button class="quick-amount-btn" onclick="setBetAmount(10)">$10</button>
+                    <button class="quick-amount-btn" onclick="setBetAmount(25)">$25</button>
+                    <button class="quick-amount-btn" onclick="setBetAmount(50)">$50</button>
+                </div>
+                <button class="btn-primary" onclick="placeBet()">Place Bet</button>
+            `;
         }
 
-        async function placeBet(gameId, team, odds) {
-            const amount = prompt('Enter bet amount:');
-            if (!amount || isNaN(amount) || amount <= 0) return;
+        function setBetAmount(amount) {
+            document.getElementById('betAmount').value = amount;
+        }
+
+        async function placeBet() {
+            if (!currentBetSlip) return;
+            
+            const amount = parseFloat(document.getElementById('betAmount').value);
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid bet amount');
+                return;
+            }
 
             try {
                 const response = await fetch(`${API_BASE}/sportsbook/bet`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId, gameId, team, amount: parseFloat(amount) })
+                    body: JSON.stringify({
+                        userId,
+                        gameId: currentBetSlip.gameId,
+                        team: currentBetSlip.team,
+                        amount
+                    })
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
-                    alert(`Bet placed! Potential win: $${data.bet.potentialWin.toFixed(2)}`);
+                    alert(`✅ Bet placed! Potential win: $${data.bet.potentialWin.toFixed(2)}`);
+                    document.getElementById('betSlip').style.display = 'none';
+                    currentBetSlip = null;
                     loadWallet();
                     loadBetHistory();
                 } else {
@@ -586,29 +934,37 @@
             }
         }
 
+        // Bet History
         async function loadBetHistory() {
             try {
                 const response = await fetch(`${API_BASE}/sportsbook/user/${userId}/bets`);
                 const data = await response.json();
 
-                const container = document.getElementById('betHistory');
+                const container = document.getElementById('betHistoryContainer');
 
                 if (data.bets.length === 0) {
-                    container.innerHTML = '<p>No bets yet. Place your first bet!</p>';
+                    container.innerHTML = '<p style="text-align: center; color: #8b949e; padding: 20px;">No bets yet</p>';
                     return;
                 }
 
                 container.innerHTML = data.bets.map(bet => `
-                    <div class="bet-item bet-${bet.status}">
-                        <strong>Game ${bet.gameId}</strong> - ${bet.team}<br>
-                        Amount: $${bet.amount.toFixed(2)} | Potential Win: $${bet.potentialWin.toFixed(2)}<br>
-                        Status: ${bet.status.toUpperCase()}<br>
-                        ${bet.status === 'pending' ? `<button onclick="cashOut('${bet.id}')">💸 Cash Out</button>` : ''}
+                    <div class="bet-history-item">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-weight: 600;">Game ${bet.gameId} - ${bet.team}</span>
+                            <span class="bet-status ${bet.status}">${bet.status}</span>
+                        </div>
+                        <div style="font-size: 14px; color: #8b949e;">
+                            Amount: $${bet.amount.toFixed(2)} | Potential Win: $${bet.potentialWin.toFixed(2)}
+                        </div>
+                        ${bet.status === 'pending' ? `
+                            <button class="btn-primary" style="margin-top: 12px; padding: 8px;" onclick="cashOut('${bet.id}')">
+                                💸 Cash Out
+                            </button>
+                        ` : ''}
                     </div>
                 `).join('');
             } catch (error) {
                 console.error('Error loading bet history:', error);
-                document.getElementById('betHistory').innerHTML = '<p class="error">Failed to load bet history</p>';
             }
         }
 
@@ -620,7 +976,7 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    alert(`Cashed out for $${data.amount.toFixed(2)}`);
+                    alert(`✅ Cashed out for $${data.amount.toFixed(2)}`);
                     loadWallet();
                     loadBetHistory();
                 } else {
@@ -632,54 +988,25 @@
             }
         }
 
-        async function loadAPIDocs() {
-            try {
-                const response = await fetch(`${API_BASE}/api`);
-                const data = await response.json();
-
-                const container = document.getElementById('apiDocs');
-                container.innerHTML = `
-                    <div class="api-docs">
-                        <h3>${data.service} v${data.version}</h3>
-                        <h4>Endpoints:</h4>
-                        ${Object.entries(data.endpoints).map(([category, endpoints]) => `
-                            <div style="margin: 15px 0;">
-                                <strong style="color: #00adb5;">${category.toUpperCase()}</strong>
-                                ${typeof endpoints === 'object' && !Array.isArray(endpoints) ? 
-                                    Object.entries(endpoints).map(([name, endpoint]) => `
-                                        <div class="endpoint">
-                                            <span class="method">${endpoint.split(' ')[0]}</span>
-                                            ${endpoint.split(' ')[1]}
-                                        </div>
-                                    `).join('') 
-                                : `<div class="endpoint">${endpoints}</div>`}
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            } catch (error) {
-                console.error('Error loading API docs:', error);
-            }
-        }
-
-        function toggleSection(sectionId) {
-            const section = document.getElementById(sectionId);
-            section.classList.toggle('active');
-        }
-
-        // Initialize on page load
+        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             loadWallet();
             loadGames();
             loadBetHistory();
-            loadAPIDocs();
 
-            // Refresh data every 30 seconds
             setInterval(() => {
                 loadWallet();
                 loadBetHistory();
             }, 30000);
         });
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            const modal = document.getElementById('walletModal');
+            if (event.target === modal) {
+                closeWalletModal();
+            }
+        };
     </script>
 </body>
 </html>
