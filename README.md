@@ -32,6 +32,18 @@ Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 - `POST /auth/logout` - Logout
 - `GET /auth/status` - SSO status
 
+### Content Control (SSO Protected)
+- `POST /content/create` - Create new content item
+- `GET /content/:contentId` - Get content by ID
+- `PUT /content/:contentId` - Update content
+- `DELETE /content/:contentId` - Delete content
+- `GET /content/my/list` - List user's accessible content
+- `POST /content/:contentId/share` - Share content with user
+- `POST /content/:contentId/access/grant` - Grant access permissions
+- `POST /content/:contentId/access/revoke` - Revoke access permissions
+- `GET /content/system/stats` - Get content statistics
+- `GET /content/:contentId/audit` - Get content audit log
+
 ### Webhooks
 - `POST /webhooks/receive/:sportsbookId` - Receive external updates
 - `POST /webhooks/test/:sportsbookId` - Test webhook connection
