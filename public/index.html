@@ -85,6 +85,43 @@
             font-weight: bold;
         }
         
+        .teams-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 15px 0;
+            gap: 10px;
+        }
+        
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .team-logo {
+            font-size: 3em;
+            filter: drop-shadow(0 2px 4px rgba(0, 173, 181, 0.3));
+        }
+        
+        .team-name {
+            font-size: 1.1em;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .vs {
+            font-size: 1.2em;
+            color: #00adb5;
+            font-weight: bold;
+        }
+        
+        .odd-logo {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+        
         .sport-badge {
             background: #00adb5;
             color: #1a1a2e;
@@ -431,10 +468,21 @@
                     <span class="sport-badge">${game.sport}</span>
                     <span class="status-badge ${statusClass}">${game.status}</span>
                 </div>
-                <div class="teams">${game.awayTeam} @ ${game.homeTeam}</div>
+                <div class="teams-container">
+                    <div class="team">
+                        <div class="team-logo">${getTeamLogo(game.awayTeam, game.sport)}</div>
+                        <div class="team-name">${game.awayTeam}</div>
+                    </div>
+                    <div class="vs">@</div>
+                    <div class="team">
+                        <div class="team-logo">${getTeamLogo(game.homeTeam, game.sport)}</div>
+                        <div class="team-name">${game.homeTeam}</div>
+                    </div>
+                </div>
                 <div id="score-${game.id}"></div>
                 <div class="odds">
                     <div class="odd-button" onclick="placeBet('${game.id}', 'away', ${game.odds.away})">
+                        <div class="odd-logo">${getTeamLogo(game.awayTeam, game.sport)}</div>
                         ${game.awayTeam}<br><strong>${game.odds.away > 0 ? '+' : ''}${game.odds.away}</strong>
                     </div>
                     ${game.odds.draw ? `
@@ -443,6 +491,7 @@
                         </div>
                     ` : ''}
                     <div class="odd-button" onclick="placeBet('${game.id}', 'home', ${game.odds.home})">
+                        <div class="odd-logo">${getTeamLogo(game.homeTeam, game.sport)}</div>
                         ${game.homeTeam}<br><strong>${game.odds.home > 0 ? '+' : ''}${game.odds.home}</strong>
                     </div>
                 </div>
@@ -451,6 +500,19 @@
             `;
             
             return card;
+        }
+
+        function getTeamLogo(teamName, sport) {
+            const sportEmojis = {
+                'NFL': '🏈',
+                'NBA': '🏀',
+                'MLB': '⚾',
+                'NHL': '🏒',
+                'Soccer': '⚽',
+                'MMA': '🥊',
+                'Boxing': '🥊'
+            };
+            return sportEmojis[sport] || '🏆';
         }
 
         function startLiveStream(gameId) {
