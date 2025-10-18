@@ -1,4 +1,3 @@
-
 import express, { Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
 import sportsbookRouter from './routes/sportsbook.js';
@@ -6,6 +5,7 @@ import streamingRouter from './routes/streaming.js';
 import authRouter from './routes/auth.js';
 import webhooksRouter from './routes/webhooks.js';
 import accountRouter from './routes/account.js';
+import { sportsDataService } from './services/SportsDataService.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;

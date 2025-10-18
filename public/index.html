@@ -857,11 +857,13 @@
                         <div class="team-row">
                             <div class="team-info">
                                 <span class="team-logo">${getTeamLogo(game.sport)}</span>
-                                <span class="team-name">${game.homeTeam}</span>
+                                <span class="team-name">${game.homeTeam}</div>
                             </div>
                             <span class="live-score" id="score-home-${game.id}"></span>
                         </div>
                     </div>
+
+                    ${game.radioLink ? `<button onclick="openRadioLink('${game.radioLink}')" style="background: #2196F3; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; margin: 8px 0; font-size: 12px; font-weight: 600;">📻 Listen Live</button>` : ''}
 
                     <div class="betting-markets">
                         <div class="bet-button" onclick="addToBetSlip('${game.id}', '${game.awayTeam}', 'away', ${game.odds.away})">
@@ -945,6 +947,11 @@
                 awayScore.textContent = update.score.away;
                 homeScore.textContent = update.score.home;
             }
+        }
+
+        // Radio Link
+        function openRadioLink(url) {
+            window.open(url, '_blank', 'noopener,noreferrer');
         }
 
         // Bet Slip
