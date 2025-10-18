@@ -80,7 +80,7 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
   });
 });
 
-app.listen(PORT, HOST, () => {
+const server = app.listen(PORT, HOST, () => {
   console.log(`🚀 API Server running on ${HOST}:${PORT}`);
   console.log(`📡 Environment: ${NODE_ENV}`);
   console.log(`🔒 HTTPS: ${NODE_ENV === 'production' ? 'Enabled' : 'Development mode'}`);
@@ -88,6 +88,16 @@ app.listen(PORT, HOST, () => {
   console.log(`🐙 GitHub Integration: Connected`);
   console.log(`📺 FCC Streaming: Enabled`);
   console.log(`💚 Health Check: http://${HOST}:${PORT}/health`);
+  console.log(`🌐 Server is ready to accept connections`);
+});
+
+server.on('error', (error: any) => {
+  if (error.code === 'EADDRINUSE') {
+    console.error(`❌ Port ${PORT} is already in use`);
+  } else {
+    console.error('❌ Server error:', error);
+  }
+  process.exit(1);
 });
 
 export default app;
