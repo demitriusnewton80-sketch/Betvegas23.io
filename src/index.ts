@@ -5,6 +5,7 @@ import sportsbookRouter from './routes/sportsbook.js';
 import streamingRouter from './routes/streaming.js';
 import authRouter from './routes/auth.js';
 import webhooksRouter from './routes/webhooks.js';
+import accountRouter from './routes/account.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -74,6 +75,19 @@ app.get('/api', (req: Request, res: Response) => {
       webhooks: {
         receive: 'POST /webhooks/receive/:sportsbookId',
         test: 'POST /webhooks/test/:sportsbookId'
+      },
+      account: {
+        register: 'POST /account/register',
+        profile: 'GET /account/profile/:accountId',
+        updateProfile: 'PUT /account/profile/:accountId',
+        balance: 'GET /account/balance/:accountId',
+        deposit: 'POST /account/deposit/:accountId',
+        withdraw: 'POST /account/withdraw/:accountId',
+        stats: 'GET /account/stats/:accountId',
+        bets: 'GET /account/bets/:accountId',
+        preferences: 'PUT /account/preferences/:accountId',
+        deactivate: 'POST /account/deactivate/:accountId',
+        reactivate: 'POST /account/reactivate/:accountId'
       }
     },
     integrations: {
@@ -99,6 +113,7 @@ app.use('/sportsbook', sportsbookRouter);
 app.use('/streaming', streamingRouter);
 app.use('/auth', authRouter);
 app.use('/webhooks', webhooksRouter);
+app.use('/account', accountRouter);
 
 // Ensure all routes are mounted
 console.log('📍 Routes registered:');
@@ -106,6 +121,7 @@ console.log('   - /sportsbook');
 console.log('   - /streaming');
 console.log('   - /auth');
 console.log('   - /webhooks');
+console.log('   - /account');
 
 // 404 handler for API
 app.use((req: Request, res: Response) => {

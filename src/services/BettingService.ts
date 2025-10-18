@@ -6,6 +6,7 @@
 // 5. Retrieve data: const users = await db.get("users");
 
 import { Bet, User, Transaction } from '../models/User.js';
+import { accountService } from './AccountService.js';
 
 class BettingService {
   private users: Map<string, User> = new Map();
@@ -22,6 +23,12 @@ class BettingService {
       walletBalance: 1000,
       createdAt: new Date().toISOString()
     });
+
+    // Sync with account service
+    const account = accountService.getAccountByUsername('demo-user');
+    if (account) {
+      accountService.updateBalance(account.id, 1000, 'add');
+    }
   }
 
   getUser(userId: string): User | undefined {
