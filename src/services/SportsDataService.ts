@@ -36,7 +36,7 @@ class SportsDataService extends EventEmitter {
       startTime: new Date(Date.now() + 86400000).toISOString(),
       status: 'upcoming',
       moneyLine: { home: -150, away: +130 },
-      radioLink: 'https://player.radio.com/listen/station/nfl-live'
+      radioLink: 'https://www.iheart.com/live/espn-radio-3959/'
     });
 
     this.addEvent({
@@ -47,7 +47,7 @@ class SportsDataService extends EventEmitter {
       startTime: new Date(Date.now() + 172800000).toISOString(),
       status: 'upcoming',
       moneyLine: { home: -110, away: -110 },
-      radioLink: 'https://player.radio.com/listen/station/nfl-live'
+      radioLink: 'https://tunein.com/radio/ESPN-Radio-s20368/'
     });
 
     // NBA Events
@@ -70,7 +70,7 @@ class SportsDataService extends EventEmitter {
       startTime: new Date(Date.now() + 129600000).toISOString(),
       status: 'upcoming',
       moneyLine: { home: -105, away: -115 },
-      radioLink: 'https://www.nba.com/live'
+      radioLink: 'https://www.nba.com/watch'
     });
 
     // MLB Events
@@ -82,7 +82,7 @@ class SportsDataService extends EventEmitter {
       startTime: new Date(Date.now() + 259200000).toISOString(),
       status: 'upcoming',
       moneyLine: { home: -130, away: +110 },
-      radioLink: 'https://www.mlb.com/live'
+      radioLink: 'https://www.mlb.com/tv'
     });
 
     this.addEvent({
@@ -93,7 +93,7 @@ class SportsDataService extends EventEmitter {
       startTime: new Date(Date.now() + 345600000).toISOString(),
       status: 'upcoming',
       moneyLine: { home: -145, away: +125 },
-      radioLink: 'https://www.mlb.com/live'
+      radioLink: 'https://www.mlb.com/tv'
     });
 
     // NHL Events
@@ -105,7 +105,7 @@ class SportsDataService extends EventEmitter {
       startTime: new Date(Date.now() + 21600000).toISOString(),
       status: 'live',
       moneyLine: { home: -125, away: +105 },
-      radioLink: 'https://www.nhl.com/live'
+      radioLink: 'https://www.nhl.com/tv'
     });
 
     this.addEvent({

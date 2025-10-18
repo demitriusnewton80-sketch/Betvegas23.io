@@ -173,18 +173,44 @@ router.get('/nba/direct/:gameId', async (req: Request, res: Response) => {
   res.json(nbaIntegration);
 });
 
-// Get radio stream info for a game
+// Get radio stream info for a game with fallback options
 router.get('/radio/:gameId', async (req: Request, res: Response) => {
   const { gameId } = req.params;
   
-  // NFL games use radio.com
-  const radioUrl = 'https://player.radio.com/listen/station/nfl-live';
+  // Multiple radio stream options with fallbacks
+  const radioStreams = [
+    {
+      url: 'https://player.radio.com/listen/station/nfl-live',
+      provider: 'Radio.com',
+      type: 'NFL Live Radio'
+    },
+    {
+      url: 'https://www.iheart.com/live/espn-radio-3959/',
+      provider: 'iHeartRadio',
+      type: 'ESPN Radio'
+    },
+    {
+      url: 'https://tunein.com/radio/ESPN-Radio-s20368/',
+      provider: 'TuneIn',
+      type: 'ESPN Radio'
+    },
+    {
+      url: 'https://www.audacy.com/stations/sports',
+      provider: 'Audacy Sports',
+      type: 'Sports Radio Network'
+    }
+  ];
   
   res.json({
     gameId,
-    radioUrl,
-    streamType: 'NFL Live Radio',
-    provider: 'Radio.com'
+    primaryRadio: radioStreams[0],
+    fallbackRadios: radioStreams.slice(1),
+    note: 'If primary stream is unavailable, try fallback options',
+    directConnect: {
+      fccEntity: '20130314143016',
+      registration: '0024454324',
+      contactEmail: 'gbemeeat@gmail.com'
+    }
   });
 });
 
