@@ -405,12 +405,12 @@
                 const container = document.getElementById('gamesContainer');
                 container.innerHTML = '';
 
-                data.games.forEach(game => {
-                    const card = createGameCard(game);
+                data.games.forEach(gameItem => {
+                    const card = createGameCard(gameItem);
                     container.appendChild(card);
                     
-                    if (game.status === 'live') {
-                        startLiveStream(game.id);
+                    if (gameItem.status === 'live') {
+                        startLiveStream(gameItem.id);
                     }
                 });
             } catch (error) {
