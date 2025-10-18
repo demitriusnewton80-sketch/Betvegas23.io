@@ -1,0 +1,442 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Young Meat LLC - Live Sports Betting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .wallet {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .wallet-balance {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .deposit-form {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .deposit-form input {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            width: 150px;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        button.cashout {
+            background: #ff9800;
+        }
+        
+        button.cashout:hover {
+            background: #e68900;
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .game-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .live-indicator {
+            background: #f44336;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .teams {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        
+        .score {
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 5px;
+        }
+        
+        .betting-section {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .betting-section input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+        
+        .odds {
+            display: flex;
+            justify-content: space-around;
+            margin: 15px 0;
+        }
+        
+        .odd-button {
+            flex: 1;
+            margin: 0 5px;
+            padding: 15px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .odd-button:hover {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.3);
+        }
+        
+        .my-bets {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+        
+        .bet-item {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        
+        .status.pending {
+            background: #ff9800;
+        }
+        
+        .status.won {
+            background: #4CAF50;
+        }
+        
+        .status.lost {
+            background: #f44336;
+        }
+        
+        .status.cashed_out {
+            background: #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏆 Young Meat LLC Sports Betting</h1>
+            <p>Live Sports Streaming & Betting Platform</p>
+        </header>
+        
+        <div class="wallet">
+            <div>
+                <div>Wallet Balance</div>
+                <div class="wallet-balance" id="balance">$1000.00</div>
+            </div>
+            <div class="deposit-form">
+                <input type="number" id="depositAmount" placeholder="Amount" min="1">
+                <button onclick="deposit()">Deposit</button>
+            </div>
+        </div>
+        
+        <h2>Live Games</h2>
+        <div class="games-grid" id="gamesGrid"></div>
+        
+        <div class="my-bets">
+            <h2>My Bets</h2>
+            <div id="betsList"></div>
+        </div>
+    </div>
+    
+    <script>
+        const userId = 'demo-user';
+        let games = [];
+        let userBets = [];
+        
+        async function loadGames() {
+            const response = await fetch('/sportsbook/games');
+            const data = await response.json();
+            games = data.games;
+            renderGames();
+        }
+        
+        async function loadWallet() {
+            const response = await fetch(`/sportsbook/user/${userId}/wallet`);
+            const data = await response.json();
+            document.getElementById('balance').textContent = `$${data.balance.toFixed(2)}`;
+        }
+        
+        async function loadBets() {
+            const response = await fetch(`/sportsbook/user/${userId}/bets`);
+            const data = await response.json();
+            userBets = data.bets;
+            renderBets();
+        }
+        
+        function renderGames() {
+            const grid = document.getElementById('gamesGrid');
+            grid.innerHTML = games.map(game => `
+                <div class="game-card">
+                    <div class="game-header">
+                        <span>${game.sport}</span>
+                        ${game.status === 'live' ? '<span class="live-indicator">🔴 LIVE</span>' : ''}
+                    </div>
+                    <div class="teams">
+                        ${game.homeTeam} vs ${game.awayTeam}
+                    </div>
+                    ${game.status === 'live' ? `
+                        <div class="score" id="score-${game.id}">
+                            Loading live score...
+                        </div>
+                    ` : ''}
+                    <div class="odds">
+                        <button class="odd-button" onclick="selectBet('${game.id}', 'home', ${game.odds.home})">
+                            ${game.homeTeam}<br>${game.odds.home > 0 ? '+' : ''}${game.odds.home}
+                        </button>
+                        ${game.odds.draw ? `
+                            <button class="odd-button" onclick="selectBet('${game.id}', 'draw', ${game.odds.draw})">
+                                Draw<br>+${game.odds.draw}
+                            </button>
+                        ` : ''}
+                        <button class="odd-button" onclick="selectBet('${game.id}', 'away', ${game.odds.away})">
+                            ${game.awayTeam}<br>${game.odds.away > 0 ? '+' : ''}${game.odds.away}
+                        </button>
+                    </div>
+                    <div class="betting-section">
+                        <input type="number" id="amount-${game.id}" placeholder="Bet amount" min="1">
+                        <button onclick="placeBet('${game.id}')">Place Bet</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Start streams for live games
+            games.filter(g => g.status === 'live').forEach(game => {
+                startLiveStream(game.id);
+            });
+        }
+        
+        function startLiveStream(gameId) {
+            const eventSource = new EventSource(`/streaming/stream/${gameId}`);
+            
+            eventSource.onmessage = (event) => {
+                const update = JSON.parse(event.data);
+                const scoreDiv = document.getElementById(`score-${gameId}`);
+                if (scoreDiv) {
+                    scoreDiv.innerHTML = `
+                        ${update.score.home} - ${update.score.away}<br>
+                        <small>${update.quarter || update.period} - ${update.timeRemaining}</small><br>
+                        <small>${update.lastPlay}</small>
+                    `;
+                }
+            };
+        }
+        
+        let selectedGame = null;
+        let selectedTeam = null;
+        let selectedOdds = null;
+        
+        function selectBet(gameId, team, odds) {
+            selectedGame = gameId;
+            selectedTeam = team;
+            selectedOdds = odds;
+        }
+        
+        async function placeBet(gameId) {
+            const amount = parseFloat(document.getElementById(`amount-${gameId}`).value);
+            
+            if (!selectedTeam || !amount || amount <= 0) {
+                alert('Please select a team and enter a valid amount');
+                return;
+            }
+            
+            const response = await fetch('/sportsbook/bet', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId,
+                    gameId: selectedGame,
+                    team: selectedTeam,
+                    amount
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                alert(`Bet placed! Potential win: $${data.bet.potentialWin.toFixed(2)}`);
+                loadWallet();
+                loadBets();
+                document.getElementById(`amount-${gameId}`).value = '';
+            } else {
+                alert(data.error);
+            }
+        }
+        
+        async function deposit() {
+            const amount = parseFloat(document.getElementById('depositAmount').value);
+            
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+            
+            const response = await fetch(`/sportsbook/user/${userId}/deposit`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                alert(`Deposit successful! New balance: $${data.newBalance.toFixed(2)}`);
+                loadWallet();
+                document.getElementById('depositAmount').value = '';
+            } else {
+                alert(data.error);
+            }
+        }
+        
+        async function cashOut(betId) {
+            if (!confirm('Are you sure you want to cash out this bet?')) {
+                return;
+            }
+            
+            const response = await fetch(`/sportsbook/cashout/${betId}`, {
+                method: 'POST'
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                alert(`Cash out successful! You received $${data.amount.toFixed(2)}`);
+                loadWallet();
+                loadBets();
+            } else {
+                alert(data.error);
+            }
+        }
+        
+        function renderBets() {
+            const betsList = document.getElementById('betsList');
+            
+            if (userBets.length === 0) {
+                betsList.innerHTML = '<p>No bets placed yet</p>';
+                return;
+            }
+            
+            betsList.innerHTML = userBets.map(bet => {
+                const game = games.find(g => g.id === bet.gameId);
+                return `
+                    <div class="bet-item">
+                        <div>
+                            <strong>${game ? `${game.homeTeam} vs ${game.awayTeam}` : 'Game'}</strong><br>
+                            Bet on: ${bet.team} | Amount: $${bet.amount.toFixed(2)}<br>
+                            Potential win: $${bet.potentialWin.toFixed(2)}
+                        </div>
+                        <div>
+                            <span class="status ${bet.status}">${bet.status.toUpperCase()}</span>
+                            ${bet.status === 'pending' ? `<button class="cashout" onclick="cashOut('${bet.id}')">Cash Out</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Initialize
+        loadGames();
+        loadWallet();
+        loadBets();
+        
+        // Refresh bets every 10 seconds
+        setInterval(loadBets, 10000);
+    </script>
+</body>
+</html>
