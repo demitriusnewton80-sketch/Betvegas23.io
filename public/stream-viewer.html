@@ -1,0 +1,684 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
+    <title>Live Stream - Betting Sites</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
+        .stream-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-container {
+            flex: 1;
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .video-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+
+        .stream-status {
+            font-size: 18px;
+            font-weight: 600;
+            color: #53c451;
+            margin-bottom: 8px;
+        }
+
+        .stream-info {
+            font-size: 14px;
+            color: #8b949e;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .controls-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            padding: 20px;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .controls-overlay.hidden {
+            transform: translateY(100%);
+        }
+
+        .top-controls {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(rgba(0,0,0,0.9), transparent);
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-btn:active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .game-header {
+            flex: 1;
+            text-align: center;
+            padding: 0 16px;
+        }
+
+        .game-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(248, 81, 73, 0.2);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #f85149;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .score-overlay {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 16px 24px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            min-width: 280px;
+        }
+
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .team-score {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .team-logo {
+            font-size: 24px;
+        }
+
+        .team-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #c9d1d9;
+        }
+
+        .score-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #53c451;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        .game-clock {
+            text-align: center;
+            padding: 8px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 8px;
+            font-size: 13px;
+            color: #8b949e;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s;
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .control-btn.primary {
+            background: #53c451;
+            border-color: #53c451;
+            color: #000;
+        }
+
+        .quality-selector {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .quality-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #8b949e;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .quality-btn.active {
+            background: #53c451;
+            border-color: #53c451;
+            color: #000;
+        }
+
+        .stream-options {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #161b22;
+            border-radius: 16px 16px 0 0;
+            padding: 24px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            z-index: 20;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .stream-options.active {
+            transform: translateY(0);
+        }
+
+        .options-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .options-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .close-options-btn {
+            background: none;
+            border: none;
+            color: #8b949e;
+            font-size: 28px;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+        }
+
+        .option-group {
+            margin-bottom: 24px;
+        }
+
+        .option-label {
+            font-size: 13px;
+            color: #8b949e;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .option-item {
+            background: #21262d;
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .option-item:active {
+            background: #30363d;
+        }
+
+        .loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(83, 196, 81, 0.2);
+            border-top-color: #53c451;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 30;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="stream-container">
+        <!-- Top Controls -->
+        <div class="top-controls">
+            <button class="back-btn" onclick="goBack()">←</button>
+            <div class="game-header">
+                <div class="game-title" id="gameTitle">Loading...</div>
+                <div class="live-indicator">
+                    <span class="live-dot"></span>
+                    <span>LIVE</span>
+                </div>
+            </div>
+            <button class="back-btn" onclick="toggleOptions()">⚙️</button>
+        </div>
+
+        <!-- Video Container -->
+        <div class="video-container" onclick="toggleControls()">
+            <div class="video-placeholder">
+                <div class="video-icon">📺</div>
+                <div class="stream-status">Live Stream Active</div>
+                <div class="stream-info" id="streamInfo">Connecting to stream...</div>
+                <div class="loading-spinner"></div>
+            </div>
+
+            <!-- Live Score Overlay -->
+            <div class="score-overlay" id="scoreOverlay">
+                <div class="score-row">
+                    <div class="team-score">
+                        <span class="team-logo" id="awayLogo">🏈</span>
+                        <span class="team-name" id="awayTeam">Away Team</span>
+                    </div>
+                    <span class="score-number" id="awayScore">0</span>
+                </div>
+                <div class="score-row">
+                    <div class="team-score">
+                        <span class="team-logo" id="homeLogo">🏈</span>
+                        <span class="team-name" id="homeTeam">Home Team</span>
+                    </div>
+                    <span class="score-number" id="homeScore">0</span>
+                </div>
+                <div class="game-clock" id="gameClock">Q1 - 12:00</div>
+            </div>
+        </div>
+
+        <!-- Bottom Controls -->
+        <div class="controls-overlay" id="controlsOverlay">
+            <div class="control-buttons">
+                <button class="control-btn" onclick="toggleMute()">
+                    <span id="muteIcon">🔊</span>
+                    <span>Audio</span>
+                </button>
+                <button class="control-btn" onclick="openRadioStream()">
+                    <span>📻</span>
+                    <span>Radio</span>
+                </button>
+                <button class="control-btn primary" onclick="toggleFullscreen()">
+                    <span id="fullscreenIcon">⛶</span>
+                    <span>Fullscreen</span>
+                </button>
+            </div>
+            <div class="quality-selector">
+                <button class="quality-btn" onclick="setQuality('auto')">Auto</button>
+                <button class="quality-btn active" onclick="setQuality('1080p')">1080p</button>
+                <button class="quality-btn" onclick="setQuality('720p')">720p</button>
+                <button class="quality-btn" onclick="setQuality('480p')">480p</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stream Options Panel -->
+    <div class="stream-options" id="streamOptions">
+        <div class="options-header">
+            <h2 class="options-title">Stream Options</h2>
+            <button class="close-options-btn" onclick="toggleOptions()">×</button>
+        </div>
+
+        <div class="option-group">
+            <div class="option-label">Stream Source</div>
+            <div class="option-item" onclick="switchSource('amazon')">
+                <span>📺 Amazon Prime Video</span>
+                <span>✓</span>
+            </div>
+            <div class="option-item" onclick="switchSource('nba')">
+                <span>🏀 NBA Direct Stream</span>
+                <span></span>
+            </div>
+            <div class="option-item" onclick="switchSource('radio')">
+                <span>📻 Radio Stream</span>
+                <span></span>
+            </div>
+        </div>
+
+        <div class="option-group">
+            <div class="option-label">Display Settings</div>
+            <div class="option-item" onclick="toggleScoreOverlay()">
+                <span>Show Score Overlay</span>
+                <span id="scoreToggle">ON</span>
+            </div>
+            <div class="option-item" onclick="toggleStats()">
+                <span>Show Live Stats</span>
+                <span id="statsToggle">OFF</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        const urlParams = new URLSearchParams(window.location.search);
+        const gameId = urlParams.get('gameId');
+        const userId = urlParams.get('userId') || 'demo-user';
+        let eventSource = null;
+        let isMuted = false;
+        let controlsVisible = true;
+        let controlsTimeout = null;
+        let scoreOverlayVisible = true;
+
+        // Initialize stream
+        async function initStream() {
+            if (!gameId) {
+                showToast('No game ID provided');
+                setTimeout(() => goBack(), 2000);
+                return;
+            }
+
+            try {
+                // Load game info
+                const response = await fetch(`${API_BASE}/sportsbook/games`);
+                const data = await response.json();
+                const game = data.games.find(g => g.id === gameId);
+
+                if (game) {
+                    document.getElementById('gameTitle').textContent = `${game.awayTeam} @ ${game.homeTeam}`;
+                    document.getElementById('awayTeam').textContent = game.awayTeam;
+                    document.getElementById('homeTeam').textContent = game.homeTeam;
+                    document.getElementById('awayLogo').textContent = getTeamLogo(game.sport);
+                    document.getElementById('homeLogo').textContent = getTeamLogo(game.sport);
+                    document.getElementById('streamInfo').textContent = `${game.sport} • Live Stream via Amazon Prime`;
+                }
+
+                // Start live stream
+                startLiveStream();
+            } catch (error) {
+                console.error('Error initializing stream:', error);
+                document.getElementById('streamInfo').textContent = 'Error loading stream';
+            }
+        }
+
+        function startLiveStream() {
+            eventSource = new EventSource(`${API_BASE}/streaming/stream/${gameId}`);
+
+            eventSource.onmessage = (event) => {
+                try {
+                    const update = JSON.parse(event.data);
+                    updateScore(update);
+                } catch (error) {
+                    console.error('Stream update error:', error);
+                }
+            };
+
+            eventSource.onerror = () => {
+                showToast('Stream connection lost. Reconnecting...');
+                setTimeout(startLiveStream, 3000);
+            };
+
+            document.querySelector('.loading-spinner').style.display = 'none';
+            showToast('Stream connected');
+        }
+
+        function updateScore(update) {
+            document.getElementById('awayScore').textContent = update.score.away;
+            document.getElementById('homeScore').textContent = update.score.home;
+            
+            if (update.quarter && update.timeRemaining) {
+                document.getElementById('gameClock').textContent = `${update.quarter} - ${update.timeRemaining}`;
+            }
+        }
+
+        function getTeamLogo(sport) {
+            const logos = {
+                'NFL': '🏈',
+                'NBA': '🏀',
+                'MLB': '⚾',
+                'NHL': '🏒',
+                'Soccer': '⚽'
+            };
+            return logos[sport] || '🏆';
+        }
+
+        function toggleControls() {
+            controlsVisible = !controlsVisible;
+            const overlay = document.getElementById('controlsOverlay');
+            
+            if (controlsVisible) {
+                overlay.classList.remove('hidden');
+                resetControlsTimeout();
+            } else {
+                overlay.classList.add('hidden');
+            }
+        }
+
+        function resetControlsTimeout() {
+            clearTimeout(controlsTimeout);
+            controlsTimeout = setTimeout(() => {
+                document.getElementById('controlsOverlay').classList.add('hidden');
+                controlsVisible = false;
+            }, 5000);
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('muteIcon').textContent = isMuted ? '🔇' : '🔊';
+            showToast(isMuted ? 'Muted' : 'Unmuted');
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                document.getElementById('fullscreenIcon').textContent = '⛶';
+                showToast('Fullscreen enabled');
+            } else {
+                document.exitFullscreen();
+                document.getElementById('fullscreenIcon').textContent = '⛶';
+                showToast('Fullscreen disabled');
+            }
+        }
+
+        function setQuality(quality) {
+            document.querySelectorAll('.quality-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            showToast(`Quality: ${quality}`);
+        }
+
+        function toggleOptions() {
+            document.getElementById('streamOptions').classList.toggle('active');
+        }
+
+        function switchSource(source) {
+            const sources = {
+                'amazon': '📺 Amazon Prime Video',
+                'nba': '🏀 NBA Direct Stream',
+                'radio': '📻 Radio Stream'
+            };
+            showToast(`Switched to ${sources[source]}`);
+            toggleOptions();
+        }
+
+        function toggleScoreOverlay() {
+            scoreOverlayVisible = !scoreOverlayVisible;
+            document.getElementById('scoreOverlay').style.display = scoreOverlayVisible ? 'block' : 'none';
+            document.getElementById('scoreToggle').textContent = scoreOverlayVisible ? 'ON' : 'OFF';
+        }
+
+        function toggleStats() {
+            const statsToggle = document.getElementById('statsToggle');
+            const isOn = statsToggle.textContent === 'ON';
+            statsToggle.textContent = isOn ? 'OFF' : 'ON';
+            showToast(isOn ? 'Stats hidden' : 'Stats shown');
+        }
+
+        async function openRadioStream() {
+            try {
+                const response = await fetch(`${API_BASE}/streaming/radio/${gameId}`);
+                const data = await response.json();
+                window.open(data.primaryRadio.url, '_blank');
+            } catch (error) {
+                showToast('Radio stream unavailable');
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        function goBack() {
+            if (eventSource) {
+                eventSource.close();
+            }
+            window.history.back();
+        }
+
+        // Auto-hide controls
+        resetControlsTimeout();
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', initStream);
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (eventSource) {
+                eventSource.close();
+            }
+        });
+    </script>
+</body>
+</html>

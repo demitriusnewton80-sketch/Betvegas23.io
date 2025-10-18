@@ -937,6 +937,8 @@
 
                     ${game.radioLink ? `<button onclick="openRadioLink('${game.radioLink}')" style="background: #2196F3; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; margin: 8px 0; font-size: 12px; font-weight: 600;">📻 Listen Live</button>` : ''}
 
+                    ${isLive ? `<button onclick="openLiveStream('${game.id}')" style="background: #53c451; color: #000; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; margin: 8px 0; font-size: 14px; font-weight: 700; width: 100%;">📺 Watch Live Stream</button>` : ''}
+
                     <div class="betting-markets">
                         <div class="bet-button" onclick="addToBetSlip('${game.id}', '${game.awayTeam}', 'away', ${game.odds.away})">
                             <div class="bet-label">${game.awayTeam}</div>
@@ -1024,6 +1026,11 @@
         // Radio Link
         function openRadioLink(url) {
             window.open(url, '_blank', 'noopener,noreferrer');
+        }
+
+        // Open Live Stream Viewer
+        function openLiveStream(gameId) {
+            window.location.href = `/stream-viewer.html?gameId=${gameId}&userId=${userId}`;
         }
 
         // Bet Slip
@@ -1134,7 +1141,7 @@
             notification.innerHTML = `
                 <span>📺</span>
                 <span>Amazon Prime Access for Game ${gameId}</span>
-                <button onclick="openStream('${streamUrl}')" style="background: #53c451; color: #0d1117; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-weight: 700;">Watch Live</button>
+                <button onclick="openLiveStream('${gameId}')" style="background: #53c451; color: #0d1117; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-weight: 700;">Watch Live</button>
                 <button onclick="openRadioStream('${gameId}')" style="background: #1e90ff; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-weight: 700; margin-left: 8px;">🔊 Listen</button>
                 <button onclick="dismissNotification('${notificationId}')" style="background: none; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer;">×</button>
             `;
