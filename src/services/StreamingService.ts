@@ -85,8 +85,29 @@ class StreamingService extends EventEmitter {
     console.log(`Live stream started for game ${gameId}`);
     this.streamFailures.delete(gameId);
     
-    // Placeholder - replace with actual data source integration
-    this.activeStreams.set(gameId, undefined as any);
+    // Simulate live game updates with proper error handling
+    const interval = setInterval(() => {
+      try {
+        const update: LiveGameUpdate = {
+          gameId,
+          score: {
+            home: Math.floor(Math.random() * 100),
+            away: Math.floor(Math.random() * 100)
+          },
+          quarter: `Q${Math.floor(Math.random() * 4) + 1}`,
+          timeRemaining: `${Math.floor(Math.random() * 12)}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}`,
+          lastPlay: 'Play in progress',
+          timestamp: new Date().toISOString()
+        };
+        
+        this.pushGameUpdate(update);
+      } catch (error) {
+        console.error(`Error generating update for game ${gameId}:`, error);
+        this.recordStreamFailure(gameId);
+      }
+    }, 3000);
+    
+    this.activeStreams.set(gameId, interval);
   }
 
   // Method to push live updates from external source
@@ -190,7 +211,9 @@ class StreamingService extends EventEmitter {
   }
 
   stopGameStream(gameId: string): void {
-    if (this.activeStreams.has(gameId)) {
+    const interval = this.activeStreams.get(gameId);
+    if (interval) {
+      clearInterval(interval);
       console.log(`Live stream stopped for game ${gameId}`);
       this.activeStreams.delete(gameId);
       this.sharedStreams.delete(gameId);
@@ -199,7 +222,10 @@ class StreamingService extends EventEmitter {
   }
 
   stopAllStreams(): void {
-    this.activeStreams.forEach((_, gameId) => {
+    this.activeStreams.forEach((interval, gameId) => {
+      if (interval) {
+        clearInterval(interval);
+      }
       console.log(`Stopping stream for game ${gameId}`);
     });
     this.activeStreams.clear();
