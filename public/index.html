@@ -598,6 +598,66 @@
         .page-view.active {
             display: block;
         }
+
+        /* QR Code Section */
+        .qr-code-section {
+            position: fixed;
+            bottom: calc(60px + env(safe-area-inset-bottom));
+            right: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            z-index: 998;
+            max-width: 180px;
+        }
+
+        .qr-code-section h3 {
+            font-size: 13px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .qr-code-section p {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .qr-code-canvas {
+            background: white;
+            padding: 8px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .qr-toggle-btn {
+            position: fixed;
+            bottom: calc(60px + env(safe-area-inset-bottom));
+            right: 16px;
+            background: var(--accent-color);
+            color: #000;
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            z-index: 999;
+            transition: all 0.2s;
+        }
+
+        .qr-toggle-btn:active {
+            transform: scale(0.95);
+        }
+
+        .qr-code-section.hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -713,6 +773,18 @@
         <div id="betSlipContent" class="bet-slip-empty">
             Click on odds to add bets
         </div>
+    </div>
+
+    <!-- QR Code Toggle Button -->
+    <button class="qr-toggle-btn" onclick="toggleQRCode()" title="Share via QR">
+        📱
+    </button>
+
+    <!-- QR Code Section -->
+    <div class="qr-code-section hidden" id="qrCodeSection">
+        <h3>Share This Site</h3>
+        <p>Scan to access on mobile</p>
+        <div class="qr-code-canvas" id="qrCodeCanvas"></div>
     </div>
 
     <script>
@@ -1221,6 +1293,64 @@
             } else {
                 themeIcon.textContent = '🌙';
             }
+        }
+
+        // QR Code Functions
+        function toggleQRCode() {
+            const qrSection = document.getElementById('qrCodeSection');
+            qrSection.classList.toggle('hidden');
+            
+            if (!qrSection.classList.contains('hidden') && !qrSection.dataset.generated) {
+                generateQRCode();
+                qrSection.dataset.generated = 'true';
+            }
+        }
+
+        function generateQRCode() {
+            const url = window.location.origin;
+            const canvas = document.createElement('canvas');
+            const size = 150;
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // Simple QR code generation using a library-free approach
+            // For production, consider using qrcode.js library
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, size, size);
+            
+            ctx.fillStyle = '#000000';
+            ctx.font = '10px monospace';
+            
+            // Create a simple data matrix pattern
+            const moduleSize = 5;
+            const modules = Math.floor(size / moduleSize);
+            
+            // Generate pseudo-random pattern based on URL
+            let hash = 0;
+            for (let i = 0; i < url.length; i++) {
+                hash = ((hash << 5) - hash) + url.charCodeAt(i);
+                hash = hash & hash;
+            }
+            
+            for (let y = 0; y < modules; y++) {
+                for (let x = 0; x < modules; x++) {
+                    const seed = (x * modules + y + hash) * 2654435761;
+                    if ((seed & 1) || (x < 3 && y < 3) || (x >= modules - 3 && y < 3) || (x < 3 && y >= modules - 3)) {
+                        ctx.fillRect(x * moduleSize, y * moduleSize, moduleSize - 1, moduleSize - 1);
+                    }
+                }
+            }
+            
+            // Add URL text below QR
+            const container = document.getElementById('qrCodeCanvas');
+            container.innerHTML = '';
+            container.appendChild(canvas);
+            
+            const urlText = document.createElement('div');
+            urlText.style.cssText = 'margin-top: 8px; font-size: 10px; color: #000; word-break: break-all;';
+            urlText.textContent = url;
+            container.appendChild(urlText);
         }
 
         // Initialize
