@@ -52,6 +52,14 @@ Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 - `GET /packages/user/:userId` - Get user's purchased packages
 - `GET /packages/user/:userId/access/:league` - Check league access
 
+### PlayStation 5 Game Betting (WiFi Core + SSO)
+- `GET /playstation/wifi/status` - WiFi Core connection status
+- `GET /playstation/games` - Get available PS5 games for betting
+- `POST /playstation/bet` - Place bet on PS5 game (SSO protected)
+- `GET /playstation/psn/connect` - PlayStation Network WiFi Core integration
+- `GET /playstation/stream/:gameId` - Live PS5 game stream (SSE)
+- `GET /playstation/wifi/diagnostic` - WiFi Core diagnostic information
+
 ### Webhooks
 - `POST /webhooks/receive/:sportsbookId` - Receive external updates
 - `POST /webhooks/test/:sportsbookId` - Test webhook connection

@@ -11,6 +11,7 @@ import accountRouter from './routes/account.js';
 import contactRoutes from './routes/contact.js'; // Renamed from contactRoutes for consistency
 import contentRoutes from './routes/content.js'; // New import for content routes
 import packagesRoutes from './routes/packages.js'; // New import for packages routes
+import playstationRoutes from './routes/playstation.js'; // New import for PlayStation 5 routes
 import { sportsDataService } from './services/SportsDataService.js';
 
 const app = express();
@@ -65,6 +66,7 @@ app.use('/aws', awsRoutes); // Mount AWS routes
 app.use('/backup', backupRoutes); // Mount backup routes
 app.use('/content', contentRoutes); // Mount content routes
 app.use('/packages', packagesRoutes); // Mount packages routes
+app.use('/playstation', playstationRoutes); // Mount PlayStation 5 routes
 
 // Ensure all routes are mounted
 console.log('📍 Routes registered:');
@@ -79,6 +81,7 @@ console.log('   - /aws'); // Added for new AWS routes
 console.log('   - /backup'); // Added for new backup routes
 console.log('   - /content'); // Added for new content routes
 console.log('   - /packages'); // Added for new packages routes
+console.log('   - /playstation'); // Added for new PlayStation 5 routes
 
 // 404 handler for API
 app.use((req: Request, res: Response) => {
