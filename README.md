@@ -44,6 +44,14 @@ Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 - `GET /content/system/stats` - Get content statistics
 - `GET /content/:contentId/audit` - Get content audit log
 
+### Sports Packages
+- `GET /packages` - Get all available sports packages
+- `GET /packages/league/:league` - Get packages by league
+- `GET /packages/:packageId` - Get package details
+- `POST /packages/purchase` - Purchase package with account balance
+- `GET /packages/user/:userId` - Get user's purchased packages
+- `GET /packages/user/:userId/access/:league` - Check league access
+
 ### Webhooks
 - `POST /webhooks/receive/:sportsbookId` - Receive external updates
 - `POST /webhooks/test/:sportsbookId` - Test webhook connection

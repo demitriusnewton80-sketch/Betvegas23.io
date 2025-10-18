@@ -10,6 +10,7 @@ import backupRoutes from './routes/backup.js'; // New import for backup routes
 import accountRouter from './routes/account.js';
 import contactRoutes from './routes/contact.js'; // Renamed from contactRoutes for consistency
 import contentRoutes from './routes/content.js'; // New import for content routes
+import packagesRoutes from './routes/packages.js'; // New import for packages routes
 import { sportsDataService } from './services/SportsDataService.js';
 
 const app = express();
@@ -63,6 +64,7 @@ app.use('/ecommerce', ecommerceRoutes); // Mount e-commerce routes
 app.use('/aws', awsRoutes); // Mount AWS routes
 app.use('/backup', backupRoutes); // Mount backup routes
 app.use('/content', contentRoutes); // Mount content routes
+app.use('/packages', packagesRoutes); // Mount packages routes
 
 // Ensure all routes are mounted
 console.log('📍 Routes registered:');
@@ -76,6 +78,7 @@ console.log('   - /ecommerce'); // Added for new e-commerce routes
 console.log('   - /aws'); // Added for new AWS routes
 console.log('   - /backup'); // Added for new backup routes
 console.log('   - /content'); // Added for new content routes
+console.log('   - /packages'); // Added for new packages routes
 
 // 404 handler for API
 app.use((req: Request, res: Response) => {
