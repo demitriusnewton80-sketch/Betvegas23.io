@@ -33,6 +33,23 @@ args = "npm install"
 task = "shell.exec"
 args = "npm run dev"
 
+[[workflows.workflow]]
+name = "Direct contact "
+mode = "parallel"
+author = 48739577
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "20130314143016"
+
+[[workflows.workflow.tasks]]
+task = "packager.installForLanguage"
+args = "nix"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Direct contact "
+
 [[ports]]
 localPort = 5000
 externalPort = 80
