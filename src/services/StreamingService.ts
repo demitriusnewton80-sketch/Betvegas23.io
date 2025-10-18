@@ -20,6 +20,9 @@ interface ExternalSportsbook {
   apiKey: string;
   webhookUrl: string;
   active: boolean;
+  allowedIPs: string[];
+  registeredAt: string;
+  githubProject?: string;
 }
 
 class StreamingService extends EventEmitter {
@@ -36,15 +39,42 @@ class StreamingService extends EventEmitter {
       name: 'BetPartner Pro',
       apiKey: 'demo-key-001',
       webhookUrl: 'https://api.betpartner.example/streams',
-      active: true
+      active: true,
+      allowedIPs: ['192.168.1.100', '10.0.0.50'],
+      registeredAt: new Date().toISOString(),
+      githubProject: 'https://github.com/betvages23/betvages23.in'
     });
     this.externalSportsbooks.set('sb-002', {
       id: 'sb-002',
       name: 'OddsExchange',
       apiKey: 'demo-key-002',
       webhookUrl: 'https://api.oddsexchange.example/feeds',
-      active: true
+      active: true,
+      allowedIPs: ['203.0.113.45'],
+      registeredAt: new Date().toISOString()
     });
+  }
+
+  // Validate IP address against sportsbook's allowed IPs
+  validateIPAccess(sportsbookId: string, clientIP: string): boolean {
+    const sportsbook = this.externalSportsbooks.get(sportsbookId);
+    if (!sportsbook || !sportsbook.active) {
+      return false;
+    }
+    
+    // Allow access if IP is in allowed list
+    return sportsbook.allowedIPs.includes(clientIP);
+  }
+
+  // Register callback URL with IP whitelist
+  registerCallback(sportsbookId: string, callbackUrl: string, allowedIPs: string[]): boolean {
+    const sportsbook = this.externalSportsbooks.get(sportsbookId);
+    if (sportsbook) {
+      sportsbook.webhookUrl = callbackUrl;
+      sportsbook.allowedIPs = allowedIPs;
+      return true;
+    }
+    return false;
   }
 
   startGameStream(gameId: string): void {

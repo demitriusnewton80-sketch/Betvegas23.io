@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import sportsbookRouter from './routes/sportsbook.js';
 import streamingRouter from './routes/streaming.js';
 import authRouter from './routes/auth.js';
+import webhooksRouter from './routes/webhooks.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -49,6 +50,12 @@ app.get('/', (req: Request, res: Response) => {
       ssoStatus: '/auth/status',
       currentUser: '/auth/me',
       logout: 'POST /auth/logout',
+      webhooks: '/webhooks',
+      registerCallback: 'POST /webhooks/register',
+      updateCallback: 'PUT /webhooks/callback/:sportsbookId',
+      testCallback: 'POST /webhooks/test/:sportsbookId',
+      listCallbacks: 'GET /webhooks/list',
+      receiveUpdate: 'POST /webhooks/receive/:sportsbookId',
       sportsbook: '/sportsbook',
       games: '/sportsbook/games',
       placeBet: 'POST /sportsbook/bet',
@@ -69,6 +76,7 @@ app.get('/health', (req: Request, res: Response) => {
 app.use('/sportsbook', sportsbookRouter);
 app.use('/streaming', streamingRouter);
 app.use('/auth', authRouter);
+app.use('/webhooks', webhooksRouter);
 
 // CORS configuration for cross-origin requests
 app.use((req: Request, res: Response, next) => {
