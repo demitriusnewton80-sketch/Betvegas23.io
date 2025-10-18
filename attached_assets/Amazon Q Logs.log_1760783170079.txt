@@ -1,0 +1,22 @@
+2025-10-12 10:20:48.972 [info] Log level: info, beta=false
+2025-10-12 10:20:48.972 [info] Telemetry product: Amazon Q For VS Code
+2025-10-12 10:20:49.004 [warning] AwsContext: no default region in credentials profile, falling back to us-east-1:
+2025-10-12 10:20:49.068 [error] %O { [Error (FileSystemError): Unable to read file '/User/globalStorage/amazonwebservices.amazon-q-vscode/telemetryCache' (Unavailable (FileSystemError): Error: No file system handle registered (/User))] code: 'Unknown', name: 'Error (FileSystemError)' }
+2025-10-12 10:20:49.077 [info] Telemetry clientId: someValue.machineId
+2025-10-12 10:20:49.078 [info] Telemetry sessionId: cabea8e7-a8a1-5e51-a60e-07218f4a5937
+2025-10-12 10:20:49.078 [info] proxyUtil: Using noProxy from VS Code settings:
+2025-10-12 10:20:49.079 [info] codewhisperer: active connection changed
+2025-10-12 10:20:49.079 [info] codewhisperer: connection states
+    connection isValid=false,
+    connection isValidCodewhispererCoreConnection=false,
+    connection isExpired=false,
+    secondaryAuth isExpired=false,
+    connection isUndefined=true
+2025-10-12 10:20:49.080 [info] Trying to register toolkit callback. Toolkit is installed,
+                        toolkit activated = true
+2025-10-12 10:20:49.080 [info] using amazonqLsp service configuration: default
+2025-10-12 10:20:49.080 [error] CodeWhisperer: Error when fetching feature configs Error: No connection found
+2025-10-12 10:20:50.815 [info] lsp: trying local "AmazonQ" manifest...
+2025-10-12 10:20:50.815 [warning] telemetry: invalid Metric:  "languageServer_setup" emitted with missing fields: id
+2025-10-12 10:20:50.836 [warning] amazonqLsp: Failed to start downloaded LSP, falling back to bundled LSP: Unable to find a language server that satifies one or more of these conditions: version in range [>=1.0.0-0 <2.0.0-0], matching system's architecture and platform
+2025-10-12 10:20:50.837 [error] UninstallExtension: Failed to register un-installation: TypeError: (0 , u.existsSync) is not a function
