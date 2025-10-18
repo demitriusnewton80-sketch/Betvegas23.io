@@ -7,6 +7,7 @@
 
 import { Bet, User, Transaction } from '../models/User.js';
 import { accountService } from './AccountService.js';
+import { streamingService } from './StreamingService.js';
 
 class BettingService {
   private users: Map<string, User> = new Map();
@@ -70,7 +71,10 @@ class BettingService {
       relatedBetId: bet.id
     });
 
-    return { success: true, bet };
+    // Grant Amazon Prime stream access for the game
+    const streamAccess = streamingService.grantStreamAccess(userId, gameId, bet.id);
+
+    return { success: true, bet, streamAccess };
   }
 
   cashOut(betId: string): { success: boolean; amount?: number; error?: string } {

@@ -106,4 +106,38 @@ router.post('/partners', (req: Request, res: Response) => {
   });
 });
 
+// Get Amazon Prime stream access for user
+router.get('/amazon-prime/:userId/:gameId', (req: Request, res: Response) => {
+  const { userId, gameId } = req.params;
+  
+  const hasAccess = streamingService.hasStreamAccess(userId, gameId);
+  
+  if (!hasAccess) {
+    return res.status(403).json({ 
+      error: 'No stream access. Place a bet on this game to watch on Amazon Prime.',
+      hasAccess: false
+    });
+  }
+  
+  const amazonPrimeUrl = streamingService.getAmazonPrimeUrl(userId, gameId);
+  
+  res.json({
+    hasAccess: true,
+    gameId,
+    amazonPrimeUrl,
+    message: 'Amazon Prime stream access granted via Young Meat LLC partnership'
+  });
+});
+
+// Get all stream access for user
+router.get('/my-streams/:userId', (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const streams = streamingService.getUserStreamAccess(userId);
+  
+  res.json({
+    streams,
+    count: streams.length
+  });
+});
+
 export default router;
