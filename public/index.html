@@ -1,0 +1,386 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Young Meat LLC - Sports Betting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .status {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status-badge.active {
+            background: #10b981;
+            color: white;
+        }
+        
+        .sport-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .sport-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            background: #f3f4f6;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .sport-header:hover {
+            background: #e5e7eb;
+        }
+        
+        .sport-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .game-count {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .game-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            background: #fafafa;
+            transition: all 0.3s;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .game-card.live {
+            border-color: #ef4444;
+            background: #fee2e2;
+        }
+        
+        .game-status {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .game-status.live {
+            background: #ef4444;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        .game-status.upcoming {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .matchup {
+            margin: 10px 0;
+        }
+        
+        .team {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 5px 0;
+            color: #1f2937;
+        }
+        
+        .odds {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .odd-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        .odd-btn:hover {
+            background: #5568d3;
+        }
+        
+        .start-time {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 10px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .stream-indicator {
+            font-size: 11px;
+            color: #ef4444;
+            margin-top: 5px;
+        }
+        
+        .collapsed {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 Young Meat LLC - Sports Betting</h1>
+            <div class="status">
+                <span class="status-badge active" id="aws-status">☁️ AWS: Connected</span>
+                <span class="status-badge active" id="github-status">🐙 GitHub: Connected</span>
+                <span class="status-badge active" id="fcc-status">📺 FCC Streaming: Enabled</span>
+            </div>
+        </header>
+        
+        <div id="sports-container">
+            <div class="loading">Loading games...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let allGames = [];
+        
+        // Fetch games from API
+        async function fetchGames() {
+            try {
+                const response = await fetch(`${API_BASE}/sportsbook/games`);
+                const data = await response.json();
+                allGames = data.games || [];
+                renderGames();
+            } catch (error) {
+                console.error('Error fetching games:', error);
+                document.getElementById('sports-container').innerHTML = `
+                    <div class="error">
+                        ❌ Failed to load games. Please ensure the API server is running.
+                    </div>
+                `;
+            }
+        }
+        
+        // Group games by sport
+        function groupGamesBySport(games) {
+            const grouped = {};
+            games.forEach(game => {
+                if (!grouped[game.sport]) {
+                    grouped[game.sport] = [];
+                }
+                grouped[game.sport].push(game);
+            });
+            return grouped;
+        }
+        
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+        }
+        
+        // Toggle sport section
+        function toggleSport(sport) {
+            const section = document.getElementById(`games-${sport}`);
+            section.classList.toggle('collapsed');
+        }
+        
+        // Render games
+        function renderGames() {
+            const groupedGames = groupGamesBySport(allGames);
+            const container = document.getElementById('sports-container');
+            
+            let html = '';
+            
+            for (const [sport, sportGames] of Object.entries(groupedGames)) {
+                html += `
+                    <div class="sport-section">
+                        <div class="sport-header" onclick="toggleSport('${sport}')">
+                            <span class="sport-name">${sport}</span>
+                            <span class="game-count">${sportGames.length} game${sportGames.length > 1 ? 's' : ''}</span>
+                        </div>
+                        <div class="games-grid" id="games-${sport}">
+                            ${sportGames.map(game => `
+                                <div class="game-card ${game.status}">
+                                    <span class="game-status ${game.status}">
+                                        ${game.status.toUpperCase()}
+                                    </span>
+                                    <div class="matchup">
+                                        <div class="team">🏠 ${game.homeTeam}</div>
+                                        <div style="text-align: center; color: #9ca3af;">vs</div>
+                                        <div class="team">✈️ ${game.awayTeam}</div>
+                                    </div>
+                                    <div class="odds">
+                                        <button class="odd-btn" onclick="placeBet('${game.id}', 'home', ${game.odds.home})">
+                                            Home ${game.odds.home > 0 ? '+' : ''}${game.odds.home}
+                                        </button>
+                                        <button class="odd-btn" onclick="placeBet('${game.id}', 'away', ${game.odds.away})">
+                                            Away ${game.odds.away > 0 ? '+' : ''}${game.odds.away}
+                                        </button>
+                                    </div>
+                                    ${game.status === 'live' ? '<div class="stream-indicator">🔴 Live Stream Active</div>' : ''}
+                                    <div class="start-time">⏰ ${formatDate(game.startTime)}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html || '<div class="loading">No games available</div>';
+        }
+        
+        // Place bet
+        async function placeBet(gameId, team, odds) {
+            const amount = prompt('Enter bet amount ($):');
+            if (!amount || isNaN(amount) || amount <= 0) {
+                alert('Invalid amount');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/sportsbook/bet`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        gameId,
+                        team,
+                        amount: parseFloat(amount)
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert(`✅ Bet placed successfully!\n\nGame: ${gameId}\nTeam: ${team}\nAmount: $${amount}\nOdds: ${odds}`);
+                } else {
+                    alert(`❌ Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error placing bet:', error);
+                alert('Failed to place bet. Please try again.');
+            }
+        }
+        
+        // Listen for live stream updates
+        function connectToLiveStream(gameId) {
+            const eventSource = new EventSource(`${API_BASE}/streaming/stream/${gameId}`);
+            
+            eventSource.onmessage = (event) => {
+                const update = JSON.parse(event.data);
+                console.log('Stream update:', update);
+            };
+            
+            eventSource.onerror = (error) => {
+                console.error('Stream error for game', gameId);
+                eventSource.close();
+            };
+        }
+        
+        // Connect to live games
+        function connectToLiveGames() {
+            const liveGames = allGames.filter(g => g.status === 'live');
+            liveGames.forEach(game => connectToLiveStream(game.id));
+        }
+        
+        // Initialize
+        fetchGames();
+        
+        // Refresh games every 30 seconds
+        setInterval(fetchGames, 30000);
+        
+        // Connect to live streams after initial load
+        setTimeout(connectToLiveGames, 2000);
+    </script>
+</body>
+</html>
