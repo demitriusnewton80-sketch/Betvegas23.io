@@ -1,5 +1,6 @@
 
 import express, { Request, Response } from 'express';
+import { bettingService } from '../services/BettingService.js';
 
 const router = express.Router();
 
@@ -98,7 +99,7 @@ router.get('/games/:id', (req: Request, res: Response) => {
 });
 
 router.post('/bet', (req: Request, res: Response) => {
-  const { gameId, team, amount } = req.body;
+  const { userId = 'demo-user', gameId, team, amount } = req.body;
   
   const game = sampleGames.find(g => g.id === gameId);
   
@@ -109,15 +110,79 @@ router.post('/bet', (req: Request, res: Response) => {
   if (!amount || amount <= 0) {
     return res.status(400).json({ error: 'Invalid bet amount' });
   }
+
+  const odds = team === 'home' ? game.odds.home : team === 'away' ? game.odds.away : game.odds.draw || 0;
+  
+  const result = bettingService.placeBet(userId, gameId, team, amount, odds);
+  
+  if (!result.success) {
+    return res.status(400).json({ error: result.error });
+  }
   
   res.json({
     message: 'Bet placed successfully',
-    betId: `BET-${Date.now()}`,
-    gameId,
-    team,
-    amount,
-    potentialWin: amount * 1.9,
-    timestamp: new Date().toISOString()
+    bet: result.bet
+  });
+});
+
+router.post('/cashout/:betId', (req: Request, res: Response) => {
+  const { betId } = req.params;
+  
+  const result = bettingService.cashOut(betId);
+  
+  if (!result.success) {
+    return res.status(400).json({ error: result.error });
+  }
+  
+  res.json({
+    message: 'Cash out successful',
+    amount: result.amount
+  });
+});
+
+router.get('/user/:userId/bets', (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const bets = bettingService.getUserBets(userId);
+  
+  res.json({
+    bets,
+    count: bets.length
+  });
+});
+
+router.get('/user/:userId/wallet', (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const user = bettingService.getUser(userId);
+  
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+  
+  res.json({
+    balance: user.walletBalance,
+    transactions: bettingService.getUserTransactions(userId)
+  });
+});
+
+router.post('/user/:userId/deposit', (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const { amount } = req.body;
+  
+  if (!amount || amount <= 0) {
+    return res.status(400).json({ error: 'Invalid deposit amount' });
+  }
+  
+  const result = bettingService.deposit(userId, amount);
+  
+  if (!result.success) {
+    return res.status(400).json({ error: result.error });
+  }
+  
+  const user = bettingService.getUser(userId);
+  
+  res.json({
+    message: 'Deposit successful',
+    newBalance: user?.walletBalance
   });
 });
 
