@@ -1,9 +1,16 @@
+// To use Replit Database for persistence:
+// 1. Install: npm install @replit/database
+// 2. Import: import Database from "@replit/database";
+// 3. Initialize: const db = new Database();
+// 4. Store data: await db.set("users", users);
+// 5. Retrieve data: const users = await db.get("users");
 
 import { Bet, User, Transaction } from '../models/User.js';
 
 class BettingService {
   private users: Map<string, User> = new Map();
   private bets: Map<string, Bet> = new Map();
+  private games: Map<string, Game> = new Map();
   private transactions: Map<string, Transaction[]> = new Map();
 
   constructor() {
@@ -23,7 +30,7 @@ class BettingService {
 
   placeBet(userId: string, gameId: string, team: string, amount: number, odds: number): { success: boolean; bet?: Bet; error?: string } {
     const user = this.users.get(userId);
-    
+
     if (!user) {
       return { success: false, error: 'User not found' };
     }
@@ -46,7 +53,7 @@ class BettingService {
 
     user.walletBalance -= amount;
     this.bets.set(bet.id, bet);
-    
+
     this.addTransaction(userId, {
       id: `TXN-${Date.now()}`,
       userId,
@@ -61,7 +68,7 @@ class BettingService {
 
   cashOut(betId: string): { success: boolean; amount?: number; error?: string } {
     const bet = this.bets.get(betId);
-    
+
     if (!bet) {
       return { success: false, error: 'Bet not found' };
     }
@@ -78,13 +85,13 @@ class BettingService {
     // Calculate cash out amount (typically 80-95% of potential win)
     const cashOutMultiplier = 0.85;
     const currentValue = bet.amount + (bet.potentialWin - bet.amount) * cashOutMultiplier;
-    
+
     bet.status = 'cashed_out';
     bet.cashOutAmount = currentValue;
     bet.settledAt = new Date().toISOString();
-    
+
     user.walletBalance += currentValue;
-    
+
     this.addTransaction(bet.userId, {
       id: `TXN-${Date.now()}`,
       userId: bet.userId,
@@ -99,7 +106,7 @@ class BettingService {
 
   settleBet(betId: string, won: boolean): { success: boolean; error?: string } {
     const bet = this.bets.get(betId);
-    
+
     if (!bet) {
       return { success: false, error: 'Bet not found' };
     }
