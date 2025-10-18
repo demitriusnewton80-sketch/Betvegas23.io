@@ -1,0 +1,289 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Streaming Dashboard - Young Meat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: white;
+            margin-bottom: 10px;
+        }
+        .live-badge {
+            background: #f85149;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-top: 10px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .card h3 {
+            margin-bottom: 15px;
+            color: #58a6ff;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #21262d;
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #22c55e;
+            margin-right: 8px;
+        }
+        .btn {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 15px;
+            width: 100%;
+        }
+        .btn:hover {
+            background: #2ea043;
+        }
+        .btn-espn {
+            background: #dc2626;
+        }
+        .btn-espn:hover {
+            background: #ef4444;
+        }
+        .partners-list {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .partner-item {
+            background: #21262d;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .endpoint {
+            background: #21262d;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            margin: 5px 0;
+            color: #58a6ff;
+        }
+        .stream-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📡 Production Streaming Dashboard</h1>
+        <p>ESPN-Based Live Sports Distribution</p>
+        <span class="live-badge">🔴 LIVE STREAMING</span>
+        <p style="margin-top: 10px; opacity: 0.9;">FCC Entity: 20130314143016 | Registration: 0024454324</p>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h3>🎯 ESPN Integration</h3>
+            <div id="espnStatus">
+                <div class="info-row">
+                    <span>Status:</span>
+                    <strong><span class="status-indicator"></span>Active</strong>
+                </div>
+                <div class="info-row">
+                    <span>Coverage:</span>
+                    <strong>NFL, NBA, MLB, NHL</strong>
+                </div>
+                <div class="info-row">
+                    <span>Quality:</span>
+                    <strong>1080p60 HLS/DASH</strong>
+                </div>
+                <div class="info-row">
+                    <span>Latency:</span>
+                    <strong>2-3 seconds</strong>
+                </div>
+            </div>
+            <button class="btn btn-espn" onclick="testESPNFeed()">Test ESPN Feed</button>
+        </div>
+
+        <div class="card">
+            <h3>📊 Distribution Stats</h3>
+            <div id="stats">
+                <p>Loading stats...</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🔗 Stream Endpoints</h3>
+            <div id="endpoints">
+                <p>Loading endpoints...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="partners-list">
+        <h2>🤝 Registered Sportsbook Partners</h2>
+        <button class="btn" onclick="registerPartner()">Register New Partner</button>
+        <div id="partnersList" style="margin-top: 20px;">
+            <p>Loading partners...</p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/streaming/production/stats`);
+                const data = await response.json();
+                
+                document.getElementById('stats').innerHTML = `
+                    <div class="info-row">
+                        <span>Total Partners:</span>
+                        <strong>${data.totalPartners}</strong>
+                    </div>
+                    <div class="info-row">
+                        <span>Active Partners:</span>
+                        <strong>${data.activePartners}</strong>
+                    </div>
+                    <div class="info-row">
+                        <span>Uptime:</span>
+                        <strong>${data.uptime}</strong>
+                    </div>
+                    <div class="info-row">
+                        <span>Protocols:</span>
+                        <strong>${data.streamingCapabilities.protocols.join(', ')}</strong>
+                    </div>
+                `;
+
+                displayPartners(data.partners);
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function loadEndpoints() {
+            const gameId = 'nfl-1';
+            document.getElementById('endpoints').innerHTML = `
+                <div class="endpoint">SSE: /streaming/production/feed/{sportsbookId}</div>
+                <div class="endpoint">ESPN: /streaming/production/espn/feed/{sportsbookId}</div>
+                <div class="endpoint">Direct: /streaming/stream/{gameId}</div>
+                <div class="endpoint">Webhook: /webhooks/receive/{sportsbookId}</div>
+            `;
+        }
+
+        function displayPartners(partners) {
+            const partnersHtml = partners.map(partner => `
+                <div class="partner-item">
+                    <div>
+                        <strong>${partner.name}</strong>
+                        <div style="font-size: 12px; color: #8b949e; margin-top: 5px;">
+                            ID: ${partner.id} | Registered: ${new Date(partner.registeredAt).toLocaleDateString()}
+                        </div>
+                    </div>
+                    <div>
+                        <span class="status-indicator" style="background: ${partner.active ? '#22c55e' : '#6b7280'}"></span>
+                        ${partner.active ? 'Active' : 'Inactive'}
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('partnersList').innerHTML = partnersHtml || '<p>No partners registered</p>';
+        }
+
+        async function testESPNFeed() {
+            const gameId = prompt('Enter Game ID to test (e.g., nfl-1):') || 'nfl-1';
+            window.open(`/streaming/production/espn/${gameId}`, '_blank');
+        }
+
+        async function registerPartner() {
+            const sportsbookId = prompt('Sportsbook ID:');
+            const sportsbookName = prompt('Sportsbook Name:');
+            const webhookUrl = prompt('Webhook URL:');
+            const apiKey = prompt('API Key:');
+            
+            if (!sportsbookId || !sportsbookName || !webhookUrl || !apiKey) {
+                alert('All fields are required');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/streaming/production/register-partner`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sportsbookId,
+                        sportsbookName,
+                        webhookUrl,
+                        apiKey
+                    })
+                });
+                
+                const data = await response.json();
+                alert('Partner registered successfully!\n\nStream endpoint: ' + data.streamingEndpoints.espn);
+                loadStats();
+            } catch (error) {
+                alert('Error registering partner: ' + error.message);
+            }
+        }
+
+        // Load data on page load
+        loadStats();
+        loadEndpoints();
+        
+        // Refresh stats every 10 seconds
+        setInterval(loadStats, 10000);
+    </script>
+</body>
+</html>
