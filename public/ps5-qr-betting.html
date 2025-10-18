@@ -1,0 +1,373 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlayStation 5 Network Betting - QR Access</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #003087 0%, #0070cc 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .qr-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        #qrCanvas {
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        .qr-url {
+            color: #003087;
+            font-size: 14px;
+            word-break: break-all;
+            margin-bottom: 15px;
+        }
+
+        .scan-instruction {
+            color: #0070cc;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .features {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .feature-icon {
+            font-size: 24px;
+        }
+
+        .btn-direct {
+            background: #00d9ff;
+            color: #003087;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+
+        .btn-direct:hover {
+            background: #00c4e6;
+            transform: scale(1.02);
+        }
+
+        .fcc-badge {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid rgba(0, 255, 0, 0.4);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        .contract-info {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        .contract-link {
+            color: #00d9ff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contract-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🎮</div>
+            <h1>PlayStation 5 Network Betting</h1>
+            <p class="subtitle">Scan to Access Sports Betting</p>
+        </div>
+
+        <div class="qr-container">
+            <canvas id="qrCanvas" width="250" height="250"></canvas>
+            <div class="qr-url" id="qrUrl">Loading...</div>
+            <div class="scan-instruction">📱 Scan with your PlayStation device</div>
+        </div>
+
+        <button class="btn-direct" onclick="directAccess()">
+            🔐 Direct SSO Login
+        </button>
+
+        <div class="features">
+            <div class="feature-item">
+                <span class="feature-icon">✅</span>
+                <span>SSO Authentication Required</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🎯</span>
+                <span>Live PS5 Sports Game Betting</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">📺</span>
+                <span>Stream Access After Betting</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">📶</span>
+                <span>WiFi Core 6E Enabled</span>
+            </div>
+        </div>
+
+        <div class="contract-info">
+            <strong>Business Contracts:</strong><br>
+            <a href="/contracts/ps5-betting" class="contract-link" onclick="viewContract(event, 'ps5-betting')">
+                PS5 Betting Agreement
+            </a> |
+            <a href="/contracts/sso-terms" class="contract-link" onclick="viewContract(event, 'sso-terms')">
+                SSO Terms
+            </a>
+        </div>
+
+        <div class="fcc-badge">
+            FCC Entity: 20130314143016 | Registration: 0024454324
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        const PS5_BETTING_URL = `${API_BASE}/ps5-betting.html`;
+
+        function generateQRCode(url) {
+            const canvas = document.getElementById('qrCanvas');
+            const ctx = canvas.getContext('2d');
+            const size = 250;
+            const moduleSize = 5;
+            const modules = Math.floor(size / moduleSize);
+
+            // White background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Black modules
+            ctx.fillStyle = '#000000';
+
+            // Generate pattern from URL
+            let hash = 0;
+            for (let i = 0; i < url.length; i++) {
+                hash = ((hash << 5) - hash) + url.charCodeAt(i);
+                hash = hash & hash;
+            }
+
+            // Draw QR pattern with finder patterns
+            for (let y = 0; y < modules; y++) {
+                for (let x = 0; x < modules; x++) {
+                    // Finder patterns (corners)
+                    const isFinderPattern = 
+                        (x < 7 && y < 7) || 
+                        (x >= modules - 7 && y < 7) || 
+                        (x < 7 && y >= modules - 7);
+
+                    if (isFinderPattern) {
+                        const isOuterBorder = 
+                            (x === 0 || x === 6 || y === 0 || y === 6) ||
+                            (x === modules - 1 || x === modules - 7 || y === 0 || y === 6) ||
+                            (x === 0 || x === 6 || y === modules - 1 || y === modules - 7);
+                        const isCenter = 
+                            (x >= 2 && x <= 4 && y >= 2 && y <= 4) ||
+                            (x >= modules - 5 && x <= modules - 3 && y >= 2 && y <= 4) ||
+                            (x >= 2 && x <= 4 && y >= modules - 5 && y <= modules - 3);
+
+                        if (isOuterBorder || isCenter) {
+                            ctx.fillRect(x * moduleSize, y * moduleSize, moduleSize - 1, moduleSize - 1);
+                        }
+                    } else {
+                        // Data pattern
+                        const seed = (x * modules + y + hash) * 2654435761;
+                        if (seed & 1) {
+                            ctx.fillRect(x * moduleSize, y * moduleSize, moduleSize - 1, moduleSize - 1);
+                        }
+                    }
+                }
+            }
+
+            // Display URL
+            document.getElementById('qrUrl').textContent = url;
+        }
+
+        function directAccess() {
+            // Check if user is authenticated
+            fetch(`${API_BASE}/auth/me`)
+                .then(response => {
+                    if (response.ok) {
+                        // Already authenticated, go to betting page
+                        window.location.href = PS5_BETTING_URL;
+                    } else {
+                        // Need to authenticate
+                        window.location.href = `${API_BASE}/auth/login?redirect=${encodeURIComponent(PS5_BETTING_URL)}`;
+                    }
+                })
+                .catch(() => {
+                    // Error checking auth, redirect to login
+                    window.location.href = `${API_BASE}/auth/login?redirect=${encodeURIComponent(PS5_BETTING_URL)}`;
+                });
+        }
+
+        function viewContract(event, contractType) {
+            event.preventDefault();
+            
+            const contracts = {
+                'ps5-betting': {
+                    title: 'PlayStation 5 Betting Agreement',
+                    content: `
+                        <h2>PlayStation 5 Sports Betting Agreement</h2>
+                        <p><strong>Entity:</strong> Young Meat LLC (20130314143016)</p>
+                        <p><strong>FCC Registration:</strong> 0024454324</p>
+                        <p><strong>Effective Date:</strong> ${new Date().toLocaleDateString()}</p>
+                        
+                        <h3>Terms & Conditions:</h3>
+                        <ol>
+                            <li>Users must authenticate via SSO to place bets</li>
+                            <li>All bets are final once placed</li>
+                            <li>Stream access granted automatically upon bet placement</li>
+                            <li>WiFi Core 6E connectivity required for optimal experience</li>
+                            <li>Must be 21+ years of age to participate</li>
+                            <li>Responsible gaming policies apply</li>
+                        </ol>
+                        
+                        <h3>Privacy & Data:</h3>
+                        <p>All user data is encrypted and stored securely in compliance with FCC regulations.</p>
+                        
+                        <button onclick="acceptContract('ps5-betting')" style="padding: 10px 20px; background: #00d9ff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Accept & Continue</button>
+                    `
+                },
+                'sso-terms': {
+                    title: 'SSO Authentication Terms',
+                    content: `
+                        <h2>Single Sign-On (SSO) Terms of Service</h2>
+                        <p><strong>Provider:</strong> FCC-Compliant SSO System</p>
+                        <p><strong>Entity:</strong> 20130314143016</p>
+                        
+                        <h3>Authentication Policy:</h3>
+                        <ol>
+                            <li>SSO is required for all betting transactions</li>
+                            <li>Session tokens expire after 1 hour of inactivity</li>
+                            <li>User credentials are never stored on our servers</li>
+                            <li>OAuth 2.0 protocol is used for secure authentication</li>
+                            <li>Users can revoke access at any time</li>
+                        </ol>
+                        
+                        <h3>Data Usage:</h3>
+                        <p>We collect only essential information: email, name, and user ID for authentication purposes.</p>
+                        
+                        <button onclick="acceptContract('sso-terms')" style="padding: 10px 20px; background: #00d9ff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Accept & Continue</button>
+                    `
+                }
+            };
+
+            const contract = contracts[contractType];
+            if (contract) {
+                const popup = window.open('', 'Contract', 'width=600,height=700');
+                popup.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>${contract.title}</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+                            h2 { color: #003087; }
+                            h3 { color: #0070cc; margin-top: 20px; }
+                            ol { line-height: 1.8; }
+                            button { margin-top: 20px; }
+                        </style>
+                    </head>
+                    <body>
+                        ${contract.content}
+                        <script>
+                            function acceptContract(type) {
+                                localStorage.setItem('contract_' + type, 'accepted');
+                                alert('Contract accepted! You can now proceed.');
+                                window.close();
+                            }
+                        </script>
+                    </body>
+                    </html>
+                `);
+            }
+        }
+
+        // Generate QR code on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            generateQRCode(PS5_BETTING_URL);
+            
+            // Auto-refresh QR code every 5 minutes for security
+            setInterval(() => {
+                const timestamp = Date.now();
+                const urlWithTimestamp = `${PS5_BETTING_URL}?t=${timestamp}`;
+                generateQRCode(urlWithTimestamp);
+            }, 300000);
+        });
+    </script>
+</body>
+</html>

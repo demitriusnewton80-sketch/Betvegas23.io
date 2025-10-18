@@ -231,4 +231,22 @@ router.get('/wifi/diagnostic', (req: Request, res: Response) => {
   });
 });
 
+// QR Code Access Information
+router.get('/qr-access', (req: Request, res: Response) => {
+  const baseUrl = `${req.protocol}://${req.get('host')}`;
+  
+  res.json({
+    qrPageUrl: `${baseUrl}/ps5-qr-betting.html`,
+    bettingPageUrl: `${baseUrl}/ps5-betting.html`,
+    ssoLoginUrl: `${baseUrl}/auth/login`,
+    contracts: {
+      ps5Betting: `${baseUrl}/contracts/ps5-betting`,
+      ssoTerms: `${baseUrl}/contracts/sso-terms`
+    },
+    publicAccess: true,
+    requiresSSO: true,
+    fccEntity: '20130314143016'
+  });
+});
+
 export default router;

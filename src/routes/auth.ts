@@ -1,49 +1,59 @@
-
 import express, { Request, Response } from 'express';
 import { ssoService } from '../services/SSOService.js';
+import crypto from 'crypto';
 
 const router = express.Router();
 
 // SSO Login - Redirect to provider
 router.get('/login', (req: Request, res: Response) => {
-  const authUrl = ssoService.getAuthorizationUrl();
+  const state = crypto.randomBytes(16).toString('hex');
+  const redirectUrl = req.query.redirect as string || '/';
+  const authUrl = ssoService.getAuthorizationUrl(state);
+
+  res.cookie('oauth_state', state, {
+    httpOnly: true,
+    maxAge: 600000,
+    sameSite: 'lax'
+  });
+
+  res.cookie('post_login_redirect', redirectUrl, {
+    httpOnly: true,
+    maxAge: 600000,
+    sameSite: 'lax'
+  });
+
   res.redirect(authUrl);
 });
 
 // SSO Callback - Handle provider response
 router.get('/callback', async (req: Request, res: Response) => {
-  const { code, state, error } = req.query;
+  const { code, state } = req.query;
+  const savedState = req.cookies?.oauth_state;
+  const redirectUrl = req.cookies?.post_login_redirect || '/';
 
-  if (error) {
-    return res.status(400).json({
-      error: 'Authentication failed',
-      details: error
-    });
-  }
-
-  if (!code || typeof code !== 'string') {
-    return res.status(400).json({
-      error: 'Missing authorization code'
-    });
+  if (!code || !state || state !== savedState) {
+    return res.status(400).json({ error: 'Invalid OAuth callback' });
   }
 
   try {
-    const user = await ssoService.exchangeCode(code);
-    
-    // In production, set secure HTTP-only cookie
-    res.cookie('session_id', user.id, {
+    const user = await ssoService.exchangeCode(code as string);
+    const sessionId = crypto.randomBytes(64).toString('hex');
+
+    res.cookie('session_id', sessionId, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      maxAge: 3600000,
       sameSite: 'lax'
     });
 
-    // Redirect to main app
-    res.redirect('/?authenticated=true');
-  } catch (err) {
-    console.error('SSO callback error:', err);
+    res.clearCookie('oauth_state');
+    res.clearCookie('post_login_redirect');
+
+    res.redirect(redirectUrl);
+  } catch (error) {
+    console.error('SSO callback error:', error);
     res.status(500).json({
-      error: 'Authentication processing failed'
+      error: 'Authentication processing failed',
+      message: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
