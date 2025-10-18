@@ -5,6 +5,7 @@ import streamingRouter from './routes/streaming.js';
 import authRouter from './routes/auth.js';
 import webhooksRouter from './routes/webhooks.js';
 import accountRouter from './routes/account.js';
+import contactRoutes from './routes/contact.js';
 import { sportsDataService } from './services/SportsDataService.js';
 
 const app = express();
@@ -53,6 +54,7 @@ app.use('/streaming', streamingRouter);
 app.use('/auth', authRouter);
 app.use('/webhooks', webhooksRouter);
 app.use('/account', accountRouter);
+app.use('/contact', contactRoutes);
 
 // Ensure all routes are mounted
 console.log('📍 Routes registered:');
@@ -61,6 +63,7 @@ console.log('   - /streaming');
 console.log('   - /auth');
 console.log('   - /webhooks');
 console.log('   - /account');
+console.log('   - /contact');
 
 // 404 handler for API
 app.use((req: Request, res: Response) => {
