@@ -245,9 +245,9 @@
         }
         
         // Group games by sport
-        function groupGamesBySport(games) {
+        function groupGamesBySport(gamesData) {
             const grouped = {};
-            games.forEach(game => {
+            gamesData.forEach(game => {
                 if (!grouped[game.sport]) {
                     grouped[game.sport] = [];
                 }
