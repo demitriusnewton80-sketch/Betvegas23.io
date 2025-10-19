@@ -300,6 +300,43 @@ args = "echo \"=== Starting development server ===\""
 task = "shell.exec"
 args = "npm run dev"
 
+[[workflows.workflow]]
+name = "Direct contact"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"===================================\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Young Meeat LLC - FCC Entity\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"===================================\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Entity ID: 20130314143016\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Registration Number: 0024454324\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Contact Email: gbemeeat@gmail.com\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Secondary Email: meeatupt215@gmail.com\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"===================================\""
+
 [[ports]]
 localPort = 5000
 externalPort = 5000
