@@ -13,6 +13,7 @@ import contentRoutes from './routes/content.js'; // New import for content route
 import samRoutes from './routes/sam.js'; // New import for SAM.gov routes
 import ssoPluginRoutes from './routes/sso-plugin.js'; // New import for SSO plugin routes
 import spotifyRoutes from './routes/spotify.js'; // New import for Spotify routes
+import qrRoutes from './routes/qr.js';
 import { sportsDataService } from './services/SportsDataService.js';
 import path from 'path'; // Import path module
 
@@ -80,6 +81,7 @@ app.use('/content', contentRoutes); // Mount content routes
 app.use('/sam', samRoutes); // Mount SAM.gov routes
 app.use('/sso-plugin', ssoPluginRoutes); // Mount SSO plugin routes
 app.use('/spotify', spotifyRoutes); // Mount Spotify routes
+app.use('/qr', qrRoutes);
 
 // Ensure all routes are mounted
 console.log('📍 Routes registered:');
@@ -98,6 +100,7 @@ console.log('   - /sso-plugin'); // Added for new SSO plugin routes
 console.log('   - /spotify'); // Added for new Spotify routes
 console.log('   - /login'); // Added for personal SSO login
 console.log('   - /public-access'); // Added for public access view
+console.log('   - /qr'); // Added for QR code routes
 
 // 404 handler for API
 app.use((req: Request, res: Response) => {
