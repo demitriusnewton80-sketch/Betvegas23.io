@@ -408,7 +408,7 @@ args = "echo \"=== Troubleshooting Complete ===\""
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"Access dashboard at: /troubleshooting\""
+args = "echo \"Access dashboard at: http://0.0.0.0:5000/public-troubleshooting.html\""
 
 [[workflows.workflow]]
 name = "Cloud Troubleshooting"
