@@ -1128,6 +1128,20 @@
         let currentSport = 'all';
         let betSlipItems = [];
 
+        function filterBySport(sport) {
+            currentSport = sport;
+            document.querySelectorAll('.sport-chip').forEach(chip => chip.classList.remove('active'));
+            event.target.closest('.sport-chip').classList.add('active');
+            loadGames();
+        }
+
+        function toggleQRCode() {
+            const qrSection = document.getElementById('qrCodeSection');
+            if (qrSection) {
+                qrSection.classList.toggle('hidden');
+            }
+        }
+
         async function loadGames() {
             try {
                 const url = currentSport === 'all' 
@@ -1202,19 +1216,7 @@
             }).join('');
         }
 
-        function filterBySport(sport) {
-            currentSport = sport;
-            document.querySelectorAll('.sport-chip').forEach(chip => chip.classList.remove('active'));
-            event.target.closest('.sport-chip').classList.add('active');
-            loadGames();
-        }
-
-        function filterBySport(sport) {
-            currentSport = sport;
-            document.querySelectorAll('.sport-chip').forEach(chip => chip.classList.remove('active'));
-            event.target.closest('.sport-chip').classList.add('active');
-            loadGames();
-        }
+        
 
         function formatOdds(odds) {
             return odds > 0 ? `+${odds}` : odds;
@@ -1570,7 +1572,11 @@
             if (logo && logo.startsWith('http')) {
                 return `<img src="${logo}" alt="${teamName}" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';" style="width: 40px; height: 40px; object-fit: contain; vertical-align: middle;"><span style="display:none; font-size: 24px;">${teamLogoEmojis[teamName] || '🏆'}</span>`;
             }
-            return logo=/i/teamlogos/nba/500/mil.png&h=200&w=200',
+            return logo;
+        }
+
+        const teamLogosExtra = {
+            'Phoenix Suns': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/phx.png&h=200&w=200',
             'Phoenix Suns': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/phx.png&h=200&w=200',
             'Brooklyn Nets': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/bkn.png&h=200&w=200',
 
