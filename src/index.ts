@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import cookieParser from 'cookie-parser';
 import { appCore } from './core/AppCore.js';
+import { phoneControlService } from './services/PhoneControlService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -147,6 +148,16 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
     timestamp: new Date().toISOString()
   });
 });
+
+// Initialize phone control and network plugins on startup
+console.log('🔌 Initializing Betting Zone - Phone Control & Network Plugins...');
+console.log(`📱 Phone Control: Enabled`);
+console.log(`🌐 Internet Connection: Active on 0.0.0.0:${PORT}`);
+console.log(`🎯 FCC Entity: 20130314143016`);
+
+// Auto-activate all network plugins
+const hostPlugins = phoneControlService.getHostPlugins();
+console.log(`✅ Activated ${hostPlugins.length} host plugins:`, hostPlugins.map(p => p.name).join(', '));
 
 const server = app.listen(PORT, HOST, () => {
   console.log(`🚀 API Server running on ${HOST}:${PORT}`);
