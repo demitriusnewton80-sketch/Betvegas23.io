@@ -233,7 +233,7 @@ router.get('/fcc/status/:email', async (req: Request, res: Response) => {
   });
 });
 
-// Get WiFi connection hub status with IP infusion
+// Get WiFi connection hub status with IP infusion (deprecated - use /wifi-infusion/status)
 router.get('/wifi-hub/status', (req: Request, res: Response) => {
   const clientIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '0.0.0.0';
   
@@ -247,7 +247,7 @@ router.get('/wifi-hub/status', (req: Request, res: Response) => {
     fccEntity: '20130314143016',
     wifiInfusion: {
       enabled: true,
-      protocol: 'TCP/IP',
+      protocol: 'TCP/IP over HTTPS',
       bandwidth: 'unlimited',
       signalStrength: 100,
       encryption: 'WPA3-Enterprise'

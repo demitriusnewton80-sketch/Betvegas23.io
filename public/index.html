@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -128,19 +129,20 @@
 
         async function loadWiFiConnection() {
             try {
-                const response = await fetch(`${API_BASE}/streaming/wifi-hub/status`);
+                const response = await fetch(`${API_BASE}/wifi-infusion/status`);
                 const data = await response.json();
 
                 document.getElementById('wifiStatus').innerHTML = `
-                    📡 ${data.hubName} - ${data.status.toUpperCase()}
+                    📡 WiFi Connection Infusion - ${data.wifiInfusion.enabled ? 'ACTIVE' : 'INACTIVE'}
                 `;
 
                 document.getElementById('ipInfo').innerHTML = `
-                    <div><strong>WiFi IP Connection:</strong> ${data.ipAddress}:${data.port}</div>
-                    <div><strong>Signal Strength:</strong> ${data.connectionStrength}</div>
-                    <div><strong>Latency:</strong> ${data.latency}</div>
-                    <div><strong>Connected Plugins:</strong> ${data.connectedPlugins.length}</div>
-                    <div><strong>FCC Entity:</strong> ${data.fccEntity}</div>
+                    <div><strong>WiFi IP Connection:</strong> ${data.wifiInfusion.serverIP}:${data.wifiInfusion.port}</div>
+                    <div><strong>Client IP:</strong> ${data.wifiInfusion.clientIP}</div>
+                    <div><strong>Signal Strength:</strong> ${data.wifiInfusion.signalStrength}%</div>
+                    <div><strong>Latency:</strong> ${data.wifiInfusion.latency}</div>
+                    <div><strong>Protocol:</strong> ${data.wifiInfusion.protocol}</div>
+                    <div><strong>FCC Entity:</strong> ${data.wifiInfusion.fccEntity}</div>
                 `;
             } catch (error) {
                 console.error('Error loading WiFi connection:', error);
@@ -159,7 +161,7 @@
                 displayGames(allGames);
             } catch (error) {
                 console.error('Error loading games:', error);
-                document.getElementById('gamesGrid').innerHTML = '<p>Error loading games</p>';
+                document.getElementById('gamesGrid').innerHTML = '<p>Error loading games. Please try again later.</p>';
             }
         }
 
@@ -199,7 +201,7 @@
         }
 
         function placeBet(gameId) {
-            alert('Betting interface coming soon for game: ' + gameId);
+            window.location.href = `/ps5-betting.html?gameId=${gameId}`;
         }
 
         window.addEventListener('load', () => {
