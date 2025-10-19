@@ -91,12 +91,12 @@ class PhoneControlService extends EventEmitter {
     });
   }
 
-  // Validate phone control access
+  // Validate Betting Zone access
   validatePhoneAccess(email: string): boolean {
     return this.authorizedEmails.includes(email.toLowerCase());
   }
 
-  // Create phone control session
+  // Create Betting Zone session
   createSession(email: string, phoneNumber?: string): PhoneControlSession {
     const sessionId = `phone-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
@@ -185,7 +185,7 @@ class PhoneControlService extends EventEmitter {
     return this.distributions.get(userId) || [];
   }
 
-  // Send phone control command
+  // Send Betting Zone command
   sendPhoneCommand(sessionId: string, command: string, pluginId?: string): any {
     const session = this.sessions.get(sessionId);
     if (!session || session.networkStatus !== 'connected') {

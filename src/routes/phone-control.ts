@@ -24,7 +24,7 @@ router.post('/session/create', (req: Request, res: Response) => {
   res.json({
     success: true,
     session,
-    message: 'Phone control session created'
+    message: 'Betting Zone session created'
   });
 });
 
@@ -144,7 +144,7 @@ router.get('/status', (req: Request, res: Response) => {
   res.json({
     networkStatus: 'online',
     corePluginsActive: phoneControlService.getHostPlugins().every(p => p.status === 'active'),
-    phoneControlEnabled: true,
+    bettingZoneEnabled: true,
     distributionSystem: 'active',
     fccEntity: '20130314143016',
     timestamp: new Date().toISOString()
