@@ -38,6 +38,16 @@ Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 - `GET /sportsbook/games?source=psn` - Gaming content betting
 - `GET /ps5-betting.html` - PS5 sports betting interface
 
+### Transformer Bridge (Core to Web3 Delivery)
+- `GET /transformer/status` - Get transformer bridge status
+- `POST /transformer/activate` - Activate transformer bridge
+- `POST /transformer/deactivate` - Deactivate transformer bridge
+- `POST /transformer/transform` - Transform and deliver data to Web3
+- `POST /transformer/transform/batch` - Batch transform data
+- `GET /transformer/rules` - Get transformation rules
+- `GET /transformer/data` - Get transformed data history
+- `GET /transformer/data/:id` - Get specific transformed data
+
 ### Web3 Bridge (Blockchain Integration)
 - `GET /web3/status` - Get Web3 bridge status
 - `POST /web3/wallet/connect` - Connect crypto wallet

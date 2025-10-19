@@ -92,6 +92,13 @@ export class AppCore extends EventEmitter {
         status: 'connected',
         lastHeartbeat: Date.now(),
         metadata: { endpoint: '/sso-plugin/plugins' }
+      },
+      {
+        id: 'transformer-bridge',
+        type: 'wifi',
+        status: 'connected',
+        lastHeartbeat: Date.now(),
+        metadata: { endpoint: '/transformer/status', bridgeType: 'web3-delivery' }
       }
     ];
 
