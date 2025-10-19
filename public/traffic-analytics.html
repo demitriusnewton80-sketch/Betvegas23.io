@@ -1,0 +1,421 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Analytics - Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #fff;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #3b82f6;
+        }
+
+        .fcc-badge {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-5px);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #3b82f6;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-container {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .bar {
+            background: rgba(59, 130, 246, 0.2);
+            border-left: 4px solid #3b82f6;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bar-fill {
+            height: 24px;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .request-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-left: 3px solid #22c55e;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .request-meta {
+            color: #94a3b8;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .method-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        .method-GET { background: #22c55e; color: white; }
+        .method-POST { background: #3b82f6; color: white; }
+        .method-PUT { background: #f59e0b; color: white; }
+        .method-DELETE { background: #ef4444; color: white; }
+
+        .btn {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid #22c55e;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 Live Traffic Analytics</h1>
+        <p>Real-time traffic monitoring for Young Meeat LLC</p>
+        <span class="fcc-badge">FCC Entity: 20130314143016</span>
+        <div style="margin-top: 15px;">
+            <span class="live-indicator">
+                <span class="pulse"></span>
+                Live Monitoring Active
+            </span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Requests</div>
+                <div class="stat-value" id="totalRequests">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Unique Visitors</div>
+                <div class="stat-value" id="uniqueVisitors">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Uptime</div>
+                <div class="stat-value" style="font-size: 24px;" id="uptime">0s</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Requests/Min</div>
+                <div class="stat-value" style="font-size: 24px;" id="requestsPerMin">0</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Top Endpoints</h2>
+            <div class="chart-container" id="topEndpoints">
+                <p style="color: #94a3b8;">Loading...</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📈 Requests by Hour</h2>
+            <div class="chart-container" id="hourlyRequests">
+                <p style="color: #94a3b8;">Loading...</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔧 Request Methods</h2>
+            <div class="chart-container" id="requestMethods">
+                <p style="color: #94a3b8;">Loading...</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>⏱️ Recent Requests</h2>
+            <div id="recentRequests">
+                <p style="color: #94a3b8;">Loading...</p>
+            </div>
+            <button class="btn" onclick="loadMetrics()" style="margin-top: 15px;">🔄 Refresh</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let lastRequestCount = 0;
+        let lastUpdateTime = Date.now();
+
+        async function loadMetrics() {
+            try {
+                const response = await fetch(`${API_BASE}/analytics/metrics`);
+                const data = await response.json();
+
+                // Update stats
+                document.getElementById('totalRequests').textContent = data.totalRequests.toLocaleString();
+                document.getElementById('uniqueVisitors').textContent = data.uniqueVisitors.toLocaleString();
+                document.getElementById('uptime').textContent = formatUptime(data.uptime);
+
+                // Calculate requests per minute
+                const now = Date.now();
+                const timeDiff = (now - lastUpdateTime) / 1000 / 60;
+                const requestDiff = data.totalRequests - lastRequestCount;
+                const requestsPerMin = timeDiff > 0 ? Math.round(requestDiff / timeDiff) : 0;
+                document.getElementById('requestsPerMin').textContent = requestsPerMin;
+                
+                lastRequestCount = data.totalRequests;
+                lastUpdateTime = now;
+
+                // Display top endpoints
+                displayTopEndpoints(data.topEndpoints);
+
+                // Display hourly requests
+                displayHourlyRequests(data.requestsByHour);
+
+                // Display request methods
+                displayRequestMethods(data.requestsByMethod);
+
+                // Display recent requests
+                displayRecentRequests(data.recentRequests);
+
+            } catch (error) {
+                console.error('Error loading metrics:', error);
+            }
+        }
+
+        function displayTopEndpoints(endpoints) {
+            const container = document.getElementById('topEndpoints');
+            if (!endpoints || endpoints.length === 0) {
+                container.innerHTML = '<p style="color: #94a3b8;">No data available</p>';
+                return;
+            }
+
+            const maxCount = Math.max(...endpoints.map(e => e.count));
+            const html = endpoints.map(endpoint => {
+                const percentage = (endpoint.count / maxCount) * 100;
+                return `
+                    <div class="bar">
+                        <div style="flex: 1;">
+                            <strong>${endpoint.path}</strong>
+                            <div class="bar-fill" style="width: ${percentage}%; margin-top: 8px;"></div>
+                        </div>
+                        <div style="font-size: 20px; font-weight: 700; color: #3b82f6; margin-left: 15px;">
+                            ${endpoint.count}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html;
+        }
+
+        function displayHourlyRequests(hourly) {
+            const container = document.getElementById('hourlyRequests');
+            if (!hourly || hourly.length === 0) {
+                container.innerHTML = '<p style="color: #94a3b8;">No data available</p>';
+                return;
+            }
+
+            const maxCount = Math.max(...hourly.map(h => h.count));
+            const html = hourly.slice(-12).map(hour => {
+                const percentage = (hour.count / maxCount) * 100;
+                const time = new Date(hour.hour + ':00:00').toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                return `
+                    <div class="bar">
+                        <div style="flex: 1;">
+                            <strong>${time}</strong>
+                            <div class="bar-fill" style="width: ${percentage}%; margin-top: 8px;"></div>
+                        </div>
+                        <div style="font-size: 20px; font-weight: 700; color: #3b82f6; margin-left: 15px;">
+                            ${hour.count}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html;
+        }
+
+        function displayRequestMethods(methods) {
+            const container = document.getElementById('requestMethods');
+            if (!methods || methods.length === 0) {
+                container.innerHTML = '<p style="color: #94a3b8;">No data available</p>';
+                return;
+            }
+
+            const maxCount = Math.max(...methods.map(m => m.count));
+            const html = methods.map(method => {
+                const percentage = (method.count / maxCount) * 100;
+                return `
+                    <div class="bar">
+                        <div style="flex: 1;">
+                            <span class="method-badge method-${method.method}">${method.method}</span>
+                            <div class="bar-fill" style="width: ${percentage}%; margin-top: 8px;"></div>
+                        </div>
+                        <div style="font-size: 20px; font-weight: 700; color: #3b82f6; margin-left: 15px;">
+                            ${method.count}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html;
+        }
+
+        function displayRecentRequests(requests) {
+            const container = document.getElementById('recentRequests');
+            if (!requests || requests.length === 0) {
+                container.innerHTML = '<p style="color: #94a3b8;">No recent requests</p>';
+                return;
+            }
+
+            const html = requests.map(req => `
+                <div class="request-item">
+                    <span class="method-badge method-${req.method}">${req.method}</span>
+                    <strong>${req.path}</strong>
+                    <div class="request-meta">
+                        🕒 ${new Date(req.timestamp).toLocaleString()} | 
+                        📍 ${req.ip} | 
+                        🖥️ ${req.userAgent.substring(0, 50)}...
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
+        function formatUptime(seconds) {
+            const days = Math.floor(seconds / 86400);
+            const hours = Math.floor((seconds % 86400) / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = Math.floor(seconds % 60);
+
+            if (days > 0) return `${days}d ${hours}h`;
+            if (hours > 0) return `${hours}h ${minutes}m`;
+            if (minutes > 0) return `${minutes}m ${secs}s`;
+            return `${secs}s`;
+        }
+
+        // Initial load
+        loadMetrics();
+
+        // Auto-refresh every 5 seconds
+        setInterval(loadMetrics, 5000);
+    </script>
+</body>
+</html>
