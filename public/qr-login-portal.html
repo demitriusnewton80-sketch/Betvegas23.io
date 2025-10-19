@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -145,93 +146,77 @@
             <p>Scan to access SSO providers</p>
             <span class="fcc-badge">FCC Entity: 20130314143016</span>
         </div>
-
+        
         <div class="portal-body">
             <div class="qr-section">
                 <h2>Scan QR Code</h2>
-                <div class="qr-code-container" id="qrContainer">
+                <div class="qr-code-container">
                     <canvas id="qrCode"></canvas>
                 </div>
-
+                
                 <div class="qr-info">
                     <p><strong>📲 How to use:</strong> Scan this QR code with your mobile device to access all available SSO login providers and management services.</p>
                 </div>
-
+                
                 <button class="btn download-btn" onclick="downloadQR()">
                     Download QR Code
                 </button>
             </div>
-
+            
             <div class="provider-section">
                 <h3>Available Providers</h3>
                 <div class="provider-list" id="providerList">
                     <p style="text-align: center; color: #6b7280;">Loading providers...</p>
                 </div>
             </div>
-
+            
             <a href="/personal-sso-login.html" class="btn">
                 Direct Login Access →
             </a>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
     <script>
         const API_BASE = window.location.origin;
         const SSO_LOGIN_URL = `${API_BASE}/personal-sso-login.html`;
-
-        // Generate QR Code (fallback without library)
+        
+        // Generate QR Code
         async function generateQRCode() {
+            const canvas = document.getElementById('qrCode');
             try {
-                const qrCanvas = document.getElementById('qrCode');
-                if (!qrCanvas) {
-                    console.error('QR canvas element not found');
-                    const qrContainer = document.getElementById('qrContainer');
-                    if (qrContainer) {
-                        qrContainer.innerHTML = '<p style="color: #ff6b6b;">QR Code generation failed. Please use manual login.</p>';
-                    }
-                    return;
-                }
-
-                const qrData = `${API_BASE}/sso-plugin/login/playstation-network?source=qr`;
-
-                await QRCode.toCanvas(qrCanvas, qrData, {
-                    width: 256,
+                await QRCode.toCanvas(canvas, SSO_LOGIN_URL, {
+                    width: 280,
+                    margin: 2,
                     color: {
-                        dark: '#000000',
+                        dark: '#1e3a8a',
                         light: '#ffffff'
                     }
                 });
-            } catch (error) {
-                console.error('QR Code generation error:', error);
-                const qrContainer = document.querySelector('.qr-code-container');
-                if (qrContainer) {
-                    qrContainer.innerHTML = '<p style="color: #ff6b6b;">QR Code generation failed. Please use manual login.</p>';
-                }
+            } catch (err) {
+                console.error('QR Code generation error:', err);
             }
         }
-
+        
         // Download QR Code
         function downloadQR() {
             const canvas = document.getElementById('qrCode');
-            if (!canvas) {
-                console.error('QR Code canvas element not found for download.');
-                return;
-            }
             const link = document.createElement('a');
             link.download = 'young-meeat-llc-sso-qr.png';
             link.href = canvas.toDataURL();
             link.click();
         }
-
+        
         // Load available SSO providers
         async function loadProviders() {
             try {
                 const response = await fetch(`${API_BASE}/sso-plugin/plugins/enabled`);
                 const data = await response.json();
-
+                
                 const providerList = document.getElementById('providerList');
-
+                
                 if (data.plugins && data.plugins.length > 0) {
                     providerList.innerHTML = data.plugins.map(plugin => `
                         <div class="provider-item">
@@ -251,7 +236,7 @@
                 `;
             }
         }
-
+        
         // Initialize on page load
         generateQRCode();
         loadProviders();

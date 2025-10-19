@@ -1,47 +1,45 @@
+
 import express, { Request, Response } from 'express';
 import { streamingService } from '../services/StreamingService.js';
 
 const router = express.Router();
 
-// Stream live game updates
 router.get('/stream/:gameId', (req: Request, res: Response) => {
   const { gameId } = req.params;
-
+  
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
   res.setHeader('Access-Control-Allow-Origin', '*');
-
-  const intervalId = setInterval(() => {
-    try {
-      const update = streamingService.generateLiveUpdate(gameId);
+  
+  const updateHandler = (update: any) => {
+    if (update.gameId === gameId) {
       res.write(`data: ${JSON.stringify(update)}\n\n`);
-    } catch (error) {
-      console.error('Stream error:', error);
     }
-  }, 3000);
-
+  };
+  
+  const errorHandler = () => {
+    streamingService.recordStreamFailure(gameId);
+  };
+  
+  streamingService.on('gameUpdate', updateHandler);
+  streamingService.startGameStream(gameId);
+  
+  // Handle stream errors
+  res.on('error', errorHandler);
+  
   req.on('close', () => {
-    clearInterval(intervalId);
-    console.log('WiFi network stream connection closed for game:', gameId);
-  });
-});
-
-// Get stream status
-router.get('/status', (req: Request, res: Response) => {
-  const status = streamingService.getBroadcastStatus();
-  res.json({
-    status: 'active',
-    streaming: true,
-    domain: req.get('host'),
-    ...status
+    streamingService.off('gameUpdate', updateHandler);
+    res.off('error', errorHandler);
+    streamingService.stopGameStream(gameId);
+    res.end();
   });
 });
 
 router.post('/stream/:gameId/start', (req: Request, res: Response) => {
   const { gameId } = req.params;
   streamingService.startGameStream(gameId);
-
+  
   res.json({
     message: 'Stream started',
     gameId,
@@ -52,7 +50,7 @@ router.post('/stream/:gameId/start', (req: Request, res: Response) => {
 router.post('/stream/:gameId/stop', (req: Request, res: Response) => {
   const { gameId } = req.params;
   streamingService.stopGameStream(gameId);
-
+  
   res.json({
     message: 'Stream stopped',
     gameId
@@ -63,7 +61,7 @@ router.post('/stream/:gameId/stop', (req: Request, res: Response) => {
 router.get('/stream/:gameId/sharing', (req: Request, res: Response) => {
   const { gameId } = req.params;
   const status = streamingService.getSharingStatus(gameId);
-
+  
   res.json({
     gameId,
     ...status
@@ -74,7 +72,7 @@ router.get('/stream/:gameId/sharing', (req: Request, res: Response) => {
 router.post('/stream/:gameId/report-failure', (req: Request, res: Response) => {
   const { gameId } = req.params;
   streamingService.recordStreamFailure(gameId);
-
+  
   res.json({
     message: 'Stream failure recorded',
     gameId,
@@ -85,7 +83,7 @@ router.post('/stream/:gameId/report-failure', (req: Request, res: Response) => {
 // Get all external sportsbooks
 router.get('/partners', (req: Request, res: Response) => {
   const sportsbooks = streamingService.getExternalSportsbooks();
-
+  
   res.json({
     partners: sportsbooks,
     count: sportsbooks.length
@@ -95,13 +93,13 @@ router.get('/partners', (req: Request, res: Response) => {
 // Add new external sportsbook partner
 router.post('/partners', (req: Request, res: Response) => {
   const { id, name, apiKey, webhookUrl, active = true } = req.body;
-
+  
   if (!id || !name || !apiKey || !webhookUrl) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
-
+  
   streamingService.addExternalSportsbook({ id, name, apiKey, webhookUrl, active });
-
+  
   res.json({
     message: 'External sportsbook partner added',
     sportsbook: { id, name, webhookUrl, active }
@@ -111,18 +109,18 @@ router.post('/partners', (req: Request, res: Response) => {
 // Get Amazon Prime stream access for user
 router.get('/amazon-prime/:userId/:gameId', (req: Request, res: Response) => {
   const { userId, gameId } = req.params;
-
+  
   const hasAccess = streamingService.hasStreamAccess(userId, gameId);
-
+  
   if (!hasAccess) {
-    return res.status(403).json({
+    return res.status(403).json({ 
       error: 'No stream access. Place a bet on this game to watch on Amazon Prime.',
       hasAccess: false
     });
   }
-
+  
   const amazonPrimeUrl = streamingService.getAmazonPrimeUrl(userId, gameId);
-
+  
   res.json({
     hasAccess: true,
     gameId,
@@ -135,7 +133,7 @@ router.get('/amazon-prime/:userId/:gameId', (req: Request, res: Response) => {
 router.get('/my-streams/:userId', (req: Request, res: Response) => {
   const { userId } = req.params;
   const streams = streamingService.getUserStreamAccess(userId);
-
+  
   res.json({
     streams,
     count: streams.length
@@ -145,10 +143,10 @@ router.get('/my-streams/:userId', (req: Request, res: Response) => {
 // FCC Email-based PlayStation Control
 router.post('/fcc/playstation-control', async (req: Request, res: Response) => {
   const { email, action, gameId } = req.body;
-
+  
   // Verify FCC authorized emails
   const authorizedEmails = ['gbemeeat@gmail.com', 'meeatupt215@gmail.com'];
-
+  
   if (!email || !authorizedEmails.includes(email.toLowerCase())) {
     return res.status(403).json({
       error: 'Unauthorized email address',
@@ -156,7 +154,7 @@ router.post('/fcc/playstation-control', async (req: Request, res: Response) => {
       authorizedEmails: authorizedEmails.map(e => e.replace(/(.{2}).*(@.*)/, '$1***$2'))
     });
   }
-
+  
   // FCC Streaming Control
   const fccControl = {
     email,
@@ -194,7 +192,7 @@ router.post('/fcc/playstation-control', async (req: Request, res: Response) => {
     },
     timestamp: new Date().toISOString()
   };
-
+  
   res.json({
     success: true,
     message: 'FCC PlayStation control activated',
@@ -207,35 +205,47 @@ router.post('/fcc/playstation-control', async (req: Request, res: Response) => {
   });
 });
 
-// FCC Phone Control for PlayStation
-router.get('/fcc/status/:email', (req: Request, res: Response) => {
+// Get FCC streaming status for email
+router.get('/fcc/status/:email', async (req: Request, res: Response) => {
   const { email } = req.params;
-
+  
+  const authorizedEmails = ['gbemeeat@gmail.com', 'meeatupt215@gmail.com'];
+  
+  if (!authorizedEmails.includes(email.toLowerCase())) {
+    return res.status(403).json({
+      error: 'Unauthorized email',
+      fccEntity: '20130314143016'
+    });
+  }
+  
   res.json({
     email,
     fccEntity: '20130314143016',
-    phoneControlEnabled: true,
+    fccRegistration: '0024454324',
+    status: 'active',
     services: {
       playstationControl: 'enabled',
-      streamingAccess: 'enabled',
-      radioAccess: 'enabled',
-      videoStreaming: 'enabled'
+      streamingAccess: 'full',
+      bettingPlatform: 'active'
     },
-    activeStreams: streamingService.getActiveStreamCount() || 0,
-    domain: req.get('host'),
-    timestamp: new Date().toISOString()
+    activeStreams: streamingService.getExternalSportsbooks().length,
+    phoneControlEnabled: true,
+    lastActivity: new Date().toISOString()
   });
 });
+
+export default router;
+
 
 // Get NBA direct stream integration
 router.get('/nba/direct/:gameId', async (req: Request, res: Response) => {
   const { gameId } = req.params;
   const { userId } = req.query;
-
+  
   // Verify FCC registration
   const fccRegistration = '0024454324'; // 20130314143016 inc
   const controlEntity = '20130314143016';
-
+  
   const nbaIntegration = {
     gameId,
     streamUrl: 'https://www.nba.com/live',
@@ -253,14 +263,14 @@ router.get('/nba/direct/:gameId', async (req: Request, res: Response) => {
       controlLevel: 'full'
     }
   };
-
+  
   res.json(nbaIntegration);
 });
 
 // Get radio stream info for a game with fallback options
 router.get('/radio/:gameId', async (req: Request, res: Response) => {
   const { gameId } = req.params;
-
+  
   // Multiple radio stream options with fallbacks
   const radioStreams = [
     {
@@ -284,7 +294,7 @@ router.get('/radio/:gameId', async (req: Request, res: Response) => {
       type: 'Sports Radio Network'
     }
   ];
-
+  
   res.json({
     gameId,
     primaryRadio: radioStreams[0],
@@ -298,212 +308,37 @@ router.get('/radio/:gameId', async (req: Request, res: Response) => {
   });
 });
 
-// Get IP address for radio stream URL with WiFi network validation
+// Get IP address for radio stream URL
 router.get('/radio/ip-lookup', async (req: Request, res: Response) => {
   const { url } = req.query;
-
+  
   if (!url || typeof url !== 'string') {
-    return res.status(400).json({ 
-      error: 'URL parameter required',
-
-
-// WiFi Calling Status - Core Network Health
-router.get('/wifi-calling/status', async (req: Request, res: Response) => {
-  const dns = await import('dns/promises');
-  const resolver = new dns.Resolver();
-  
-  // Test DNS resolution with multiple providers
-  const testHosts = [
-    'google.com',
-    'cloudflare.com', 
-    'nba.com'
-  ];
-  
-  const results = await Promise.allSettled(
-    testHosts.map(host => dns.lookup(host))
-  );
-  
-  const successfulLookups = results.filter(r => r.status === 'fulfilled').length;
-  const healthPercentage = (successfulLookups / testHosts.length) * 100;
-  
-  res.json({
-    wifiCalling: {
-      status: healthPercentage >= 66 ? 'healthy' : healthPercentage >= 33 ? 'degraded' : 'critical',
-      protocol: 'DNS-over-WiFi',
-      coreNetwork: 'active',
-      healthPercentage: Math.round(healthPercentage)
-    },
-    dns: {
-      totalTests: testHosts.length,
-      successful: successfulLookups,
-      failed: testHosts.length - successfulLookups
-    },
-    network: {
-      calling: 'enabled',
-      voip: 'active',
-      streaming: 'active',
-      quality: healthPercentage >= 80 ? 'excellent' : healthPercentage >= 60 ? 'good' : 'fair'
-    },
-    fccEntity: '20130314143016',
-    fccRegistration: '0024454324',
-    timestamp: new Date().toISOString()
-  });
-});
-
-// DNS WiFi Calling - Resolve any hostname
-router.get('/wifi-calling/resolve/:hostname', async (req: Request, res: Response) => {
-  const { hostname } = req.params;
-  
-  try {
-    const dns = await import('dns/promises');
-    
-    const [lookup, ipv4, ipv6, mx, ns] = await Promise.allSettled([
-      dns.lookup(hostname),
-      dns.resolve4(hostname),
-      dns.resolve6(hostname),
-      dns.resolveMx(hostname),
-      dns.resolveNs(hostname)
-    ]);
-    
-    res.json({
-      hostname,
-      wifiCalling: {
-        status: 'active',
-        protocol: 'DNS-Core',
-        resolution: 'successful'
-      },
-      records: {
-        primary: lookup.status === 'fulfilled' ? lookup.value : null,
-        ipv4: ipv4.status === 'fulfilled' ? ipv4.value : [],
-        ipv6: ipv6.status === 'fulfilled' ? ipv6.value : [],
-        mx: mx.status === 'fulfilled' ? mx.value : [],
-        nameservers: ns.status === 'fulfilled' ? ns.value : []
-      },
-      fccEntity: '20130314143016',
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    res.status(500).json({
-      error: 'WiFi calling DNS resolution failed',
-      hostname,
-      message: errorMessage,
-      wifiCalling: 'disabled'
-    });
+    return res.status(400).json({ error: 'URL parameter required' });
   }
-});
-
-      wifiCoreNetwork: 'connection_required',
-      wifiCalling: 'disabled'
-    });
-  }
-
+  
   try {
     const urlObj = new URL(url);
     const hostname = urlObj.hostname;
-
-    // Use DNS lookup with WiFi network connection - Core WiFi Calling
-    const dns = await import('dns/promises');
     
-    // Perform multiple DNS resolutions for redundancy
-    const [ipv4Result, ipv6Result] = await Promise.allSettled([
-      dns.resolve4(hostname),
-      dns.resolve6(hostname)
-    ]);
-
-    const ipv4Addresses = ipv4Result.status === 'fulfilled' ? ipv4Result.value : [];
-    const ipv6Addresses = ipv6Result.status === 'fulfilled' ? ipv6Result.value : [];
-
-    // Get primary address using standard lookup
-    const primaryLookup = await dns.lookup(hostname);
-
+    // Use DNS lookup
+    const dns = await import('dns');
+    const { promisify } = await import('util');
+    const lookup = promisify(dns.lookup);
+    
+    const result = await lookup(hostname);
+    
     res.json({
       url: url,
       hostname: hostname,
-      wifiCalling: {
-        status: 'active',
-        protocol: 'DNS',
-        coreNetwork: 'connected'
-      },
-      dns: {
-        primary: {
-          address: primaryLookup.address,
-          family: primaryLookup.family === 4 ? 'IPv4' : 'IPv6'
-        },
-        ipv4: ipv4Addresses,
-        ipv6: ipv6Addresses,
-        totalAddresses: ipv4Addresses.length + ipv6Addresses.length
-      },
-      wifiCoreNetwork: 'connected',
-      fccEntity: '20130314143016',
-      fccRegistration: '0024454324',
-      calling: {
-        voip: 'enabled',
-        streaming: 'enabled',
-        quality: 'high'
-      },
-      note: 'DNS resolution complete via WiFi calling network'
+      ipAddress: result.address,
+      family: result.family === 4 ? 'IPv4' : 'IPv6',
+      note: 'IP addresses for streaming services may change. Consider using the hostname instead.'
     });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('DNS WiFi calling error:', errorMessage);
-    
-    // Attempt fallback DNS servers
-    try {
-      const dns = await import('dns/promises');
-      const resolver = new dns.Resolver();
-      
-      // Use public DNS servers as fallback
-      resolver.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
-      
-      const urlObj = new URL(url as string);
-      const fallbackResult = await resolver.resolve4(urlObj.hostname);
-      
-      res.json({
-        url: url,
-        hostname: urlObj.hostname,
-        wifiCalling: {
-          status: 'active',
-          protocol: 'DNS-Fallback',
-          coreNetwork: 'fallback_connected'
-        },
-        dns: {
-          primary: {
-            address: fallbackResult[0],
-            family: 'IPv4'
-          },
-          ipv4: fallbackResult,
-          ipv6: [],
-          totalAddresses: fallbackResult.length,
-          source: 'public_dns_fallback'
-        },
-        wifiCoreNetwork: 'fallback_connected',
-        fccEntity: '20130314143016',
-        calling: {
-          voip: 'enabled',
-          streaming: 'enabled',
-          quality: 'medium'
-        },
-        note: 'Connected via fallback DNS servers (Google/Cloudflare)'
-      });
-    } catch (fallbackError) {
-      res.status(500).json({
-        error: 'WiFi calling DNS resolution failed',
-        message: errorMessage,
-        wifiCoreNetwork: 'connection_failed',
-        wifiCalling: 'disabled',
-        hostname: url ? new URL(url as string).hostname : 'invalid',
-        fallback: 'Check WiFi network connection and try again',
-        fccEntity: '20130314143016',
-        troubleshooting: {
-          step1: 'Verify WiFi network is connected',
-          step2: 'Check firewall settings',
-          step3: 'Try using IP address directly',
-          step4: 'Contact support at gbemeeat@gmail.com'
-        }
-      });
-    }
+    res.status(500).json({ 
+      error: 'Failed to lookup IP address',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 });
 
-export default router;

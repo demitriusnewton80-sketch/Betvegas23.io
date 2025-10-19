@@ -1,6 +1,6 @@
 
 import { EventEmitter } from 'events';
-import * as crypto from 'crypto';
+import crypto from 'crypto';
 
 export interface SSOUser {
   id: string;
