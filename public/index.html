@@ -421,6 +421,13 @@
             justify-content: center;
             font-size: 24px;
             border: 2px solid var(--border-color);
+            overflow: hidden;
+        }
+        
+        .team-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .team-details {
@@ -1077,39 +1084,68 @@
         let activeStreams = new Set();
         let currentPage = 'sportsbook';
 
-        // Team Logos Mapping
+        // Team Logos Mapping with image URLs
         const teamLogos = {
             // NFL
+            'Kansas City Chiefs': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/kc.png&h=200&w=200',
+            'Buffalo Bills': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/buf.png&h=200&w=200',
+            'San Francisco 49ers': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/sf.png&h=200&w=200',
+            'Dallas Cowboys': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/dal.png&h=200&w=200',
+            'Philadelphia Eagles': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/phi.png&h=200&w=200',
+            'Miami Dolphins': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/mia.png&h=200&w=200',
+
+            // NBA
+            'Los Angeles Lakers': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/lal.png&h=200&w=200',
+            'Boston Celtics': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/bos.png&h=200&w=200',
+            'Golden State Warriors': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/gs.png&h=200&w=200',
+            'Milwaukee Bucks': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/mil.png&h=200&w=200',
+            'Phoenix Suns': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/phx.png&h=200&w=200',
+            'Brooklyn Nets': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/bkn.png&h=200&w=200',
+
+            // MLB
+            'New York Yankees': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/nyy.png&h=200&w=200',
+            'Boston Red Sox': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/bos.png&h=200&w=200',
+            'Los Angeles Dodgers': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/lad.png&h=200&w=200',
+            'San Francisco Giants': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/sf.png&h=200&w=200',
+            'Houston Astros': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/hou.png&h=200&w=200',
+
+            // NHL
+            'Toronto Maple Leafs': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nhl/500/tor.png&h=200&w=200',
+            'Montreal Canadiens': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nhl/500/mtl.png&h=200&w=200',
+            'Edmonton Oilers': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nhl/500/edm.png&h=200&w=200',
+            'Calgary Flames': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nhl/500/cgy.png&h=200&w=200',
+            'Tampa Bay Lightning': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nhl/500/tb.png&h=200&w=200',
+
+            // Boxing - fallback emojis
+            'Tyson Fury': '👑',
+            'Oleksandr Usyk': '🥊',
+            'Canelo Alvarez': '🥊',
+            'Dmitry Bivol': '🥊'
+        };
+
+        const teamLogoEmojis = {
             'Kansas City Chiefs': '🏈',
             'Buffalo Bills': '🦬',
             'San Francisco 49ers': '⚡',
             'Dallas Cowboys': '⭐',
             'Philadelphia Eagles': '🦅',
             'Miami Dolphins': '🐬',
-
-            // NBA
             'Los Angeles Lakers': '👑',
             'Boston Celtics': '🍀',
             'Golden State Warriors': '⚔️',
             'Milwaukee Bucks': '🦌',
             'Phoenix Suns': '☀️',
             'Brooklyn Nets': '🏀',
-
-            // MLB
             'New York Yankees': '⚾',
             'Boston Red Sox': '🧦',
             'Los Angeles Dodgers': '💙',
             'San Francisco Giants': '🧡',
             'Houston Astros': '🌟',
-
-            // NHL
             'Toronto Maple Leafs': '🍁',
             'Montreal Canadiens': '🔴',
             'Edmonton Oilers': '🛢️',
             'Calgary Flames': '🔥',
             'Tampa Bay Lightning': '⚡',
-
-            // Boxing
             'Tyson Fury': '👑',
             'Oleksandr Usyk': '🥊',
             'Canelo Alvarez': '🥊',
@@ -1117,7 +1153,14 @@
         };
 
         function getTeamLogo(teamName) {
-            return teamLogos[teamName] || '🏆';
+            const logo = teamLogos[teamName];
+            if (!logo) return '🏆';
+            
+            // If it's a URL, return an img tag, otherwise return emoji
+            if (logo.startsWith('http')) {
+                return `<img src="${logo}" alt="${teamName}" onerror="this.style.display='none'; this.nextSibling.style.display='block';" style="width: 40px; height: 40px; object-fit: contain;"><span style="display:none; font-size: 24px;">${teamLogoEmojis[teamName] || '🏆'}</span>`;
+            }
+            return logo;
         }
 
         // Page Navigation
