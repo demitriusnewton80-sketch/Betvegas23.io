@@ -165,17 +165,19 @@
         }
 
         .team-logo {
-            width: 60px;
-            height: 60px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
+            width: 80px;
+            height: 80px;
             margin: 0 auto 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
-            border: 2px solid rgba(255,255,255,0.2);
             position: relative;
+        }
+
+        .team-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .team-logo::after {
@@ -357,7 +359,47 @@
             }
 
             grid.innerHTML = filtered.map(stream => `
-                <div class="stream-card ${stream.status === 'live' ? 'live' : ''}">
+                <div class="stream-card ${stream.status === 'live' ? 'live' : ''}" onclick="openRadioStream('${stream.streamUrl}')">
+                    <div class="stream-header">
+                        <div class="league-badge">${stream.league}</div>
+                        ${stream.status === 'live' ? '<div class="live-indicator">● LIVE</div>' : ''}
+                    </div>
+                    <div class="teams-section">
+                        <div class="team">
+                            <div class="team-logo">
+                                <img src="${window.location.origin}/sports-radio/logo/${stream.league}/${encodeURIComponent(stream.awayTeam)}" 
+                                     alt="${stream.awayTeam}" 
+                                     onerror="this.src='data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"80\\" height=\\"80\\"><circle cx=\\"40\\" cy=\\"40\\" r=\\"35\\" fill=\\"%23374151\\"/><text x=\\"40\\" y=\\"50\\" font-size=\\"30\\" text-anchor=\\"middle\\" fill=\\"white\\">${stream.awayTeam.charAt(0)}</text></svg>'">
+                            </div>
+                            <div class="team-name">${stream.awayTeam}</div>
+                        </div>
+                        <div class="vs">@</div>
+                        <div class="team">
+                            <div class="team-logo">
+                                <img src="${window.location.origin}/sports-radio/logo/${stream.league}/${encodeURIComponent(stream.homeTeam)}" 
+                                     alt="${stream.homeTeam}"
+                                     onerror="this.src='data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"80\\" height=\\"80\\"><circle cx=\\"40\\" cy=\\"40\\" r=\\"35\\" fill=\\"%23374151\\"/><text x=\\"40\\" y=\\"50\\" font-size=\\"30\\" text-anchor=\\"middle\\" fill=\\"white\\">${stream.homeTeam.charAt(0)}</text></svg>'">
+                            </div>
+                            <div class="team-name">${stream.homeTeam}</div>
+                        </div>
+                    </div>
+                    <div class="stream-info">
+                        <div class="listeners">👥 ${stream.listeners.toLocaleString()} listening</div>
+                        <div class="quality">Quality: ${stream.quality.toUpperCase()}</div>
+                    </div>
+                    <button class="listen-btn" onclick="event.stopPropagation(); openRadioStream('${stream.streamUrl}')">
+                        🎧 Listen Live
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function openRadioStream(url) {
+            window.open(url, '_blank');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const streamCard = document.querySelector('.stream-card ${stream.status === 'live' ? 'live' : ''}">
                     <div class="stream-header">
                         <span class="league-badge">${stream.league}</span>
                         ${stream.status === 'live' ? '<span class="live-indicator"><span>●</span> LIVE</span>' : ''}

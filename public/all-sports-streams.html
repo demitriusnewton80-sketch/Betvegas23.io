@@ -297,9 +297,21 @@
                             ${leagueStreams.map(stream => `
                                 <div class="game-card" onclick="openStream('${stream.streamUrl}')">
                                     <div class="game-teams">
-                                        <div class="team">${stream.awayTeam}</div>
+                                        <div class="team">
+                                            <img src="${window.location.origin}/sports-radio/logo/${stream.league}/${encodeURIComponent(stream.awayTeam)}" 
+                                                 alt="${stream.awayTeam}" 
+                                                 style="width: 40px; height: 40px; margin: 0 auto 5px; display: block;"
+                                                 onerror="this.style.display='none'">
+                                            <div>${stream.awayTeam}</div>
+                                        </div>
                                         <div class="vs">@</div>
-                                        <div class="team">${stream.homeTeam}</div>
+                                        <div class="team">
+                                            <img src="${window.location.origin}/sports-radio/logo/${stream.league}/${encodeURIComponent(stream.homeTeam)}" 
+                                                 alt="${stream.homeTeam}"
+                                                 style="width: 40px; height: 40px; margin: 0 auto 5px; display: block;"
+                                                 onerror="this.style.display='none'">
+                                            <div>${stream.homeTeam}</div>
+                                        </div>
                                     </div>
                                     <div class="game-info">
                                         <span class="listeners">👥 ${stream.listeners.toLocaleString()}</span>

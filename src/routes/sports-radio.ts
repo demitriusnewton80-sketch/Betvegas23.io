@@ -57,8 +57,24 @@ router.get('/stream/:streamId', (req: Request, res: Response) => {
   });
 });
 
-// Get protected team logo
+// Get protected team logo as SVG
 router.get('/logo/:league/:teamName', (req: Request, res: Response) => {
+  const { league, teamName } = req.params;
+  const decodedTeamName = decodeURIComponent(teamName);
+  
+  const { teamLogoService } = require('../services/TeamLogoService.js');
+  const logoSVG = teamLogoService.generateLogoSVG(league, decodedTeamName);
+  
+  res.setHeader('Content-Type', 'image/svg+xml');
+  res.setHeader('Cache-Control', 'public, max-age=86400');
+  res.setHeader('X-FCC-Entity', '20130314143016');
+  res.setHeader('X-Copyright', '© 2025 Young Meeat LLC. All rights reserved.');
+  
+  res.send(logoSVG);
+});
+
+// Get team logo info as JSON
+router.get('/logo/:league/:teamName/info', (req: Request, res: Response) => {
   const { league, teamName } = req.params;
   const logo = sportsRadioService.getTeamLogoInfo(league, decodeURIComponent(teamName));
   
