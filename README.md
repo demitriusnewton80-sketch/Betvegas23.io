@@ -36,6 +36,19 @@ Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 - `GET /playstation-network-sso.html` - PlayStation 5 users landing page
 - `GET /sso-plugin/login/playstation-network` - PSN SSO login
 - `GET /sportsbook/games?source=psn` - Gaming content betting
+- `GET /ps5-betting.html` - PS5 sports betting interface
+
+### PS5 Sports Betting (Madden, NBA 2K, UFC, Undisputed, 5v5)
+- `GET /ps5/games` - Get all PS5 games
+- `GET /ps5/games?type=madden` - Filter by game type
+- `GET /ps5/games/:gameId` - Get specific game
+- `POST /ps5/enroll` - Enroll user in PS5 betting
+- `POST /ps5/bet` - Place bet on PS5 game
+- `GET /ps5/user/:userId` - Get user info and enrollment points
+- `GET /ps5/user/psn/:psnId` - Get user by PSN ID
+- `GET /ps5/user/:userId/bets` - Get user's bets
+- `POST /ps5/user/:userId/deposit` - Deposit funds
+- `GET /ps5/user/:userId/points` - Get enrollment points
 
 ### SSO Plugin System
 - `GET /sso-plugin/plugins` - Get all SSO plugins

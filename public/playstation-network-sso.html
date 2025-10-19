@@ -222,6 +222,10 @@
                 🎮 Sign In with PlayStation Network
             </button>
             
+            <button class="btn btn-secondary" onclick="goToBettingSystem()">
+                🏆 Start Betting on PS5 Games
+            </button>
+            
             <button class="btn btn-secondary" onclick="viewGames()">
                 View Available Games
             </button>
@@ -259,6 +263,11 @@
         function viewGames() {
             // Redirect to sportsbook games
             window.location.href = `${API_BASE}/sportsbook/games?source=psn`;
+        }
+
+        function goToBettingSystem() {
+            // Redirect to PS5 betting interface
+            window.location.href = `${API_BASE}/ps5-betting.html`;
         }
 
         // Check if user is already authenticated
