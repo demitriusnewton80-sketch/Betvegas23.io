@@ -165,6 +165,15 @@ curl -H "X-API-Key: your_api_key" https://your-repl.replit.app/api
 
 ## FCC Compliance
 
+- FCC Entity: 20130314143016 inc
+- FCC Registration (FRN): 0024454324
+- Registration Date: 03/25/2015
+- Last Updated: 08/30/2024
+- Contact: Mr Demitrius P Newton
+- Email: gbemeeat@gmail.com
+- Phone: (445) 942-9173
+- Address: 2200 Benjamin Franklin Parkway, Philadelphia, PA 19130-1913
+- Entity Type: State or Local Agency, State
 - FCC-compliant SSO authentication
 - Streaming services meet FCC requirements
 - Full audit trail for regulatory compliance

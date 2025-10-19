@@ -258,7 +258,7 @@ router.post('/fcc/playstation-control', async (req: Request, res: Response) => {
 router.get('/fcc/status/:email', async (req: Request, res: Response) => {
   const { email } = req.params;
 
-  const authorizedEmails = ['gbemeeat@gmail.com', 'meeatupt215@gmail.com'];
+  const authorizedEmails = (process.env.AUTHORIZED_EMAILS || 'gbemeeat@gmail.com,meeatupt215@gmail.com').split(',');
 
   if (!authorizedEmails.includes(email.toLowerCase())) {
     return res.status(403).json({
@@ -271,11 +271,17 @@ router.get('/fcc/status/:email', async (req: Request, res: Response) => {
     email,
     fccEntity: '20130314143016',
     fccRegistration: '0024454324',
+    registrationDate: '03/25/2015',
+    contactName: 'Mr Demitrius P Newton',
+    contactPhone: '(445) 942-9173',
     status: 'active',
+    lastUpdated: '08/30/2024',
     services: {
       playstationControl: 'enabled',
       streamingAccess: 'full',
-      bettingPlatform: 'active'
+      bettingPlatform: 'active',
+      wifiInfusion: 'enabled',
+      phoneControl: 'active'
     },
     activeStreams: streamingService.getExternalSportsbooks().length,
     phoneControlEnabled: true,
