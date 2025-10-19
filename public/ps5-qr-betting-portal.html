@@ -129,12 +129,32 @@
             text-align: center;
         }
         .qr-code-display {
-            background: #f9fafb;
+            background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
             padding: 30px;
-            border-radius: 16px;
+            border-radius: 20px;
             margin: 20px auto;
             display: inline-block;
-            border: 3px solid #003087;
+            border: 3px solid;
+            border-image: linear-gradient(135deg, #003087 0%, #0070cc 100%) 1;
+            box-shadow: 0 8px 32px rgba(0,48,135,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .qr-code-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0,112,204,0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         #qrCodeCanvas {
             display: block;
