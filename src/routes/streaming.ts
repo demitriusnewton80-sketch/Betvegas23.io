@@ -425,4 +425,4 @@ router.get('/radio/ip-lookup', async (req: Request, res: Response) => {
   }
 });
 
-export { router as default };
+export default router;
