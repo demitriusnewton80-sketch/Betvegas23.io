@@ -17,6 +17,7 @@ import qrRoutes from './routes/qr.js';
 import ps5Routes from './routes/ps5.js'; // Added for PS5 sports betting routes
 import phoneControlRouter from './routes/phone-control.js'; // Added for phone control
 import winnerPayoutRouter from './routes/winner-payout.js';
+import espnTracker from './routes/espn-tracker.js'; // Added for ESPN tracker
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -86,6 +87,7 @@ app.use('/qr', qrRoutes);
 app.use('/ps5', ps5Routes); // Mount PS5 routes
 app.use('/phone-control', phoneControlRouter); // Mount phone control routes
 app.use('/winner-payout', winnerPayoutRouter);
+app.use('/espn-tracker', espnTracker); // Mount ESPN tracker routes
 
 // Ensure all routes are mounted
 console.log('📍 Routes registered:');
@@ -108,6 +110,7 @@ console.log('   - /qr'); // Added for QR code routes
 console.log('   - /ps5'); // Added for PS5 sports betting routes
 console.log('   - /phone-control'); // Added for phone control routes
 console.log('   - /winner-payout'); // Added for winner payout routes
+console.log('   - /espn-tracker'); // Added for ESPN tracker routes
 
 // 404 handler for API
 app.use((req: Request, res: Response) => {
