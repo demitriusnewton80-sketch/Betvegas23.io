@@ -86,10 +86,41 @@
             background: #22c55e;
             display: inline-block;
             animation: pulse 2s infinite;
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+        }
+        .status-indicator.error {
+            background: #ef4444;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
         }
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.95); }
+        }
+        .loading-state {
+            text-align: center;
+            padding: 40px;
+            color: #8b949e;
+        }
+        .error-state {
+            background: #3d1a1a;
+            border: 1px solid #ef4444;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .retry-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .retry-btn:hover {
+            background: #2563eb;
         }
     </style>
 </head>
@@ -122,10 +153,19 @@
     <script>
         const API_BASE = window.location.origin;
 
+        let retryCount = 0;
+        const maxRetries = 3;
+
         async function loadCoreStatus() {
             try {
                 const response = await fetch(`${API_BASE}/core/status`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
                 const data = await response.json();
+                retryCount = 0; // Reset on success
                 
                 // Update overall status
                 const statusBadge = document.getElementById('overallStatus');
@@ -183,12 +223,28 @@
                 
             } catch (error) {
                 console.error('Error loading core status:', error);
-                document.getElementById('overallStatus').textContent = 'Error Loading Status';
-                document.getElementById('overallStatus').className = 'status-badge error';
+                retryCount++;
+                
+                const statusBadge = document.getElementById('overallStatus');
+                statusBadge.textContent = retryCount < maxRetries ? 'Retrying...' : 'Connection Error';
+                statusBadge.className = 'status-badge error';
+                
+                document.getElementById('connectionsList').innerHTML = `
+                    <div class="error-state">
+                        <p style="color: #ef4444; margin-bottom: 10px;">⚠️ Connection Failed</p>
+                        <p style="color: #8b949e; font-size: 14px;">${error.message}</p>
+                        <button class="retry-btn" onclick="loadCoreStatus()">Retry Now</button>
+                    </div>
+                `;
+                
+                if (retryCount < maxRetries) {
+                    setTimeout(loadCoreStatus, 2000);
+                }
             }
         }
 
-        // Load initial status
+        // Load initial status with loading indicator
+        document.getElementById('connectionsList').innerHTML = '<div class="loading-state">🔄 Loading system status...</div>';
         loadCoreStatus();
         
         // Auto-refresh every 5 seconds

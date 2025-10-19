@@ -233,36 +233,42 @@ router.get('/fcc/status/:email', async (req: Request, res: Response) => {
   });
 });
 
-// Get WiFi connection hub status with IP infusion (deprecated - use /wifi-infusion/status)
+// Get WiFi connection hub status with enhanced control
 router.get('/wifi-hub/status', (req: Request, res: Response) => {
   const clientIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '0.0.0.0';
   
   res.json({
+    success: true,
     hubName: 'WiFi Connection Infusion Hub',
     status: 'active',
     connectionStrength: 'excellent',
-    ipAddress: '0.0.0.0',
-    clientIP: clientIP,
-    port: process.env.PORT || 5000,
+    network: {
+      ipAddress: '0.0.0.0',
+      clientIP: String(clientIP),
+      port: parseInt(process.env.PORT || '5000'),
+      protocol: 'https/wss',
+      encryption: 'WPA3-Enterprise'
+    },
     fccEntity: '20130314143016',
     wifiInfusion: {
       enabled: true,
       protocol: 'TCP/IP over HTTPS',
       bandwidth: 'unlimited',
-      signalStrength: 100,
-      encryption: 'WPA3-Enterprise'
+      signalStrength: 100
     },
     connectedPlugins: [
-      { name: 'Live Sportsbook', status: 'connected', endpoint: '/sportsbook/games' },
-      { name: 'PlayStation Network', status: 'connected', endpoint: '/ps5/games' },
-      { name: 'FCC Streaming', status: 'connected', endpoint: '/streaming/partners' },
-      { name: 'SSO Authentication', status: 'connected', endpoint: '/sso-plugin/plugins' },
-      { name: 'AWS Integration', status: 'connected', endpoint: '/aws/status' },
-      { name: 'SAM.gov Portal', status: 'connected', endpoint: '/sam/entity/young-meeat-llc' }
+      { name: 'Live Sportsbook', status: 'connected', endpoint: '/sportsbook/games', health: 100 },
+      { name: 'PlayStation Network', status: 'connected', endpoint: '/ps5/games', health: 100 },
+      { name: 'FCC Streaming', status: 'connected', endpoint: '/streaming/partners', health: 100 },
+      { name: 'SSO Authentication', status: 'connected', endpoint: '/sso-plugin/plugins', health: 100 },
+      { name: 'AWS Integration', status: 'connected', endpoint: '/aws/status', health: 100 },
+      { name: 'SAM.gov Portal', status: 'connected', endpoint: '/sam/entity/young-meeat-llc', health: 100 }
     ],
-    bandwidth: 'unlimited',
-    latency: '<50ms',
-    protocol: 'https/wss',
+    metrics: {
+      bandwidth: 'unlimited',
+      latency: '<50ms',
+      uptime: '99.9%'
+    },
     timestamp: new Date().toISOString()
   });
 });

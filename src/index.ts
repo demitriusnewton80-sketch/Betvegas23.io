@@ -108,44 +108,40 @@ app.use('/winner-payout', winnerPayoutRouter);
 app.use('/espn-tracker', espnTracker); // Mount ESPN tracker routes
 app.use('/wifi-infusion', wifiInfusionRoutes);
 
-// Ensure all routes are mounted
-console.log('📍 Routes registered:');
-console.log('   - /sportsbook');
-console.log('   - /streaming');
-console.log('   - /auth');
-console.log('   - /webhooks');
-console.log('   - /account');
-console.log('   - /contact');
-console.log('   - /ecommerce'); // Added for new e-commerce routes
-console.log('   - /aws'); // Added for new AWS routes
-console.log('   - /backup'); // Added for new backup routes
-console.log('   - /content'); // Added for new content routes
-console.log('   - /sam'); // Added for new SAM.gov routes
-console.log('   - /sso-plugin'); // Added for new SSO plugin routes
-console.log('   - /spotify'); // Added for new Spotify routes
-console.log('   - /login'); // Added for personal SSO login
-console.log('   - /public-access'); // Added for public access view
-console.log('   - /qr'); // Added for QR code routes
-console.log('   - /ps5'); // Added for PS5 sports betting routes
-console.log('   - /phone-control'); // Added for phone control routes
-console.log('   - /winner-payout'); // Added for winner payout routes
-console.log('   - /espn-tracker'); // Added for ESPN tracker routes
-console.log('   - /wifi-infusion');
+// Route registry for monitoring
+const routes = [
+  '/sportsbook', '/streaming', '/auth', '/webhooks',
+  '/account', '/contact', '/ecommerce', '/aws',
+  '/backup', '/content', '/sam', '/sso-plugin',
+  '/spotify', '/qr', '/ps5', '/phone-control',
+  '/winner-payout', '/espn-tracker', '/wifi-infusion'
+];
 
-// 404 handler for API
+console.log('📍 Routes registered:', routes.length);
+routes.forEach(route => console.log(`   ✓ ${route}`));
+
+// 404 handler with better styling
 app.use((req: Request, res: Response) => {
   res.status(404).json({
+    success: false,
     error: 'Endpoint not found',
-    message: `Cannot ${req.method} ${req.path}`
+    message: `Cannot ${req.method} ${req.path}`,
+    availableRoutes: '/health, /core/status',
+    timestamp: new Date().toISOString()
   });
 });
 
-// Error handler
+// Enhanced error handler with control
 app.use((err: Error, req: Request, res: Response, next: any) => {
-  console.error('Server error:', err);
+  const errorId = `ERR-${Date.now()}`;
+  console.error(`[${errorId}] Server error:`, err.message);
+  console.error('Stack:', err.stack);
+  
   res.status(500).json({
+    success: false,
     error: 'Internal server error',
-    message: err.message,
+    errorId,
+    message: NODE_ENV === 'development' ? err.message : 'An error occurred',
     timestamp: new Date().toISOString()
   });
 });
