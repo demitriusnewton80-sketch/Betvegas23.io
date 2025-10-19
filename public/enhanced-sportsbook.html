@@ -484,6 +484,9 @@
         const MAX_LOAD_RETRIES = 3;
 
         async function loadGames() {
+            const container = document.getElementById('gamesContainer');
+            container.innerHTML = '<p style="text-align: center; opacity: 0.7;">Loading games...</p>';
+            
             try {
                 const response = await fetch(`${API_BASE}/sportsbook/games`, {
                     method: 'GET',
@@ -498,6 +501,7 @@
                 }
 
                 const data = await response.json();
+                console.log('✅ Games loaded:', data);
                 
                 if (data.success && data.games) {
                     displayGames(data.games);
@@ -506,7 +510,7 @@
                     throw new Error('Invalid response format');
                 }
             } catch (error) {
-                console.error('Error loading games:', error);
+                console.error('❌ Error loading games:', error);
                 
                 const container = document.getElementById('gamesContainer');
                 container.innerHTML = `

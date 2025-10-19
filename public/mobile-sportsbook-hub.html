@@ -488,7 +488,7 @@
 
         async function loadGames() {
             try {
-                const response = await fetch(`${API_BASE}/mobile/games`);
+                const response = await fetch(`${API_BASE}/sportsbook/games`);
                 const data = await response.json();
 
                 if (data.success && data.games) {
