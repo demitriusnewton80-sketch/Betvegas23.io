@@ -308,7 +308,7 @@
     </div>
 
     <script>
-        const ESPN_API_BASE = window.location.origin;
+        const ESPN_API_BASE_TICKER = window.location.origin;
         let currentView = 'live';
         let eventSource = null;
         let isCollapsed = false;
@@ -347,7 +347,7 @@
                 eventSource.close();
             }
 
-            eventSource = new EventSource(`${ESPN_API_BASE}/espn-tracker/stream`);
+            eventSource = new EventSource(`${ESPN_API_BASE_TICKER}/espn-tracker/stream`);
 
             eventSource.onmessage = (event) => {
                 const data = JSON.parse(event.data);
@@ -371,22 +371,22 @@
                 let data;
                 switch(currentView) {
                     case 'live':
-                        const liveResponse = await fetch(`${ESPN_API_BASE}/espn-tracker/live`);
+                        const liveResponse = await fetch(`${ESPN_API_BASE_TICKER}/espn-tracker/live`);
                         data = await liveResponse.json();
                         displayLiveGames(data.liveGames);
                         break;
                     case 'upcoming':
-                        const upcomingResponse = await fetch(`${ESPN_API_BASE}/espn-tracker/upcoming?limit=25`);
+                        const upcomingResponse = await fetch(`${ESPN_API_BASE_TICKER}/espn-tracker/upcoming?limit=25`);
                         data = await upcomingResponse.json();
                         displayUpcomingGames(data.upcomingGames);
                         break;
                     case 'news':
-                        const newsResponse = await fetch(`${ESPN_API_BASE}/espn-tracker/news?limit=25`);
+                        const newsResponse = await fetch(`${ESPN_API_BASE_TICKER}/espn-tracker/news?limit=25`);
                         data = await newsResponse.json();
                         displayNews(data.news);
                         break;
                     case 'scores':
-                        const scoresResponse = await fetch(`${ESPN_API_BASE}/espn-tracker/games`);
+                        const scoresResponse = await fetch(`${ESPN_API_BASE_TICKER}/espn-tracker/games`);
                         data = await scoresResponse.json();
                         displayAllScores(data.games);
                         break;

@@ -1,0 +1,447 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Sports Radio Hub | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .fcc-badge {
+            display: inline-block;
+            background: rgba(34,197,94,0.2);
+            color: #22c55e;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 10px;
+            border: 1px solid #22c55e;
+        }
+
+        .league-tabs {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .league-tab {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .league-tab:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: #22c55e;
+        }
+
+        .league-tab.active {
+            background: #22c55e;
+            border-color: #22c55e;
+            color: #0f172a;
+        }
+
+        .streams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stream-card {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .stream-card:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: #22c55e;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(34,197,94,0.2);
+        }
+
+        .stream-card.live {
+            border-color: #ef4444;
+            animation: live-pulse 2s infinite;
+        }
+
+        @keyframes live-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(239,68,68,0); }
+        }
+
+        .stream-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .league-badge {
+            background: #3b82f6;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .live-indicator {
+            background: #ef4444;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .teams-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            gap: 12px;
+        }
+
+        .team {
+            flex: 1;
+            text-align: center;
+        }
+
+        .team-logo {
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            margin: 0 auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            border: 2px solid rgba(255,255,255,0.2);
+            position: relative;
+        }
+
+        .team-logo::after {
+            content: '🔒';
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            font-size: 14px;
+            background: #22c55e;
+            border-radius: 50%;
+            padding: 2px;
+        }
+
+        .team-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #e5e7eb;
+        }
+
+        .vs-separator {
+            font-size: 24px;
+            font-weight: 800;
+            color: #6b7280;
+        }
+
+        .stream-info {
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .listeners {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #22c55e;
+            margin-bottom: 8px;
+        }
+
+        .quality {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .listen-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .listen-btn:hover {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            transform: scale(1.02);
+        }
+
+        .fallback-links {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .fallback-title {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-bottom: 6px;
+        }
+
+        .fallback-link {
+            display: block;
+            font-size: 11px;
+            color: #3b82f6;
+            text-decoration: none;
+            margin-bottom: 4px;
+        }
+
+        .fallback-link:hover {
+            color: #60a5fa;
+            text-decoration: underline;
+        }
+
+        .protection-notice {
+            background: rgba(34,197,94,0.1);
+            border: 1px solid rgba(34,197,94,0.3);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .protection-notice h3 {
+            color: #22c55e;
+            margin-bottom: 8px;
+        }
+
+        .protection-notice p {
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 32px;
+            }
+
+            .streams-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .league-tabs {
+                gap: 8px;
+            }
+
+            .league-tab {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📻 Live Sports Radio Hub</h1>
+            <p style="color: #9ca3af; margin-top: 10px;">NFL • NBA • MLB • NHL Live Radio Streams</p>
+            <span class="fcc-badge">FCC Entity: 20130314143016 | Protected Logos</span>
+        </div>
+
+        <div class="league-tabs">
+            <button class="league-tab active" onclick="filterLeague('ALL')">All Sports</button>
+            <button class="league-tab" onclick="filterLeague('NFL')">🏈 NFL</button>
+            <button class="league-tab" onclick="filterLeague('NBA')">🏀 NBA</button>
+            <button class="league-tab" onclick="filterLeague('MLB')">⚾ MLB</button>
+            <button class="league-tab" onclick="filterLeague('NHL')">🏒 NHL</button>
+        </div>
+
+        <div class="streams-grid" id="streamsGrid"></div>
+
+        <div class="protection-notice">
+            <h3>🔒 Logo Protection Notice</h3>
+            <p>All team logos are protected and watermarked by Young Meeat LLC (FCC Entity: 20130314143016)</p>
+            <p>© 2025 Young Meeat LLC. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_RADIO = window.location.origin;
+        let allStreams = [];
+        let currentLeague = 'ALL';
+        let eventSource = null;
+
+        async function loadRadioStreams() {
+            try {
+                const response = await fetch(`${API_BASE_RADIO}/sports-radio/live`);
+                const data = await response.json();
+                allStreams = data.streams;
+                displayStreams();
+            } catch (error) {
+                console.error('Error loading radio streams:', error);
+            }
+        }
+
+        function displayStreams() {
+            const grid = document.getElementById('streamsGrid');
+            const filtered = currentLeague === 'ALL' 
+                ? allStreams 
+                : allStreams.filter(s => s.league === currentLeague);
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; color: #9ca3af;">No live streams available</p>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(stream => `
+                <div class="stream-card ${stream.status === 'live' ? 'live' : ''}">
+                    <div class="stream-header">
+                        <span class="league-badge">${stream.league}</span>
+                        ${stream.status === 'live' ? '<span class="live-indicator"><span>●</span> LIVE</span>' : ''}
+                    </div>
+
+                    <div class="teams-section">
+                        <div class="team">
+                            <div class="team-logo">🏆</div>
+                            <div class="team-name">${stream.awayTeam}</div>
+                        </div>
+                        <div class="vs-separator">@</div>
+                        <div class="team">
+                            <div class="team-logo">🏆</div>
+                            <div class="team-name">${stream.homeTeam}</div>
+                        </div>
+                    </div>
+
+                    <div class="stream-info">
+                        <div class="listeners">
+                            <span>👥</span>
+                            <span>${stream.listeners.toLocaleString()} listeners</span>
+                        </div>
+                        <div class="quality">Quality: ${stream.quality.toUpperCase()}</div>
+                    </div>
+
+                    <button class="listen-btn" onclick="openRadioStream('${stream.streamUrl}')">
+                        🎧 Listen Live
+                    </button>
+
+                    <div class="fallback-links">
+                        <div class="fallback-title">Fallback Streams:</div>
+                        ${stream.fallbackUrls.map(url => `
+                            <a href="${url}" target="_blank" class="fallback-link">📡 ${url}</a>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterLeague(league) {
+            currentLeague = league;
+            document.querySelectorAll('.league-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            displayStreams();
+        }
+
+        function openRadioStream(url) {
+            window.open(url, '_blank');
+        }
+
+        function connectToLiveUpdates() {
+            if (eventSource) {
+                eventSource.close();
+            }
+
+            eventSource = new EventSource(`${API_BASE_RADIO}/sports-radio/stream-updates`);
+
+            eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'radioUpdate') {
+                    loadRadioStreams();
+                }
+            };
+
+            eventSource.onerror = () => {
+                console.error('EventSource error, reconnecting...');
+                setTimeout(connectToLiveUpdates, 5000);
+            };
+        }
+
+        window.addEventListener('load', () => {
+            loadRadioStreams();
+            connectToLiveUpdates();
+            setInterval(loadRadioStreams, 30000);
+        });
+
+        window.addEventListener('beforeunload', () => {
+            if (eventSource) {
+                eventSource.close();
+            }
+        });
+    </script>
+</body>
+</html>
