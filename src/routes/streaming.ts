@@ -195,9 +195,13 @@ router.post('/fcc/playstation-control', async (req: Request, res: Response) => {
   const { email, action, gameId } = req.body;
 
   // Verify FCC authorized emails from environment
-  const authorizedEmails = (process.env.AUTHORIZED_EMAILS || 'gbemeeat@gmail.com,meeatupt215@gmail.com').split(',');
+  const defaultEmails = 'gbemeeat@gmail.com,meeatupt215@gmail.com';
+  const authorizedEmails = (process.env.AUTHORIZED_EMAILS || defaultEmails)
+    .split(',')
+    .map(e => e.trim().toLowerCase())
+    .filter(e => e.length > 0);
 
-  if (!email || !authorizedEmails.includes(email.toLowerCase())) {
+  if (!email || typeof email !== 'string' || !authorizedEmails.includes(email.toLowerCase())) {
     return res.status(403).json({
       error: 'Unauthorized email address',
       fccEntity: '20130314143016'
@@ -258,9 +262,13 @@ router.post('/fcc/playstation-control', async (req: Request, res: Response) => {
 router.get('/fcc/status/:email', async (req: Request, res: Response) => {
   const { email } = req.params;
 
-  const authorizedEmails = (process.env.AUTHORIZED_EMAILS || 'gbemeeat@gmail.com,meeatupt215@gmail.com').split(',');
+  const defaultEmails = 'gbemeeat@gmail.com,meeatupt215@gmail.com';
+  const authorizedEmails = (process.env.AUTHORIZED_EMAILS || defaultEmails)
+    .split(',')
+    .map(e => e.trim().toLowerCase())
+    .filter(e => e.length > 0);
 
-  if (!authorizedEmails.includes(email.toLowerCase())) {
+  if (!email || !authorizedEmails.includes(email.toLowerCase())) {
     return res.status(403).json({
       error: 'Unauthorized email',
       fccEntity: '20130314143016'
@@ -640,12 +648,19 @@ router.get('/radio/ip-lookup', async (req: Request, res: Response) => {
     const urlObj = new URL(url);
     const hostname = urlObj.hostname;
 
-    // Use DNS lookup
+    // Use DNS lookup with timeout
     const dns = await import('dns');
     const { promisify } = await import('util');
     const lookup = promisify(dns.lookup);
 
-    const result = await lookup(hostname);
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('DNS lookup timeout')), 5000)
+    );
+
+    const result = await Promise.race([
+      lookup(hostname),
+      timeoutPromise
+    ]) as { address: string; family: number };
 
     res.json({
       url: url,
@@ -657,7 +672,8 @@ router.get('/radio/ip-lookup', async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       error: 'Failed to lookup IP address',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? error.message : 'Unknown error',
+      suggestion: 'Use hostname directly instead of IP address'
     });
   }
 });
