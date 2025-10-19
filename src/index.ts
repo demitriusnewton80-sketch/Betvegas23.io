@@ -309,6 +309,11 @@ app.get('/public-unified-view.html', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../public/public-unified-view.html'));
 });
 
+// AI Mobile Launcher - serve the HTML directly
+app.get('/ai-mobile-launcher', (req, res) => {
+  res.sendFile('public/ai-mobile-launcher.html', { root: '.' });
+});
+
 // Fallback route for SPA - only for non-file requests
 app.get('*', (req, res, next) => {
   // If the request has a file extension, let static middleware handle it
