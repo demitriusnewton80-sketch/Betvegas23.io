@@ -321,11 +321,8 @@ router.get('/radio/ip-lookup', async (req: Request, res: Response) => {
     const hostname = urlObj.hostname;
     
     // Use DNS lookup
-    const dns = await import('dns');
-    const { promisify } = await import('util');
-    const lookup = promisify(dns.lookup);
-    
-    const result = await lookup(hostname);
+    const dns = await import('dns/promises');
+    const result = await dns.lookup(hostname);
     
     res.json({
       url: url,
