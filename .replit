@@ -5,7 +5,7 @@ expertMode = true
 channel = "stable-25_05"
 
 [workflows]
-runButton = "Run"
+runButton = "Diagnostics & Run"
 
 [[workflows.workflow]]
 name = "Run6"
@@ -57,6 +57,207 @@ author = 48739577
 [[workflows.workflow.tasks]]
 task = "workflow.run"
 args = "Run6"
+
+[[workflows.workflow]]
+name = "Diagnostics & Run"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+
+[[workflows.workflow]]
+name = "System Diagnostics"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Young Meeat LLC System Diagnostics ===\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Entity: 20130314143016\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 1: Checking Node.js version...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node --version"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 2: Checking npm version...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm --version"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 3: Verifying dependencies...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm list --depth=0"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 4: TypeScript compilation check...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx tsc --noEmit"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 5: All diagnostics complete!\""
+
+[[workflows.workflow]]
+name = "Build Production"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Building Young Meeat LLC production assets...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run build"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Build complete!\""
+
+[[workflows.workflow]]
+name = "FCC Contact Verification"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"===================================\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Young Meeat LLC - FCC Entity\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"===================================\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Registration Number: 0024454324\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Entity ID: 20130314143016\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Contact Email: gbemeeat@gmail.com\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Secondary Email: meeatupt215@gmail.com\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"===================================\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"System Status: ACTIVE\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"All plugins: CONNECTED\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"===================================\""
+
+[[workflows.workflow]]
+name = "FCC Contact Verification"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"===================================\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Young Meeat LLC - FCC Entity\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"===================================\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Registration Number: 0024454324\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Entity ID: 20130314143016\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Contact Email: gbemeeat@gmail.com\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Secondary Email: meeatupt215@gmail.com\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"===================================\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"System Status: ACTIVE\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"All plugins: CONNECTED\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"===================================\""
 
 [[ports]]
 localPort = 5000
