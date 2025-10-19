@@ -43,6 +43,15 @@ Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 - `GET /sso-plugin/stats` - Get plugin statistics (SSO protected)
 - `GET /sso-plugin/session` - Get current plugin session (SSO protected)
 
+### Spotify Integration (SSO Protected)
+- `POST /spotify/connect` - Connect Spotify account
+- `GET /spotify/status` - Check Spotify connection status
+- `POST /spotify/upload` - Upload Spotify content to server
+- `GET /spotify/uploads` - Get user's uploads
+- `GET /spotify/uploads/:uploadId` - Get specific upload
+- `DELETE /spotify/uploads/:uploadId` - Delete upload
+- `GET /spotify/fetch/:type/:spotifyId` - Fetch data from Spotify
+
 ### Content Control (SSO Protected)
 - `POST /content/create` - Create new content item
 - `GET /content/:contentId` - Get content by ID

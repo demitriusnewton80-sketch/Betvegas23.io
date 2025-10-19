@@ -12,6 +12,7 @@ import contactRoutes from './routes/contact.js'; // Renamed from contactRoutes f
 import contentRoutes from './routes/content.js'; // New import for content routes
 import samRoutes from './routes/sam.js'; // New import for SAM.gov routes
 import ssoPluginRoutes from './routes/sso-plugin.js'; // New import for SSO plugin routes
+import spotifyRoutes from './routes/spotify.js'; // New import for Spotify routes
 import { sportsDataService } from './services/SportsDataService.js';
 
 const app = express();
@@ -67,6 +68,7 @@ app.use('/backup', backupRoutes); // Mount backup routes
 app.use('/content', contentRoutes); // Mount content routes
 app.use('/sam', samRoutes); // Mount SAM.gov routes
 app.use('/sso-plugin', ssoPluginRoutes); // Mount SSO plugin routes
+app.use('/spotify', spotifyRoutes); // Mount Spotify routes
 
 // Ensure all routes are mounted
 console.log('📍 Routes registered:');
@@ -82,6 +84,7 @@ console.log('   - /backup'); // Added for new backup routes
 console.log('   - /content'); // Added for new content routes
 console.log('   - /sam'); // Added for new SAM.gov routes
 console.log('   - /sso-plugin'); // Added for new SSO plugin routes
+console.log('   - /spotify'); // Added for new Spotify routes
 
 // 404 handler for API
 app.use((req: Request, res: Response) => {
