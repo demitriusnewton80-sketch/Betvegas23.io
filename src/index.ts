@@ -14,6 +14,7 @@ import samRoutes from './routes/sam.js'; // New import for SAM.gov routes
 import ssoPluginRoutes from './routes/sso-plugin.js'; // New import for SSO plugin routes
 import spotifyRoutes from './routes/spotify.js'; // New import for Spotify routes
 import { sportsDataService } from './services/SportsDataService.js';
+import path from 'path'; // Import path module
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -26,6 +27,16 @@ app.use(cookieParser());
 
 // Serve static files from public directory
 app.use(express.static('public'));
+
+// Personal SSO login route
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/personal-sso-login.html'));
+});
+
+// Public access route (authenticated users)
+app.get('/public-access', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/public-access.html'));
+});
 
 // CORS for external device connections
 app.use((req, res, next) => {
@@ -85,6 +96,8 @@ console.log('   - /content'); // Added for new content routes
 console.log('   - /sam'); // Added for new SAM.gov routes
 console.log('   - /sso-plugin'); // Added for new SSO plugin routes
 console.log('   - /spotify'); // Added for new Spotify routes
+console.log('   - /login'); // Added for personal SSO login
+console.log('   - /public-access'); // Added for public access view
 
 // 404 handler for API
 app.use((req: Request, res: Response) => {

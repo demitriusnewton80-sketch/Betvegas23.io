@@ -1,0 +1,446 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Files - Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f7f9fc;
+            color: #1d2129;
+        }
+        .topbar {
+            background: white;
+            border-bottom: 1px solid #e1e8ed;
+            padding: 0 24px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0061fe;
+            text-decoration: none;
+        }
+        .search-box {
+            position: relative;
+        }
+        .search-box input {
+            width: 300px;
+            padding: 8px 16px 8px 36px;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #f7f9fc;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: #0061fe;
+            background: white;
+        }
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #697386;
+        }
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .user-menu:hover {
+            background: #f7f9fc;
+        }
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            color: #697386;
+        }
+        .breadcrumb a {
+            color: #0061fe;
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .toolbar h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .toolbar-actions {
+            display: flex;
+            gap: 12px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #0061fe;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #0052d9;
+        }
+        .btn-secondary {
+            background: white;
+            color: #1d2129;
+            border: 1px solid #e1e8ed;
+        }
+        .btn-secondary:hover {
+            background: #f7f9fc;
+        }
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+        .file-card {
+            background: white;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .file-card:hover {
+            border-color: #0061fe;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+        .file-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+        .file-icon.folder {
+            background: #e3f2fd;
+        }
+        .file-icon.file {
+            background: #f3e5f5;
+        }
+        .file-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .file-meta {
+            font-size: 12px;
+            color: #697386;
+        }
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .stat-card {
+            background: white;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .stat-label {
+            color: #697386;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1d2129;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 8px;
+            border: 2px dashed #e1e8ed;
+        }
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .empty-state p {
+            color: #697386;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div class="topbar-left">
+            <a href="/" class="logo">📦 Young Meeat</a>
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" placeholder="Search files..." id="searchInput">
+            </div>
+        </div>
+        <div class="topbar-right">
+            <button class="btn btn-secondary" onclick="logout()">Sign Out</button>
+            <div class="user-menu" id="userMenu">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <span id="userName">User</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="/public-access">Home</a>
+            <span>›</span>
+            <span>My Files</span>
+        </div>
+
+        <div class="toolbar">
+            <h1>My Files</h1>
+            <div class="toolbar-actions">
+                <button class="btn btn-secondary" onclick="refreshContent()">🔄 Refresh</button>
+                <button class="btn btn-primary" onclick="uploadFile()">⬆️ Upload</button>
+            </div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-label">Total Files</div>
+                <div class="stat-value" id="totalFiles">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Shared with Me</div>
+                <div class="stat-value" id="sharedFiles">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Storage Used</div>
+                <div class="stat-value" id="storageUsed">0 MB</div>
+            </div>
+        </div>
+
+        <div id="fileContainer">
+            <div class="empty-state">
+                <div class="empty-state-icon">📂</div>
+                <h3>Loading your files...</h3>
+                <p>Please wait while we fetch your content</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let currentUser = null;
+
+        async function checkAuthentication() {
+            try {
+                const response = await fetch(`${API_BASE}/auth/me`, {
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    currentUser = data.user;
+                    updateUserInfo();
+                    loadUserContent();
+                } else {
+                    window.location.href = '/personal-sso-login.html';
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                window.location.href = '/personal-sso-login.html';
+            }
+        }
+
+        function updateUserInfo() {
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.name || currentUser.email;
+                document.getElementById('userAvatar').textContent = (currentUser.name || currentUser.email).charAt(0).toUpperCase();
+            }
+        }
+
+        async function loadUserContent() {
+            try {
+                const response = await fetch(`${API_BASE}/content/my/list`, {
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    displayContent(data.content || []);
+                    updateStats(data);
+                } else {
+                    showEmptyState();
+                }
+            } catch (error) {
+                console.error('Error loading content:', error);
+                showEmptyState();
+            }
+        }
+
+        function displayContent(items) {
+            const container = document.getElementById('fileContainer');
+            
+            if (items.length === 0) {
+                showEmptyState();
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="file-grid">
+                    ${items.map(item => `
+                        <div class="file-card" onclick="openItem('${item.id}')">
+                            <div class="file-icon ${item.type || 'file'}">
+                                ${item.type === 'folder' ? '📁' : getFileIcon(item)}
+                            </div>
+                            <div class="file-name">${item.name || 'Untitled'}</div>
+                            <div class="file-meta">${formatDate(item.createdAt)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function showEmptyState() {
+            document.getElementById('fileContainer').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <h3>No files yet</h3>
+                    <p>Upload your first file to get started</p>
+                    <button class="btn btn-primary" onclick="uploadFile()">Upload File</button>
+                </div>
+            `;
+        }
+
+        function updateStats(data) {
+            document.getElementById('totalFiles').textContent = data.count || 0;
+            document.getElementById('sharedFiles').textContent = data.sharedCount || 0;
+            document.getElementById('storageUsed').textContent = (data.storageUsed || 0) + ' MB';
+        }
+
+        function getFileIcon(item) {
+            const type = item.contentType || '';
+            if (type.includes('pdf')) return '📄';
+            if (type.includes('image')) return '🖼️';
+            if (type.includes('video')) return '🎬';
+            if (type.includes('audio')) return '🎵';
+            if (type.includes('text')) return '📝';
+            return '📎';
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'Unknown';
+            const date = new Date(dateString);
+            return date.toLocaleDateString();
+        }
+
+        function openItem(itemId) {
+            window.location.href = `${API_BASE}/content/${itemId}`;
+        }
+
+        function uploadFile() {
+            alert('Upload functionality - integrate with your content management system');
+        }
+
+        function refreshContent() {
+            loadUserContent();
+        }
+
+        async function logout() {
+            try {
+                await fetch(`${API_BASE}/auth/logout`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+            window.location.href = '/personal-sso-login.html';
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.file-card');
+            
+            cards.forEach(card => {
+                const name = card.querySelector('.file-name').textContent.toLowerCase();
+                card.style.display = name.includes(searchTerm) ? 'block' : 'none';
+            });
+        });
+
+        // Initialize on page load
+        checkAuthentication();
+    </script>
+</body>
+</html>
