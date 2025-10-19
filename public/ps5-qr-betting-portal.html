@@ -299,10 +299,36 @@
         </div>
 
         <div class="qr-stream-section">
-            <h2>📱 Universal Access QR Code</h2>
+            <h2>📱 Phone Control & Universal Access</h2>
             <p style="color: #6b7280; margin-bottom: 20px;">
-                Scan to connect all devices to unified betting zone
+                FCC-authorized phone control for PlayStation & betting platforms
             </p>
+            
+            <div class="email-select" style="background: #f3f4f6; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                <label for="emailSelect" style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 10px; color: #1f2937;">Select Your Authorized Email:</label>
+                <select id="emailSelect" onchange="loadFCCStatus()" style="width: 100%; padding: 14px; background: white; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 15px; color: #1f2937;">
+                    <option value="">-- Select Email --</option>
+                    <option value="gbemeeat@gmail.com">gbemeeat@gmail.com</option>
+                    <option value="meeatupt215@gmail.com">meeatupt215@gmail.com</option>
+                </select>
+            </div>
+
+            <div id="fccStatusDisplay"></div>
+
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0;">
+                <button class="btn btn-primary" onclick="sendPSControl('connect')" style="padding: 14px; font-size: 14px;">
+                    🎮 Connect PS5
+                </button>
+                <button class="btn btn-primary" onclick="sendPSControl('disconnect')" style="padding: 14px; font-size: 14px;">
+                    🔌 Disconnect
+                </button>
+                <button class="btn btn-stream" onclick="sendPSControl('start_stream')" style="padding: 14px; font-size: 14px;">
+                    📺 Start Stream
+                </button>
+                <button class="btn btn-stream" onclick="sendPSControl('stop_stream')" style="padding: 14px; font-size: 14px;">
+                    ⏹️ Stop Stream
+                </button>
+            </div>
             
             <div class="qr-code-display">
                 <canvas id="qrCodeCanvas" width="300" height="300"></canvas>
@@ -351,9 +377,80 @@
         const BETTING_ZONE_URL = API_BASE;
         let streamActive = false;
         
+        // FCC Phone Control Functions
+        async function loadFCCStatus() {
+            const email = document.getElementById('emailSelect').value;
+            if (!email) {
+                document.getElementById('fccStatusDisplay').innerHTML = '';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/streaming/fcc/status/${encodeURIComponent(email)}`);
+                const data = await response.json();
+                
+                document.getElementById('fccStatusDisplay').innerHTML = `
+                    <div style="background: #eff6ff; border-left: 4px solid #0070cc; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                        <h4 style="color: #003087; margin-bottom: 10px; font-size: 14px;">✅ FCC Status Active</h4>
+                        <div style="color: #1f2937; font-size: 13px; padding: 5px 0; display: flex; justify-content: space-between;">
+                            <span>PlayStation Control:</span>
+                            <strong style="color: #22c55e;">${data.services.playstationControl}</strong>
+                        </div>
+                        <div style="color: #1f2937; font-size: 13px; padding: 5px 0; display: flex; justify-content: space-between;">
+                            <span>Streaming Access:</span>
+                            <strong style="color: #22c55e;">${data.services.streamingAccess}</strong>
+                        </div>
+                        <div style="color: #1f2937; font-size: 13px; padding: 5px 0; display: flex; justify-content: space-between;">
+                            <span>Phone Control:</span>
+                            <strong style="color: #22c55e;">${data.phoneControlEnabled ? 'enabled' : 'disabled'}</strong>
+                        </div>
+                        <div style="color: #1f2937; font-size: 13px; padding: 5px 0; display: flex; justify-content: space-between;">
+                            <span>Active Streams:</span>
+                            <strong>${data.activeStreams}</strong>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading FCC status:', error);
+            }
+        }
+        
+        async function sendPSControl(action) {
+            const email = document.getElementById('emailSelect').value;
+            if (!email) {
+                alert('Please select your email first');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/streaming/fcc/playstation-control`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, action })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`✅ ${action.replace('_', ' ').toUpperCase()} successful!`);
+                    loadFCCStatus();
+                    updateStreamStatus(`● ${action.replace('_', ' ')} completed`);
+                } else {
+                    alert(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error sending control:', error);
+                alert('Failed to send control command');
+            }
+        }
+        
         // Generate QR Code
         function generateQRCode() {
             const canvas = document.getElementById('qrCodeCanvas');
+            if (!canvas) {
+                console.error('QR Code canvas not found');
+                return;
+            }
             const ctx = canvas.getContext('2d');
             const size = 300;
             
@@ -399,10 +496,19 @@
         
         function downloadQR() {
             const canvas = document.getElementById('qrCodeCanvas');
-            const link = document.createElement('a');
-            link.download = 'betting-zone-unified-qr.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
+            if (!canvas) {
+                alert('QR Code not generated yet');
+                return;
+            }
+            try {
+                const link = document.createElement('a');
+                link.download = 'betting-zone-unified-qr.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            } catch (error) {
+                console.error('QR Code download error:', error);
+                alert('Failed to download QR code');
+            }
         }
         
         function openPS5Betting() {
