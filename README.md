@@ -137,6 +137,13 @@ Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 - `GET /sam/cache` - Get cached entities (SSO protected)
 - `GET /sam/profile-link` - Get direct SAM.gov profile link
 
+### SAM.gov API Base
+- `GET /sam/api-base/config` - Get SAM API base configuration
+- `GET /sam/api-base/search?name=` - Search using SAM API base
+- `GET /sam/api-base/young-meeat` - Get Young Meeat LLC via API base
+- `GET /sam/api-base/opportunities` - Search contract opportunities
+- `GET /sam/api-base/test` - Test SAM API base connection
+
 ## Deployment on Replit
 
 1. Set environment variables in Replit Secrets

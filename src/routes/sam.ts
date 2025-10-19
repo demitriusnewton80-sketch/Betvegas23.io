@@ -2,6 +2,7 @@
 import express, { Request, Response } from 'express';
 import { samGovService } from '../services/SAMGovService.js';
 import { ssoService } from '../services/SSOService.js';
+import { samAPIBase } from '../config/sam-api-base.js';
 
 const router = express.Router();
 
@@ -196,6 +197,133 @@ router.get('/cache', requireAuth, (req: Request, res: Response) => {
 
 // Direct link to SAM.gov profile
 router.get('/profile-link', (req: Request, res: Response) => {
+
+
+// Get SAM API base configuration
+router.get('/api-base/config', (req: Request, res: Response) => {
+  const config = samAPIBase.getConfig();
+  
+  res.json({
+    success: true,
+    apiBase: {
+      baseUrl: config.baseUrl,
+      entityName: config.entityName,
+      fccEntity: config.fccEntity,
+      fccRegistration: config.fccRegistration,
+      hasApiKey: !!config.apiKey,
+      endpoints: config.endpoints
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Search using SAM API base
+router.get('/api-base/search', async (req: Request, res: Response) => {
+  const { name } = req.query;
+
+  if (!name || typeof name !== 'string') {
+    return res.status(400).json({ error: 'Entity name required' });
+  }
+
+  try {
+    const result = await samAPIBase.searchEntity(name);
+    
+    res.json({
+      success: true,
+      query: name,
+      result,
+      apiBase: samAPIBase.getConfig().baseUrl,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Search failed',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// Get Young Meeat LLC using API base
+router.get('/api-base/young-meeat', async (req: Request, res: Response) => {
+  try {
+    const entity = await samAPIBase.getYoungMeeatEntity();
+    
+    res.json({
+      success: true,
+      entity,
+      fccEntity: '20130314143016',
+      fccRegistration: '0024454324',
+      apiBase: samAPIBase.getConfig().baseUrl,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to retrieve entity',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// Search contract opportunities
+router.get('/api-base/opportunities', async (req: Request, res: Response) => {
+  try {
+    const params = req.query as Record<string, string>;
+    const opportunities = await samAPIBase.searchOpportunities(params);
+    
+    res.json({
+      success: true,
+      opportunities,
+      fccEntity: '20130314143016',
+      apiBase: samAPIBase.getConfig().baseUrl,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to search opportunities',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+// Test SAM API base connection
+router.get('/api-base/test', async (req: Request, res: Response) => {
+  const config = samAPIBase.getConfig();
+  
+  try {
+    const testResult = await samAPIBase.getYoungMeeatEntity();
+    
+    res.json({
+      success: true,
+      message: 'SAM API base connection successful',
+      config: {
+        baseUrl: config.baseUrl,
+        fccEntity: config.fccEntity,
+        fccRegistration: config.fccRegistration,
+        hasApiKey: !!config.apiKey
+      },
+      testResult: !!testResult,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: 'SAM API base connection test',
+      config: {
+        baseUrl: config.baseUrl,
+        fccEntity: config.fccEntity,
+        fccRegistration: config.fccRegistration,
+        hasApiKey: !!config.apiKey
+      },
+      error: error instanceof Error ? error.message : 'Unknown error',
+      note: 'Ensure SAM_GOV_API_KEY is set in environment variables',
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
   const profileLink = samGovService.getEntityProfileLink();
   
   res.json({
