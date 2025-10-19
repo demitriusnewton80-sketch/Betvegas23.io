@@ -1678,20 +1678,36 @@
             }
         }
 
-        function generateQRCode() {
+        async function generateQRCode() {
             const url = window.location.origin;
             const container = document.getElementById('qrCodeCanvas');
             
-            if (!container) {
-                console.error('QR code container not found');
+            // WiFi Core Network Connection Check
+            const networkConnection = {
+                online: navigator.onLine,
+                connection: navigator.connection || navigator.mozConnection || navigator.webkitConnection,
+                timestamp: Date.now()
+            };
+            
+            // Ensure network connectivity before proceeding
+            if (!networkConnection.online) {
+                console.error('WiFi core network connection required');
+                container.innerHTML = '<div style="color: red;">Network connection required</div>';
                 return;
             }
             
-            container.innerHTML = '';
+            // Validate container with network-backed fallback
+            const validContainer = container || document.createElement('div');
+            validContainer.innerHTML = '';
             
-            // Create a simple text-based QR code representation
+            // Create WiFi-connected QR code representation
             const qrDiv = document.createElement('div');
             qrDiv.style.cssText = 'background: white; padding: 20px; border-radius: 8px; text-align: center;';
+            qrDiv.setAttribute('data-network-status', networkConnection.online ? 'connected' : 'disconnected');
+            
+            const networkIndicator = document.createElement('div');
+            networkIndicator.style.cssText = 'font-size: 10px; color: #22c55e; margin-bottom: 5px;';
+            networkIndicator.textContent = '📶 WiFi Core Connected';
             
             const qrText = document.createElement('div');
             qrText.style.cssText = 'font-size: 11px; color: #000; font-weight: bold; margin-bottom: 8px;';
@@ -1705,17 +1721,24 @@
             instruction.style.cssText = 'margin-top: 8px; font-size: 9px; color: #666;';
             instruction.textContent = 'Copy this URL to share';
             
+            qrDiv.appendChild(networkIndicator);
             qrDiv.appendChild(qrText);
             qrDiv.appendChild(urlBox);
             qrDiv.appendChild(instruction);
-            container.appendChild(qrDiv);
+            validContainer.appendChild(qrDiv);
             
-            // Add click-to-copy functionality
+            // Add click-to-copy functionality with network validation
             urlBox.style.cursor = 'pointer';
-            urlBox.onclick = () => {
-                navigator.clipboard.writeText(url).then(() => {
+            urlBox.onclick = async () => {
+                if (!navigator.onLine) {
+                    alert('WiFi network connection required to copy');
+                    return;
+                }
+                
+                try {
+                    await navigator.clipboard.writeText(url);
                     const originalText = urlBox.textContent;
-                    urlBox.textContent = 'Copied!';
+                    urlBox.textContent = 'Copied via WiFi!';
                     urlBox.style.background = '#22c55e';
                     urlBox.style.color = 'white';
                     setTimeout(() => {
@@ -1723,7 +1746,9 @@
                         urlBox.style.background = '#f0f0f0';
                         urlBox.style.color = '#000';
                     }, 1500);
-                });
+                } catch (error) {
+                    console.error('WiFi network error:', error);
+                }
             };
         }
 

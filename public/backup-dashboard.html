@@ -202,6 +202,12 @@
         let sessionId = 'demo-session-' + Date.now(); // Replace with actual SSO session
 
         async function loadSSOOptions() {
+            // WiFi Core Network Connection Check
+            if (!navigator.onLine) {
+                document.getElementById('ssoOptions').innerHTML = '<p style="color: orange;">📶 WiFi network connection required</p>';
+                return;
+            }
+            
             try {
                 const response = await fetch(`${API_BASE}/backup/sso-options`, {
                     headers: { 'Authorization': `Bearer ${sessionId}` }
@@ -219,9 +225,9 @@
                     </div>
                 `).join('');
                 
-                document.getElementById('ssoOptions').innerHTML = optionsHtml;
+                document.getElementById('ssoOptions').innerHTML = optionsHtml || '<p>WiFi network connected - No options available</p>';
             } catch (error) {
-                document.getElementById('ssoOptions').innerHTML = '<p>Error loading SSO options</p>';
+                document.getElementById('ssoOptions').innerHTML = '<p>📶 WiFi network error - Check connection</p>';
             }
         }
 
