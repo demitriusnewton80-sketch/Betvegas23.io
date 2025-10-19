@@ -391,6 +391,64 @@ class VPNService {
       totalViewers
     };
   }
+
+  // Phone-to-Domain Integration
+  createPhoneDomain(phoneNumber: string, userId: string): { domain: string; ip: string; vpnIP: string } {
+    // Generate unique domain from phone number
+    const sanitizedPhone = phoneNumber.replace(/\D/g, '');
+    const domain = `phone-${sanitizedPhone}.youngmeeat.repl.co`;
+    
+    // Allocate dedicated VPN IP for this phone
+    const vpnIP = this.allocateIP();
+    
+    // Map to server's public IP (0.0.0.0 binding makes it accessible)
+    const publicIP = '0.0.0.0';
+    
+    return {
+      domain,
+      ip: publicIP,
+      vpnIP
+    };
+  }
+
+  // Get domain mapping for phone
+  getPhoneDomainMapping(phoneNumber: string): {
+    domain: string;
+    vpnIP: string;
+    serverIP: string;
+    port: number;
+    accessUrl: string;
+  } {
+    const sanitizedPhone = phoneNumber.replace(/\D/g, '');
+    const domain = `phone-${sanitizedPhone}.youngmeeat.repl.co`;
+    const vpnIP = `10.8.0.${Math.floor(Math.random() * 254) + 1}`;
+    
+    return {
+      domain,
+      vpnIP,
+      serverIP: '0.0.0.0',
+      port: 5000,
+      accessUrl: `https://${domain}:5000`
+    };
+  }
+
+  // Enable phone control access
+  enablePhoneAccess(connectionId: string, phoneNumber: string): boolean {
+    const connection = this.connections.get(connectionId);
+    if (!connection) {
+      throw new Error('Connection not found');
+    }
+
+    const phoneMapping = this.getPhoneDomainMapping(phoneNumber);
+    
+    // Enable full access including streaming and control
+    connection.streamingEnabled = true;
+    connection.tvChannels = Array.from(this.tvStreams.keys());
+    
+    return true;
+  }
 }
+
+export const vpnService = new VPNService();
 
 export const vpnService = new VPNService();

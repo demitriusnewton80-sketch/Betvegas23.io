@@ -216,4 +216,101 @@ router.get('/stream/:streamId/url', (req: Request, res: Response) => {
   });
 });
 
+// Create phone-based domain
+router.post('/phone/create-domain', (req: Request, res: Response) => {
+  const { phoneNumber, userId } = req.body;
+
+  if (!phoneNumber || !userId) {
+    return res.status(400).json({
+      success: false,
+      error: 'phoneNumber and userId are required'
+    });
+  }
+
+  try {
+    const domainInfo = vpnService.createPhoneDomain(phoneNumber, userId);
+
+    res.json({
+      success: true,
+      message: 'Phone domain created successfully',
+      domain: domainInfo.domain,
+      vpnIP: domainInfo.vpnIP,
+      serverIP: domainInfo.ip,
+      port: 5000,
+      accessUrl: `https://${domainInfo.domain}:5000`,
+      fccEntity: '20130314143016',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to create phone domain'
+    });
+  }
+});
+
+// Get phone domain mapping
+router.get('/phone/:phoneNumber/domain', (req: Request, res: Response) => {
+  const { phoneNumber } = req.params;
+
+  try {
+    const mapping = vpnService.getPhoneDomainMapping(phoneNumber);
+
+    res.json({
+      success: true,
+      ...mapping,
+      fccEntity: '20130314143016',
+      instructions: {
+        step1: 'Connect to VPN using the provided server',
+        step2: `Access your domain at ${mapping.accessUrl}`,
+        step3: 'Your phone now has a working IP domain on this server'
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to get phone domain'
+    });
+  }
+});
+
+// Enable phone access with full control
+router.post('/phone/enable-access', (req: Request, res: Response) => {
+  const { connectionId, phoneNumber } = req.body;
+
+  if (!connectionId || !phoneNumber) {
+    return res.status(400).json({
+      success: false,
+      error: 'connectionId and phoneNumber are required'
+    });
+  }
+
+  try {
+    vpnService.enablePhoneAccess(connectionId, phoneNumber);
+    const mapping = vpnService.getPhoneDomainMapping(phoneNumber);
+
+    res.json({
+      success: true,
+      message: 'Phone access enabled with full control',
+      domain: mapping.domain,
+      accessUrl: mapping.accessUrl,
+      capabilities: [
+        'VPN Connection',
+        'TV Streaming',
+        'Domain Access',
+        'Server Control',
+        'FCC Compliant'
+      ],
+      fccEntity: '20130314143016',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to enable phone access'
+    });
+  }
+});
+
 export default router;

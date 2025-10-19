@@ -261,6 +261,11 @@ app.get('/account-dashboard.html', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../public/account-dashboard.html'));
 });
 
+// Phone VPN Domain Interface
+app.get('/phone-vpn-domain.html', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/phone-vpn-domain.html'));
+});
+
 // Fallback route for SPA - only for non-file requests
 app.get('*', (req, res, next) => {
   // If the request has a file extension, let static middleware handle it
