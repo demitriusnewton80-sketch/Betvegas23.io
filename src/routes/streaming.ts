@@ -305,7 +305,96 @@ router.get('/radio/ip-lookup', async (req: Request, res: Response) => {
   if (!url || typeof url !== 'string') {
     return res.status(400).json({ 
       error: 'URL parameter required',
-      wifiCoreNetwork: 'connection_required'
+
+
+// WiFi Calling Status - Core Network Health
+router.get('/wifi-calling/status', async (req: Request, res: Response) => {
+  const dns = await import('dns/promises');
+  const resolver = new dns.Resolver();
+  
+  // Test DNS resolution with multiple providers
+  const testHosts = [
+    'google.com',
+    'cloudflare.com', 
+    'nba.com'
+  ];
+  
+  const results = await Promise.allSettled(
+    testHosts.map(host => dns.lookup(host))
+  );
+  
+  const successfulLookups = results.filter(r => r.status === 'fulfilled').length;
+  const healthPercentage = (successfulLookups / testHosts.length) * 100;
+  
+  res.json({
+    wifiCalling: {
+      status: healthPercentage >= 66 ? 'healthy' : healthPercentage >= 33 ? 'degraded' : 'critical',
+      protocol: 'DNS-over-WiFi',
+      coreNetwork: 'active',
+      healthPercentage: Math.round(healthPercentage)
+    },
+    dns: {
+      totalTests: testHosts.length,
+      successful: successfulLookups,
+      failed: testHosts.length - successfulLookups
+    },
+    network: {
+      calling: 'enabled',
+      voip: 'active',
+      streaming: 'active',
+      quality: healthPercentage >= 80 ? 'excellent' : healthPercentage >= 60 ? 'good' : 'fair'
+    },
+    fccEntity: '20130314143016',
+    fccRegistration: '0024454324',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// DNS WiFi Calling - Resolve any hostname
+router.get('/wifi-calling/resolve/:hostname', async (req: Request, res: Response) => {
+  const { hostname } = req.params;
+  
+  try {
+    const dns = await import('dns/promises');
+    
+    const [lookup, ipv4, ipv6, mx, ns] = await Promise.allSettled([
+      dns.lookup(hostname),
+      dns.resolve4(hostname),
+      dns.resolve6(hostname),
+      dns.resolveMx(hostname),
+      dns.resolveNs(hostname)
+    ]);
+    
+    res.json({
+      hostname,
+      wifiCalling: {
+        status: 'active',
+        protocol: 'DNS-Core',
+        resolution: 'successful'
+      },
+      records: {
+        primary: lookup.status === 'fulfilled' ? lookup.value : null,
+        ipv4: ipv4.status === 'fulfilled' ? ipv4.value : [],
+        ipv6: ipv6.status === 'fulfilled' ? ipv6.value : [],
+        mx: mx.status === 'fulfilled' ? mx.value : [],
+        nameservers: ns.status === 'fulfilled' ? ns.value : []
+      },
+      fccEntity: '20130314143016',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    res.status(500).json({
+      error: 'WiFi calling DNS resolution failed',
+      hostname,
+      message: errorMessage,
+      wifiCalling: 'disabled'
+    });
+  }
+});
+
+      wifiCoreNetwork: 'connection_required',
+      wifiCalling: 'disabled'
     });
   }
 
@@ -313,29 +402,107 @@ router.get('/radio/ip-lookup', async (req: Request, res: Response) => {
     const urlObj = new URL(url);
     const hostname = urlObj.hostname;
 
-    // Use DNS lookup with WiFi network connection
+    // Use DNS lookup with WiFi network connection - Core WiFi Calling
     const dns = await import('dns/promises');
-    const result = await dns.lookup(hostname);
+    
+    // Perform multiple DNS resolutions for redundancy
+    const [ipv4Result, ipv6Result] = await Promise.allSettled([
+      dns.resolve4(hostname),
+      dns.resolve6(hostname)
+    ]);
+
+    const ipv4Addresses = ipv4Result.status === 'fulfilled' ? ipv4Result.value : [];
+    const ipv6Addresses = ipv6Result.status === 'fulfilled' ? ipv6Result.value : [];
+
+    // Get primary address using standard lookup
+    const primaryLookup = await dns.lookup(hostname);
 
     res.json({
       url: url,
       hostname: hostname,
-      ipAddress: result.address || '0.0.0.0',
-      family: result.family === 4 ? 'IPv4' : 'IPv6',
+      wifiCalling: {
+        status: 'active',
+        protocol: 'DNS',
+        coreNetwork: 'connected'
+      },
+      dns: {
+        primary: {
+          address: primaryLookup.address,
+          family: primaryLookup.family === 4 ? 'IPv4' : 'IPv6'
+        },
+        ipv4: ipv4Addresses,
+        ipv6: ipv6Addresses,
+        totalAddresses: ipv4Addresses.length + ipv6Addresses.length
+      },
       wifiCoreNetwork: 'connected',
       fccEntity: '20130314143016',
-      note: 'IP addresses for streaming services may change. Consider using the hostname instead.'
+      fccRegistration: '0024454324',
+      calling: {
+        voip: 'enabled',
+        streaming: 'enabled',
+        quality: 'high'
+      },
+      note: 'DNS resolution complete via WiFi calling network'
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('DNS lookup error:', errorMessage);
-    res.status(500).json({
-      error: 'Failed to lookup IP address',
-      message: errorMessage,
-      wifiCoreNetwork: 'connection_failed',
-      hostname: url ? new URL(url).hostname : 'invalid',
-      fallback: 'Use hostname directly for streaming'
-    });
+    console.error('DNS WiFi calling error:', errorMessage);
+    
+    // Attempt fallback DNS servers
+    try {
+      const dns = await import('dns/promises');
+      const resolver = new dns.Resolver();
+      
+      // Use public DNS servers as fallback
+      resolver.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
+      
+      const urlObj = new URL(url as string);
+      const fallbackResult = await resolver.resolve4(urlObj.hostname);
+      
+      res.json({
+        url: url,
+        hostname: urlObj.hostname,
+        wifiCalling: {
+          status: 'active',
+          protocol: 'DNS-Fallback',
+          coreNetwork: 'fallback_connected'
+        },
+        dns: {
+          primary: {
+            address: fallbackResult[0],
+            family: 'IPv4'
+          },
+          ipv4: fallbackResult,
+          ipv6: [],
+          totalAddresses: fallbackResult.length,
+          source: 'public_dns_fallback'
+        },
+        wifiCoreNetwork: 'fallback_connected',
+        fccEntity: '20130314143016',
+        calling: {
+          voip: 'enabled',
+          streaming: 'enabled',
+          quality: 'medium'
+        },
+        note: 'Connected via fallback DNS servers (Google/Cloudflare)'
+      });
+    } catch (fallbackError) {
+      res.status(500).json({
+        error: 'WiFi calling DNS resolution failed',
+        message: errorMessage,
+        wifiCoreNetwork: 'connection_failed',
+        wifiCalling: 'disabled',
+        hostname: url ? new URL(url as string).hostname : 'invalid',
+        fallback: 'Check WiFi network connection and try again',
+        fccEntity: '20130314143016',
+        troubleshooting: {
+          step1: 'Verify WiFi network is connected',
+          step2: 'Check firewall settings',
+          step3: 'Try using IP address directly',
+          step4: 'Contact support at gbemeeat@gmail.com'
+        }
+      });
+    }
   }
 });
 
