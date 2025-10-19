@@ -1,9 +1,7 @@
+
 // Cloud-based API Configuration
 // Young Meeat LLC - FCC Entity: 20130314143016
 (function() {
-  'use strict';
-
-  // Cloud configuration - automatically detects environment
   const CloudConfig = {
     getAPIBase: function() {
       // Production cloud environment
@@ -28,8 +26,8 @@
     getConfig: function() {
       return {
         apiBase: this.getAPIBase(),
-        fccEntity: '20130314143016',
         environment: this.getEnvironment(),
+        fccEntity: '20130314143016',
         timestamp: new Date().toISOString()
       };
     },
@@ -41,13 +39,9 @@
     }
   };
 
-  // Expose globally
+  // Expose globally - single declaration
   window.CloudConfig = CloudConfig;
-  // Centralized API configuration
-  // This file should be loaded once before other scripts
-  if (typeof window.API_BASE === 'undefined') {
-    window.API_BASE = CloudConfig.getAPIBase();
-  }
+  window.API_BASE = CloudConfig.getAPIBase();
 
   console.log('☁️ Cloud API Config loaded:', CloudConfig.getConfig());
 })();
