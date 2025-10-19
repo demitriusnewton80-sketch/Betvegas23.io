@@ -6,347 +6,557 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Live Sportsbook - Young Meeat LLC</title>
+    <title>Live Sportsbook - WiFi Core Connected | Young Meeat LLC</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --secondary: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --text: #1f2937;
+            --text-light: #6b7280;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
             min-height: 100vh;
-            color: white;
+            color: var(--text);
+            padding: 0;
         }
-        .header {
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-            padding: 40px 20px;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+
+        body.dark-mode {
+            --light: #1e293b;
+            --border: #334155;
+            --text: #f1f5f9;
+            --text-light: #cbd5e1;
         }
-        .header h1 {
-            font-size: 48px;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-        .header p {
-            font-size: 18px;
-            opacity: 0.9;
-        }
+
         .dark-mode-toggle {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: var(--bg-card);
-            border: 2px solid var(--border-color);
-            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
             padding: 12px 20px;
-            border-radius: 25px;
+            border-radius: 50px;
             cursor: pointer;
-            font-weight: 600;
-            z-index: 1000;
-            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            z-index: 1000;
         }
+
         .dark-mode-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
             transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
+
+        .hero-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            padding: 40px 20px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,101.3C1248,85,1344,75,1392,69.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+            background-size: cover;
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-header h1 {
+            color: white;
+            font-size: 48px;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .hero-header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .wifi-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid rgba(34, 197, 94, 0.5);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 700;
+            margin: 10px;
+            animation: pulse 2s infinite;
+        }
+
         .fcc-badge {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
             padding: 8px 20px;
             border-radius: 25px;
             font-size: 12px;
             display: inline-block;
-            margin-top: 15px;
+            margin: 5px;
             font-weight: 700;
         }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .container {
             max-width: 1400px;
-            margin: 0 auto;
-            padding: 30px 20px;
+            margin: -40px auto 0;
+            padding: 0 20px 40px;
+            position: relative;
+            z-index: 2;
         }
-        .user-panel {
-            background: rgba(22, 27, 34, 0.8);
-            border-radius: 16px;
-            padding: 25px;
-            margin-bottom: 30px;
-            border: 2px solid rgba(83, 196, 81, 0.3);
-        }
-        .user-info {
+
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
         }
-        .stat-box {
-            background: rgba(13, 17, 23, 0.8);
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid rgba(83, 196, 81, 0.2);
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            border: 2px solid transparent;
         }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            border-color: var(--primary-light);
+        }
+
         .stat-label {
             font-size: 12px;
-            opacity: 0.7;
+            color: var(--text-light);
             text-transform: uppercase;
+            font-weight: 600;
             margin-bottom: 8px;
+            letter-spacing: 0.5px;
         }
+
         .stat-value {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
-            color: #22c55e;
+            color: var(--primary);
         }
-        .btn {
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
+
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
-        .btn-secondary {
-            background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
+
+        .section-header h2 {
+            color: var(--primary);
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .sport-tabs {
+
+        .filter-tabs {
             display: flex;
             gap: 10px;
-            margin-bottom: 30px;
             flex-wrap: wrap;
         }
-        .sport-tab {
-            background: rgba(22, 27, 34, 0.8);
-            border: 2px solid rgba(83, 196, 81, 0.3);
-            padding: 12px 24px;
-            border-radius: 10px;
+
+        .filter-tab {
+            padding: 10px 20px;
+            background: var(--light);
+            border: 2px solid var(--border);
+            border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s;
             font-weight: 600;
+            transition: all 0.3s;
+            font-size: 14px;
         }
-        .sport-tab:hover {
-            border-color: rgba(83, 196, 81, 0.6);
+
+        .filter-tab:hover {
+            background: var(--primary-light);
+            color: white;
+            border-color: var(--primary-light);
         }
-        .sport-tab.active {
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            border-color: #22c55e;
+
+        .filter-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
+
         .games-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
         }
-        @media (min-width: 768px) {
-            .games-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        @media (min-width: 1200px) {
-            .games-grid {
-                grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-            }
-        }
+
         .game-card {
-            background: rgba(22, 27, 34, 0.8);
-            border: 2px solid rgba(83, 196, 81, 0.3);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
             border-radius: 16px;
-            padding: 25px;
+            padding: 24px;
+            border: 2px solid var(--border);
             transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
         }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .game-card:hover::before {
+            left: 100%;
+        }
+
         .game-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(83, 196, 81, 0.6);
-            box-shadow: 0 12px 32px rgba(83, 196, 81, 0.3);
-            background: var(--bg-card-hover);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-light);
         }
+
         .game-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
+
         .sport-badge {
-            background: rgba(59, 130, 246, 0.3);
-            color: #3b82f6;
+            background: var(--primary);
+            color: white;
             padding: 6px 14px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
+            text-transform: uppercase;
         }
+
         .status-badge {
             padding: 6px 14px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
+            text-transform: uppercase;
         }
-        .status-upcoming {
-            background: rgba(251, 191, 36, 0.3);
-            color: #fbbf24;
-        }
+
         .status-live {
-            background: rgba(34, 197, 94, 0.3);
-            color: #22c55e;
+            background: #dcfce7;
+            color: #166534;
             animation: pulse 2s infinite;
         }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+
+        .status-upcoming {
+            background: #fef3c7;
+            color: #92400e;
         }
+
         .matchup {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin: 20px 0;
+            padding: 16px;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 12px;
         }
+
         .team {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
+            color: var(--text);
+            flex: 1;
+            text-align: center;
         }
+
         .vs {
-            color: #6b7280;
-            font-weight: 600;
+            color: var(--text-light);
+            font-weight: 700;
             font-size: 14px;
+            padding: 0 16px;
         }
+
         .odds-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin: 20px 0;
+            margin-bottom: 16px;
         }
+
         .odds-btn {
-            background: rgba(13, 17, 23, 0.8);
-            border: 2px solid rgba(83, 196, 81, 0.3);
-            padding: 18px;
-            border-radius: 10px;
+            background: var(--light);
+            border: 2px solid var(--border);
+            padding: 16px;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s;
             text-align: center;
         }
+
         .odds-btn:hover {
-            border-color: rgba(83, 196, 81, 0.6);
-            background: rgba(22, 27, 34, 0.9);
+            background: var(--primary-light);
+            color: white;
+            border-color: var(--primary-light);
+            transform: scale(1.05);
         }
+
         .odds-btn.selected {
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            border-color: #22c55e;
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
+
         .odds-label {
-            font-size: 13px;
-            opacity: 0.7;
+            font-size: 11px;
+            color: var(--text-light);
             margin-bottom: 6px;
+            text-transform: uppercase;
+            font-weight: 600;
         }
+
+        .odds-btn.selected .odds-label {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
         .odds-value {
             font-size: 24px;
             font-weight: 700;
         }
-        .bet-input-section {
-            margin-top: 15px;
+
+        .bet-input-container {
             display: none;
+            margin-top: 16px;
+            animation: slideDown 0.3s ease-out;
         }
-        .bet-input-section.active {
+
+        .bet-input-container.active {
             display: block;
         }
-        input[type="number"] {
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .bet-input {
             width: 100%;
             padding: 14px;
-            background: rgba(13, 17, 23, 0.8);
-            border: 2px solid rgba(83, 196, 81, 0.3);
+            border: 2px solid var(--border);
             border-radius: 10px;
             font-size: 16px;
-            color: white;
             margin-bottom: 12px;
         }
-        input[type="number"]:focus {
+
+        .bet-input:focus {
             outline: none;
-            border-color: #22c55e;
+            border-color: var(--primary-light);
         }
+
+        .btn {
+            padding: 14px 24px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30, 58, 138, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary) 0%, #16a34a 100%);
+        }
+
         .game-info {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 15px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 2px solid var(--border);
             font-size: 13px;
-            opacity: 0.7;
+            color: var(--text-light);
         }
-        .my-bets-section {
-            background: rgba(22, 27, 34, 0.8);
-            border: 2px solid rgba(83, 196, 81, 0.3);
-            border-radius: 16px;
+
+        .wifi-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .radio-link {
+            color: var(--primary-light);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .radio-link:hover {
+            text-decoration: underline;
+        }
+
+        .bets-section {
+            background: white;
+            border-radius: 20px;
             padding: 30px;
-            margin-top: 40px;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
-        .my-bets-section h2 {
-            font-size: 28px;
-            margin-bottom: 20px;
-        }
+
         .bet-item {
-            background: rgba(13, 17, 23, 0.8);
-            border-left: 4px solid #22c55e;
+            background: var(--light);
             padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s;
         }
-        .bet-item-header {
+
+        .bet-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .bet-detail {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
-        .quick-links {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 30px;
+
+        .bet-label {
+            color: var(--text-light);
+            font-weight: 600;
         }
-        .quick-link {
-            background: rgba(22, 27, 34, 0.8);
-            border: 2px solid rgba(59, 130, 246, 0.3);
-            border-radius: 12px;
-            padding: 20px;
+
+        .bet-value {
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .loading {
             text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            color: white;
-        }
-        .quick-link:hover {
-            transform: translateY(-3px);
-            border-color: rgba(59, 130, 246, 0.6);
-        }
-        .quick-link-icon {
-            font-size: 36px;
-            margin-bottom: 10px;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal.active {
-            display: flex;
-        }
-        .modal-content {
-            background: rgba(22, 27, 34, 0.95);
-            border: 2px solid rgba(83, 196, 81, 0.3);
             padding: 40px;
-            border-radius: 16px;
-            max-width: 500px;
-            width: 90%;
+            color: var(--text-light);
+        }
+
+        .loading-spinner {
+            border: 4px solid var(--border);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .hero-header h1 {
+                font-size: 32px;
+            }
+
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
@@ -355,204 +565,188 @@
         <span id="darkModeIcon">☀️</span>
         <span id="darkModeText">Light Mode</span>
     </button>
-    
-    <div class="header">
-        <h1>🏆 Live Sportsbook</h1>
-        <p>Young Meeat LLC Sports Betting Platform</p>
-        <span class="fcc-badge">FCC Entity: 20130314143016</span>
+
+    <div class="hero-header">
+        <div class="hero-content">
+            <h1>🏆 Live Sportsbook</h1>
+            <p>Young Meeat LLC - WiFi Core Connected Sports Betting Platform</p>
+            <div class="wifi-status">
+                <span>📡</span>
+                <span>WiFi Core Connected</span>
+            </div>
+            <span class="fcc-badge">FCC Entity: 20130314143016</span>
+        </div>
     </div>
 
     <div class="container">
-        <div class="user-panel">
-            <div class="user-info">
-                <div class="stat-box">
-                    <div class="stat-label">User ID</div>
-                    <div class="stat-value" style="font-size: 18px;" id="userId">demo-user</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Wallet Balance</div>
-                    <div class="stat-value">$<span id="walletBalance">1000.00</span></div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Active Bets</div>
-                    <div class="stat-value" id="activeBets">0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Total Wagered</div>
-                    <div class="stat-value">$<span id="totalWagered">0.00</span></div>
-                </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">User ID</div>
+                <div class="stat-value" style="font-size: 18px;" id="userId">demo-user</div>
             </div>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <button class="btn" onclick="showDepositModal()">💰 Deposit Funds</button>
-                <button class="btn btn-secondary" onclick="loadUserData()">🔄 Refresh Data</button>
+            <div class="stat-card">
+                <div class="stat-label">Wallet Balance</div>
+                <div class="stat-value">$<span id="walletBalance">1000.00</span></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Bets</div>
+                <div class="stat-value" id="activeBets">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Wagered</div>
+                <div class="stat-value">$<span id="totalWagered">0.00</span></div>
             </div>
         </div>
 
-        <div class="sport-tabs">
-            <div class="sport-tab active" onclick="filterGames('all')">🏆 All Sports</div>
-            <div class="sport-tab" onclick="filterGames('NFL')">🏈 NFL</div>
-            <div class="sport-tab" onclick="filterGames('NBA')">🏀 NBA</div>
-            <div class="sport-tab" onclick="filterGames('MLB')">⚾ MLB</div>
-            <div class="sport-tab" onclick="filterGames('NHL')">🏒 NHL</div>
-            <div class="sport-tab" onclick="filterGames('Boxing')">🥊 Boxing</div>
-        </div>
+        <div class="section">
+            <div class="section-header">
+                <h2>🎯 Available Games</h2>
+                <div class="filter-tabs">
+                    <div class="filter-tab active" onclick="filterGames('all')">All Sports</div>
+                    <div class="filter-tab" onclick="filterGames('NFL')">🏈 NFL</div>
+                    <div class="filter-tab" onclick="filterGames('NBA')">🏀 NBA</div>
+                    <div class="filter-tab" onclick="filterGames('MLB')">⚾ MLB</div>
+                    <div class="filter-tab" onclick="filterGames('NHL')">🏒 NHL</div>
+                    <div class="filter-tab" onclick="filterGames('Boxing')">🥊 Boxing</div>
+                </div>
+            </div>
 
-        <div class="games-grid" id="gamesGrid">
-            <!-- Games will be loaded here -->
-        </div>
-
-        <div class="my-bets-section">
-            <h2>📊 My Active Bets</h2>
-            <div id="myBetsList">
-                <p style="opacity: 0.7;">No active bets. Place a bet to get started!</p>
+            <div id="gamesContainer">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Loading games via WiFi Core...</p>
+                </div>
             </div>
         </div>
 
-        <div class="quick-links">
-            <a href="/ps5-betting.html" class="quick-link">
-                <div class="quick-link-icon">🎮</div>
-                <div>PlayStation 5 Betting</div>
-            </a>
-            <a href="/betting-zone.html" class="quick-link">
-                <div class="quick-link-icon">🎯</div>
-                <div>Betting Zone</div>
-            </a>
-            <a href="/wifi-plugin-hub.html" class="quick-link">
-                <div class="quick-link-icon">📡</div>
-                <div>WiFi Hub</div>
-            </a>
-            <a href="/backup-dashboard.html" class="quick-link">
-                <div class="quick-link-icon">☁️</div>
-                <div>AWS Backup</div>
-            </a>
-        </div>
-    </div>
-
-    <!-- Deposit Modal -->
-    <div class="modal" id="depositModal">
-        <div class="modal-content">
-            <h2 style="margin-bottom: 20px;">💰 Deposit Funds</h2>
-            <input type="number" id="depositAmount" placeholder="Enter amount ($10 minimum)" min="10" step="10">
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn" onclick="processDeposit()" style="flex: 1;">Deposit</button>
-                <button class="btn btn-secondary" onclick="closeDepositModal()" style="flex: 1;">Cancel</button>
+        <div class="bets-section">
+            <h2 style="color: var(--primary); margin-bottom: 20px;">📊 My Bets</h2>
+            <div id="betsContainer">
+                <p style="color: var(--text-light);">No bets placed yet. Start betting to see your wagers here!</p>
             </div>
         </div>
     </div>
 
     <script>
         const API_BASE = window.location.origin;
-        const currentUserId = 'demo-user';
-        let currentSport = 'all';
+        let currentUserId = 'demo-user';
         let selectedBets = new Map();
-        let allGames = [];
+        let currentFilter = 'all';
 
-        // Dark mode functionality
+        // Dark mode toggle
         function toggleDarkMode() {
-            const body = document.body;
+            document.body.classList.toggle('dark-mode');
             const icon = document.getElementById('darkModeIcon');
             const text = document.getElementById('darkModeText');
             
-            body.classList.toggle('light-mode');
-            
-            if (body.classList.contains('light-mode')) {
+            if (document.body.classList.contains('dark-mode')) {
                 icon.textContent = '🌙';
                 text.textContent = 'Dark Mode';
-                localStorage.setItem('darkMode', 'light');
+                localStorage.setItem('darkMode', 'enabled');
             } else {
                 icon.textContent = '☀️';
                 text.textContent = 'Light Mode';
-                localStorage.setItem('darkMode', 'dark');
+                localStorage.setItem('darkMode', 'disabled');
             }
         }
 
         // Load dark mode preference
-        function loadDarkModePreference() {
-            const savedMode = localStorage.getItem('darkMode');
-            if (savedMode === 'light') {
-                document.body.classList.add('light-mode');
-                document.getElementById('darkModeIcon').textContent = '🌙';
-                document.getElementById('darkModeText').textContent = 'Dark Mode';
-            }
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('darkModeIcon').textContent = '🌙';
+            document.getElementById('darkModeText').textContent = 'Dark Mode';
         }
 
+        // Filter games
+        function filterGames(sport) {
+            currentFilter = sport;
+            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            loadGames();
+        }
+
+        // Load games from API
         async function loadGames() {
+            const container = document.getElementById('gamesContainer');
+            container.innerHTML = '<div class="loading"><div class="loading-spinner"></div><p>Loading games via WiFi Core...</p></div>';
+
             try {
-                const url = currentSport === 'all' 
+                const url = currentFilter === 'all' 
                     ? `${API_BASE}/sportsbook/games`
-                    : `${API_BASE}/sportsbook/games?sport=${currentSport}`;
-                
+                    : `${API_BASE}/sportsbook/games?sport=${currentFilter}`;
+
                 const response = await fetch(url);
                 const data = await response.json();
-                
-                allGames = data.games;
-                displayGames(allGames);
+
+                if (data.games && data.games.length > 0) {
+                    displayGames(data.games);
+                } else {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 40px;">No games available for this sport.</p>';
+                }
             } catch (error) {
                 console.error('Error loading games:', error);
-                document.getElementById('gamesGrid').innerHTML = 
-                    '<p style="text-align: center; opacity: 0.7;">Error loading games. Please try again.</p>';
+                container.innerHTML = '<p style="text-align: center; color: var(--danger); padding: 40px;">Failed to load games. Please refresh.</p>';
             }
         }
 
+        // Display games
         function displayGames(games) {
-            const grid = document.getElementById('gamesGrid');
-            
-            if (games.length === 0) {
-                grid.innerHTML = '<p style="text-align: center; opacity: 0.7;">No games available for this sport.</p>';
-                return;
-            }
-
-            grid.innerHTML = games.map(game => `
-                <div class="game-card">
-                    <div class="game-header">
-                        <span class="sport-badge">${game.sport}</span>
-                        <span class="status-badge status-${game.status}">
-                            ${game.status === 'live' ? '🔴 LIVE' : '⏰ Upcoming'}
-                        </span>
-                    </div>
-                    
-                    <div class="matchup">
-                        <span class="team">${game.homeTeam}</span>
-                        <span class="vs">VS</span>
-                        <span class="team">${game.awayTeam}</span>
-                    </div>
-                    
-                    <div class="odds-container">
-                        <div class="odds-btn" onclick="selectTeam('${game.id}', 'home', ${game.odds.home}, '${game.homeTeam}')">
-                            <div class="odds-label">${game.homeTeam}</div>
-                            <div class="odds-value">${game.odds.home > 0 ? '+' : ''}${game.odds.home}</div>
+            const container = document.getElementById('gamesContainer');
+            const html = `
+                <div class="games-grid">
+                    ${games.map(game => `
+                        <div class="game-card">
+                            <div class="game-header">
+                                <span class="sport-badge">${game.sport}</span>
+                                <span class="status-badge status-${game.status}">${game.status}</span>
+                            </div>
+                            <div class="matchup">
+                                <div class="team">${game.homeTeam}</div>
+                                <div class="vs">VS</div>
+                                <div class="team">${game.awayTeam}</div>
+                            </div>
+                            <div class="odds-container">
+                                <div class="odds-btn" onclick="selectTeam('${game.id}', 'home', ${game.odds.home})">
+                                    <div class="odds-label">${game.homeTeam}</div>
+                                    <div class="odds-value">${game.odds.home > 0 ? '+' : ''}${game.odds.home}</div>
+                                </div>
+                                <div class="odds-btn" onclick="selectTeam('${game.id}', 'away', ${game.odds.away})">
+                                    <div class="odds-label">${game.awayTeam}</div>
+                                    <div class="odds-value">${game.odds.away > 0 ? '+' : ''}${game.odds.away}</div>
+                                </div>
+                            </div>
+                            <div class="bet-input-container" id="bet-${game.id}">
+                                <input type="number" class="bet-input" id="amount-${game.id}" placeholder="Enter bet amount ($)" min="1" step="1">
+                                <button class="btn" onclick="placeBet('${game.id}')">Place Bet</button>
+                            </div>
+                            <div class="game-info">
+                                <span>📅 ${new Date(game.startTime).toLocaleString()}</span>
+                                ${game.radioLink ? `<a href="${game.radioLink}" target="_blank" class="radio-link">📻 Radio</a>` : ''}
+                            </div>
+                            <div class="wifi-indicator">
+                                <span>📡</span>
+                                <span>WiFi Core Synced</span>
+                            </div>
                         </div>
-                        <div class="odds-btn" onclick="selectTeam('${game.id}', 'away', ${game.odds.away}, '${game.awayTeam}')">
-                            <div class="odds-label">${game.awayTeam}</div>
-                            <div class="odds-value">${game.odds.away > 0 ? '+' : ''}${game.odds.away}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="bet-input-section" id="bet-${game.id}">
-                        <input type="number" placeholder="Bet amount ($)" min="1" step="1" id="amount-${game.id}">
-                        <button class="btn" style="width: 100%;" onclick="placeBet('${game.id}')">
-                            Place Bet
-                        </button>
-                    </div>
-                    
-                    <div class="game-info">
-                        <span>${new Date(game.startTime).toLocaleString()}</span>
-                        ${game.radioLink ? `<a href="${game.radioLink}" target="_blank" style="color: #22c55e;">📻 Listen</a>` : ''}
-                    </div>
+                    `).join('')}
                 </div>
-            `).join('');
+            `;
+            container.innerHTML = html;
         }
 
-        function selectTeam(gameId, team, odds, teamName) {
-            selectedBets.set(gameId, { team, odds, teamName });
+        // Select team for betting
+        function selectTeam(gameId, team, odds) {
+            selectedBets.set(gameId, { team, odds });
+            
+            const container = document.getElementById(`bet-${gameId}`);
+            container.classList.add('active');
             
             const card = event.target.closest('.game-card');
             card.querySelectorAll('.odds-btn').forEach(btn => btn.classList.remove('selected'));
             event.target.closest('.odds-btn').classList.add('selected');
-            
-            document.getElementById(`bet-${gameId}`).classList.add('active');
         }
 
+        // Place bet
         async function placeBet(gameId) {
             const betInfo = selectedBets.get(gameId);
             if (!betInfo) {
@@ -581,152 +775,90 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    alert(`✅ Bet placed successfully!\n\nTeam: ${betInfo.teamName}\nAmount: $${amount.toFixed(2)}\nPotential Win: $${data.bet.potentialWin.toFixed(2)}`);
+                    alert(`✅ Bet placed successfully!\nPotential payout: $${data.bet.potentialWin.toFixed(2)}`);
                     document.getElementById(`amount-${gameId}`).value = '';
                     document.getElementById(`bet-${gameId}`).classList.remove('active');
                     selectedBets.delete(gameId);
                     loadUserData();
                 } else {
-                    alert('Error: ' + (data.error || 'Failed to place bet'));
+                    alert('❌ ' + (data.error || 'Failed to place bet'));
                 }
             } catch (error) {
                 console.error('Error placing bet:', error);
-                alert('Failed to place bet. Please try again.');
+                alert('❌ Failed to place bet. Please try again.');
             }
         }
 
+        // Load user data
         async function loadUserData() {
             try {
-                const [walletRes, betsRes] = await Promise.all([
+                const [walletRes, betsRes, statsRes] = await Promise.all([
                     fetch(`${API_BASE}/sportsbook/user/${currentUserId}/wallet`),
-                    fetch(`${API_BASE}/sportsbook/user/${currentUserId}/bets`)
+                    fetch(`${API_BASE}/sportsbook/user/${currentUserId}/bets`),
+                    fetch(`${API_BASE}/sportsbook/user/${currentUserId}/stats`)
                 ]);
 
-                const walletData = await walletRes.json();
-                const betsData = await betsRes.json();
+                const wallet = await walletRes.json();
+                const bets = await betsRes.json();
+                const stats = await statsRes.json();
 
-                document.getElementById('walletBalance').textContent = walletData.balance.toFixed(2);
-                
-                const activeBets = betsData.bets.filter(b => b.status === 'pending');
-                document.getElementById('activeBets').textContent = activeBets.length;
-                
-                const totalWagered = betsData.bets.reduce((sum, bet) => sum + bet.amount, 0);
-                document.getElementById('totalWagered').textContent = totalWagered.toFixed(2);
-                
-                displayMyBets(activeBets);
+                document.getElementById('walletBalance').textContent = wallet.balance.toFixed(2);
+                document.getElementById('activeBets').textContent = stats.activeBets;
+                document.getElementById('totalWagered').textContent = stats.totalWagered.toFixed(2);
+
+                displayBets(bets.bets);
             } catch (error) {
                 console.error('Error loading user data:', error);
             }
         }
 
-        function displayMyBets(bets) {
-            const betsList = document.getElementById('myBetsList');
+        // Display user bets
+        function displayBets(bets) {
+            const container = document.getElementById('betsContainer');
             
-            if (bets.length === 0) {
-                betsList.innerHTML = '<p style="opacity: 0.7;">No active bets. Place a bet to get started!</p>';
+            if (!bets || bets.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light);">No bets placed yet. Start betting to see your wagers here!</p>';
                 return;
             }
 
-            betsList.innerHTML = bets.map(bet => `
+            const html = bets.map(bet => `
                 <div class="bet-item">
-                    <div class="bet-item-header">
-                        <strong>Game: ${bet.gameId}</strong>
-                        <span style="color: #fbbf24;">⏳ Pending</span>
+                    <div class="bet-detail">
+                        <span class="bet-label">Game ID:</span>
+                        <span class="bet-value">${bet.gameId}</span>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 14px;">
-                        <div><strong>Team:</strong> ${bet.team}</div>
-                        <div><strong>Amount:</strong> $${bet.amount.toFixed(2)}</div>
-                        <div><strong>Odds:</strong> ${bet.odds > 0 ? '+' : ''}${bet.odds}</div>
-                        <div><strong>Potential Win:</strong> $${bet.potentialWin.toFixed(2)}</div>
+                    <div class="bet-detail">
+                        <span class="bet-label">Team:</span>
+                        <span class="bet-value">${bet.team}</span>
                     </div>
-                    <div style="margin-top: 12px;">
-                        <button class="btn btn-secondary" onclick="cashOutBet('${bet.id}')" style="width: 100%;">
-                            💵 Cash Out (85%)
-                        </button>
+                    <div class="bet-detail">
+                        <span class="bet-label">Amount:</span>
+                        <span class="bet-value">$${bet.amount.toFixed(2)}</span>
+                    </div>
+                    <div class="bet-detail">
+                        <span class="bet-label">Odds:</span>
+                        <span class="bet-value">${bet.odds > 0 ? '+' : ''}${bet.odds}</span>
+                    </div>
+                    <div class="bet-detail">
+                        <span class="bet-label">Potential Win:</span>
+                        <span class="bet-value" style="color: var(--secondary);">$${bet.potentialWin.toFixed(2)}</span>
+                    </div>
+                    <div class="bet-detail">
+                        <span class="bet-label">Status:</span>
+                        <span class="bet-value">${bet.status}</span>
                     </div>
                 </div>
             `).join('');
+
+            container.innerHTML = html;
         }
 
-        async function cashOutBet(betId) {
-            if (!confirm('Are you sure you want to cash out this bet? You will receive 85% of the potential payout.')) {
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_BASE}/sportsbook/cashout/${betId}`, {
-                    method: 'POST'
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    alert(`✅ Cash out successful!\n\nAmount received: $${data.amount.toFixed(2)}`);
-                    loadUserData();
-                } else {
-                    alert('Error: ' + (data.error || 'Cash out failed'));
-                }
-            } catch (error) {
-                console.error('Error cashing out:', error);
-                alert('Failed to cash out. Please try again.');
-            }
-        }
-
-        function filterGames(sport) {
-            currentSport = sport;
-            
-            document.querySelectorAll('.sport-tab').forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            loadGames();
-        }
-
-        function showDepositModal() {
-            document.getElementById('depositModal').classList.add('active');
-        }
-
-        function closeDepositModal() {
-            document.getElementById('depositModal').classList.remove('active');
-        }
-
-        async function processDeposit() {
-            const amount = parseFloat(document.getElementById('depositAmount').value);
-            
-            if (!amount || amount < 10) {
-                alert('Minimum deposit is $10');
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_BASE}/sportsbook/user/${currentUserId}/deposit`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ amount })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    alert(`✅ Deposit successful!\n\nNew balance: $${data.newBalance.toFixed(2)}`);
-                    closeDepositModal();
-                    loadUserData();
-                    document.getElementById('depositAmount').value = '';
-                } else {
-                    alert('Error: ' + (data.error || 'Deposit failed'));
-                }
-            } catch (error) {
-                console.error('Error processing deposit:', error);
-                alert('Failed to process deposit. Please try again.');
-            }
-        }
-
-        // Initialize on page load
+        // Initialize
         window.addEventListener('load', () => {
-            loadDarkModePreference();
             loadGames();
             loadUserData();
             
-            // Refresh data every 30 seconds
+            // Auto-refresh every 30 seconds
             setInterval(() => {
                 loadGames();
                 loadUserData();
