@@ -1,0 +1,311 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FCC PlayStation Control - Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #003087 0%, #0070cc 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1967D2 0%, #0D47A1 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .fcc-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 12px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: 700;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .email-select {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .email-select label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+        select, input {
+            width: 100%;
+            padding: 14px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #1f2937;
+        }
+        select:focus, input:focus {
+            outline: none;
+            border-color: #003087;
+        }
+        .control-section {
+            margin: 30px 0;
+        }
+        .control-section h3 {
+            color: #003087;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .control-btn {
+            padding: 16px;
+            background: linear-gradient(135deg, #003087 0%, #0070cc 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,48,135,0.3);
+        }
+        .control-btn:active {
+            transform: scale(0.98);
+        }
+        .status-box {
+            background: #eff6ff;
+            border-left: 4px solid #0070cc;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .status-box h4 {
+            color: #003087;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .status-item {
+            color: #1f2937;
+            font-size: 13px;
+            padding: 5px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .stream-list {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        .stream-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #22c55e;
+        }
+        .stream-item h5 {
+            color: #1f2937;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+        .stream-item p {
+            color: #6b7280;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 FCC PlayStation Control</h1>
+            <p>Phone Control for PlayStation Network</p>
+            <span class="fcc-badge">FCC Entity: 20130314143016</span>
+        </div>
+        
+        <div class="content">
+            <div class="email-select">
+                <label for="emailSelect">Select Your Authorized Email:</label>
+                <select id="emailSelect" onchange="loadStatus()">
+                    <option value="">-- Select Email --</option>
+                    <option value="gbemeeat@gmail.com">gbemeeat@gmail.com</option>
+                    <option value="meeatupt215@gmail.com">meeatupt215@gmail.com</option>
+                </select>
+            </div>
+            
+            <div id="statusDisplay"></div>
+            
+            <div class="control-section">
+                <h3>🎮 PlayStation Controls</h3>
+                <div class="control-grid">
+                    <button class="control-btn" onclick="sendControl('connect')">
+                        Connect PS5
+                    </button>
+                    <button class="control-btn" onclick="sendControl('disconnect')">
+                        Disconnect
+                    </button>
+                    <button class="control-btn" onclick="sendControl('start_stream')">
+                        Start Stream
+                    </button>
+                    <button class="control-btn" onclick="sendControl('stop_stream')">
+                        Stop Stream
+                    </button>
+                </div>
+            </div>
+            
+            <div class="control-section">
+                <h3>📺 Quick Access</h3>
+                <button class="control-btn" style="width: 100%; margin-bottom: 10px;" onclick="openBettingZone()">
+                    🎯 Open Betting Zone
+                </button>
+                <button class="control-btn" style="width: 100%; margin-bottom: 10px;" onclick="openPS5Betting()">
+                    🎮 PS5 Betting Platform
+                </button>
+                <button class="control-btn" style="width: 100%;" onclick="openSportsbook()">
+                    🏆 Live Sportsbook
+                </button>
+            </div>
+            
+            <div id="streamsDisplay"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        
+        async function loadStatus() {
+            const email = document.getElementById('emailSelect').value;
+            if (!email) {
+                document.getElementById('statusDisplay').innerHTML = '';
+                document.getElementById('streamsDisplay').innerHTML = '';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/streaming/fcc/status/${encodeURIComponent(email)}`);
+                const data = await response.json();
+                
+                document.getElementById('statusDisplay').innerHTML = `
+                    <div class="status-box">
+                        <h4>✅ FCC Status Active</h4>
+                        <div class="status-item">
+                            <span>PlayStation Control:</span>
+                            <strong style="color: #22c55e;">${data.services.playstationControl}</strong>
+                        </div>
+                        <div class="status-item">
+                            <span>Streaming Access:</span>
+                            <strong style="color: #22c55e;">${data.services.streamingAccess}</strong>
+                        </div>
+                        <div class="status-item">
+                            <span>Phone Control:</span>
+                            <strong style="color: #22c55e;">${data.phoneControlEnabled ? 'enabled' : 'disabled'}</strong>
+                        </div>
+                        <div class="status-item">
+                            <span>Active Streams:</span>
+                            <strong>${data.activeStreams}</strong>
+                        </div>
+                    </div>
+                `;
+                
+                loadStreams();
+            } catch (error) {
+                console.error('Error loading status:', error);
+                alert('Error loading FCC status');
+            }
+        }
+        
+        async function sendControl(action) {
+            const email = document.getElementById('emailSelect').value;
+            if (!email) {
+                alert('Please select your email first');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/streaming/fcc/playstation-control`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, action })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`✅ ${action.replace('_', ' ').toUpperCase()} successful!`);
+                    loadStatus();
+                } else {
+                    alert(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error sending control:', error);
+                alert('Failed to send control command');
+            }
+        }
+        
+        async function loadStreams() {
+            try {
+                const response = await fetch(`${API_BASE}/streaming/partners`);
+                const data = await response.json();
+                
+                document.getElementById('streamsDisplay').innerHTML = `
+                    <div class="stream-list">
+                        <h3 style="color: #003087; margin-bottom: 15px; font-size: 18px;">📡 Available Streams</h3>
+                        ${data.partners.map(partner => `
+                            <div class="stream-item">
+                                <h5>${partner.name}</h5>
+                                <p>Status: ${partner.active ? '✅ Active' : '⏸️ Inactive'}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading streams:', error);
+            }
+        }
+        
+        function openBettingZone() {
+            window.open(`${API_BASE}/ps5-qr-betting-portal.html`, '_blank');
+        }
+        
+        function openPS5Betting() {
+            window.open(`${API_BASE}/ps5-betting.html`, '_blank');
+        }
+        
+        function openSportsbook() {
+            window.open(`${API_BASE}/index.html`, '_blank');
+        }
+    </script>
+</body>
+</html>
