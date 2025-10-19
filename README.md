@@ -32,6 +32,11 @@ Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 - `POST /auth/logout` - Logout
 - `GET /auth/status` - SSO status
 
+### PlayStation Network Integration
+- `GET /playstation-network-sso.html` - PlayStation 5 users landing page
+- `GET /sso-plugin/login/playstation-network` - PSN SSO login
+- `GET /sportsbook/games?source=psn` - Gaming content betting
+
 ### SSO Plugin System
 - `GET /sso-plugin/plugins` - Get all SSO plugins
 - `GET /sso-plugin/plugins/enabled` - Get enabled plugins

@@ -143,6 +143,27 @@ class SSOPluginService extends EventEmitter {
         priority: 5
       }
     });
+
+    // PlayStation Network SSO Plugin
+    this.registerPlugin({
+      id: 'playstation-network',
+      name: 'PlayStation Network',
+      provider: 'Sony PlayStation',
+      enabled: true,
+      config: {
+        clientId: process.env.PSN_CLIENT_ID || '',
+        clientSecret: process.env.PSN_CLIENT_SECRET || '',
+        authUrl: 'https://auth.api.sonyentertainmentnetwork.com/2.0/oauth/authorize',
+        tokenUrl: 'https://auth.api.sonyentertainmentnetwork.com/2.0/oauth/token',
+        userInfoUrl: 'https://us-prof.np.community.playstation.net/userProfile/v1/users/me/profile2',
+        scopes: ['psn:mobile.v1', 'user:account.get']
+      },
+      metadata: {
+        icon: '🎮',
+        description: 'PlayStation Network - Sports Gaming Betting',
+        priority: 6
+      }
+    });
   }
 
   // Register a new SSO plugin
