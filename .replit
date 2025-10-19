@@ -55,5 +55,5 @@ localPort = 5000
 externalPort = 5000
 
 [deployment]
-run = ["sh", "-c", "npm run dev"]
+run = ["sh", "-c", "npm start"]
 build = ["sh", "-c", "npm run build"]
