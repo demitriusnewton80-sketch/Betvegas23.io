@@ -1,6 +1,8 @@
 
 import { EventEmitter } from 'events';
 import fetch from 'node-fetch';
+import { WalletModel, WalletData } from '../models/Wallet.js';
+import { Web3TransactionModel, Web3Transaction } from '../models/Web3Transaction.js';
 
 interface Web3Config {
   rpcEndpoint: string;
@@ -13,27 +15,13 @@ interface Web3Config {
   };
 }
 
-interface WalletConnection {
-  address: string;
-  chainId: number;
-  balance: string;
-  connectedAt: number;
-}
-
-interface Transaction {
-  id: string;
-  from: string;
-  to: string;
-  amount: string;
-  hash?: string;
-  status: 'pending' | 'confirmed' | 'failed';
-  timestamp: number;
-}
+interface WalletConnection extends WalletData {}
+interface Transaction extends Web3Transaction {}
 
 class Web3BridgeService extends EventEmitter {
   private static instance: Web3BridgeService;
-  private wallets: Map<string, WalletConnection>;
-  private transactions: Map<string, Transaction>;
+  private wallets: Map<string, WalletModel>;
+  private transactions: Map<string, Web3TransactionModel>;
   private config: Web3Config;
 
   private constructor() {
@@ -67,14 +55,10 @@ class Web3BridgeService extends EventEmitter {
     try {
       const balance = await this.getBalance(address);
       
-      const connection: WalletConnection = {
-        address: address.toLowerCase(),
-        chainId: this.config.chainId,
-        balance,
-        connectedAt: Date.now()
-      };
-
-      this.wallets.set(address.toLowerCase(), connection);
+      const walletModel = new WalletModel(address, this.config.chainId, balance);
+      this.wallets.set(address.toLowerCase(), walletModel);
+      
+      const connection = walletModel.toJSON();
       this.emit('wallet:connected', connection);
 
       return connection;
@@ -115,27 +99,30 @@ class Web3BridgeService extends EventEmitter {
   }
 
   async createTransaction(from: string, to: string, amount: string): Promise<Transaction> {
-    const txId = `tx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const walletModel = this.wallets.get(from.toLowerCase());
     
-    const transaction: Transaction = {
-      id: txId,
+    const txModel = new Web3TransactionModel({
       from: from.toLowerCase(),
       to: to.toLowerCase(),
       amount,
-      status: 'pending',
-      timestamp: Date.now()
-    };
+      currency: this.config.nativeCurrency.symbol,
+      nonce: walletModel?.getNonce()
+    });
 
-    this.transactions.set(txId, transaction);
-    this.emit('transaction:created', transaction);
+    if (walletModel) {
+      walletModel.incrementNonce();
+    }
 
-    return transaction;
+    this.transactions.set(txModel.getId(), txModel);
+    this.emit('transaction:created', txModel.toJSON());
+
+    return txModel.toJSON();
   }
 
   async sendTransaction(txId: string): Promise<Transaction> {
-    const tx = this.transactions.get(txId);
+    const txModel = this.transactions.get(txId);
     
-    if (!tx) {
+    if (!txModel) {
       throw new Error('Transaction not found');
     }
 
@@ -143,35 +130,40 @@ class Web3BridgeService extends EventEmitter {
       // Simulate transaction hash (in production, this would interact with Web3 provider)
       const hash = `0x${Math.random().toString(16).substr(2, 64)}`;
       
-      tx.hash = hash;
-      tx.status = 'confirmed';
+      txModel.setHash(hash);
+      txModel.setStatus('confirmed');
       
-      this.transactions.set(txId, tx);
-      this.emit('transaction:confirmed', tx);
+      // Add confirmations
+      for (let i = 0; i < 12; i++) {
+        txModel.addConfirmation();
+      }
+      
+      this.emit('transaction:confirmed', txModel.toJSON());
 
-      return tx;
+      return txModel.toJSON();
     } catch (error) {
-      tx.status = 'failed';
-      this.transactions.set(txId, tx);
-      this.emit('transaction:failed', tx);
+      txModel.setStatus('failed');
+      this.emit('transaction:failed', txModel.toJSON());
       throw error;
     }
   }
 
   getWallet(address: string): WalletConnection | undefined {
-    return this.wallets.get(address.toLowerCase());
+    const walletModel = this.wallets.get(address.toLowerCase());
+    return walletModel?.toJSON();
   }
 
   getTransaction(txId: string): Transaction | undefined {
-    return this.transactions.get(txId);
+    const txModel = this.transactions.get(txId);
+    return txModel?.toJSON();
   }
 
   getAllWallets(): WalletConnection[] {
-    return Array.from(this.wallets.values());
+    return Array.from(this.wallets.values()).map(w => w.toJSON());
   }
 
   getAllTransactions(): Transaction[] {
-    return Array.from(this.transactions.values());
+    return Array.from(this.transactions.values()).map(tx => tx.toJSON());
   }
 
   disconnectWallet(address: string): boolean {

@@ -249,13 +249,28 @@
         </div>
     </div>
 
+    <script src="/js/web3-bridge-client.js"></script>
     <script>
-        const API_BASE = window.location.origin;
+        const web3Client = new Web3BridgeClient();
+
+        // Set up event listeners
+        web3Client.on('wallet:connected', (wallet) => {
+            console.log('Wallet connected:', wallet);
+            updateWalletDisplay(wallet);
+        });
+
+        web3Client.on('transaction:created', (tx) => {
+            console.log('Transaction created:', tx);
+        });
+
+        web3Client.on('transaction:sent', (tx) => {
+            console.log('Transaction sent:', tx);
+            loadTransactions();
+        });
 
         async function loadBridgeStatus() {
             try {
-                const response = await fetch(`${API_BASE}/web3/status`);
-                const data = await response.json();
+                const data = await web3Client.getStatus();
 
                 if (data.success) {
                     document.getElementById('bridgeStatus').textContent = 'Connected';
@@ -281,27 +296,19 @@
             }
 
             try {
-                const response = await fetch(`${API_BASE}/web3/wallet/connect`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ address })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    document.getElementById('walletInfo').style.display = 'block';
-                    document.getElementById('connectedAddress').textContent = data.wallet.address;
-                    document.getElementById('walletBalance').textContent = `${data.wallet.balance} MATIC`;
-                    alert('Wallet connected successfully!');
-                    loadBridgeStatus();
-                } else {
-                    alert(`Error: ${data.error}`);
-                }
+                const wallet = await web3Client.connectWallet(address);
+                updateWalletDisplay(wallet);
+                alert('Wallet connected successfully!');
+                loadBridgeStatus();
             } catch (error) {
-                alert('Failed to connect wallet');
-                console.error(error);
+                alert(`Failed to connect wallet: ${error.message}`);
             }
+        }
+
+        function updateWalletDisplay(wallet) {
+            document.getElementById('walletInfo').style.display = 'block';
+            document.getElementById('connectedAddress').textContent = web3Client.shortenAddress(wallet.address);
+            document.getElementById('walletBalance').textContent = `${web3Client.formatBalance(wallet.balance)} MATIC`;
         }
 
         async function loadStats() {
@@ -311,13 +318,12 @@
 
         async function loadTransactions() {
             try {
-                const response = await fetch(`${API_BASE}/web3/transactions`);
-                const data = await response.json();
+                const transactions = await web3Client.getTransactions();
 
                 const txList = document.getElementById('transactionList');
 
-                if (data.transactions && data.transactions.length > 0) {
-                    txList.innerHTML = data.transactions.slice(0, 5).map(tx => `
+                if (transactions && transactions.length > 0) {
+                    txList.innerHTML = transactions.slice(0, 5).map(tx => `
                         <div class="transaction-item">
                             <div class="info-row">
                                 <span class="info-label">Status</span>
@@ -325,9 +331,9 @@
                             </div>
                             <div class="info-row">
                                 <span class="info-label">Amount</span>
-                                <span class="info-value">${tx.amount} MATIC</span>
+                                <span class="info-value">${web3Client.formatBalance(tx.amount)} MATIC</span>
                             </div>
-                            ${tx.hash ? `<div class="tx-hash">Hash: ${tx.hash}</div>` : ''}
+                            ${tx.hash ? `<div class="tx-hash">Hash: ${web3Client.shortenAddress(tx.hash, 6)}</div>` : ''}
                         </div>
                     `).join('');
                 } else {
