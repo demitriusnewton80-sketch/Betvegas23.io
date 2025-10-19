@@ -1,5 +1,6 @@
 
 import { EventEmitter } from 'events';
+import * as crypto from 'crypto';
 import { ssoService, SSOUser } from './SSOService.js';
 
 export interface SSOPlugin {
@@ -332,7 +333,15 @@ class SSOPluginService extends EventEmitter {
 
   // Generate random state
   private generateState(): string {
-    return crypto.randomBytes(32).toString('hex');
+    const bytes = new Uint8Array(32);
+    if (typeof window !== 'undefined' && window.crypto) {
+      window.crypto.getRandomValues(bytes);
+      return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+    } else {
+      // Node.js environment
+      const nodeCrypto = await import('crypto');
+      return nodeCrypto.randomBytes(32).toString('hex');
+    }
   }
 
   // Get plugin statistics

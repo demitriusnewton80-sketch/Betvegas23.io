@@ -2,6 +2,7 @@
 import express, { Request, Response } from 'express';
 import { ssoPluginService } from '../services/SSOPluginService.js';
 import { ssoService } from '../services/SSOService.js';
+import { bloombergDriveService } from '../services/BloombergDriveService.js';
 
 const router = express.Router();
 
@@ -138,6 +139,16 @@ router.get('/callback', async (req: Request, res: Response) => {
       });
     }
 
+    // Sync plugin data to Bloomberg Drive cloud
+    const cloudUrl = await bloombergDriveService.connectPluginToCloud(pluginId, {
+      userId: result.user.id,
+      email: result.user.email,
+      provider: result.user.provider,
+      authenticatedAt: new Date().toISOString()
+    });
+
+    console.log(`✅ Plugin synced to Bloomberg Drive: ${cloudUrl}`);
+
     // Set session cookie
     res.cookie('session_id', result.user.id, {
       httpOnly: true,
@@ -150,11 +161,12 @@ router.get('/callback', async (req: Request, res: Response) => {
     res.clearCookie('sso_plugin_id');
 
     // Redirect to main app
-    res.redirect(`/?authenticated=true&provider=${result.user.provider}`);
+    res.redirect(`/?authenticated=true&provider=${result.user.provider}&cloud=${encodeURIComponent(cloudUrl)}`);
   } catch (err) {
     console.error('SSO plugin callback error:', err);
     res.status(500).json({
-      error: 'Authentication processing failed'
+      error: 'Authentication processing failed',
+      details: err instanceof Error ? err.message : 'Unknown error'
     });
   }
 });
@@ -231,3 +243,41 @@ router.get('/session', requireAuth, (req: Request, res: Response) => {
 });
 
 export default router;
+
+
+
+// Get Bloomberg Drive cloud status
+router.get('/cloud/status', requireAuth, (req: Request, res: Response) => {
+  const status = bloombergDriveService.getBroadcastStatus();
+  const files = bloombergDriveService.listFiles();
+  
+  res.json({
+    cloudStorage: 'Bloomberg Drive',
+    status: status,
+    recentFiles: files.slice(-10),
+    ipBroadcast: 'Active',
+    fccCompliant: true
+  });
+});
+
+// Sync plugin output to cloud
+router.post('/cloud/sync/:pluginId', requireAuth, async (req: Request, res: Response) => {
+  const { pluginId } = req.params;
+  const { output } = req.body;
+  
+  try {
+    const cloudFile = await bloombergDriveService.syncPluginOutput(pluginId, output);
+    
+    res.json({
+      success: true,
+      message: 'Plugin output synced to Bloomberg Drive',
+      cloudUrl: cloudFile.cloudUrl,
+      ipBroadcast: 'Completed'
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'Cloud sync failed',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});

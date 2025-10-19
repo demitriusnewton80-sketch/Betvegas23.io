@@ -496,18 +496,23 @@
         
         function downloadQR() {
             const canvas = document.getElementById('qrCodeCanvas');
-            if (!canvas) {
-                alert('QR Code not generated yet');
+            if (!canvas || !(canvas instanceof HTMLCanvasElement)) {
+                alert('QR Code not generated yet. Please wait for the page to load completely.');
+                generateQRCode();
                 return;
             }
             try {
+                const dataUrl = canvas.toDataURL('image/png');
+                if (!dataUrl || dataUrl === 'data:,') {
+                    throw new Error('Canvas is empty');
+                }
                 const link = document.createElement('a');
                 link.download = 'betting-zone-unified-qr.png';
-                link.href = canvas.toDataURL('image/png');
+                link.href = dataUrl;
                 link.click();
             } catch (error) {
                 console.error('QR Code download error:', error);
-                alert('Failed to download QR code');
+                alert('Failed to download QR code. Please try refreshing the page.');
             }
         }
         

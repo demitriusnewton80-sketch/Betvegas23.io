@@ -16,6 +16,7 @@ import spotifyRoutes from './routes/spotify.js'; // New import for Spotify route
 import qrRoutes from './routes/qr.js';
 import ps5Routes from './routes/ps5.js'; // Added for PS5 sports betting routes
 import { sportsDataService } from './services/SportsDataService.js';
+import { bloombergDriveService } from './services/BloombergDriveService.js';
 import path from 'path'; // Import path module
 
 const app = express();
