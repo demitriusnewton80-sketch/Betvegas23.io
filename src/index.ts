@@ -44,7 +44,7 @@ import linkBridgeRoutes from './routes/link-bridge.js';
 import smartSystemRoutes from './routes/smart-system.js';
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = parseInt(process.env.PORT || '5000');
 
 // Security: Disable powered-by header
 app.disable('x-powered-by');
@@ -175,7 +175,7 @@ app.use('/spotify', spotifyRoutes);
 app.use('/qr', qrRoutes);
 app.use('/ps5', ps5Routes);
 app.use('/phone-control', phoneControlRouter);
-app.use('/winner-payout', winnerPayoutRoutes);
+app.use('/winner-payout', winnerPayoutRouter);
 app.use('/ssh', sshRoutes);
 app.use('/espn-tracker', espnTrackerRouter);
 app.use('/espn-betting', espnBettingRouter);
@@ -270,7 +270,6 @@ app.get('/api', (req: Request, res: Response) => {
   });
 });
 
-
 // Start server with production-ready configuration
 const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`
@@ -288,6 +287,11 @@ const server = app.listen(PORT, '0.0.0.0', () => {
 ║  📊 Deployment Mode: ${process.env.REPLIT_DEPLOYMENT ? 'PRODUCTION' : 'DEVELOPMENT'} ║
 ╚════════════════════════════════════════════════════════════╝
   `);
+}).on('error', (err: Error) => {
+  console.error('❌ Server startup error:', err);
+  if ((err as any).code === 'EADDRINUSE') {
+    console.error(`Port ${PORT} is already in use. Try a different port.`);
+  }
 });
 
 // Keep server alive with proper timeout settings
@@ -324,3 +328,31 @@ const gracefulShutdown = (signal: string) => {
 
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+// Health check for AWS monitoring
+app.get('/health', (req: Request, res: Response) => {
+  res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
+
+// Diagnostic endpoint
+app.get('/api/diagnostics', (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    server: 'online',
+    timestamp: new Date().toISOString(),
+    port: PORT,
+    host: '0.0.0.0',
+    fccEntity: '20130314143016',
+    endpoints: {
+      sportsbook: '/sportsbook/games',
+      streaming: '/streaming/partners',
+      ps5: '/ps5/games',
+      health: '/health'
+    },
+    environment: process.env.REPLIT_DEPLOYMENT === '1' ? 'production' : 'development'
+  });
+});

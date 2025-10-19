@@ -382,6 +382,8 @@
             try {
                 updateStatus('Loading...', 'warning');
                 
+                console.log('🔄 Fetching games from:', `${API_BASE}/sportsbook/games`);
+                
                 const response = await fetch(`${API_BASE}/sportsbook/games`, {
                     method: 'GET',
                     headers: {
@@ -389,11 +391,16 @@
                     }
                 });
 
+                console.log('📡 Response status:', response.status);
+
                 if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('❌ Response error:', errorText);
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
 
                 const data = await response.json();
+                console.log('✅ Data received:', data);
                 
                 if (data.success && data.games && data.games.length > 0) {
                     displayGames(data.games);
@@ -403,7 +410,7 @@
                     throw new Error('No games available');
                 }
             } catch (error) {
-                console.error('Error loading games:', error);
+                console.error('❌ Error loading games:', error);
                 showError(error.message);
                 updateStatus('Error', 'error');
             } finally {
