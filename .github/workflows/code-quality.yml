@@ -1,0 +1,34 @@
+
+name: Code Quality Checks
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+        
+    - name: Install dependencies
+      run: npm install
+      
+    - name: TypeScript type checking
+      run: npx tsc --noEmit
+      
+    - name: Check for vulnerabilities
+      run: npm audit --audit-level=high
+      continue-on-error: true
+      
+    - name: List outdated packages
+      run: npm outdated
+      continue-on-error: true
