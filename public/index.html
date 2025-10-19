@@ -16,17 +16,17 @@
         }
 
         :root {
-            --bg-primary: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
-            --bg-secondary: rgba(22, 27, 34, 0.95);
-            --bg-tertiary: rgba(33, 38, 45, 0.9);
-            --border-color: rgba(83, 196, 81, 0.2);
-            --text-primary: #ffffff;
-            --text-secondary: #e6e8eb;
-            --text-muted: #a8b2c1;
-            --accent-color: #53c451;
-            --fanduel-blue: #1967D2;
-            --fanduel-dark: #0D47A1;
-            --glow-color: rgba(83, 196, 81, 0.5);
+            --bg-primary: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --bg-secondary: rgba(30, 41, 59, 0.95);
+            --bg-tertiary: rgba(51, 65, 85, 0.9);
+            --border-color: rgba(59, 130, 246, 0.3);
+            --text-primary: #f1f5f9;
+            --text-secondary: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent-color: #22c55e;
+            --fanduel-blue: #3b82f6;
+            --fanduel-dark: #2563eb;
+            --glow-color: rgba(59, 130, 246, 0.4);
         }
 
         body.light-mode {
@@ -328,13 +328,14 @@
 
         /* Game Cards - FanDuel Style */
         .game-card {
-            background: rgba(22, 27, 34, 0.6);
+            background: rgba(30, 41, 59, 0.8);
             backdrop-filter: blur(10px);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
             overflow: hidden;
             transition: all 0.3s ease;
             position: relative;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
         }
 
         .game-card::before {
@@ -479,19 +480,21 @@
         }
 
         .bet-button {
-            background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
-            border: 2px solid #30363d;
-            border-radius: 12px;
-            padding: 20px 16px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px 20px;
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .bet-button:hover {
             border-color: var(--fanduel-blue);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(25, 103, 210, 0.3);
+            background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(59, 130, 246, 0.4);
         }
 
         .bet-button:active {
@@ -501,7 +504,8 @@
         .bet-button.selected {
             background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
             border-color: #22c55e;
-            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.5), 0 0 40px rgba(34, 197, 94, 0.2);
+            transform: scale(1.05);
         }
 
         .bet-label {
@@ -868,23 +872,6 @@
 
         .btn-primary:active {
             transform: translateY(0);
-        }rder-radius: 8px;
-            margin: 12px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .payout-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .payout-amount {
-            font-size: 18px;
-            font-weight: 700;
-            color: #22c55e;
         }
 
         /* Bet History */
@@ -1508,15 +1495,6 @@
                 </div>
                 <button class="btn-primary" onclick="placeBet()">Place Bet</button>
                 <button class="btn-primary" style="background: #374151; margin-top: 8px;" onclick="closeBetSlip()">Cancel</button>
-            `;="setBetAmount(250)">$250</button>
-                    <button class="quick-amount-btn" onclick="setBetAmount(500)">$500</button>
-                </div>
-                <div class="potential-payout" id="potentialPayout">
-                    <span class="payout-label">Potential Payout</span>
-                    <span class="payout-amount">$0.00</span>
-                </div>
-                <button class="btn-primary" onclick="placeBet()">Place Bet</button>
-                <button class="btn-primary" style="background: var(--bg-tertiary); color: var(--text-primary); margin-top: 8px;" onclick="closeBetSlip()">Cancel</button>
             `;
         }
 
