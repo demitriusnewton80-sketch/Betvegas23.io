@@ -136,6 +136,15 @@
             background: var(--fanduel-dark);
         }
 
+        .betting-zone-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(25, 103, 210, 0.4);
+        }
+
+        .betting-zone-link:active {
+            transform: scale(0.95);
+        }
+
         /* Mobile Bottom Navigation */
         .bottom-nav {
             position: fixed;
@@ -828,6 +837,12 @@
                 <span>BETTING SITES</span>
             </div>
             <div class="nav-actions">
+                <a href="https://2ff2dd2c-0218-43d5-83da-e4e4577d5b62-00-2ntrr3ce4l5i4.picard.replit.dev" 
+                   target="_blank" 
+                   class="betting-zone-link"
+                   style="background: linear-gradient(135deg, #1967D2 0%, #0D47A1 100%); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
+                    🎯 Betting Zone
+                </a>
                 <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
                     <span id="themeIcon">🌙</span>
                 </button>
