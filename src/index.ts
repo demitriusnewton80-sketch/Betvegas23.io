@@ -104,6 +104,7 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' })); // Reduced from 50mb for security
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(cookieParser());
 
 // Security middleware (order matters)
 app.use(validateRequest); // Request validation
@@ -253,6 +254,11 @@ app.get('/streaming-hub', (req, res) => {
 // Link Bridge Dashboard
 app.get('/link-bridge-dashboard.html', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../public/link-bridge-dashboard.html'));
+});
+
+// Account Management Dashboard
+app.get('/account-dashboard.html', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/account-dashboard.html'));
 });
 
 // Fallback route for SPA - only for non-file requests

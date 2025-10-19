@@ -1,0 +1,487 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Management - Young Meeat LLC</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+
+    .header h1 {
+      color: #667eea;
+      margin-bottom: 10px;
+    }
+
+    .fcc-badge {
+      display: inline-block;
+      background: #22c55e;
+      color: white;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .card h2 {
+      color: #1e3a8a;
+      margin-bottom: 20px;
+      font-size: 20px;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .stat {
+      background: #f3f4f6;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #667eea;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #6b7280;
+      text-transform: uppercase;
+    }
+
+    .account-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .account-item {
+      background: #f9fafb;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border-left: 4px solid #667eea;
+    }
+
+    .account-item h3 {
+      color: #1e3a8a;
+      margin-bottom: 5px;
+    }
+
+    .account-item p {
+      color: #6b7280;
+      font-size: 14px;
+      margin: 3px 0;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+
+    .badge-active {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .badge-inactive {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .badge-pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge-approved {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    #message {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    #message.success {
+      background: #dcfce7;
+      color: #166534;
+      border: 2px solid #22c55e;
+    }
+
+    #message.error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 2px solid #ef4444;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🏢 Account Management Portal</h1>
+      <p>Young Meeat LLC - Microsoft-Style Architecture</p>
+      <span class="fcc-badge">FCC Entity: 20130314143016</span>
+    </div>
+
+    <div id="message"></div>
+
+    <div class="grid">
+      <!-- Create Account -->
+      <div class="card">
+        <h2>📝 Create New Account</h2>
+        <form id="createAccountForm">
+          <div class="form-group">
+            <label>Username *</label>
+            <input type="text" name="username" required>
+          </div>
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" name="firstName">
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" name="lastName">
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" name="phoneNumber">
+          </div>
+          <button type="submit" class="btn">Create Account</button>
+        </form>
+      </div>
+
+      <!-- Account Stats -->
+      <div class="card">
+        <h2>📊 System Statistics</h2>
+        <div class="stat-grid">
+          <div class="stat">
+            <div class="stat-value" id="totalAccounts">0</div>
+            <div class="stat-label">Total Accounts</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value" id="activeAccounts">0</div>
+            <div class="stat-label">Active Accounts</div>
+          </div>
+        </div>
+        <button onclick="refreshStats()" class="btn btn-secondary">Refresh Stats</button>
+      </div>
+
+      <!-- Account Operations -->
+      <div class="card">
+        <h2>💰 Account Operations</h2>
+        <form id="depositForm">
+          <div class="form-group">
+            <label>Account ID</label>
+            <input type="text" name="accountId" placeholder="Enter account ID">
+          </div>
+          <div class="form-group">
+            <label>Amount</label>
+            <input type="number" name="amount" step="0.01" min="0" placeholder="0.00">
+          </div>
+          <button type="submit" class="btn btn-secondary">Deposit Funds</button>
+        </form>
+        <form id="withdrawForm" style="margin-top: 20px;">
+          <button type="submit" class="btn btn-danger">Withdraw Funds</button>
+        </form>
+      </div>
+
+      <!-- Account Search -->
+      <div class="card">
+        <h2>🔍 Search Account</h2>
+        <form id="searchForm">
+          <div class="form-group">
+            <label>Search by Account ID</label>
+            <input type="text" name="accountId" placeholder="Enter account ID">
+          </div>
+          <button type="submit" class="btn">Search</button>
+        </form>
+        <div id="searchResult" style="margin-top: 15px;"></div>
+      </div>
+    </div>
+
+    <!-- All Accounts List -->
+    <div class="card">
+      <h2>👥 All Accounts</h2>
+      <div class="account-list" id="accountsList">
+        <p style="text-align: center; color: #6b7280;">Loading accounts...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '';
+
+    function showMessage(message, type = 'success') {
+      const msgEl = document.getElementById('message');
+      msgEl.textContent = message;
+      msgEl.className = type;
+      msgEl.style.display = 'block';
+      setTimeout(() => {
+        msgEl.style.display = 'none';
+      }, 5000);
+    }
+
+    // Create Account
+    document.getElementById('createAccountForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData);
+
+      try {
+        const response = await fetch(`${API_BASE}/account/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+          showMessage(`Account created! ID: ${result.account.id}`, 'success');
+          e.target.reset();
+          loadAccounts();
+          refreshStats();
+        } else {
+          showMessage(result.error || 'Failed to create account', 'error');
+        }
+      } catch (error) {
+        showMessage('Network error: ' + error.message, 'error');
+      }
+    });
+
+    // Deposit
+    document.getElementById('depositForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const accountId = formData.get('accountId');
+      const amount = parseFloat(formData.get('amount'));
+
+      try {
+        const response = await fetch(`${API_BASE}/account/deposit/${accountId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount })
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+          showMessage(`Deposited $${amount}. New balance: $${result.newBalance}`, 'success');
+          e.target.reset();
+        } else {
+          showMessage(result.error || 'Deposit failed', 'error');
+        }
+      } catch (error) {
+        showMessage('Network error: ' + error.message, 'error');
+      }
+    });
+
+    // Withdraw
+    document.getElementById('withdrawForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const depositForm = document.getElementById('depositForm');
+      const formData = new FormData(depositForm);
+      const accountId = formData.get('accountId');
+      const amount = parseFloat(formData.get('amount'));
+
+      try {
+        const response = await fetch(`${API_BASE}/account/withdraw/${accountId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount })
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+          showMessage(`Withdrew $${amount}. New balance: $${result.newBalance}`, 'success');
+          depositForm.reset();
+        } else {
+          showMessage(result.error || 'Withdrawal failed', 'error');
+        }
+      } catch (error) {
+        showMessage('Network error: ' + error.message, 'error');
+      }
+    });
+
+    // Search
+    document.getElementById('searchForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const accountId = formData.get('accountId');
+
+      try {
+        const response = await fetch(`${API_BASE}/account/profile/${accountId}`);
+        const result = await response.json();
+
+        if (response.ok) {
+          const html = `
+            <div class="account-item">
+              <h3>${result.profile.username}</h3>
+              <p>Email: ${result.profile.email}</p>
+              <p>Balance: $${result.profile.walletBalance.toFixed(2)}</p>
+              <p>KYC: <span class="badge badge-${result.profile.kycStatus}">${result.profile.kycStatus}</span></p>
+              <p>Status: <span class="badge badge-${result.profile.isActive ? 'active' : 'inactive'}">${result.profile.isActive ? 'Active' : 'Inactive'}</span></p>
+            </div>
+          `;
+          document.getElementById('searchResult').innerHTML = html;
+        } else {
+          document.getElementById('searchResult').innerHTML = '<p style="color: #ef4444;">Account not found</p>';
+        }
+      } catch (error) {
+        document.getElementById('searchResult').innerHTML = '<p style="color: #ef4444;">Search failed</p>';
+      }
+    });
+
+    // Load all accounts
+    async function loadAccounts() {
+      try {
+        const response = await fetch(`${API_BASE}/account/admin/accounts`);
+        const result = await response.json();
+
+        const html = result.accounts.map(acc => `
+          <div class="account-item">
+            <h3>${acc.username} <span class="badge badge-${acc.isActive ? 'active' : 'inactive'}">${acc.isActive ? 'Active' : 'Inactive'}</span></h3>
+            <p><strong>ID:</strong> ${acc.id}</p>
+            <p><strong>Email:</strong> ${acc.email}</p>
+            <p><strong>Balance:</strong> $${acc.walletBalance.toFixed(2)}</p>
+            <p><strong>KYC:</strong> <span class="badge badge-${acc.kycStatus}">${acc.kycStatus}</span></p>
+            <p><strong>Created:</strong> ${new Date(acc.createdAt).toLocaleDateString()}</p>
+          </div>
+        `).join('');
+
+        document.getElementById('accountsList').innerHTML = html || '<p style="text-align: center; color: #6b7280;">No accounts found</p>';
+      } catch (error) {
+        document.getElementById('accountsList').innerHTML = '<p style="color: #ef4444;">Failed to load accounts</p>';
+      }
+    }
+
+    // Refresh stats
+    async function refreshStats() {
+      try {
+        const response = await fetch(`${API_BASE}/account/admin/accounts`);
+        const result = await response.json();
+
+        document.getElementById('totalAccounts').textContent = result.count;
+        document.getElementById('activeAccounts').textContent = result.activeCount;
+      } catch (error) {
+        console.error('Failed to refresh stats:', error);
+      }
+    }
+
+    // Initial load
+    loadAccounts();
+    refreshStats();
+  </script>
+</body>
+</html>
