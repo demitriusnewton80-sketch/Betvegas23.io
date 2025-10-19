@@ -99,6 +99,13 @@ export class AppCore extends EventEmitter {
         status: 'connected',
         lastHeartbeat: Date.now(),
         metadata: { endpoint: '/transformer/status', bridgeType: 'web3-delivery' }
+      },
+      {
+        id: 'ai-core',
+        type: 'sportsbook',
+        status: 'connected',
+        lastHeartbeat: Date.now(),
+        metadata: { endpoint: '/ai/status', service: 'core-ai' }
       }
     ];
 

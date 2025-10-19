@@ -1,0 +1,337 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Core AI Dashboard - Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin: 0 5px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+        }
+        .card h2 {
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .model-card {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .model-card:hover {
+            border-color: #22c55e;
+            transform: translateY(-2px);
+        }
+        .model-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .accuracy {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .btn {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .input-group input,
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 14px;
+        }
+        .input-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .result {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid rgba(34, 197, 94, 0.4);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .stat {
+            text-align: center;
+            padding: 15px;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="font-size: 48px; margin-bottom: 15px;">🤖</div>
+            <h1>Core AI Dashboard</h1>
+            <p style="opacity: 0.9; margin-top: 8px;">Young Meeat LLC - AI-Powered Intelligence</p>
+            <div style="margin-top: 12px;">
+                <span class="badge">FCC: 20130314143016</span>
+                <span class="badge">AI Enabled</span>
+                <span class="badge">Learning System</span>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>📊 AI Models</h2>
+                <div id="modelsContainer">
+                    <p>Loading models...</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🎯 Process Request</h2>
+                <div class="input-group">
+                    <label>Select Model</label>
+                    <select id="modelSelect">
+                        <option value="">Loading...</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Enter Prompt</label>
+                    <textarea id="promptInput" placeholder="e.g., Predict winner of Lakers vs Warriors"></textarea>
+                </div>
+                <button class="btn" onclick="processRequest()">Process with AI</button>
+                <div id="resultContainer"></div>
+            </div>
+
+            <div class="card">
+                <h2>📈 Your AI Stats</h2>
+                <div id="statsContainer">
+                    <div class="stat">
+                        <div class="stat-value" id="totalRequests">0</div>
+                        <div class="stat-label">Total Requests</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="avgConfidence">0%</div>
+                        <div class="stat-label">Avg Confidence</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let models = [];
+
+        async function loadModels() {
+            try {
+                const response = await fetch('/ai/models');
+                const data = await response.json();
+                
+                if (data.success) {
+                    models = data.models;
+                    displayModels(models);
+                    populateModelSelect(models);
+                }
+            } catch (error) {
+                console.error('Error loading models:', error);
+            }
+        }
+
+        function displayModels(models) {
+            const container = document.getElementById('modelsContainer');
+            
+            if (models.length === 0) {
+                container.innerHTML = '<p>No models available</p>';
+                return;
+            }
+
+            container.innerHTML = models.map(model => `
+                <div class="model-card">
+                    <div class="model-header">
+                        <strong>${model.name}</strong>
+                        <span class="accuracy">${(model.accuracy * 100).toFixed(1)}%</span>
+                    </div>
+                    <div style="font-size: 12px; opacity: 0.8;">
+                        Type: ${model.type} | Version: ${model.version}
+                    </div>
+                    <div style="font-size: 12px; opacity: 0.8; margin-top: 5px;">
+                        Training Data: ${model.trainingData.toLocaleString()} samples
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function populateModelSelect(models) {
+            const select = document.getElementById('modelSelect');
+            select.innerHTML = '<option value="">Select a model</option>' +
+                models.map(model => `
+                    <option value="${model.id}">${model.name} (${(model.accuracy * 100).toFixed(1)}%)</option>
+                `).join('');
+        }
+
+        async function processRequest() {
+            const modelId = document.getElementById('modelSelect').value;
+            const prompt = document.getElementById('promptInput').value;
+
+            if (!modelId || !prompt) {
+                alert('Please select a model and enter a prompt');
+                return;
+            }
+
+            try {
+                const response = await fetch('/ai/process', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ modelId, prompt })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayResult(data.request);
+                    loadInsights();
+                } else {
+                    alert('Error: ' + (data.error || 'Processing failed'));
+                }
+            } catch (error) {
+                console.error('Error processing request:', error);
+                alert('Network error');
+            }
+        }
+
+        function displayResult(request) {
+            const container = document.getElementById('resultContainer');
+            
+            container.innerHTML = `
+                <div class="result">
+                    <h3>AI Response</h3>
+                    <p><strong>Confidence:</strong> ${(request.confidence * 100).toFixed(1)}%</p>
+                    <p><strong>Processing Time:</strong> ${request.processingTime}ms</p>
+                    <div style="margin-top: 10px;">
+                        <pre style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; overflow-x: auto;">
+${JSON.stringify(request.response, null, 2)}
+                        </pre>
+                    </div>
+                    <div style="margin-top: 10px; display: flex; gap: 10px;">
+                        <button class="btn" style="flex: 1;" onclick="provideFeedback('${request.id}', 'positive')">👍 Helpful</button>
+                        <button class="btn" style="flex: 1;" onclick="provideFeedback('${request.id}', 'negative')">👎 Not Helpful</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function provideFeedback(requestId, feedback) {
+            try {
+                const response = await fetch(`/ai/feedback/${requestId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ feedback })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Thank you for your feedback! This helps improve our AI.');
+                }
+            } catch (error) {
+                console.error('Error submitting feedback:', error);
+            }
+        }
+
+        async function loadInsights() {
+            try {
+                const response = await fetch('/ai/insights');
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('totalRequests').textContent = 
+                        data.insights.totalRequests || 0;
+                    document.getElementById('avgConfidence').textContent = 
+                        ((data.insights.averageConfidence || 0) * 100).toFixed(1) + '%';
+                }
+            } catch (error) {
+                console.error('Error loading insights:', error);
+            }
+        }
+
+        // Initialize
+        loadModels();
+        loadInsights();
+    </script>
+</body>
+</html>

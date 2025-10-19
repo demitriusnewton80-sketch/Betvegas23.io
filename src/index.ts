@@ -48,6 +48,7 @@ import smartSystemRoutes from './routes/smart-system.js';
 import draftKingsRoutes from './routes/draftkings.js';
 import mobileRoutes from './routes/mobile.js';
 import microsoftDiagnostics from './routes/microsoft-diagnostics.js';
+import aiRoutes from './routes/ai.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -217,6 +218,7 @@ app.use('/smart-system', smartSystemRoutes);
 app.use('/draftkings', draftKingsRoutes);
 app.use('/mobile', mobileRoutes);
 app.use('/microsoft', microsoftDiagnostics);
+app.use('/ai', aiRoutes);
 
 // Static files - serve with proper MIME types
 app.use(express.static(path.join(__dirname, '../public'), {
