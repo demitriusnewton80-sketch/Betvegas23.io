@@ -47,7 +47,7 @@ class AccountService extends EventEmitter {
     // Initialize demo account
     this.createAccount({
       username: 'demo-user',
-      email: 'demo@youngmeat.com',
+      email: 'demo@youngmeeat.com',
       firstName: 'Demo',
       lastName: 'User',
       phoneNumber: '(445) 942-9173',

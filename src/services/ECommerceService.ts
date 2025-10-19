@@ -55,7 +55,7 @@ class ECommerceService extends EventEmitter {
       category: 'data-feed',
       price: 299.99,
       stock: 100,
-      supplier: 'Young Meat LLC',
+      supplier: 'Young Meeat LLC',
       specifications: {
         updateFrequency: 'Real-time',
         coverage: 'All major leagues',
@@ -76,7 +76,7 @@ class ECommerceService extends EventEmitter {
       category: 'infrastructure',
       price: 899.99,
       stock: 20,
-      supplier: 'Young Meat LLC',
+      supplier: 'Young Meeat LLC',
       specifications: {
         instanceType: 't3.xlarge',
         storage: '500GB SSD',
@@ -97,7 +97,7 @@ class ECommerceService extends EventEmitter {
       category: 'api-access',
       price: 1499.99,
       stock: 10,
-      supplier: 'Young Meat LLC',
+      supplier: 'Young Meeat LLC',
       specifications: {
         streams: 'Unlimited',
         quality: 'Up to 4K',
@@ -114,7 +114,7 @@ class ECommerceService extends EventEmitter {
       category: 'software',
       price: 2999.99,
       stock: 15,
-      supplier: 'Young Meat LLC',
+      supplier: 'Young Meeat LLC',
       specifications: {
         features: 'User management, odds engine, payment processing',
         support: '24/7 dedicated support',
