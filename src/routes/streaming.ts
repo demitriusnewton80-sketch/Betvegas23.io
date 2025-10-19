@@ -130,6 +130,46 @@ router.get('/mobile/hub/status', (req: Request, res: Response) => {
   });
 });
 
+// Mobile games endpoint for sportsbook hub
+router.get('/mobile/games', (req: Request, res: Response) => {
+  const { streamingService } = require('../services/StreamingService.js');
+  
+  res.json({
+    success: true,
+    games: [
+      {
+        id: 'game-1',
+        sport: 'NFL',
+        homeTeam: 'Kansas City Chiefs',
+        awayTeam: 'Buffalo Bills',
+        startTime: new Date(Date.now() + 86400000).toISOString(),
+        status: 'upcoming',
+        odds: { home: -150, away: +130 }
+      },
+      {
+        id: 'game-2',
+        sport: 'NBA',
+        homeTeam: 'Los Angeles Lakers',
+        awayTeam: 'Boston Celtics',
+        startTime: new Date(Date.now() + 43200000).toISOString(),
+        status: 'live',
+        odds: { home: +120, away: -140 }
+      },
+      {
+        id: 'game-3',
+        sport: 'NHL',
+        homeTeam: 'Tampa Bay Lightning',
+        awayTeam: 'Colorado Avalanche',
+        startTime: new Date(Date.now() + 172800000).toISOString(),
+        status: 'upcoming',
+        odds: { home: -110, away: -110 }
+      }
+    ],
+    mobileOptimized: true,
+    fccEntity: '20130314143016'
+  });
+});
+
 // Add new external sportsbook partner
 router.post('/partners', (req: Request, res: Response) => {
   const { id, name, apiKey, webhookUrl, active = true } = req.body;

@@ -240,6 +240,26 @@ router.get('/user/:userId/stats', (req: Request, res: Response) => {
   res.json(stats);
 });
 
+// Mobile-optimized games endpoint
+router.get('/mobile/games', (req: Request, res: Response) => {
+  const games = sportsDataService.getAllEvents().slice(0, 15);
+  
+  res.json({
+    success: true,
+    games: games.map(game => ({
+      id: game.id,
+      sport: game.sport,
+      homeTeam: game.homeTeam,
+      awayTeam: game.awayTeam,
+      startTime: game.startTime,
+      status: game.status,
+      odds: game.moneyLine
+    })),
+    mobileOptimized: true,
+    fccEntity: '20130314143016'
+  });
+});
+
 router.post('/user/:userId/deposit', (req: Request, res: Response) => {
   const { userId } = req.params;
   const { amount } = req.body;
