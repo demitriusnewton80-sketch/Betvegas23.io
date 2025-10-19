@@ -1680,42 +1680,51 @@
 
         function generateQRCode() {
             const url = window.location.origin;
-            const canvas = document.createElement('canvas');
-            const size = 150;
-            canvas.width = size;
-            canvas.height = size;
-            const ctx = canvas.getContext('2d');
-
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, size, size);
-            
-            ctx.fillStyle = '#000000';
-            const moduleSize = 5;
-            const modules = Math.floor(size / moduleSize);
-            
-            let hash = 0;
-            for (let i = 0; i < url.length; i++) {
-                hash = ((hash << 5) - hash) + url.charCodeAt(i);
-                hash = hash & hash;
-            }
-            
-            for (let y = 0; y < modules; y++) {
-                for (let x = 0; x < modules; x++) {
-                    const seed = (x * modules + y + hash) * 2654435761;
-                    if ((seed & 1) || (x < 3 && y < 3) || (x >= modules - 3 && y < 3) || (x < 3 && y >= modules - 3)) {
-                        ctx.fillRect(x * moduleSize, y * moduleSize, moduleSize - 1, moduleSize - 1);
-                    }
-                }
-            }
-            
             const container = document.getElementById('qrCodeCanvas');
-            container.innerHTML = '';
-            container.appendChild(canvas);
             
-            const urlText = document.createElement('div');
-            urlText.style.cssText = 'margin-top: 8px; font-size: 10px; color: #000; word-break: break-all;';
-            urlText.textContent = url;
-            container.appendChild(urlText);
+            if (!container) {
+                console.error('QR code container not found');
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            // Create a simple text-based QR code representation
+            const qrDiv = document.createElement('div');
+            qrDiv.style.cssText = 'background: white; padding: 20px; border-radius: 8px; text-align: center;';
+            
+            const qrText = document.createElement('div');
+            qrText.style.cssText = 'font-size: 11px; color: #000; font-weight: bold; margin-bottom: 8px;';
+            qrText.textContent = 'Scan to Access';
+            
+            const urlBox = document.createElement('div');
+            urlBox.style.cssText = 'background: #f0f0f0; padding: 10px; border-radius: 4px; font-size: 10px; color: #000; word-break: break-all; font-family: monospace;';
+            urlBox.textContent = url;
+            
+            const instruction = document.createElement('div');
+            instruction.style.cssText = 'margin-top: 8px; font-size: 9px; color: #666;';
+            instruction.textContent = 'Copy this URL to share';
+            
+            qrDiv.appendChild(qrText);
+            qrDiv.appendChild(urlBox);
+            qrDiv.appendChild(instruction);
+            container.appendChild(qrDiv);
+            
+            // Add click-to-copy functionality
+            urlBox.style.cursor = 'pointer';
+            urlBox.onclick = () => {
+                navigator.clipboard.writeText(url).then(() => {
+                    const originalText = urlBox.textContent;
+                    urlBox.textContent = 'Copied!';
+                    urlBox.style.background = '#22c55e';
+                    urlBox.style.color = 'white';
+                    setTimeout(() => {
+                        urlBox.textContent = originalText;
+                        urlBox.style.background = '#f0f0f0';
+                        urlBox.style.color = '#000';
+                    }, 1500);
+                });
+            };
         }
 
         // Initialize
