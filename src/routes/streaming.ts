@@ -394,7 +394,6 @@ router.get('/nba/direct/:gameId', async (req: Request, res: Response) => {
 router.get('/radio/:gameId', async (req: Request, res: Response) => {
   const { gameId } = req.params;
 
-  // Multiple radio stream options with fallbacks
   const radioStreams = [
     {
       url: 'https://player.radio.com/listen/station/nfl-live',
@@ -419,6 +418,7 @@ router.get('/radio/:gameId', async (req: Request, res: Response) => {
   ];
 
   res.json({
+    success: true,
     gameId,
     primaryRadio: radioStreams[0],
     fallbackRadios: radioStreams.slice(1),
@@ -426,7 +426,10 @@ router.get('/radio/:gameId', async (req: Request, res: Response) => {
     directConnect: {
       fccEntity: '20130314143016',
       registration: '0024454324',
-
+      contactEmail: 'gbemeeat@gmail.com'
+    }
+  });
+});
 
 // Comprehensive workflow status endpoint
 router.get('/workflows/all', (req: Request, res: Response) => {
@@ -574,11 +577,6 @@ router.get('/test/integrations', async (req: Request, res: Response) => {
       timestamp: new Date().toISOString()
     });
   }
-});
-
-      contactEmail: 'gbemeeat@gmail.com'
-    }
-  });
 });
 
 // Get IP address for radio stream URL
