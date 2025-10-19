@@ -447,18 +447,272 @@
         
         /* Responsive */
         @media (max-width: 768px) {
-            .bet-slip {
-                width: 100%;
+            .top-nav {
+                position: relative;
             }
             
             .nav-container {
                 flex-direction: column;
-                align-items: flex-start;
+                align-items: stretch;
+                padding: 15px;
+                gap: 12px;
+            }
+            
+            .brand {
+                gap: 10px;
+            }
+            
+            .brand-icon {
+                font-size: 28px;
+            }
+            
+            .brand-text h1 {
+                font-size: 18px;
+            }
+            
+            .brand-text p {
+                font-size: 10px;
             }
             
             .user-wallet {
                 width: 100%;
                 justify-content: space-between;
+                gap: 10px;
+            }
+            
+            .balance-display {
+                padding: 10px 18px;
+                font-size: 16px;
+                flex: 1;
+            }
+            
+            .deposit-btn {
+                padding: 10px 18px;
+                font-size: 12px;
+                white-space: nowrap;
+            }
+            
+            .sports-tabs {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+            
+            .sports-tabs::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .tabs-container {
+                padding: 0 15px;
+            }
+            
+            .sport-tab {
+                padding: 14px 20px;
+                font-size: 12px;
+                white-space: nowrap;
+            }
+            
+            .container {
+                padding: 20px 12px;
+            }
+            
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+            
+            .stat-box {
+                padding: 15px;
+            }
+            
+            .stat-label {
+                font-size: 10px;
+            }
+            
+            .stat-value {
+                font-size: 22px;
+            }
+            
+            .games-section h2 {
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
+            
+            .live-indicator {
+                padding: 3px 10px;
+                font-size: 10px;
+            }
+            
+            .games-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .game-card {
+                border-radius: 12px;
+            }
+            
+            .game-header {
+                padding: 10px 15px;
+            }
+            
+            .game-league {
+                font-size: 11px;
+            }
+            
+            .game-time {
+                font-size: 10px;
+            }
+            
+            .game-status-badge {
+                padding: 3px 8px;
+                font-size: 9px;
+            }
+            
+            .matchup {
+                padding: 15px;
+            }
+            
+            .team-row {
+                padding: 12px 0;
+            }
+            
+            .team-icon {
+                font-size: 24px;
+                width: 32px;
+            }
+            
+            .team-name {
+                font-size: 14px;
+            }
+            
+            .odds-button {
+                padding: 10px 16px;
+                min-width: 75px;
+                border-radius: 8px;
+            }
+            
+            .odds-value {
+                font-size: 16px;
+            }
+            
+            .odds-label {
+                font-size: 9px;
+            }
+            
+            .bet-slip {
+                width: 100%;
+                height: 100vh;
+            }
+            
+            .bet-slip-header {
+                padding: 15px;
+            }
+            
+            .bet-slip-header h3 {
+                font-size: 16px;
+            }
+            
+            .bet-slip-count {
+                font-size: 11px;
+            }
+            
+            .bet-slip-item {
+                margin: 12px;
+                padding: 12px;
+            }
+            
+            .bet-input {
+                padding: 12px;
+                font-size: 15px;
+            }
+            
+            .action-btn {
+                padding: 12px 20px;
+                font-size: 13px;
+                margin-top: 8px;
+            }
+            
+            .bet-slip-toggle {
+                right: 15px;
+                bottom: 15px;
+                width: 56px;
+                height: 56px;
+                font-size: 22px;
+            }
+            
+            .bet-count-badge {
+                width: 22px;
+                height: 22px;
+                font-size: 11px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .brand-text h1 {
+                font-size: 16px;
+            }
+            
+            .brand-text p {
+                display: none;
+            }
+            
+            .balance-display {
+                font-size: 14px;
+                padding: 8px 15px;
+            }
+            
+            .deposit-btn {
+                padding: 8px 15px;
+            }
+            
+            .sport-tab {
+                padding: 12px 16px;
+                font-size: 11px;
+            }
+            
+            .stats-bar {
+                gap: 8px;
+            }
+            
+            .stat-box {
+                padding: 12px;
+            }
+            
+            .stat-value {
+                font-size: 20px;
+            }
+            
+            .team-name {
+                font-size: 13px;
+            }
+            
+            .odds-button {
+                padding: 8px 12px;
+                min-width: 70px;
+            }
+            
+            .odds-value {
+                font-size: 15px;
+            }
+        }
+        
+        /* Improve touch targets */
+        @media (hover: none) and (pointer: coarse) {
+            .sport-tab,
+            .odds-button,
+            .deposit-btn,
+            .action-btn,
+            .bet-slip-toggle {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .odds-button {
+                min-width: 80px;
             }
         }
         
