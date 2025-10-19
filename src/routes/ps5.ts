@@ -158,4 +158,42 @@ router.get('/user/:userId/points', (req: Request, res: Response) => {
   });
 });
 
+// Public plugin approval endpoint
+router.get('/plugin/status', (req: Request, res: Response) => {
+  res.json({
+    pluginName: 'PS5 Network Enrollment Plugin',
+    status: 'active',
+    approved: true,
+    publicAccess: true,
+    connectionPoint: 'https://2ff2dd2c-0218-43d5-83da-e4e4577d5b62-00-2ntrr3ce4l5i4.picard.replit.dev',
+    fccEntity: '20130314143016',
+    samGovPermit: 'Young Meeat LLC',
+    supportedGames: ['madden', 'nba2k', 'ufc', 'undisputed', '5v5-basketball'],
+    enrollmentEnabled: true,
+    message: 'PlayStation 5 Network users approved for enrollment through this plugin point'
+  });
+});
+
+// Verify plugin connection
+router.post('/plugin/verify', (req: Request, res: Response) => {
+  const { psnId, connectionUrl } = req.body;
+  
+  const expectedUrl = 'https://2ff2dd2c-0218-43d5-83da-e4e4577d5b62-00-2ntrr3ce4l5i4.picard.replit.dev';
+  
+  if (connectionUrl !== expectedUrl) {
+    return res.status(400).json({
+      verified: false,
+      error: 'Invalid connection URL'
+    });
+  }
+  
+  res.json({
+    verified: true,
+    psnId,
+    pluginApproved: true,
+    enrollmentLink: '/ps5-enrollment-plugin.html',
+    message: 'Connection verified. Proceed with enrollment.'
+  });
+});
+
 export default router;

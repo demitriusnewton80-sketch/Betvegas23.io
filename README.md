@@ -49,6 +49,9 @@ Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 - `GET /ps5/user/:userId/bets` - Get user's bets
 - `POST /ps5/user/:userId/deposit` - Deposit funds
 - `GET /ps5/user/:userId/points` - Get enrollment points
+- `GET /ps5/plugin/status` - Get public plugin approval status
+- `POST /ps5/plugin/verify` - Verify plugin connection
+- `GET /ps5-enrollment-plugin.html` - Public plugin enrollment page
 
 ### SSO Plugin System
 - `GET /sso-plugin/plugins` - Get all SSO plugins
