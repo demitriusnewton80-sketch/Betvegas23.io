@@ -1,4 +1,3 @@
-
 import express, { Request, Response } from 'express';
 import { smartSystemService } from '../services/SmartSystemService.js';
 
@@ -39,7 +38,7 @@ router.post('/upload', async (req: Request, res: Response) => {
 // Get system status
 router.get('/status', (req: Request, res: Response) => {
   const status = smartSystemService.getSystemStatus();
-  
+
   res.json({
     success: true,
     status,
@@ -47,22 +46,40 @@ router.get('/status', (req: Request, res: Response) => {
   });
 });
 
-// Get error logs
+// Get all errors including loading errors
 router.get('/errors', (req: Request, res: Response) => {
-  const errors = smartSystemService.getErrorLogs();
-  
+  const errors = smartSystemService.getErrors();
+
   res.json({
     success: true,
-    errors,
-    count: errors.length,
-    fccEntity: '20130314143016'
+    errors: Array.from(errors.values()),
+    totalErrors: errors.size,
+    unresolvedErrors: Array.from(errors.values()).filter(e => !e.resolved).length,
+    fccEntity: '20130314143016',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Get loading errors specifically
+router.get('/errors/loading', (req: Request, res: Response) => {
+  const errors = smartSystemService.getErrors();
+  const loadingErrors = Array.from(errors.values()).filter(
+    e => e.type === 'loading' || e.source.includes('load') || e.message.toLowerCase().includes('load')
+  );
+
+  res.json({
+    success: true,
+    loadingErrors,
+    count: loadingErrors.length,
+    fccEntity: '20130314143016',
+    timestamp: new Date().toISOString()
   });
 });
 
 // Get traffic data
 router.get('/traffic', (req: Request, res: Response) => {
   const traffic = smartSystemService.getTrafficData();
-  
+
   res.json({
     success: true,
     traffic,
@@ -74,7 +91,7 @@ router.get('/traffic', (req: Request, res: Response) => {
 router.get('/uploads/:userId?', (req: Request, res: Response) => {
   const { userId } = req.params;
   const uploads = smartSystemService.getContentUploads(userId);
-  
+
   res.json({
     success: true,
     uploads,
@@ -85,10 +102,22 @@ router.get('/uploads/:userId?', (req: Request, res: Response) => {
 // Force error scan and auto-fix
 router.post('/fix-errors', (req: Request, res: Response) => {
   smartSystemService.emit('forceScan');
-  
+
   res.json({
     success: true,
     message: 'Error scan initiated'
+  });
+});
+
+// Get system health
+router.get('/health', (req: Request, res: Response) => {
+  const health = smartSystemService.getSystemHealth();
+
+  res.json({
+    success: true,
+    ...health,
+    fccEntity: '20130314143016',
+    timestamp: new Date().toISOString()
   });
 });
 

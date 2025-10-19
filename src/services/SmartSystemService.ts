@@ -295,6 +295,11 @@ export class SmartSystemService extends EventEmitter {
     // Retry deployment logic here
   }
 
+  // Get all error logs
+  getErrors() {
+    return this.errorLogs;
+  }
+
   // Analyze traffic patterns
   private analyzeTraffic() {
     const recentTraffic = this.trafficData.slice(-100);
