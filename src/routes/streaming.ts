@@ -304,9 +304,6 @@ router.get('/betting-zone/status', (req: Request, res: Response) => {
   });
 });
 
-export default router;
-
-
 // Get NBA direct stream integration
 router.get('/nba/direct/:gameId', async (req: Request, res: Response) => {
   const { gameId } = req.params;

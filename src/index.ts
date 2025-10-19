@@ -1,5 +1,10 @@
 import express, { Request, Response } from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import cookieParser from 'cookie-parser';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import sportsbookRouter from './routes/sportsbook.js';
 import streamingRoutes from './routes/streaming.js'; // Renamed from streamingRouter for consistency with other route imports
 import webhookRoutes from './routes/webhooks.js'; // Renamed from webhooksRouter for consistency
