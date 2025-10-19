@@ -1,12 +1,11 @@
-
 import express, { Request, Response } from 'express';
 import { vpnService } from '../services/VPNService.js';
 
 const router = express.Router();
 
 function getClientIP(req: Request): string {
-  return (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || 
-         req.socket.remoteAddress || 
+  return (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
+         req.socket.remoteAddress ||
          '0.0.0.0';
 }
 
@@ -116,9 +115,7 @@ router.get('/stats', (req: Request, res: Response) => {
   const stats = vpnService.getStats();
 
   res.json({
-    success: true,
     stats,
-    fccEntity: '20130314143016',
     timestamp: new Date().toISOString()
   });
 });
@@ -311,6 +308,40 @@ router.post('/phone/enable-access', (req: Request, res: Response) => {
       error: error instanceof Error ? error.message : 'Failed to enable phone access'
     });
   }
+});
+
+// Create domain for phone VPN connection
+router.post('/domain/create', (req: Request, res: Response) => {
+  const { email, userId, phoneNumber, vpnConnectionId } = req.body;
+
+  // Verify authorized email
+  const authorizedEmails = ['gbemeeat@gmail.com', 'meeatupt215@gmail.com'];
+  if (!email || !authorizedEmails.includes(email.toLowerCase())) {
+    return res.status(403).json({ error: 'Unauthorized email address' });
+  }
+
+  if (!userId || !phoneNumber || !vpnConnectionId) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  const connection = vpnService.getConnection(vpnConnectionId);
+  if (!connection) {
+    return res.status(404).json({ error: 'VPN connection not found' });
+  }
+
+  const domain = `${phoneNumber}.youngmeeat.net`;
+  const accessUrl = `https://${domain}`;
+
+  res.json({
+    success: true,
+    domain,
+    vpnIP: connection.assignedIP,
+    serverIP: connection.serverIP,
+    accessUrl,
+    connectionId: vpnConnectionId,
+    fccEntity: '20130314143016',
+    timestamp: new Date().toISOString()
+  });
 });
 
 export default router;
