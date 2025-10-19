@@ -157,6 +157,8 @@
                 <button class="btn danger" onclick="resetConnections()">🔄 Reset Connections</button>
                 <button class="btn" onclick="runFullDiagnostics()">🔬 Full Diagnostics</button>
                 <button class="btn" onclick="exportLogs()">📋 Export Logs</button>
+                <button class="btn success" onclick="runAutoFix()">🔧 Auto-Fix Issues</button>
+                <button class="btn" onclick="checkCloudHealth()">☁️ Cloud Health</button>
             </div>
         </div>
 
@@ -333,6 +335,9 @@
             await checkDomain();
             await new Promise(resolve => setTimeout(resolve, 500));
             
+            await checkCloudHealth();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
             await checkAllWorkflows();
             await new Promise(resolve => setTimeout(resolve, 500));
             
@@ -346,6 +351,43 @@
             
             log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
             log('✅ Full diagnostics complete!');
+            await runAutoFix();
+        }
+
+        async function checkCloudHealth() {
+            log('☁️ Checking cloud services health...');
+            try {
+                const data = await fetchJSON(`${API_BASE}/public-access/cloud/health`);
+                log(`✅ Overall Cloud Status: ${data.overall}`);
+                data.services?.forEach(service => {
+                    log(`  📦 ${service.name}: ${service.status} (${service.responseTime || 'N/A'})`);
+                });
+                updateStatus('Cloud Health', 'success', `${data.services?.length || 0} services online`);
+            } catch (error) {
+                log(`❌ Cloud health check failed: ${error.message}`, 'error');
+                updateStatus('Cloud Health', 'error', error.message);
+            }
+        }
+
+        async function runAutoFix() {
+            log('🔧 Running automatic fixes...');
+            try {
+                const issues = ['memory', 'connections', 'cache'];
+                for (const issue of issues) {
+                    const response = await fetch(`${API_BASE}/public-access/diagnostics/fix`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ issueType: issue })
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        log(`✅ ${issue}: ${result.message}`);
+                    }
+                }
+                log('✅ Auto-fix complete!');
+            } catch (error) {
+                log(`⚠️ Auto-fix partially completed: ${error.message}`, 'error');
+            }
         }
 
         function exportLogs() {

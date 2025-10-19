@@ -410,6 +410,83 @@ args = "echo \"=== Troubleshooting Complete ===\""
 task = "shell.exec"
 args = "echo \"Access dashboard at: /troubleshooting\""
 
+[[workflows.workflow]]
+name = "Cloud Troubleshooting"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Cloud Troubleshooting System ===\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Entity: 20130314143016\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 1: Checking cloud infrastructure...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/public-access/cloud/health || echo \"⚠️ Cloud health check unavailable\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 2: Running diagnostics...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/public-access/diagnostics || echo \"⚠️ Diagnostics unavailable\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 3: Checking all workflows...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/streaming/workflows/all || echo \"⚠️ Workflows check unavailable\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 4: Auto-fixing common issues...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -X POST -H \"Content-Type: application/json\" -d '{\"issueType\":\"memory\"}' http://0.0.0.0:5000/public-access/diagnostics/fix || echo \"⚠️ Auto-fix unavailable\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -X POST -H \"Content-Type: application/json\" -d '{\"issueType\":\"cache\"}' http://0.0.0.0:5000/public-access/diagnostics/fix || echo \"⚠️ Auto-fix unavailable\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Troubleshooting Complete ===\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Dashboard: http://0.0.0.0:5000/public-troubleshooting.html\""
+
 [[ports]]
 localPort = 5000
 externalPort = 5000
