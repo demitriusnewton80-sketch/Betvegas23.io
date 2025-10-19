@@ -48,6 +48,18 @@ Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 - `POST /webhooks/receive/:sportsbookId` - Receive external updates
 - `POST /webhooks/test/:sportsbookId` - Test webhook connection
 
+### SAM.gov Integration
+- `GET /sam/entity/young-meeat-llc` - Get Young Meeat LLC entity data
+- `GET /sam/entity/search?name=` - Search entity by name
+- `GET /sam/entity/uei/:uei` - Get entity by UEI
+- `GET /sam/validate/:entityName` - Validate SAM registration
+- `GET /sam/sso/login` - Initiate SAM.gov SSO login
+- `GET /sam/sso/callback` - SAM.gov SSO callback
+- `GET /sam/config` - Get SAM.gov configuration (SSO protected)
+- `POST /sam/config/api-key` - Update API key (SSO protected)
+- `GET /sam/cache` - Get cached entities (SSO protected)
+- `GET /sam/profile-link` - Get direct SAM.gov profile link
+
 ## Deployment on Replit
 
 1. Set environment variables in Replit Secrets
