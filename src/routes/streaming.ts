@@ -91,6 +91,25 @@ router.get('/partners', (req: Request, res: Response) => {
   });
 });
 
+// Mobile contract management - Get contract status
+router.get('/contracts/mobile/status', (req: Request, res: Response) => {
+  const sportsbooks = streamingService.getExternalSportsbooks();
+  
+  res.json({
+    success: true,
+    contracts: sportsbooks.map(sb => ({
+      id: sb.id,
+      name: sb.name,
+      active: sb.active,
+      webhookUrl: sb.webhookUrl,
+      allowedIPs: sb.allowedIPs,
+      registeredAt: sb.registeredAt
+    })),
+    mobileOptimized: true,
+    fccEntity: '20130314143016'
+  });
+});
+
 // Add new external sportsbook partner
 router.post('/partners', (req: Request, res: Response) => {
   const { id, name, apiKey, webhookUrl, active = true } = req.body;
