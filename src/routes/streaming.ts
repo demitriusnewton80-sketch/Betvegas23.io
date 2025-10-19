@@ -116,13 +116,23 @@ router.get('/contracts/mobile/status', (req: Request, res: Response) => {
 router.get('/mobile/hub/status', (req: Request, res: Response) => {
   res.json({
     success: true,
+    visualConfig: {
+      theme: 'dark',
+      primaryColor: '#6366f1',
+      accentColor: '#22c55e',
+      gradientStart: '#667eea',
+      gradientEnd: '#764ba2',
+      cardShadow: '0 10px 30px rgba(0,0,0,0.3)',
+      borderRadius: '16px',
+      animationDuration: '0.3s'
+    },
     workflows: [
-      { name: 'Live Streaming', endpoint: '/streaming/partners', status: 'active' },
-      { name: 'PS5 Gaming', endpoint: '/ps5/games', status: 'connected' },
-      { name: 'WiFi Hub', endpoint: '/streaming/wifi-hub/status', status: 'online' },
-      { name: 'Phone Control', endpoint: '/phone-control/stats', status: 'ready' },
-      { name: 'AWS Backup', endpoint: '/backup/status', status: 'synced' },
-      { name: 'SSO System', endpoint: '/sso-plugin/plugins', status: 'enabled' }
+      { name: 'Live Streaming', endpoint: '/streaming/partners', status: 'active', icon: '📺', color: '#ef4444', pulse: true },
+      { name: 'PS5 Gaming', endpoint: '/ps5/games', status: 'connected', icon: '🎮', color: '#003087', pulse: false },
+      { name: 'WiFi Hub', endpoint: '/streaming/wifi-hub/status', status: 'online', icon: '📡', color: '#6366f1', pulse: true },
+      { name: 'Phone Control', endpoint: '/phone-control/stats', status: 'ready', icon: '📱', color: '#8b5cf6', pulse: false },
+      { name: 'AWS Backup', endpoint: '/backup/status', status: 'synced', icon: '☁️', color: '#ff9900', pulse: false },
+      { name: 'SSO System', endpoint: '/sso-plugin/plugins', status: 'enabled', icon: '🔐', color: '#10b981', pulse: false }
     ],
     mobileOptimized: true,
     httpsEnabled: true,
@@ -282,6 +292,14 @@ router.get('/wifi-hub/status', (req: Request, res: Response) => {
     hubName: 'WiFi Connection Infusion Hub',
     status: 'active',
     connectionStrength: 'excellent',
+    visualTheme: {
+      primary: '#6366f1',
+      secondary: '#8b5cf6',
+      accent: '#22c55e',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      cardGradient: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+      glowEffect: '0 8px 32px rgba(99, 102, 241, 0.3)'
+    },
     network: {
       ipAddress: '0.0.0.0',
       clientIP: String(clientIP),
@@ -297,12 +315,12 @@ router.get('/wifi-hub/status', (req: Request, res: Response) => {
       signalStrength: 100
     },
     connectedPlugins: [
-      { name: 'Live Sportsbook', status: 'connected', endpoint: '/sportsbook/games', health: 100 },
-      { name: 'PlayStation Network', status: 'connected', endpoint: '/ps5/games', health: 100 },
-      { name: 'FCC Streaming', status: 'connected', endpoint: '/streaming/partners', health: 100 },
-      { name: 'SSO Authentication', status: 'connected', endpoint: '/sso-plugin/plugins', health: 100 },
-      { name: 'AWS Integration', status: 'connected', endpoint: '/aws/status', health: 100 },
-      { name: 'SAM.gov Portal', status: 'connected', endpoint: '/sam/entity/young-meeat-llc', health: 100 }
+      { name: 'Live Sportsbook', status: 'connected', endpoint: '/sportsbook/games', health: 100, icon: '🏆', color: '#f59e0b' },
+      { name: 'PlayStation Network', status: 'connected', endpoint: '/ps5/games', health: 100, icon: '🎮', color: '#003087' },
+      { name: 'FCC Streaming', status: 'connected', endpoint: '/streaming/partners', health: 100, icon: '📺', color: '#ef4444' },
+      { name: 'SSO Authentication', status: 'connected', endpoint: '/sso-plugin/plugins', health: 100, icon: '🔐', color: '#6366f1' },
+      { name: 'AWS Integration', status: 'connected', endpoint: '/aws/status', health: 100, icon: '☁️', color: '#ff9900' },
+      { name: 'SAM.gov Portal', status: 'connected', endpoint: '/sam/entity/young-meeat-llc', health: 100, icon: '🏛️', color: '#10b981' }
     ],
     metrics: {
       bandwidth: 'unlimited',
@@ -338,6 +356,31 @@ router.get('/betting-zone/status', (req: Request, res: Response) => {
     wifiHubConnected: true,
     networkControl: 'integrated',
     fccEntity: '20130314143016',
+    visualDesign: {
+      theme: {
+        primary: '#1e3a8a',
+        secondary: '#3b82f6',
+        success: '#22c55e',
+        warning: '#f59e0b',
+        danger: '#ef4444',
+        background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
+        cardBackground: 'rgba(255, 255, 255, 0.95)',
+        textPrimary: '#1f2937',
+        textSecondary: '#6b7280'
+      },
+      animations: {
+        fadeIn: 'fadeIn 0.3s ease-in',
+        slideUp: 'slideUp 0.4s ease-out',
+        pulse: 'pulse 2s infinite',
+        glow: 'glow 2s ease-in-out infinite'
+      },
+      effects: {
+        cardShadow: '0 20px 60px rgba(0,0,0,0.3)',
+        cardHoverShadow: '0 25px 70px rgba(0,0,0,0.4)',
+        glowColor: 'rgba(34, 197, 94, 0.5)',
+        borderRadius: '20px'
+      }
+    },
     features: {
       phoneControl: 'enabled',
       wifiConnection: 'excellent',
@@ -347,12 +390,12 @@ router.get('/betting-zone/status', (req: Request, res: Response) => {
       networkCommands: 'enabled'
     },
     connectedPlugins: [
-      { name: 'PlayStation 5', endpoint: '/ps5-betting.html', status: 'connected' },
-      { name: 'Live Sportsbook', endpoint: '/index.html', status: 'connected' },
-      { name: 'Streaming Services', endpoint: '/streaming/partners', status: 'connected' },
-      { name: 'Radio Networks', endpoint: '/streaming/radio/latest', status: 'connected' },
-      { name: 'SSO System', endpoint: '/sso-plugin-dashboard.html', status: 'connected' },
-      { name: 'AWS Integration', endpoint: '/backup-dashboard.html', status: 'connected' }
+      { name: 'PlayStation 5', endpoint: '/ps5-betting.html', status: 'connected', icon: '🎮', color: '#003087', gradient: 'linear-gradient(135deg, #003087 0%, #0070cc 100%)' },
+      { name: 'Live Sportsbook', endpoint: '/index.html', status: 'connected', icon: '🏆', color: '#f59e0b', gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' },
+      { name: 'Streaming Services', endpoint: '/streaming/partners', status: 'connected', icon: '📺', color: '#ef4444', gradient: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' },
+      { name: 'Radio Networks', endpoint: '/streaming/radio/latest', status: 'connected', icon: '📻', color: '#8b5cf6', gradient: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)' },
+      { name: 'SSO System', endpoint: '/sso-plugin-dashboard.html', status: 'connected', icon: '🔐', color: '#6366f1', gradient: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)' },
+      { name: 'AWS Integration', endpoint: '/backup-dashboard.html', status: 'connected', icon: '☁️', color: '#ff9900', gradient: 'linear-gradient(135deg, #ff9900 0%, #ec7211 100%)' }
     ],
     phoneControlEmails: ['gbemeeat@gmail.com', 'meeatupt215@gmail.com'],
     accessUrl: '/wifi-plugin-hub.html',
