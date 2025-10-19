@@ -2,12 +2,15 @@ import express, { Request, Response } from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import cookieParser from 'cookie-parser';
+import { appCore } from './core/AppCore.js';
+import { phoneControlService } from './services/PhoneControlService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import sportsbookRouter from './routes/sportsbook.js';
-import streamingRoutes from './routes/streaming.js'; // Renamed from streamingRouter for consistency with other route imports
-import webhookRoutes from './routes/webhooks.js'; // Renamed from webhooksRouter for consistency
+import streamingRoutes from './routes/streaming.js';
+import webhookRoutes from './routes/webhooks.js';
+import wifiInfusionRoutes from './routes/wifi-infusion.js';
 import authRouter from './routes/auth.js';
 import ecommerceRoutes from './routes/ecommerce.js'; // New import for e-commerce routes
 import awsRoutes from './routes/aws.js'; // New import for AWS routes
@@ -22,7 +25,9 @@ import qrRoutes from './routes/qr.js';
 import ps5Routes from './routes/ps5.js'; // Added for PS5 sports betting routes
 import phoneControlRouter from './routes/phone-control.js'; // Added for phone control
 import winnerPayoutRouter from './routes/winner-payout.js';
+import sshRoutes from './routes/ssh.js';
 import espnTracker from './routes/espn-tracker.js'; // Added for ESPN tracker
+import web3Routes from './routes/web3.js'; // Added for Web3 bridge
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -59,6 +64,7 @@ app.use((req, res, next) => {
 
 // Health check endpoint for AWS/deployment monitoring
 app.get('/health', (req: Request, res: Response) => {
+  const coreStatus = appCore.getConnectionStatus();
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
@@ -68,8 +74,18 @@ app.get('/health', (req: Request, res: Response) => {
       aws: 'ready',
       github: 'connected',
       fcc: 'streaming_enabled'
+    },
+    core: {
+      active: coreStatus.active,
+      total: coreStatus.total,
+      status: coreStatus.active === coreStatus.total ? 'all_connected' : 'partial'
     }
   });
+});
+
+// Core connection status endpoint
+app.get('/core/status', (req: Request, res: Response) => {
+  res.json(appCore.getConnectionStatus());
 });
 
 // API Documentation endpoint removed for security
@@ -93,47 +109,57 @@ app.use('/ps5', ps5Routes); // Mount PS5 routes
 app.use('/phone-control', phoneControlRouter); // Mount phone control routes
 app.use('/winner-payout', winnerPayoutRouter);
 app.use('/espn-tracker', espnTracker); // Mount ESPN tracker routes
+app.use('/wifi-infusion', wifiInfusionRoutes);
+app.use('/web3', web3Routes); // Mount Web3 bridge routes
+app.use('/ssh', sshRoutes);
 
-// Ensure all routes are mounted
-console.log('📍 Routes registered:');
-console.log('   - /sportsbook');
-console.log('   - /streaming');
-console.log('   - /auth');
-console.log('   - /webhooks');
-console.log('   - /account');
-console.log('   - /contact');
-console.log('   - /ecommerce'); // Added for new e-commerce routes
-console.log('   - /aws'); // Added for new AWS routes
-console.log('   - /backup'); // Added for new backup routes
-console.log('   - /content'); // Added for new content routes
-console.log('   - /sam'); // Added for new SAM.gov routes
-console.log('   - /sso-plugin'); // Added for new SSO plugin routes
-console.log('   - /spotify'); // Added for new Spotify routes
-console.log('   - /login'); // Added for personal SSO login
-console.log('   - /public-access'); // Added for public access view
-console.log('   - /qr'); // Added for QR code routes
-console.log('   - /ps5'); // Added for PS5 sports betting routes
-console.log('   - /phone-control'); // Added for phone control routes
-console.log('   - /winner-payout'); // Added for winner payout routes
-console.log('   - /espn-tracker'); // Added for ESPN tracker routes
+// Route registry for monitoring
+const routes = [
+  '/sportsbook', '/streaming', '/auth', '/webhooks',
+  '/account', '/contact', '/ecommerce', '/aws',
+  '/aws-data', '/backup', '/content', '/sam', '/sso-plugin',
+  '/spotify', '/qr', '/ps5', '/phone-control',
+  '/winner-payout', '/espn-tracker', '/wifi-infusion'
+];
 
-// 404 handler for API
+console.log('📍 Routes registered:', routes.length);
+routes.forEach(route => console.log(`   ✓ ${route}`));
+
+// 404 handler with better styling
 app.use((req: Request, res: Response) => {
   res.status(404).json({
+    success: false,
     error: 'Endpoint not found',
-    message: `Cannot ${req.method} ${req.path}`
-  });
-});
-
-// Error handler
-app.use((err: Error, req: Request, res: Response, next: any) => {
-  console.error('Server error:', err);
-  res.status(500).json({
-    error: 'Internal server error',
-    message: err.message,
+    message: `Cannot ${req.method} ${req.path}`,
+    availableRoutes: '/health, /core/status',
     timestamp: new Date().toISOString()
   });
 });
+
+// Enhanced error handler with control
+app.use((err: Error, req: Request, res: Response, next: any) => {
+  const errorId = `ERR-${Date.now()}`;
+  console.error(`[${errorId}] Server error:`, err.message);
+  console.error('Stack:', err.stack);
+
+  res.status(500).json({
+    success: false,
+    error: 'Internal server error',
+    errorId,
+    message: NODE_ENV === 'development' ? err.message : 'An error occurred',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Initialize phone control and network plugins on startup
+console.log('🔌 Initializing Betting Zone - Phone Control & Network Plugins...');
+console.log(`📱 Phone Control: Enabled`);
+console.log(`🌐 Internet Connection: Active on 0.0.0.0:${PORT}`);
+console.log(`🎯 FCC Entity: 20130314143016`);
+
+// Auto-activate all network plugins
+const hostPlugins = phoneControlService.getHostPlugins();
+console.log(`✅ Activated ${hostPlugins.length} host plugins:`, hostPlugins.map(p => p.name).join(', '));
 
 const server = app.listen(PORT, HOST, () => {
   console.log(`🚀 API Server running on ${HOST}:${PORT}`);
@@ -144,6 +170,9 @@ const server = app.listen(PORT, HOST, () => {
   console.log(`📺 FCC Streaming: Enabled`);
   console.log(`💚 Health Check: http://${HOST}:${PORT}/health`);
   console.log(`🌐 Server is ready to accept connections`);
+
+  // Initialize App Core
+  appCore.initialize();
 });
 
 server.on('error', (error: any) => {
@@ -153,6 +182,25 @@ server.on('error', (error: any) => {
     console.error('❌ Server error:', error);
   }
   process.exit(1);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('📴 SIGTERM received, shutting down gracefully...');
+  appCore.shutdown();
+  server.close(() => {
+    console.log('✅ Server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('📴 SIGINT received, shutting down gracefully...');
+  appCore.shutdown();
+  server.close(() => {
+    console.log('✅ Server closed');
+    process.exit(0);
+  });
 });
 
 export default app;

@@ -1,0 +1,352 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web3 Bridge - Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .fcc-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 500;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: monospace;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .info-value {
+            color: #1f2937;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .wallet-info {
+            background: #f3f4f6;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .transaction-item {
+            background: #f9fafb;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+        }
+        .tx-hash {
+            font-family: monospace;
+            font-size: 12px;
+            color: #6b7280;
+            word-break: break-all;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: #f3f4f6;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌉 Web3 Bridge</h1>
+            <p>Blockchain Integration for Sports Betting</p>
+            <span class="fcc-badge">FCC Entity: 20130314143016</span>
+        </div>
+
+        <div class="grid">
+            <!-- Bridge Status -->
+            <div class="card">
+                <h2>Bridge Status</h2>
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span id="bridgeStatus">Connecting...</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Chain</span>
+                    <span class="info-value" id="chainName">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Chain ID</span>
+                    <span class="info-value" id="chainId">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Currency</span>
+                    <span class="info-value" id="currency">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Connected Wallets</span>
+                    <span class="info-value" id="walletCount">0</span>
+                </div>
+            </div>
+
+            <!-- Connect Wallet -->
+            <div class="card">
+                <h2>Connect Wallet</h2>
+                <div class="input-group">
+                    <label>Wallet Address</label>
+                    <input type="text" id="walletAddress" placeholder="0x..." />
+                </div>
+                <button class="btn" onclick="connectWallet()">Connect Wallet</button>
+                <div id="walletInfo" class="wallet-info" style="display: none;">
+                    <div class="info-row">
+                        <span class="info-label">Address</span>
+                        <span class="info-value" id="connectedAddress" style="font-size: 11px;">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Balance</span>
+                        <span class="info-value" id="walletBalance">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="card">
+                <h2>Bridge Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalTx">0</div>
+                        <div class="stat-label">Total Transactions</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="confirmedTx">0</div>
+                        <div class="stat-label">Confirmed</div>
+                    </div>
+                </div>
+                <button class="btn" onclick="loadStats()" style="background: #10b981;">Refresh Stats</button>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="card">
+                <h2>Recent Transactions</h2>
+                <div id="transactionList">
+                    <p style="text-align: center; color: #9ca3af;">No transactions yet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/web3-bridge-client.js"></script>
+    <script>
+        const web3Client = new Web3BridgeClient();
+
+        // Set up event listeners
+        web3Client.on('wallet:connected', (wallet) => {
+            console.log('Wallet connected:', wallet);
+            updateWalletDisplay(wallet);
+        });
+
+        web3Client.on('transaction:created', (tx) => {
+            console.log('Transaction created:', tx);
+        });
+
+        web3Client.on('transaction:sent', (tx) => {
+            console.log('Transaction sent:', tx);
+            loadTransactions();
+        });
+
+        async function loadBridgeStatus() {
+            try {
+                const data = await web3Client.getStatus();
+
+                if (data.success) {
+                    document.getElementById('bridgeStatus').textContent = 'Connected';
+                    document.getElementById('chainName').textContent = data.chain.name;
+                    document.getElementById('chainId').textContent = data.chain.id;
+                    document.getElementById('currency').textContent = data.chain.currency;
+                    document.getElementById('walletCount').textContent = data.stats.totalWallets;
+                    document.getElementById('totalTx').textContent = data.stats.totalTransactions;
+                    document.getElementById('confirmedTx').textContent = data.stats.confirmedTransactions;
+                }
+            } catch (error) {
+                console.error('Error loading bridge status:', error);
+                document.getElementById('bridgeStatus').textContent = 'Error';
+            }
+        }
+
+        async function connectWallet() {
+            const address = document.getElementById('walletAddress').value;
+
+            if (!address) {
+                alert('Please enter a wallet address');
+                return;
+            }
+
+            try {
+                const wallet = await web3Client.connectWallet(address);
+                updateWalletDisplay(wallet);
+                alert('Wallet connected successfully!');
+                loadBridgeStatus();
+            } catch (error) {
+                alert(`Failed to connect wallet: ${error.message}`);
+            }
+        }
+
+        function updateWalletDisplay(wallet) {
+            document.getElementById('walletInfo').style.display = 'block';
+            document.getElementById('connectedAddress').textContent = web3Client.shortenAddress(wallet.address);
+            document.getElementById('walletBalance').textContent = `${web3Client.formatBalance(wallet.balance)} MATIC`;
+        }
+
+        async function loadStats() {
+            await loadBridgeStatus();
+            loadTransactions();
+        }
+
+        async function loadTransactions() {
+            try {
+                const transactions = await web3Client.getTransactions();
+
+                const txList = document.getElementById('transactionList');
+
+                if (transactions && transactions.length > 0) {
+                    txList.innerHTML = transactions.slice(0, 5).map(tx => `
+                        <div class="transaction-item">
+                            <div class="info-row">
+                                <span class="info-label">Status</span>
+                                <span class="info-value">${tx.status}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Amount</span>
+                                <span class="info-value">${web3Client.formatBalance(tx.amount)} MATIC</span>
+                            </div>
+                            ${tx.hash ? `<div class="tx-hash">Hash: ${web3Client.shortenAddress(tx.hash, 6)}</div>` : ''}
+                        </div>
+                    `).join('');
+                } else {
+                    txList.innerHTML = '<p style="text-align: center; color: #9ca3af;">No transactions yet</p>';
+                }
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+            }
+        }
+
+        // Initialize
+        loadBridgeStatus();
+        setInterval(loadBridgeStatus, 10000);
+    </script>
+</body>
+</html>

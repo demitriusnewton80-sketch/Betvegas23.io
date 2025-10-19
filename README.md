@@ -38,6 +38,21 @@ Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 - `GET /sportsbook/games?source=psn` - Gaming content betting
 - `GET /ps5-betting.html` - PS5 sports betting interface
 
+### Web3 Bridge (Blockchain Integration)
+- `GET /web3/status` - Get Web3 bridge status
+- `POST /web3/wallet/connect` - Connect crypto wallet
+- `GET /web3/wallet/:address/balance` - Get wallet balance
+- `GET /web3/wallet/:address` - Get wallet info
+- `POST /web3/wallet/:address/disconnect` - Disconnect wallet
+- `GET /web3/wallets` - Get all connected wallets
+- `POST /web3/transaction/create` - Create blockchain transaction
+- `POST /web3/transaction/:txId/send` - Send transaction
+- `GET /web3/transaction/:txId` - Get transaction details
+- `GET /web3/transactions` - Get all transactions
+- `GET /web3/transaction/:hash/verify` - Verify transaction
+- `GET /web3/chain/config` - Get blockchain configuration
+- `GET /web3-bridge.html` - Web3 bridge dashboard
+
 ### PS5 Sports Betting (Madden, NBA 2K, UFC, Undisputed, 5v5)
 - `GET /ps5/games` - Get all PS5 games
 - `GET /ps5/games?type=madden` - Filter by game type

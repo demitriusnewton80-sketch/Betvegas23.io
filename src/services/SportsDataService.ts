@@ -109,6 +109,28 @@ class SportsDataService extends EventEmitter {
     });
 
     this.addEvent({
+      id: 'nfl-3',
+      sport: 'NFL',
+      homeTeam: 'Philadelphia Eagles',
+      awayTeam: 'New York Giants',
+      startTime: new Date(Date.now() + 7200000).toISOString(),
+      status: 'live',
+      moneyLine: { home: -180, away: +155 },
+      radioLink: 'https://www.audacy.com/stations/sports'
+    });
+
+    this.addEvent({
+      id: 'nba-3',
+      sport: 'NBA',
+      homeTeam: 'Phoenix Suns',
+      awayTeam: 'Denver Nuggets',
+      startTime: new Date(Date.now() + 14400000).toISOString(),
+      status: 'live',
+      moneyLine: { home: -135, away: +115 },
+      radioLink: 'https://www.nba.com/live'
+    });
+
+    this.addEvent({
       id: 'nhl-2',
       sport: 'NHL',
       homeTeam: 'Edmonton Oilers',
