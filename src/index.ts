@@ -9,6 +9,7 @@ import { rateLimiter } from './middleware/rateLimiter.js';
 import { sanitizeInput, validateRequest, auditLog } from './middleware/security.js';
 import { createApplicationBuilder } from './core/ApplicationBuilder.js';
 import { serviceContainer } from './core/ServiceContainer.js';
+import { pool, testConnection, initializeDatabase } from './config/database.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -332,6 +333,17 @@ app.get('/api', (req: Request, res: Response) => {
 // Build and start application (Microsoft-style)
 async function startApplication() {
   try {
+    // Initialize database
+    if (process.env.DATABASE_URL) {
+      console.log('🗄️  Initializing database...');
+      const dbConnected = await testConnection();
+      if (dbConnected) {
+        await initializeDatabase();
+      }
+    } else {
+      console.log('⚠️  DATABASE_URL not set - running without database');
+    }
+
     // Build application
     await builder.build();
 
