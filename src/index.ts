@@ -15,6 +15,7 @@ import ssoPluginRoutes from './routes/sso-plugin.js'; // New import for SSO plug
 import spotifyRoutes from './routes/spotify.js'; // New import for Spotify routes
 import qrRoutes from './routes/qr.js';
 import ps5Routes from './routes/ps5.js'; // Added for PS5 sports betting routes
+import phoneControlRouter from './routes/phone-control.js'; // Added for phone control
 import { sportsDataService } from './services/SportsDataService.js';
 import path from 'path'; // Import path module
 
@@ -84,6 +85,7 @@ app.use('/sso-plugin', ssoPluginRoutes); // Mount SSO plugin routes
 app.use('/spotify', spotifyRoutes); // Mount Spotify routes
 app.use('/qr', qrRoutes);
 app.use('/ps5', ps5Routes); // Mount PS5 routes
+app.use('/phone-control', phoneControlRouter); // Mount phone control routes
 
 // Ensure all routes are mounted
 console.log('📍 Routes registered:');
@@ -104,6 +106,7 @@ console.log('   - /login'); // Added for personal SSO login
 console.log('   - /public-access'); // Added for public access view
 console.log('   - /qr'); // Added for QR code routes
 console.log('   - /ps5'); // Added for PS5 sports betting routes
+console.log('   - /phone-control'); // Added for phone control routes
 
 // 404 handler for API
 app.use((req: Request, res: Response) => {
