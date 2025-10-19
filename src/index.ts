@@ -41,7 +41,7 @@ app.get('/health', (req: Request, res: Response) => {
     status: 'healthy',
     timestamp: new Date().toISOString(),
     environment: NODE_ENV,
-    service: 'Young Meat LLC Sports Betting API',
+    service: 'Young Meeat LLC Sports Betting API',
     integrations: {
       aws: 'ready',
       github: 'connected',

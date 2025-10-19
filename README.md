@@ -1,5 +1,5 @@
 
-# Young Meat LLC - Sports Betting API
+# Young Meeat LLC - Sports Betting API
 
 Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 

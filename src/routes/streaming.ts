@@ -125,7 +125,7 @@ router.get('/amazon-prime/:userId/:gameId', (req: Request, res: Response) => {
     hasAccess: true,
     gameId,
     amazonPrimeUrl,
-    message: 'Amazon Prime stream access granted via Young Meat LLC partnership'
+    message: 'Amazon Prime stream access granted via Young Meeat LLC partnership'
   });
 });
 
