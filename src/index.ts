@@ -3,6 +3,8 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { createServer } from 'http';
+import { WebSocketServer, WebSocket } from 'ws';
 import { appCore } from './core/AppCore.js';
 import { domainProtection, getAllowedDomains, addCustomDomain } from './middleware/domainProtection.js';
 import { rateLimiter } from './middleware/rateLimiter.js';
@@ -390,17 +392,117 @@ async function startApplication() {
     // Run startup tasks
     await builder.startup();
 
+    // Create HTTP server with WebSocket support
+    const httpServer = createServer(app);
+    
+    // Create WebSocket server
+    const wss = new WebSocketServer({ 
+      server: httpServer,
+      path: '/ws',
+      perMessageDeflate: false
+    });
+
+    // WebSocket connection handling
+    const activeConnections = new Map<string, WebSocket>();
+
+    wss.on('connection', (ws: WebSocket, req) => {
+      const clientId = `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      activeConnections.set(clientId, ws);
+
+      console.log(`🔌 WebSocket connected: ${clientId} (Total: ${activeConnections.size})`);
+
+      // Send welcome message
+      ws.send(JSON.stringify({
+        type: 'connected',
+        clientId,
+        fccEntity: '20130314143016',
+        timestamp: new Date().toISOString(),
+        message: 'Real-time connection established'
+      }));
+
+      // Handle incoming messages
+      ws.on('message', (data: Buffer) => {
+        try {
+          const message = JSON.parse(data.toString());
+          
+          // Route messages based on type
+          switch (message.type) {
+            case 'subscribe':
+              // Subscribe to specific channels (sportsbook, streaming, etc.)
+              ws.send(JSON.stringify({
+                type: 'subscribed',
+                channel: message.channel,
+                timestamp: new Date().toISOString()
+              }));
+              break;
+              
+            case 'ping':
+              ws.send(JSON.stringify({ type: 'pong', timestamp: new Date().toISOString() }));
+              break;
+              
+            default:
+              // Echo back for testing
+              ws.send(JSON.stringify({
+                type: 'echo',
+                received: message,
+                timestamp: new Date().toISOString()
+              }));
+          }
+        } catch (error) {
+          console.error('WebSocket message error:', error);
+        }
+      });
+
+      // Handle connection close
+      ws.on('close', () => {
+        activeConnections.delete(clientId);
+        console.log(`🔌 WebSocket disconnected: ${clientId} (Total: ${activeConnections.size})`);
+      });
+
+      // Handle errors
+      ws.on('error', (error) => {
+        console.error(`WebSocket error for ${clientId}:`, error);
+        activeConnections.delete(clientId);
+      });
+
+      // Keep connection alive with heartbeat
+      const heartbeat = setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ 
+            type: 'heartbeat', 
+            timestamp: new Date().toISOString() 
+          }));
+        } else {
+          clearInterval(heartbeat);
+        }
+      }, 30000);
+    });
+
+    // Broadcast function for real-time updates
+    const broadcast = (data: any) => {
+      activeConnections.forEach((ws) => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify(data));
+        }
+      });
+    };
+
+    // Make broadcast available globally
+    (global as any).wsBroadcast = broadcast;
+
     // Start server
-    const server = app.listen(PORT, '0.0.0.0', () => {
+    const server = httpServer.listen(PORT, '0.0.0.0', () => {
       console.log('═══════════════════════════════════════════════════');
       console.log('🏢 Young Meeat LLC - Microsoft-Style Architecture');
       console.log('═══════════════════════════════════════════════════');
-      console.log(`🚀 API Server: http://0.0.0.0:${PORT}`);
+      console.log(`🚀 HTTP Server: http://0.0.0.0:${PORT}`);
+      console.log(`🔌 WebSocket Server: ws://0.0.0.0:${PORT}/ws`);
       console.log(`📡 FCC Entity: 20130314143016`);
       console.log(`📋 FCC Registration: 0024454324`);
       console.log(`🏗️  Architecture: Microsoft Enterprise Pattern`);
       console.log(`📦 Services: ${serviceContainer.getServices().length} registered`);
       console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`💬 Real-time: WebSocket enabled`);
       console.log('═══════════════════════════════════════════════════');
     });
 

@@ -102,6 +102,16 @@ router.get('/stream/:gameId', (req: Request, res: Response) => {
   const updateHandler = (update: any) => {
     if (update.gameId === gameId) {
       res.write(`data: ${JSON.stringify(update)}\n\n`);
+      
+      // Also broadcast to WebSocket clients
+      if ((global as any).wsBroadcast) {
+        (global as any).wsBroadcast({
+          type: 'gameUpdate',
+          gameId,
+          data: update,
+          timestamp: new Date().toISOString()
+        });
+      }
     }
   };
 
@@ -795,3 +805,28 @@ router.get('/radio/ip-lookup', async (req: Request, res: Response) => {
 });
 
 export default router;
+
+
+// WebSocket connection status
+router.get('/websocket/status', (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    websocket: {
+      enabled: true,
+      endpoint: 'ws://0.0.0.0:5000/ws',
+      productionEndpoint: process.env.REPLIT_DEPLOYMENT === '1' 
+        ? `wss://${req.headers.host}/ws` 
+        : 'ws://0.0.0.0:5000/ws',
+      protocol: 'WebSocket (ws/wss)',
+      features: [
+        'Real-time game updates',
+        'Live odds streaming',
+        'Instant notifications',
+        'Bi-directional communication',
+        'Auto-reconnection support'
+      ]
+    },
+    fccEntity: '20130314143016',
+    timestamp: new Date().toISOString()
+  });
+});
