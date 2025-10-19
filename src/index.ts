@@ -52,6 +52,7 @@ import mobileRoutes from './routes/mobile.js';
 import microsoftDiagnostics from './routes/microsoft-diagnostics.js';
 import aiRoutes from './routes/ai.js';
 import feedBuilderRoutes from './routes/feed-builder.js';
+import appDepositRoutes from './routes/app-deposit.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -224,6 +225,7 @@ app.use('/mobile', mobileRoutes);
 app.use('/microsoft', microsoftDiagnostics);
 app.use('/ai', aiRoutes);
 app.use('/feed-builder', feedBuilderRoutes);
+app.use('/app-deposit', appDepositRoutes);
 
 // Static files - serve with proper MIME types
 app.use(express.static(path.join(__dirname, '../public'), {

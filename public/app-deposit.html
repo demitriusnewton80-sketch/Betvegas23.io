@@ -1,0 +1,282 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Deposit | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.9);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #60a5fa;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+        }
+
+        textarea {
+            min-height: 150px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
+        }
+
+        .deposit-list {
+            list-style: none;
+        }
+
+        .deposit-item {
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status.pending { background: #f59e0b; }
+        .status.processed { background: #3b82f6; }
+        .status.deployed { background: #22c55e; }
+
+        .fcc-badge {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid #22c55e;
+            color: #22c55e;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📦 App Deposit</h1>
+            <p>Deposit and deploy your applications</p>
+            <div style="margin-top: 10px;">
+                <span class="fcc-badge">FCC: 20130314143016</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 style="margin-bottom: 20px;">Deposit New App</h2>
+            
+            <div class="form-group">
+                <label>User ID</label>
+                <input type="text" id="userId" placeholder="Enter your user ID">
+            </div>
+
+            <div class="form-group">
+                <label>App Name</label>
+                <input type="text" id="appName" placeholder="My Awesome App">
+            </div>
+
+            <div class="form-group">
+                <label>App Type</label>
+                <select id="appType">
+                    <option value="web">Web Application</option>
+                    <option value="mobile">Mobile App</option>
+                    <option value="api">API Service</option>
+                    <option value="bot">Bot/Automation</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>App Data (JSON or Code)</label>
+                <textarea id="appData" placeholder='{"type": "web", "content": "..."}'></textarea>
+            </div>
+
+            <button class="btn" onclick="depositApp()">Deposit App</button>
+        </div>
+
+        <div class="card">
+            <h2 style="margin-bottom: 20px;">My Deposits</h2>
+            <ul class="deposit-list" id="depositList">
+                <li style="text-align: center; opacity: 0.7;">No deposits yet</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        async function depositApp() {
+            const userId = document.getElementById('userId').value;
+            const appName = document.getElementById('appName').value;
+            const appType = document.getElementById('appType').value;
+            const appData = document.getElementById('appData').value;
+
+            if (!userId || !appName || !appData) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            let parsedData;
+            try {
+                parsedData = JSON.parse(appData);
+            } catch {
+                parsedData = { content: appData };
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/app-deposit/deposit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId,
+                        appName,
+                        appType,
+                        appData: parsedData
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ App deposited successfully!\nDeposit ID: ${data.deposit.id}`);
+                    document.getElementById('appData').value = '';
+                    loadDeposits(userId);
+                } else {
+                    alert('❌ ' + (data.error || 'Deposit failed'));
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        async function loadDeposits(userId) {
+            if (!userId) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/app-deposit/deposits/${userId}`);
+                const data = await response.json();
+
+                if (data.success && data.deposits.length > 0) {
+                    const list = document.getElementById('depositList');
+                    list.innerHTML = data.deposits.map(d => `
+                        <li class="deposit-item">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <strong>${d.appName}</strong>
+                                <span class="status ${d.status}">${d.status}</span>
+                            </div>
+                            <div style="font-size: 12px; opacity: 0.7;">
+                                Type: ${d.appType} | ID: ${d.id}
+                            </div>
+                            <div style="font-size: 12px; opacity: 0.7;">
+                                Deposited: ${new Date(d.depositedAt).toLocaleString()}
+                            </div>
+                            ${d.status === 'processed' ? `
+                                <button class="btn" onclick="deployApp('${d.id}')" style="margin-top: 10px;">
+                                    🚀 Deploy
+                                </button>
+                            ` : ''}
+                        </li>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading deposits:', error);
+            }
+        }
+
+        async function deployApp(depositId) {
+            try {
+                const response = await fetch(`${API_BASE}/app-deposit/deploy/${depositId}`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ App deployed!\nURL: ${data.deployUrl}`);
+                    loadDeposits(document.getElementById('userId').value);
+                } else {
+                    alert('❌ ' + (data.error || 'Deployment failed'));
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        // Auto-load deposits when user ID is entered
+        document.getElementById('userId').addEventListener('change', (e) => {
+            loadDeposits(e.target.value);
+        });
+    </script>
+</body>
+</html>
