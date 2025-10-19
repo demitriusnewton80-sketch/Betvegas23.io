@@ -55,5 +55,5 @@ localPort = 5000
 externalPort = 5000
 
 [deployment]
-run = ["sh", "-c", "NODE_ENV=production node dist/index.js"]
+run = ["sh", "-c", "npm run dev"]
 build = ["sh", "-c", "npm run build"]

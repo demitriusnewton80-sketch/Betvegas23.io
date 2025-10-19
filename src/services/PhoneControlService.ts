@@ -1,136 +1,177 @@
 
 import { EventEmitter } from 'events';
 
-export interface PhoneControlSession {
+interface PhoneSession {
   id: string;
+  userId: string;
   email: string;
   phoneNumber?: string;
-  userId: string;
-  connectedAt: string;
-  permissions: string[];
   activePlugins: string[];
-  networkStatus: 'connected' | 'disconnected';
+  permissions: string[];
+  networkStatus: string;
+  createdAt: string;
 }
 
-export interface NetworkPlugin {
+interface NetworkPlugin {
   id: string;
   name: string;
-  type: 'betting' | 'streaming' | 'gaming' | 'content';
+  type: string;
   status: 'active' | 'inactive';
-  host: boolean; // Is this plugin a host
-  distributionEnabled: boolean;
+  host: boolean;
   connectedUsers: string[];
-  benefitShare: number; // Percentage of benefits distributed
-}
-
-export interface ContentDistribution {
-  id: string;
-  contentId: string;
-  pluginId: string;
-  userId: string;
-  benefitAmount: number;
-  distributedAt: string;
-  gameType: 'sports' | 'ps5' | 'live';
+  benefitShare: number;
+  distributionEnabled: boolean;
 }
 
 class PhoneControlService extends EventEmitter {
-  private sessions: Map<string, PhoneControlSession> = new Map();
+  private sessions: Map<string, PhoneSession> = new Map();
   private plugins: Map<string, NetworkPlugin> = new Map();
-  private distributions: Map<string, ContentDistribution[]> = new Map();
-  private authorizedEmails = ['gbemeaat@gmail.com', 'meeatupt215@gmail.com'];
 
   constructor() {
     super();
-    this.initializeNetworkPlugins();
+    this.initializePlugins();
   }
 
-  private initializeNetworkPlugins() {
-    // Initialize core network plugins
-    this.plugins.set('live-sportsbook', {
-      id: 'live-sportsbook',
-      name: 'Live Sportsbook',
-      type: 'betting',
-      status: 'active',
-      host: true, // Primary host
-      distributionEnabled: true,
-      connectedUsers: [],
-      benefitShare: 40 // 40% of benefits
-    });
+  private initializePlugins(): void {
+    const defaultPlugins: NetworkPlugin[] = [
+      {
+        id: 'live-sportsbook',
+        name: 'Live Sportsbook',
+        type: 'betting',
+        status: 'active',
+        host: true,
+        connectedUsers: [],
+        benefitShare: 35,
+        distributionEnabled: true
+      },
+      {
+        id: 'ps5-betting',
+        name: 'PlayStation 5 Betting',
+        type: 'gaming',
+        status: 'active',
+        host: true,
+        connectedUsers: [],
+        benefitShare: 25,
+        distributionEnabled: true
+      },
+      {
+        id: 'streaming-hub',
+        name: 'Amazon Prime Streaming',
+        type: 'streaming',
+        status: 'active',
+        host: false,
+        connectedUsers: [],
+        benefitShare: 15,
+        distributionEnabled: true
+      },
+      {
+        id: 'content-control',
+        name: 'Content Distribution',
+        type: 'content',
+        status: 'active',
+        host: false,
+        connectedUsers: [],
+        benefitShare: 10,
+        distributionEnabled: true
+      },
+      {
+        id: 'wifi-core',
+        name: 'WiFi Core Fuse',
+        type: 'networking',
+        status: 'active',
+        host: true,
+        connectedUsers: [],
+        benefitShare: 10,
+        distributionEnabled: true
+      },
+      {
+        id: 'winner-payout',
+        name: 'Winner Cash Payout',
+        type: 'payment',
+        status: 'active',
+        host: false,
+        connectedUsers: [],
+        benefitShare: 5,
+        distributionEnabled: true
+      }
+    ];
 
-    this.plugins.set('ps5-betting', {
-      id: 'ps5-betting',
-      name: 'PS5 Sports Betting',
-      type: 'gaming',
-      status: 'active',
-      host: true,
-      distributionEnabled: true,
-      connectedUsers: [],
-      benefitShare: 30
-    });
-
-    this.plugins.set('streaming-hub', {
-      id: 'streaming-hub',
-      name: 'Streaming Hub',
-      type: 'streaming',
-      status: 'active',
-      host: false,
-      distributionEnabled: true,
-      connectedUsers: [],
-      benefitShare: 20
-    });
-
-    this.plugins.set('content-control', {
-      id: 'content-control',
-      name: 'Content Control System',
-      type: 'content',
-      status: 'active',
-      host: true, // Host for content distribution
-      distributionEnabled: true,
-      connectedUsers: [],
-      benefitShare: 10
+    defaultPlugins.forEach(plugin => {
+      this.plugins.set(plugin.id, plugin);
     });
   }
 
-  // Validate Betting Zone access
-  validatePhoneAccess(email: string): boolean {
-    return this.authorizedEmails.includes(email.toLowerCase());
-  }
+  createSession(email: string, phoneNumber?: string): PhoneSession {
+    const userId = `user-${email.split('@')[0]}-${Date.now()}`;
+    const sessionId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-  // Create Betting Zone session
-  createSession(email: string, phoneNumber?: string): PhoneControlSession {
-    const sessionId = `phone-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
-    const session: PhoneControlSession = {
+    const session: PhoneSession = {
       id: sessionId,
+      userId,
       email,
       phoneNumber,
-      userId: `user-${email.split('@')[0]}`,
-      connectedAt: new Date().toISOString(),
-      permissions: ['control_plugins', 'distribute_benefits', 'manage_content'],
       activePlugins: Array.from(this.plugins.keys()),
-      networkStatus: 'connected'
+      permissions: ['read', 'write', 'execute', 'distribute'],
+      networkStatus: 'connected',
+      createdAt: new Date().toISOString()
     };
 
     this.sessions.set(sessionId, session);
+
+    // Connect user to all active plugins
+    this.plugins.forEach((plugin, id) => {
+      if (plugin.status === 'active') {
+        plugin.connectedUsers.push(userId);
+      }
+    });
+
     this.emit('sessionCreated', session);
-    
     return session;
   }
 
-  // Get all network plugins
   getAllPlugins(): NetworkPlugin[] {
     return Array.from(this.plugins.values());
   }
 
-  // Get host plugins (core network hosts)
-  getHostPlugins(): NetworkPlugin[] {
-    return Array.from(this.plugins.values()).filter(p => p.host);
+  executeCommand(sessionId: string, command: string): any {
+    const session = this.sessions.get(sessionId);
+    
+    if (!session) {
+      throw new Error('Session not found');
+    }
+
+    switch (command) {
+      case 'activate_all_plugins':
+        this.plugins.forEach(plugin => {
+          plugin.status = 'active';
+        });
+        return { message: 'All plugins activated', count: this.plugins.size };
+
+      case 'enable_distribution':
+        this.plugins.forEach(plugin => {
+          plugin.distributionEnabled = true;
+        });
+        return { message: 'Distribution enabled for all plugins', count: this.plugins.size };
+
+      case 'sync_network':
+        return { 
+          message: 'Network synchronized',
+          plugins: this.plugins.size,
+          sessions: this.sessions.size,
+          timestamp: new Date().toISOString()
+        };
+
+      default:
+        throw new Error(`Unknown command: ${command}`);
+    }
   }
 
-  // Connect user to network plugin
   connectUserToPlugin(userId: string, pluginId: string): boolean {
     const plugin = this.plugins.get(pluginId);
-    if (!plugin) return false;
+    
+    if (!plugin) {
+      throw new Error('Plugin not found');
+    }
 
     if (!plugin.connectedUsers.includes(userId)) {
       plugin.connectedUsers.push(userId);
@@ -140,121 +181,34 @@ class PhoneControlService extends EventEmitter {
     return true;
   }
 
-  // Distribute benefits from betting to network users
-  distributeBenefits(
-    contentId: string,
-    totalAmount: number,
-    gameType: 'sports' | 'ps5' | 'live'
-  ): ContentDistribution[] {
-    const distributions: ContentDistribution[] = [];
-    const hostPlugins = this.getHostPlugins();
-
-    hostPlugins.forEach(plugin => {
-      if (!plugin.distributionEnabled) return;
-
-      const benefitAmount = totalAmount * (plugin.benefitShare / 100);
-      
-      // Distribute to connected users
-      plugin.connectedUsers.forEach(userId => {
-        const distribution: ContentDistribution = {
-          id: `dist-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          contentId,
-          pluginId: plugin.id,
-          userId,
-          benefitAmount: benefitAmount / plugin.connectedUsers.length,
-          distributedAt: new Date().toISOString(),
-          gameType
-        };
-
-        distributions.push(distribution);
-
-        // Store distribution
-        if (!this.distributions.has(userId)) {
-          this.distributions.set(userId, []);
-        }
-        this.distributions.get(userId)!.push(distribution);
-      });
-    });
-
-    this.emit('benefitsDistributed', { contentId, distributions });
-    return distributions;
-  }
-
-  // Get user distributions
-  getUserDistributions(userId: string): ContentDistribution[] {
-    return this.distributions.get(userId) || [];
-  }
-
-  // Send Betting Zone command
-  sendPhoneCommand(sessionId: string, command: string, pluginId?: string): any {
-    const session = this.sessions.get(sessionId);
-    if (!session || session.networkStatus !== 'connected') {
-      return { success: false, error: 'Invalid or disconnected session' };
+  setDistribution(pluginId: string, enabled: boolean): boolean {
+    const plugin = this.plugins.get(pluginId);
+    
+    if (!plugin) {
+      throw new Error('Plugin not found');
     }
 
-    const commandResult = {
-      sessionId,
-      command,
-      pluginId,
-      executedAt: new Date().toISOString(),
-      success: true,
-      result: {}
-    };
-
-    switch (command) {
-      case 'activate_all_plugins':
-        this.plugins.forEach(p => { p.status = 'active'; });
-        commandResult.result = { activatedPlugins: this.plugins.size };
-        break;
-
-      case 'enable_distribution':
-        if (pluginId) {
-          const plugin = this.plugins.get(pluginId);
-          if (plugin) {
-            plugin.distributionEnabled = true;
-            commandResult.result = { pluginId, distributionEnabled: true };
-          }
-        }
-        break;
-
-      case 'sync_network':
-        commandResult.result = {
-          totalPlugins: this.plugins.size,
-          hostPlugins: this.getHostPlugins().length,
-          connectedSessions: this.sessions.size
-        };
-        break;
-
-      default:
-        commandResult.result = { message: 'Command executed' };
-    }
-
-    this.emit('phoneCommandExecuted', commandResult);
-    return commandResult;
+    plugin.distributionEnabled = enabled;
+    this.emit('distributionChanged', { pluginId, enabled });
+    
+    return enabled;
   }
 
-  // Get network statistics
   getNetworkStats(): any {
-    const totalUsers = new Set<string>();
-    this.plugins.forEach(p => {
-      p.connectedUsers.forEach(u => totalUsers.add(u));
-    });
+    const totalUsers = new Set(
+      Array.from(this.plugins.values())
+        .flatMap(p => p.connectedUsers)
+    ).size;
 
-    const totalDistributions = Array.from(this.distributions.values())
-      .reduce((sum, dists) => sum + dists.length, 0);
-
-    const totalBenefits = Array.from(this.distributions.values())
-      .flat()
-      .reduce((sum, dist) => sum + dist.benefitAmount, 0);
+    const totalBenefits = Array.from(this.plugins.values())
+      .reduce((sum, p) => sum + (p.benefitShare * p.connectedUsers.length * 10), 0);
 
     return {
       totalPlugins: this.plugins.size,
-      hostPlugins: this.getHostPlugins().length,
-      connectedUsers: totalUsers.size,
-      activeSessions: this.sessions.size,
-      totalDistributions,
+      hostPlugins: Array.from(this.plugins.values()).filter(p => p.host).length,
+      connectedUsers: totalUsers,
       totalBenefitsDistributed: totalBenefits,
-      fccEntity: '20130314143016'
+      activeSessions: this.sessions.size
     };
   }
 }

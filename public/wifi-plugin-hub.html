@@ -598,7 +598,16 @@
                 if (data.success) {
                     alert(`⚡ Revival Cash Bonus Processing!\nBonus Amount: $${data.payment.amount.toFixed(2)}\n${data.message}`);
                 } else {
-                    alert(data.error || 'Not eligible for revival cash');
+                    alert(`Revival cash not available: ${data.message || 'Unknown error'}`);
+                }
+            } catch (error) {
+                console.error('Error getting revival cash:', error);
+                alert('Failed to process revival cash request');
+            }
+        }
+
+        // Note: All npm packages are automatically installed when you click the Run button
+        // No manual npm install required - the system handles dependencies automaticallylert(data.error || 'Not eligible for revival cash');
                 }
             } catch (error) {
                 console.error('Error getting revival cash:', error);
