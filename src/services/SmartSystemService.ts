@@ -552,4 +552,4 @@ export class SmartSystemService extends EventEmitter {
   }
 }
 
-export const smartSystemService = new SmartSystemService();
+export const smartSystemService = new SmartSystemService();temService();

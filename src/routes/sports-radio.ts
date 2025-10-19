@@ -116,9 +116,6 @@ router.get('/player23/:league/:teamName', async (req: Request, res: Response) =>
   }
 });
 
-  });
-});
-
 // Get radio streams by league
 router.get('/league/:league', (req: Request, res: Response) => {
   const { league } = req.params;
