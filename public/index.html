@@ -212,10 +212,12 @@
 
         /* Main Container */
         .container {
-            padding: 12px 12px calc(70px + env(safe-area-inset-bottom));
+            padding: 8px 8px calc(70px + env(safe-area-inset-bottom));
             min-height: 100vh;
             position: relative;
             z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         /* Deployment Status Badge */
@@ -331,11 +333,12 @@
             background: rgba(30, 41, 59, 0.8);
             backdrop-filter: blur(10px);
             border: 2px solid var(--border-color);
-            border-radius: 20px;
+            border-radius: 12px;
             overflow: hidden;
             transition: all 0.3s ease;
             position: relative;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            margin-bottom: 12px;
         }
 
         .game-card::before {
@@ -413,14 +416,14 @@
         }
 
         .team-logo {
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: var(--bg-tertiary);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 18px;
             border: 2px solid var(--border-color);
             overflow: hidden;
         }
@@ -436,7 +439,7 @@
         }
 
         .team-name {
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 2px;
@@ -482,8 +485,8 @@
         .bet-button {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border: 2px solid var(--border-color);
-            border-radius: 16px;
-            padding: 24px 20px;
+            border-radius: 12px;
+            padding: 16px 12px;
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
@@ -509,9 +512,9 @@
         }
 
         .bet-label {
-            font-size: 14px;
+            font-size: 12px;
             color: var(--text-secondary);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 600;
         }
 
@@ -520,7 +523,7 @@
         }
 
         .bet-odds {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
             color: var(--text-primary);
         }
