@@ -1,11 +1,14 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { appCore } from './core/AppCore.js';
 import { domainProtection } from './middleware/domainProtection.js';
 import { rateLimiter } from './middleware/rateLimiter.js';
 import { sanitizeInput, validateRequest, auditLog } from './middleware/security.js';
+import { createApplicationBuilder } from './core/ApplicationBuilder.js';
+import { serviceContainer } from './core/ServiceContainer.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,9 +47,32 @@ import linkBridgeRoutes from './routes/link-bridge.js';
 import smartSystemRoutes from './routes/smart-system.js';
 import draftKingsRoutes from './routes/draftkings.js';
 import mobileRoutes from './routes/mobile.js';
+import microsoftDiagnostics from './routes/microsoft-diagnostics.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
+
+// Microsoft-style application builder
+const builder = createApplicationBuilder();
+
+// Configure services (dependency injection)
+builder.configureServices((container) => {
+  // Register core services
+  container.register('Express', () => app, { singleton: true });
+  container.register('AppCore', () => appCore, { singleton: true });
+
+  console.log('📦 Core services registered');
+});
+
+// Configure application
+builder.configure({
+  environment: process.env.NODE_ENV || 'development',
+  fccEntity: '20130314143016',
+  fccRegistration: '0024454324'
+});
+
+// Initialize core
+appCore.initialize();
 
 // Security: Disable powered-by header
 app.disable('x-powered-by');
@@ -97,9 +123,6 @@ app.use('/streaming', auditLog('streaming'));
 app.use('/phone-control', auditLog('phone-control'));
 app.use('/web3', auditLog('web3'));
 app.use('/backup', auditLog('backup'));
-
-// Initialize App Core
-appCore.initialize();
 
 // Health check endpoint for deployment monitoring
 app.get('/health', (req: Request, res: Response) => {
@@ -192,6 +215,7 @@ app.use('/link-bridge', linkBridgeRoutes);
 app.use('/smart-system', smartSystemRoutes);
 app.use('/draftkings', draftKingsRoutes);
 app.use('/mobile', mobileRoutes);
+app.use('/microsoft', microsoftDiagnostics);
 
 // Static files - serve with proper MIME types
 app.use(express.static(path.join(__dirname, '../public'), {
@@ -274,29 +298,35 @@ app.get('/api', (req: Request, res: Response) => {
   });
 });
 
-// Start server with production-ready configuration
-const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`
-╔════════════════════════════════════════════════════════════╗
-║          Young Meeat LLC - Production Server               ║
-║          FCC Entity: 20130314143016                        ║
-╠════════════════════════════════════════════════════════════╣
-║  🚀 Server running on port ${PORT}                           ║
-║  🌐 Access at: http://0.0.0.0:${PORT}                        ║
-║  ✅ All WiFi Core Fuse Connector Features Active           ║
-║  📡 Phone Control Network: ONLINE                          ║
-║  🎮 PS5 Betting Integration: ACTIVE                        ║
-║  💰 Winner Payout System: OPERATIONAL                      ║
-║  🔌 WiFi Plugin Hub: CONNECTED                             ║
-║  📊 Deployment Mode: ${process.env.REPLIT_DEPLOYMENT ? 'PRODUCTION' : 'DEVELOPMENT'} ║
-╚════════════════════════════════════════════════════════════╝
-  `);
-}).on('error', (err: Error) => {
-  console.error('❌ Server startup error:', err);
-  if ((err as any).code === 'EADDRINUSE') {
-    console.error(`Port ${PORT} is already in use. Try a different port.`);
+// Build and start application (Microsoft-style)
+async function startApplication() {
+  try {
+    // Build application
+    await builder.build();
+
+    // Run startup tasks
+    await builder.startup();
+
+    // Start server
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log('═══════════════════════════════════════════════════');
+      console.log('🏢 Young Meeat LLC - Microsoft-Style Architecture');
+      console.log('═══════════════════════════════════════════════════');
+      console.log(`🚀 API Server: http://0.0.0.0:${PORT}`);
+      console.log(`📡 FCC Entity: 20130314143016`);
+      console.log(`📋 FCC Registration: 0024454324`);
+      console.log(`🏗️  Architecture: Microsoft Enterprise Pattern`);
+      console.log(`📦 Services: ${serviceContainer.getServices().length} registered`);
+      console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log('═══════════════════════════════════════════════════');
+    });
+  } catch (error) {
+    console.error('❌ Application startup failed:', error);
+    process.exit(1);
   }
-});
+}
+
+startApplication();
 
 // Keep server alive with proper timeout settings
 server.keepAliveTimeout = 65000;
