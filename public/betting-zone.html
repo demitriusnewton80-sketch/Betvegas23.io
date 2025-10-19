@@ -1,0 +1,454 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Betting Zone - Unified Platform | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .header h1 {
+            color: #1e3a8a;
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+        .zone-icon {
+            font-size: 72px;
+            margin-bottom: 20px;
+        }
+        .fcc-badge {
+            background: #1e3a8a;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 12px;
+            display: inline-block;
+            margin: 10px 5px;
+            font-weight: 700;
+        }
+        .status-banner {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            margin-top: 20px;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .section h2 {
+            color: #1e3a8a;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .plugin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .plugin-card {
+            background: linear-gradient(135deg, #f9fafb 0%, #e5e7eb 100%);
+            border-radius: 16px;
+            padding: 24px;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .plugin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border-color: #1e3a8a;
+        }
+        .plugin-card.active {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            border-color: #fbbf24;
+        }
+        .plugin-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .plugin-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .plugin-desc {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+        .plugin-stats {
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 8px;
+            font-size: 13px;
+        }
+        .email-select {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .email-select label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+        select, input {
+            width: 100%;
+            padding: 14px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        .btn {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 5px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30,58,138,0.3);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-card {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .stat-value {
+            font-size: 24px;
+            color: #1e3a8a;
+            font-weight: 700;
+        }
+        .session-info {
+            background: #dcfce7;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+            border-left: 4px solid #16a34a;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: #22c55e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="zone-icon">🎯</div>
+            <h1>Betting Zone</h1>
+            <p style="color: #6b7280; font-size: 18px; margin-top: 10px;">
+                Unified Sports Betting Platform - All Streams, All Plugins, One Zone
+            </p>
+            <span class="fcc-badge">FCC Entity: 20130314143016</span>
+            <span class="fcc-badge">All Platforms Connected</span>
+            <div class="status-banner" id="connectionStatus">
+                ● Betting Zone Active - All Systems Online
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📱 Access Control</h2>
+            <p style="color: #6b7280; margin-bottom: 20px;">
+                Control all betting platforms from one unified interface
+            </p>
+            <div class="email-select">
+                <label for="emailSelect">Authorized Email:</label>
+                <select id="emailSelect">
+                    <option value="">-- Select Email --</option>
+                    <option value="gbemeeat@gmail.com">gbemeeat@gmail.com</option>
+                    <option value="meeatupt215@gmail.com">meeatupt215@gmail.com</option>
+                </select>
+                <input type="tel" id="phoneInput" placeholder="Phone Number (Optional)">
+                <button class="btn" onclick="createUnifiedSession()">🔓 Activate Betting Zone</button>
+            </div>
+            <div id="sessionInfo" style="display: none;">
+                <div class="session-info">
+                    <strong style="color: #16a34a; font-size: 18px;">✓ Betting Zone Active</strong>
+                    <div id="sessionDetails" style="margin-top: 15px; color: #1f2937;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔌 Unified Platform - All Betting Plugins</h2>
+            <p style="color: #6b7280; margin-bottom: 20px;">
+                One zone connecting all betting platforms, streams, and networks
+            </p>
+            <div class="plugin-grid" id="pluginGrid">
+                <div class="plugin-card active" onclick="openPlugin('ps5')">
+                    <div class="plugin-icon">🎮</div>
+                    <div class="plugin-title">PlayStation 5</div>
+                    <div class="plugin-desc">Madden, NBA 2K, UFC, Boxing & 5v5</div>
+                    <div class="plugin-stats">
+                        <span class="status-indicator"></span>Connected & Streaming
+                    </div>
+                </div>
+
+                <div class="plugin-card active" onclick="openPlugin('sportsbook')">
+                    <div class="plugin-icon">🏆</div>
+                    <div class="plugin-title">Live Sportsbook</div>
+                    <div class="plugin-desc">NFL, NBA, MLB, NHL & More</div>
+                    <div class="plugin-stats">
+                        <span class="status-indicator"></span>Live Betting Active
+                    </div>
+                </div>
+
+                <div class="plugin-card active" onclick="openPlugin('streaming')">
+                    <div class="plugin-icon">📺</div>
+                    <div class="plugin-title">Streaming Hub</div>
+                    <div class="plugin-desc">Amazon Prime, NBA Direct, Radio</div>
+                    <div class="plugin-stats">
+                        <span class="status-indicator"></span>Streaming Online
+                    </div>
+                </div>
+
+                <div class="plugin-card active" onclick="openPlugin('phone-control')">
+                    <div class="plugin-icon">📱</div>
+                    <div class="plugin-title">Phone Control</div>
+                    <div class="plugin-desc">Remote Betting & Management</div>
+                    <div class="plugin-stats">
+                        <span class="status-indicator"></span>Control Enabled
+                    </div>
+                </div>
+
+                <div class="plugin-card active" onclick="openPlugin('winner-payout')">
+                    <div class="plugin-icon">💰</div>
+                    <div class="plugin-title">Winner Payouts</div>
+                    <div class="plugin-desc">Cash Out & Revival Bonuses</div>
+                    <div class="plugin-stats">
+                        <span class="status-indicator"></span>Payout System Active
+                    </div>
+                </div>
+
+                <div class="plugin-card active" onclick="openPlugin('aws-backup')">
+                    <div class="plugin-icon">☁️</div>
+                    <div class="plugin-title">AWS Backup</div>
+                    <div class="plugin-desc">Cloud Backup & Recovery</div>
+                    <div class="plugin-stats">
+                        <span class="status-indicator"></span>Backup Active
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Betting Zone Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Plugins</div>
+                    <div class="stat-value" id="totalPlugins">6</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Platforms</div>
+                    <div class="stat-value" id="activePlatforms">6</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Connected Users</div>
+                    <div class="stat-value" id="connectedUsers">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Distribution</div>
+                    <div class="stat-value" id="totalBenefits">$0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Network Status</div>
+                    <div class="stat-value" style="font-size: 18px; color: #22c55e;">ONLINE</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Platform Uptime</div>
+                    <div class="stat-value" style="font-size: 18px;">100%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Quick Actions</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                <button class="btn" onclick="openPlugin('sportsbook')" style="width: 100%;">
+                    🏆 Open Live Sportsbook
+                </button>
+                <button class="btn" onclick="openPlugin('ps5')" style="width: 100%;">
+                    🎮 PlayStation 5 Betting
+                </button>
+                <button class="btn" onclick="syncAllPlugins()" style="width: 100%;">
+                    🔄 Sync All Plugins
+                </button>
+                <button class="btn" onclick="loadUnifiedStats()" style="width: 100%;">
+                    📊 Refresh Statistics
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let currentSessionId = null;
+
+        const pluginUrls = {
+            'ps5': '/ps5-betting.html',
+            'sportsbook': '/index.html',
+            'streaming': '/index.html',
+            'phone-control': '/phone-network-control.html',
+            'winner-payout': '/wifi-plugin-hub.html',
+            'aws-backup': '/backup-dashboard.html'
+        };
+
+        async function createUnifiedSession() {
+            const email = document.getElementById('emailSelect').value;
+            const phoneNumber = document.getElementById('phoneInput').value;
+
+            if (!email) {
+                alert('Please select an email');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/phone-control/session/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, phoneNumber })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentSessionId = data.session.id;
+                    document.getElementById('sessionInfo').style.display = 'block';
+                    document.getElementById('sessionDetails').innerHTML = `
+                        <div style="margin-bottom: 8px;"><strong>Session ID:</strong> ${data.session.id}</div>
+                        <div style="margin-bottom: 8px;"><strong>Email:</strong> ${data.session.email}</div>
+                        <div style="margin-bottom: 8px;"><strong>Connected Platforms:</strong> ${data.session.activePlugins.length}</div>
+                        <div style="margin-bottom: 8px;"><strong>Status:</strong> <span style="color: #22c55e;">Active</span></div>
+                    `;
+                    alert('✅ Betting Zone activated! All platforms connected.');
+                    loadUnifiedStats();
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to create session'));
+                }
+            } catch (error) {
+                console.error('Error creating session:', error);
+                alert('Failed to activate Betting Zone');
+            }
+        }
+
+        function openPlugin(pluginId) {
+            const url = pluginUrls[pluginId];
+            if (url) {
+                window.open(url, '_blank');
+            }
+        }
+
+        async function syncAllPlugins() {
+            if (!currentSessionId) {
+                alert('Please activate Betting Zone first');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/phone-control/command`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        sessionId: currentSessionId, 
+                        command: 'sync_network' 
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ All plugins synchronized!');
+                    loadUnifiedStats();
+                } else {
+                    alert('Error: ' + (data.error || 'Sync failed'));
+                }
+            } catch (error) {
+                console.error('Error syncing:', error);
+                alert('Failed to sync plugins');
+            }
+        }
+
+        async function loadUnifiedStats() {
+            try {
+                const response = await fetch(`${API_BASE}/phone-control/stats`);
+                const data = await response.json();
+
+                document.getElementById('totalPlugins').textContent = data.totalPlugins || 6;
+                document.getElementById('activePlatforms').textContent = data.hostPlugins || 6;
+                document.getElementById('connectedUsers').textContent = data.connectedUsers || 0;
+                document.getElementById('totalBenefits').textContent = '$' + (data.totalBenefitsDistributed || 0).toFixed(2);
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Auto-load stats on page load
+        window.addEventListener('load', () => {
+            loadUnifiedStats();
+            setInterval(loadUnifiedStats, 30000);
+        });
+    </script>
+</body>
+</html>

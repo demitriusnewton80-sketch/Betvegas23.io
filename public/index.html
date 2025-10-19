@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,25 +16,24 @@
         }
 
         :root {
-            --bg-primary: #0a0e27;
-            --bg-secondary: #1a1f3a;
-            --bg-tertiary: #252b48;
-            --border-color: #2d3348;
-            --text-primary: #ffffff;
-            --text-secondary: #e0e6ed;
-            --text-muted: #9ca3af;
-            --accent-color: #10b981;
+            --bg-primary: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --bg-secondary: rgba(30, 41, 59, 0.95);
+            --bg-tertiary: rgba(51, 65, 85, 0.9);
+            --border-color: rgba(59, 130, 246, 0.3);
+            --text-primary: #f1f5f9;
+            --text-secondary: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent-color: #22c55e;
             --fanduel-blue: #3b82f6;
-            --fanduel-dark: #1e40af;
-            --gradient-start: #6366f1;
-            --gradient-end: #8b5cf6;
+            --fanduel-dark: #2563eb;
+            --glow-color: rgba(59, 130, 246, 0.4);
         }
 
         body.light-mode {
-            --bg-primary: #f8fafc;
-            --bg-secondary: #ffffff;
-            --bg-tertiary: #f1f5f9;
-            --border-color: #e2e8f0;
+            --bg-primary: linear-gradient(135deg, #e2f0ff 0%, #d1e8ff 100%);
+            --bg-secondary: rgba(255, 255, 255, 0.9);
+            --bg-tertiary: rgba(240, 244, 248, 0.9);
+            --border-color: rgba(25, 103, 210, 0.2);
             --text-primary: #0f172a;
             --text-secondary: #334155;
             --text-muted: #64748b;
@@ -55,18 +53,20 @@
 
         /* Mobile Header */
         .header {
-            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
-            border-bottom: none;
+            background: rgba(22, 27, 34, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 40px rgba(83, 196, 81, 0.1);
         }
 
         body.light-mode .header {
-            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
         }
 
         .top-bar {
@@ -125,7 +125,7 @@
         .theme-toggle:active {
             transform: scale(0.95);
         }
-        
+
         .theme-toggle:hover {
             background: rgba(255, 255, 255, 0.3);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
@@ -149,7 +149,7 @@
         .wallet-btn:active {
             transform: scale(0.95);
         }
-        
+
         .wallet-btn:hover {
             background: rgba(255, 255, 255, 0.3);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
@@ -179,7 +179,7 @@
             box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
         }
-        
+
         body.light-mode .bottom-nav {
             box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
         }
@@ -212,10 +212,41 @@
 
         /* Main Container */
         .container {
-            padding: 16px 16px calc(80px + env(safe-area-inset-bottom));
+            padding: 8px 8px calc(70px + env(safe-area-inset-bottom));
             min-height: 100vh;
-            max-width: 1200px;
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
             margin: 0 auto;
+        }
+
+        /* Deployment Status Badge */
+        .deployment-badge {
+            position: fixed;
+            top: 80px;
+            right: 16px;
+            background: rgba(83, 196, 81, 0.1);
+            border: 1px solid rgba(83, 196, 81, 0.3);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #53c451;
+            backdrop-filter: blur(10px);
+            z-index: 998;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(83, 196, 81, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(83, 196, 81, 0.6);
+            }
         }
 
         /* Sports Filter - Horizontal Scroll */
@@ -262,7 +293,7 @@
             font-weight: 700;
             box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
         }
-        
+
         body.light-mode .sport-chip.active {
             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
         }
@@ -298,28 +329,41 @@
         }
 
         /* Game Cards - FanDuel Style */
-        .games-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
         .game-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
             overflow: hidden;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            margin-bottom: 12px;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(83, 196, 81, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .game-card:hover::before {
+            left: 100%;
+        }
+
+        .game-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(83, 196, 81, 0.2);
+            border-color: rgba(83, 196, 81, 0.4);
         }
 
         .game-card:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        }
-        
-        body.light-mode .game-card {
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transform: scale(0.98);
         }
 
         .game-header {
@@ -372,15 +416,22 @@
         }
 
         .team-logo {
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: var(--bg-tertiary);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 18px;
             border: 2px solid var(--border-color);
+            overflow: hidden;
+        }
+        
+        .team-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .team-details {
@@ -388,7 +439,7 @@
         }
 
         .team-name {
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 2px;
@@ -424,7 +475,7 @@
         .money-line-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 12px;
         }
 
         .money-line-grid.has-draw {
@@ -432,49 +483,53 @@
         }
 
         .bet-button {
-            background: var(--bg-primary);
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border: 2px solid var(--border-color);
             border-radius: 12px;
             padding: 16px 12px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             text-align: center;
-            position: relative;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .bet-button:active {
-            transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .bet-button:hover {
-            background: var(--bg-tertiary);
-            border-color: var(--gradient-start);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+            border-color: var(--fanduel-blue);
+            background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(59, 130, 246, 0.4);
+        }
+
+        .bet-button:active {
+            transform: translateY(0);
         }
 
         .bet-button.selected {
-            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
-            border-color: transparent;
-            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
-        }
-
-        .bet-button.selected .bet-label,
-        .bet-button.selected .bet-odds {
-            color: white;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            border-color: #22c55e;
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.5), 0 0 40px rgba(34, 197, 94, 0.2);
+            transform: scale(1.05);
         }
 
         .bet-label {
             font-size: 12px;
-            color: var(--text-muted);
+            color: var(--text-secondary);
             margin-bottom: 6px;
             font-weight: 600;
         }
 
+        .bet-button.selected .bet-label {
+            color: white;
+        }
+
         .bet-odds {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
             color: var(--text-primary);
+        }
+
+        .bet-button.selected .bet-odds {
+            color: white;
         }
 
         .bet-odds.positive {
@@ -482,7 +537,7 @@
         }
 
         .bet-odds.negative {
-            color: var(--fanduel-blue);
+            color: #58a6ff;
         }
 
         /* Radio/Stream Links */
@@ -639,7 +694,7 @@
         .btn-primary:active {
             transform: scale(0.98);
         }
-        
+
         .btn-primary:hover {
             box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
             transform: translateY(-2px);
@@ -720,49 +775,106 @@
 
         .quick-amounts {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 8px;
-            margin: 12px 0;
+            margin: 16px 0;
         }
 
         .quick-amount-btn {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 10px;
-            color: var(--text-secondary);
-            font-size: 13px;
+            background: #161b22;
+            border: 2px solid #30363d;
+            border-radius: 8px;
+            padding: 12px 8px;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
-            font-weight: 600;
+        }
+
+        .quick-amount-btn:hover {
+            border-color: var(--fanduel-blue);
+            background: #1f2937;
         }
 
         .quick-amount-btn:active {
             transform: scale(0.95);
-            border-color: var(--fanduel-blue);
-            color: var(--fanduel-blue);
+            background: var(--fanduel-blue);
+            color: white;
         }
 
         .potential-payout {
-            background: var(--bg-tertiary);
-            padding: 12px;
-            border-radius: 8px;
-            margin: 12px 0;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 16px 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .payout-label {
-            font-size: 12px;
-            color: var(--text-muted);
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
             font-weight: 600;
         }
 
         .payout-amount {
-            font-size: 18px;
+            font-size: 28px;
             font-weight: 700;
             color: #22c55e;
+        }
+
+        .input-group {
+            margin: 16px 0;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px;
+            background: #161b22;
+            border: 2px solid #30363d;
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--fanduel-blue);
+            box-shadow: 0 0 0 3px rgba(25, 103, 210, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
         }
 
         /* Bet History */
@@ -884,15 +996,10 @@
                 <span>BETTING SITES</span>
             </div>
             <div class="nav-actions">
-                <a href="/ps5-qr-betting-portal.html" 
+                <a href="/unified-betting-hub.html" 
                    class="betting-zone-link"
-                   style="background: linear-gradient(135deg, #003087 0%, #0070cc 100%); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 6px; transition: all 0.2s; margin-right: 8px;">
-                    🎯 Unified Betting Zone
-                </a>
-                <a href="/fcc-playstation-control.html" 
-                   class="betting-zone-link"
-                   style="background: linear-gradient(135deg, #1967D2 0%, #0D47A1 100%); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 6px; transition: all 0.2s; margin-right: 8px;">
-                    📱 Phone Control
+                   style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 6px; transition: all 0.2s; margin-right: 8px;">
+                    🎯 Unified Hub
                 </a>
                 <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
                     <span id="themeIcon">🌙</span>
@@ -902,6 +1009,11 @@
                 </button>
             </div>
         </div>
+    </div>
+
+    <div class="deployment-badge">
+        <span>🚀</span>
+        <span>Deployment Active</span>
     </div>
 
     <!-- Main Container -->
@@ -950,6 +1062,365 @@
 
         <!-- My Bets Page -->
         <div id="myBetsPage" class="page-view">
+            <div class="section-header">
+                <h1 class="section-title">My Bets</h1>
+            </div>
+            <div id="myBetsContainer">
+                <p style="text-align: center; color: var(--text-secondary); padding: 40px;">No bets placed yet</p>
+            </div>
+        </div>
+
+        <!-- Wallet Page -->
+        <div id="walletPage" class="page-view">
+            <div class="section-header">
+                <h1 class="section-title">Wallet</h1>
+            </div>
+            <div id="walletContainer">
+                <div class="wallet-card">
+                    <div class="wallet-balance">
+                        <div class="balance-label">Current Balance</div>
+                        <div class="balance-amount">$<span id="walletBalance">0.00</span></div>
+                    </div>
+                    <button class="btn-primary" onclick="openDepositModal()">Deposit Funds</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchPage('sportsbook')">
+            <span>🏆</span>
+            <span>Games</span>
+        </div>
+        <div class="nav-item" onclick="switchPage('myBets')">
+            <span>📊</span>
+            <span>My Bets</span>
+        </div>
+        <div class="nav-item" onclick="switchPage('wallet')">
+            <span>💰</span>
+            <span>Wallet</span>
+        </div>
+    </div>
+
+    <!-- Bet Slip -->
+    <div id="betSlip" class="bet-slip">
+        <div class="bet-slip-header">
+            <h3>Bet Slip</h3>
+            <button onclick="closeBetSlip()">✕</button>
+        </div>
+        <div id="betSlipContent"></div>
+    </div>
+
+    <!-- Modals -->
+    <div id="depositModal" class="modal">
+        <div class="modal-content">
+            <h2>Deposit Funds</h2>
+            <input type="number" id="depositAmount" placeholder="Amount" min="10">
+            <button class="btn-primary" onclick="processDeposit()">Deposit</button>
+            <button onclick="closeDepositModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let currentUser = 'demo-user';
+        let currentSport = 'all';
+        let betSlipItems = [];
+
+        function filterBySport(sport) {
+            currentSport = sport;
+            document.querySelectorAll('.sport-chip').forEach(chip => chip.classList.remove('active'));
+            event.target.closest('.sport-chip').classList.add('active');
+            loadGames();
+        }
+
+        function toggleQRCode() {
+            const qrSection = document.getElementById('qrCodeSection');
+            if (qrSection) {
+                qrSection.classList.toggle('hidden');
+            }
+        }
+
+        async function loadGames() {
+            try {
+                const url = currentSport === 'all' 
+                    ? `${API_BASE}/sportsbook/games`
+                    : `${API_BASE}/sportsbook/games?sport=${currentSport}`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                displayGames(data.games);
+            } catch (error) {
+                console.error('Error loading games:', error);
+            }
+        }
+
+        function displayGames(games) {
+            const container = document.getElementById('gamesContainer');
+            
+            if (!games || games.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 40px;">No games available</p>';
+                return;
+            }
+
+            container.innerHTML = games.map(game => {
+                const hasDraw = game.sport === 'Soccer' && game.odds.draw;
+                return `
+                    <div class="game-card">
+                        <div class="game-header">
+                            <div class="game-sport">
+                                <span>${getSportIcon(game.sport)}</span>
+                                <span>${game.sport}</span>
+                            </div>
+                            <span class="game-status ${game.status}">${game.status}</span>
+                        </div>
+                        <div class="game-matchup">
+                            <div class="team">
+                                <span class="team-logo">${getTeamLogo(game.homeTeam)}</span>
+                                <span class="team-name">${game.homeTeam}</span>
+                            </div>
+                            <div class="vs">VS</div>
+                            <div class="team">
+                                <span class="team-logo">${getTeamLogo(game.awayTeam)}</span>
+                                <span class="team-name">${game.awayTeam}</span>
+                            </div>
+                        </div>
+                        <div class="game-time">${new Date(game.startTime).toLocaleString()}</div>
+                        <div class="bet-options">
+                            <div class="bet-button" onclick="addToBetSlip('${game.id}', '${game.homeTeam}', 'home', ${game.odds.home}, '${getTeamLogo(game.homeTeam)}')">
+                                <div class="bet-label">${game.homeTeam}</div>
+                                <div class="bet-odds ${game.odds.home > 0 ? 'positive' : 'negative'}">${formatOdds(game.odds.home)}</div>
+                            </div>
+                            <div class="bet-button" onclick="addToBetSlip('${game.id}', '${game.awayTeam}', 'away', ${game.odds.away}, '${getTeamLogo(game.awayTeam)}')">
+                                <div class="bet-label">${game.awayTeam}</div>
+                                <div class="bet-odds ${game.odds.away > 0 ? 'positive' : 'negative'}">${formatOdds(game.odds.away)}</div>
+                            </div>
+                            ${hasDraw ? `
+                                <div class="bet-button" onclick="addToBetSlip('${game.id}', 'Draw', 'draw', ${game.odds.draw}, '🤝')">
+                                    <div class="bet-label">Draw</div>
+                                    <div class="bet-odds">${formatOdds(game.odds.draw)}</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        ${game.radioLink ? `
+                            <div class="game-actions">
+                                <button class="action-btn" onclick="window.open('${game.radioLink}', '_blank')">
+                                    📻 Listen Live
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        
+
+        function formatOdds(odds) {
+            return odds > 0 ? `+${odds}` : odds;
+        }
+
+        function getSportIcon(sport) {
+            const icons = {
+                'NFL': '🏈',
+                'NBA': '🏀',
+                'NHL': '🏒',
+                'MLB': '⚾',
+                'Soccer': '⚽',
+                'Boxing': '🥊'
+            };
+            return icons[sport] || '🏆';
+        }
+
+        function addToBetSlip(gameId, team, selection, odds, logo) {
+            const existing = betSlipItems.find(item => item.gameId === gameId);
+            if (existing) {
+                existing.team = team;
+                existing.selection = selection;
+                existing.odds = odds;
+                existing.logo = logo;
+            } else {
+                betSlipItems.push({ gameId, team, selection, odds, logo });
+            }
+            updateBetSlip();
+            document.getElementById('betSlip').classList.add('active');
+        }
+
+        function updateBetSlip() {
+            const content = document.getElementById('betSlipContent');
+            if (betSlipItems.length === 0) {
+                content.innerHTML = '<p>No bets selected</p>';
+                return;
+            }
+            
+            content.innerHTML = betSlipItems.map((item, index) => `
+                <div class="bet-slip-item">
+                    <div>${item.logo} ${item.team}</div>
+                    <div>${formatOdds(item.odds)}</div>
+                    <input type="number" id="amount-${index}" placeholder="Amount" min="1">
+                    <button onclick="placeBet(${index})">Place Bet</button>
+                    <button onclick="removeFromBetSlip(${index})">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        function closeBetSlip() {
+            document.getElementById('betSlip').classList.remove('active');
+        }
+
+        function removeFromBetSlip(index) {
+            betSlipItems.splice(index, 1);
+            updateBetSlip();
+        }
+
+        async function placeBet(index) {
+            const item = betSlipItems[index];
+            const amount = parseFloat(document.getElementById(`amount-${index}`).value);
+            
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/sportsbook/bet`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: currentUser,
+                        gameId: item.gameId,
+                        team: item.selection,
+                        amount
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Bet placed successfully!');
+                    removeFromBetSlip(index);
+                    loadUserData();
+                } else {
+                    alert(data.error || 'Failed to place bet');
+                }
+            } catch (error) {
+                alert('Error placing bet');
+            }
+        }
+
+        function switchPage(page) {
+            document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById(`${page}Page`).classList.add('active');
+            event.target.closest('.nav-item').classList.add('active');
+            
+            if (page === 'myBets') loadUserBets();
+            if (page === 'wallet') loadUserWallet();
+        }
+
+        async function loadUserBets() {
+            try {
+                const response = await fetch(`${API_BASE}/sportsbook/user/${currentUser}/bets`);
+                const data = await response.json();
+                
+                const container = document.getElementById('myBetsContainer');
+                if (data.bets.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 40px;">No bets placed yet</p>';
+                } else {
+                    container.innerHTML = data.bets.map(bet => `
+                        <div class="bet-item">
+                            <div>Game: ${bet.gameId}</div>
+                            <div>Team: ${bet.team}</div>
+                            <div>Amount: $${bet.amount.toFixed(2)}</div>
+                            <div>Status: ${bet.status}</div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading bets:', error);
+            }
+        }
+
+        async function loadUserWallet() {
+            try {
+                const response = await fetch(`${API_BASE}/sportsbook/user/${currentUser}/wallet`);
+                const data = await response.json();
+                
+                document.getElementById('walletBalance').textContent = data.balance.toFixed(2);
+            } catch (error) {
+                console.error('Error loading wallet:', error);
+            }
+        }
+
+        async function loadUserData() {
+            try {
+                const response = await fetch(`${API_BASE}/sportsbook/user/${currentUser}/wallet`);
+                const data = await response.json();
+                
+                document.getElementById('headerBalance').textContent = `$${data.balance.toFixed(2)}`;
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        function openWalletModal() {
+            switchPage('wallet');
+        }
+
+        function openDepositModal() {
+            document.getElementById('depositModal').classList.add('active');
+        }
+
+        function closeDepositModal() {
+            document.getElementById('depositModal').classList.remove('active');
+        }
+
+        async function processDeposit() {
+            const amount = parseFloat(document.getElementById('depositAmount').value);
+            
+            if (!amount || amount < 10) {
+                alert('Minimum deposit is $10');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/sportsbook/user/${currentUser}/deposit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Deposit successful!');
+                    closeDepositModal();
+                    loadUserData();
+                } else {
+                    alert(data.error || 'Deposit failed');
+                }
+            } catch (error) {
+                alert('Error processing deposit');
+            }
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            const icon = document.getElementById('themeIcon');
+            icon.textContent = document.body.classList.contains('light-theme') ? '☀️' : '🌙';
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            loadGames();
+            loadUserData();
+        });
+    </script>
+</body>
+</html></div id="myBetsPage" class="page-view">
             <div class="section-header">
                 <h1 class="section-title">My Bets</h1>
             </div>
@@ -1016,6 +1487,11 @@
         <div class="qr-code-canvas" id="qrCodeCanvas"></div>
     </div>
 
+    <!-- ESPN Sports Ticker -->
+    <iframe src="/components/espn-sports-ticker.html" 
+            style="position: fixed; bottom: 0; left: 0; right: 0; width: 100%; height: 70px; border: none; z-index: 9999;">
+    </iframe>
+
     <script>
         const API_BASE = window.location.origin;
         const userId = 'demo-user';
@@ -1023,40 +1499,65 @@
         let currentBetSlip = null;
         let activeStreams = new Set();
         let currentPage = 'sportsbook';
+        let currentSport = 'all';
+        let betSlipItems = [];
 
-        // Team Logos Mapping
+        // Team Logos Mapping with image URLs
         const teamLogos = {
             // NFL
+            'Kansas City Chiefs': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/kc.png&h=200&w=200',
+            'Buffalo Bills': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/buf.png&h=200&w=200',
+            'San Francisco 49ers': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/sf.png&h=200&w=200',
+            'Dallas Cowboys': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/dal.png&h=200&w=200',
+            'Philadelphia Eagles': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/phi.png&h=200&w=200',
+            'Miami Dolphins': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/mia.png&h=200&w=200',
+
+            // NBA
+            'Los Angeles Lakers': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/lal.png&h=200&w=200',
+            'Boston Celtics': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/bos.png&h=200&w=200',
+            'Golden State Warriors': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/gs.png&h=200&w=200',
+            'Milwaukee Bucks': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/mil.png&h=200&w=200',
+            'Phoenix Suns': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/phx.png&h=200&w=200',
+            'Brooklyn Nets': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/bkn.png&h=200&w=200',
+
+            // MLB
+            'New York Yankees': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/nyy.png&h=200&w=200',
+            'Boston Red Sox': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/bos.png&h=200&w=200',
+            'Los Angeles Dodgers': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/lad.png&h=200&w=200',
+            'San Francisco Giants': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/sf.png&h=200&w=200',
+            'Houston Astros': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/hou.png&h=200&w=200',
+
+            // NHL
+            'Toronto Maple Leafs': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nhl/500/tor.png&h=200&w=200',
+            'Montreal Canadiens': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nhl/500/mtl.png&h=200&w=200',
+            'Edmonton Oilers': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nhl/500/edm.png&h=200&w=200',
+            'Calgary Flames': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nhl/500/cgy.png&h=200&w=200',
+            'Tampa Bay Lightning': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nhl/500/tb.png&h=200&w=200'
+        };
+
+        const teamLogoEmojis = {
             'Kansas City Chiefs': '🏈',
             'Buffalo Bills': '🦬',
             'San Francisco 49ers': '⚡',
             'Dallas Cowboys': '⭐',
             'Philadelphia Eagles': '🦅',
             'Miami Dolphins': '🐬',
-            
-            // NBA
             'Los Angeles Lakers': '👑',
             'Boston Celtics': '🍀',
             'Golden State Warriors': '⚔️',
             'Milwaukee Bucks': '🦌',
             'Phoenix Suns': '☀️',
             'Brooklyn Nets': '🏀',
-            
-            // MLB
             'New York Yankees': '⚾',
             'Boston Red Sox': '🧦',
             'Los Angeles Dodgers': '💙',
             'San Francisco Giants': '🧡',
             'Houston Astros': '🌟',
-            
-            // NHL
             'Toronto Maple Leafs': '🍁',
             'Montreal Canadiens': '🔴',
             'Edmonton Oilers': '🛢️',
             'Calgary Flames': '🔥',
             'Tampa Bay Lightning': '⚡',
-            
-            // Boxing
             'Tyson Fury': '👑',
             'Oleksandr Usyk': '🥊',
             'Canelo Alvarez': '🥊',
@@ -1064,7 +1565,80 @@
         };
 
         function getTeamLogo(teamName) {
-            return teamLogos[teamName] || '🏆';
+            const logo = teamLogos[teamName];
+            if (!logo) return teamLogoEmojis[teamName] || '🏆';
+            
+            // If it's a URL, return an img tag with fallback emoji
+            if (logo && logo.startsWith('http')) {
+                return `<img src="${logo}" alt="${teamName}" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';" style="width: 40px; height: 40px; object-fit: contain; vertical-align: middle;"><span style="display:none; font-size: 24px;">${teamLogoEmojis[teamName] || '🏆'}</span>`;
+            }
+            return logo;
+        }
+
+        const teamLogosExtra = {
+            'Phoenix Suns': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/phx.png&h=200&w=200',
+            'Phoenix Suns': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/phx.png&h=200&w=200',
+            'Brooklyn Nets': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nba/500/bkn.png&h=200&w=200',
+
+            // MLB
+            'New York Yankees': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/nyy.png&h=200&w=200',
+            'Boston Red Sox': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/bos.png&h=200&w=200',
+            'Los Angeles Dodgers': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/lad.png&h=200&w=200',
+            'San Francisco Giants': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/sf.png&h=200&w=200',
+            'Houston Astros': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/mlb/500/hou.png&h=200&w=200',
+
+            // NHL
+            'Toronto Maple Leafs': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nhl/500/tor.png&h=200&w=200',
+            'Montreal Canadiens': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nhl/500/mtl.png&h=200&w=200',
+            'Edmonton Oilers': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nhl/500/edm.png&h=200&w=200',
+            'Calgary Flames': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nhl/500/cgy.png&h=200&w=200',
+            'Tampa Bay Lightning': 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/nhl/500/tb.png&h=200&w=200',
+
+            // Boxing - fallback emojis
+            'Tyson Fury': '👑',
+            'Oleksandr Usyk': '🥊',
+            'Canelo Alvarez': '🥊',
+            'Dmitry Bivol': '🥊'
+        };
+
+        const teamLogoEmojis = {
+            'Kansas City Chiefs': '🏈',
+            'Buffalo Bills': '🦬',
+            'San Francisco 49ers': '⚡',
+            'Dallas Cowboys': '⭐',
+            'Philadelphia Eagles': '🦅',
+            'Miami Dolphins': '🐬',
+            'Los Angeles Lakers': '👑',
+            'Boston Celtics': '🍀',
+            'Golden State Warriors': '⚔️',
+            'Milwaukee Bucks': '🦌',
+            'Phoenix Suns': '☀️',
+            'Brooklyn Nets': '🏀',
+            'New York Yankees': '⚾',
+            'Boston Red Sox': '🧦',
+            'Los Angeles Dodgers': '💙',
+            'San Francisco Giants': '🧡',
+            'Houston Astros': '🌟',
+            'Toronto Maple Leafs': '🍁',
+            'Montreal Canadiens': '🔴',
+            'Edmonton Oilers': '🛢️',
+            'Calgary Flames': '🔥',
+            'Tampa Bay Lightning': '⚡',
+            'Tyson Fury': '👑',
+            'Oleksandr Usyk': '🥊',
+            'Canelo Alvarez': '🥊',
+            'Dmitry Bivol': '🥊'
+        };
+
+        function getTeamLogo(teamName) {
+            const logo = teamLogos[teamName];
+            if (!logo) return '🏆';
+            
+            // If it's a URL, return an img tag, otherwise return emoji
+            if (logo.startsWith('http')) {
+                return `<img src="${logo}" alt="${teamName}" onerror="this.style.display='none'; this.nextSibling.style.display='block';" style="width: 40px; height: 40px; object-fit: contain;"><span style="display:none; font-size: 24px;">${teamLogoEmojis[teamName] || '🏆'}</span>`;
+            }
+            return logo;
         }
 
         // Page Navigation
@@ -1321,33 +1895,30 @@
             document.getElementById('betSlipContent').innerHTML = `
                 <div class="bet-item">
                     <div class="bet-item-header">
-                        <span>
+                        <span style="font-size: 18px; font-weight: 700;">
                             <span class="bet-team-logo">${logo}</span>
                             ${teamName}
                         </span>
-                        <span class="${odds > 0 ? 'positive' : 'negative'}" style="font-size: 16px;">${formatOdds(odds)}</span>
+                        <span class="${odds > 0 ? 'positive' : 'negative'}" style="font-size: 20px; font-weight: 700;">${formatOdds(odds)}</span>
                     </div>
-                    <div class="bet-item-detail">Game ${gameId} • Money Line</div>
-                    <div class="bet-item-detail">Team: ${team}</div>
+                    <div class="bet-item-detail" style="font-size: 13px;">Money Line Bet</div>
                 </div>
                 <div class="input-group">
-                    <label class="input-label">Bet Amount</label>
-                    <input type="number" id="betAmount" placeholder="Enter amount" min="1" step="0.01" oninput="updatePotentialPayout()">
+                    <label class="input-label">Enter Bet Amount</label>
+                    <input type="number" id="betAmount" placeholder="$0.00" min="1" step="1" oninput="updatePotentialPayout()">
                 </div>
                 <div class="quick-amounts">
+                    <button class="quick-amount-btn" onclick="setBetAmount(5)">$5</button>
                     <button class="quick-amount-btn" onclick="setBetAmount(10)">$10</button>
                     <button class="quick-amount-btn" onclick="setBetAmount(25)">$25</button>
                     <button class="quick-amount-btn" onclick="setBetAmount(50)">$50</button>
-                    <button class="quick-amount-btn" onclick="setBetAmount(100)">$100</button>
-                    <button class="quick-amount-btn" onclick="setBetAmount(250)">$250</button>
-                    <button class="quick-amount-btn" onclick="setBetAmount(500)">$500</button>
                 </div>
                 <div class="potential-payout" id="potentialPayout">
-                    <span class="payout-label">Potential Payout</span>
+                    <span class="payout-label">Win Amount</span>
                     <span class="payout-amount">$0.00</span>
                 </div>
                 <button class="btn-primary" onclick="placeBet()">Place Bet</button>
-                <button class="btn-primary" style="background: var(--bg-tertiary); color: var(--text-primary); margin-top: 8px;" onclick="closeBetSlip()">Cancel</button>
+                <button class="btn-primary" style="background: #374151; margin-top: 8px;" onclick="closeBetSlip()">Cancel</button>
             `;
         }
 
@@ -1363,17 +1934,17 @@
 
         function updatePotentialPayout() {
             if (!currentBetSlip) return;
-            
+
             const amount = parseFloat(document.getElementById('betAmount').value) || 0;
             const odds = currentBetSlip.odds;
-            
+
             let payout = 0;
             if (odds > 0) {
                 payout = amount * (odds / 100 + 1);
             } else {
                 payout = amount * (100 / Math.abs(odds) + 1);
             }
-            
+
             const payoutElement = document.querySelector('.payout-amount');
             if (payoutElement) {
                 payoutElement.textContent = `$${payout.toFixed(2)}`;
@@ -1509,7 +2080,7 @@
         function toggleQRCode() {
             const qrSection = document.getElementById('qrCodeSection');
             qrSection.classList.toggle('hidden');
-            
+
             if (!qrSection.classList.contains('hidden') && !qrSection.dataset.generated) {
                 generateQRCode();
                 qrSection.dataset.generated = 'true';
@@ -1526,17 +2097,17 @@
 
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, size, size);
-            
+
             ctx.fillStyle = '#000000';
             const moduleSize = 5;
             const modules = Math.floor(size / moduleSize);
-            
+
             let hash = 0;
             for (let i = 0; i < url.length; i++) {
                 hash = ((hash << 5) - hash) + url.charCodeAt(i);
                 hash = hash & hash;
             }
-            
+
             for (let y = 0; y < modules; y++) {
                 for (let x = 0; x < modules; x++) {
                     const seed = (x * modules + y + hash) * 2654435761;
@@ -1545,11 +2116,11 @@
                     }
                 }
             }
-            
+
             const container = document.getElementById('qrCodeCanvas');
             container.innerHTML = '';
             container.appendChild(canvas);
-            
+
             const urlText = document.createElement('div');
             urlText.style.cssText = 'margin-top: 8px; font-size: 10px; color: #000; word-break: break-all;';
             urlText.textContent = url;

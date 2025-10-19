@@ -1,0 +1,410 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESPN Sports Ticker</title>
+    <style>
+        .espn-ticker-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #c8102e 0%, #1a1a1a 100%);
+            color: white;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            z-index: 9999;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
+        }
+
+        .ticker-header {
+            background: #1a1a1a;
+            padding: 4px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #c8102e;
+        }
+
+        .ticker-logo {
+            font-weight: bold;
+            font-size: 12px;
+            color: #c8102e;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .ticker-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .ticker-tab {
+            padding: 4px 8px;
+            background: transparent;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 600;
+            transition: all 0.2s;
+            border-bottom: 1px solid transparent;
+        }
+
+        .ticker-tab:hover {
+            color: white;
+        }
+
+        .ticker-tab.active {
+            color: white;
+            border-bottom-color: #c8102e;
+        }
+
+        .ticker-content {
+            overflow: hidden;
+            height: 40px;
+            position: relative;
+            background: #1a1a1a;
+        }
+
+        .ticker-scroll {
+            display: flex;
+            gap: 15px;
+            padding: 8px 12px;
+            animation: scroll-left 60s linear infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes scroll-left {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .ticker-scroll:hover {
+            animation-play-state: paused;
+        }
+
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .ticker-item:hover {
+            background: rgba(200,16,46,0.2);
+            border-color: #c8102e;
+            transform: translateY(-1px);
+        }
+
+        .ticker-item.live {
+            border-color: #ff4444;
+            background: rgba(255,68,68,0.1);
+        }
+
+        .live-indicator {
+            background: #ff4444;
+            color: white;
+            padding: 1px 4px;
+            border-radius: 2px;
+            font-size: 8px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .league-badge {
+            background: #c8102e;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 8px;
+            font-weight: bold;
+        }
+
+        .score-display {
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        .team-name {
+            font-size: 9px;
+        }
+
+        .game-time {
+            font-size: 8px;
+            color: #888;
+        }
+
+        .news-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+        }
+
+        .news-icon {
+            font-size: 12px;
+        }
+
+        .news-headline {
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        .ticker-toggle {
+            position: fixed;
+            bottom: 70px;
+            right: 20px;
+            background: #c8102e;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 10000;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+        }
+
+        .ticker-container.collapsed .ticker-content {
+            display: none;
+        }
+
+        .ticker-container.collapsed .ticker-header {
+            padding: 4px 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="espn-ticker-container" id="espnTicker">
+        <div class="ticker-header">
+            <div class="ticker-logo">
+                <span>🏆</span>
+                <span>SPORTS TRACKER</span>
+            </div>
+            <div class="ticker-tabs">
+                <button class="ticker-tab active" data-view="live">LIVE</button>
+                <button class="ticker-tab" data-view="upcoming">UPCOMING</button>
+                <button class="ticker-tab" data-view="news">NEWS</button>
+                <button class="ticker-tab" data-view="scores">SCORES</button>
+            </div>
+        </div>
+        <div class="ticker-content">
+            <div class="ticker-scroll" id="tickerScroll"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let currentView = 'live';
+        let eventSource = null;
+
+        function initializeTicker() {
+            // Set up tab switching
+            document.querySelectorAll('.ticker-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.ticker-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentView = tab.dataset.view;
+                    loadTickerData();
+                });
+            });
+
+            // Start live updates
+            connectToLiveStream();
+            loadTickerData();
+
+            // Refresh data every 30 seconds
+            setInterval(loadTickerData, 30000);
+        }
+
+        function connectToLiveStream() {
+            if (eventSource) {
+                eventSource.close();
+            }
+
+            eventSource = new EventSource(`${API_BASE}/espn-tracker/stream`);
+
+            eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'scoreUpdate' || data.type === 'refresh') {
+                    if (currentView === 'live') {
+                        loadTickerData();
+                    }
+                }
+            };
+
+            eventSource.onerror = () => {
+                console.error('EventSource error, reconnecting...');
+                setTimeout(connectToLiveStream, 5000);
+            };
+        }
+
+        async function loadTickerData() {
+            const tickerScroll = document.getElementById('tickerScroll');
+            
+            try {
+                let data;
+                switch(currentView) {
+                    case 'live':
+                        const liveResponse = await fetch(`${API_BASE}/espn-tracker/live`);
+                        data = await liveResponse.json();
+                        displayLiveGames(data.liveGames);
+                        break;
+                    case 'upcoming':
+                        const upcomingResponse = await fetch(`${API_BASE}/espn-tracker/upcoming?limit=20`);
+                        data = await upcomingResponse.json();
+                        displayUpcomingGames(data.upcomingGames);
+                        break;
+                    case 'news':
+                        const newsResponse = await fetch(`${API_BASE}/espn-tracker/news?limit=20`);
+                        data = await newsResponse.json();
+                        displayNews(data.news);
+                        break;
+                    case 'scores':
+                        const scoresResponse = await fetch(`${API_BASE}/espn-tracker/games`);
+                        data = await scoresResponse.json();
+                        displayAllScores(data.games);
+                        break;
+                }
+            } catch (error) {
+                console.error('Error loading ticker data:', error);
+            }
+        }
+
+        function displayLiveGames(games) {
+            const tickerScroll = document.getElementById('tickerScroll');
+            
+            if (games.length === 0) {
+                tickerScroll.innerHTML = `
+                    <div class="ticker-item">
+                        <span>No live games at the moment</span>
+                    </div>
+                `;
+                return;
+            }
+
+            const itemsHtml = games.map(game => `
+                <div class="ticker-item live" onclick="openGame('${game.gameId}')">
+                    <span class="live-indicator">LIVE</span>
+                    <span class="league-badge">${game.league}</span>
+                    <span class="team-name">${game.awayTeam}</span>
+                    <span class="score-display">${game.score?.away || 0}</span>
+                    <span>@</span>
+                    <span class="team-name">${game.homeTeam}</span>
+                    <span class="score-display">${game.score?.home || 0}</span>
+                    <span class="game-time">${game.quarter || ''} ${game.timeRemaining || ''}</span>
+                </div>
+            `).join('');
+
+            // Duplicate for seamless scrolling
+            tickerScroll.innerHTML = itemsHtml + itemsHtml;
+        }
+
+        function displayUpcomingGames(games) {
+            const tickerScroll = document.getElementById('tickerScroll');
+            
+            const itemsHtml = games.map(game => {
+                const startTime = new Date(game.scheduledStartTime);
+                const timeStr = startTime.toLocaleTimeString('en-US', { 
+                    hour: 'numeric', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+                
+                return `
+                    <div class="ticker-item" onclick="openGame('${game.gameId}')">
+                        <span class="league-badge">${game.league}</span>
+                        <span class="team-name">${game.awayTeam}</span>
+                        <span>@</span>
+                        <span class="team-name">${game.homeTeam}</span>
+                        <span class="game-time">${timeStr}</span>
+                    </div>
+                `;
+            }).join('');
+
+            tickerScroll.innerHTML = itemsHtml + itemsHtml;
+        }
+
+        function displayNews(newsItems) {
+            const tickerScroll = document.getElementById('tickerScroll');
+            
+            const itemsHtml = newsItems.map(news => {
+                const icon = getNewsIcon(news.category);
+                return `
+                    <div class="news-item">
+                        <span class="news-icon">${icon}</span>
+                        <span class="league-badge">${news.league}</span>
+                        <span class="news-headline">${news.headline}</span>
+                    </div>
+                `;
+            }).join('');
+
+            tickerScroll.innerHTML = itemsHtml + itemsHtml;
+        }
+
+        function displayAllScores(games) {
+            const tickerScroll = document.getElementById('tickerScroll');
+            
+            const itemsHtml = games.map(game => {
+                const isLive = game.status === 'live';
+                return `
+                    <div class="ticker-item ${isLive ? 'live' : ''}" onclick="openGame('${game.gameId}')">
+                        ${isLive ? '<span class="live-indicator">LIVE</span>' : ''}
+                        <span class="league-badge">${game.league}</span>
+                        <span class="team-name">${game.awayTeam}</span>
+                        <span class="score-display">${game.score?.away || '-'}</span>
+                        <span>@</span>
+                        <span class="team-name">${game.homeTeam}</span>
+                        <span class="score-display">${game.score?.home || '-'}</span>
+                        ${isLive ? `<span class="game-time">${game.quarter || ''}</span>` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            tickerScroll.innerHTML = itemsHtml + itemsHtml;
+        }
+
+        function getNewsIcon(category) {
+            const icons = {
+                'breaking': '🚨',
+                'injury': '🏥',
+                'trade': '🔄',
+                'game-recap': '📊',
+                'general': '📰'
+            };
+            return icons[category] || '📰';
+        }
+
+        function openGame(gameId) {
+            window.location.href = `/index.html?gameId=${gameId}`;
+        }
+
+        // Initialize on load
+        window.addEventListener('load', initializeTicker);
+
+        // Cleanup on unload
+        window.addEventListener('beforeunload', () => {
+            if (eventSource) {
+                eventSource.close();
+            }
+        });
+    </script>
+</body>
+</html>
