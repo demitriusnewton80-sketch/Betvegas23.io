@@ -172,6 +172,52 @@
             <button class="btn" onclick="fixErrors()">🛠️ Auto-Fix Errors</button>
             <button class="btn" onclick="loadTraffic()">📊 View Traffic</button>
             <button class="btn" onclick="loadErrors()">🐛 View Errors</button>
+            <button class="btn" onclick="loadOutputs()">📤 View Outputs</button>
+            <button class="btn" onclick="loadEndpoints()">🔗 View Endpoints</button>
+        </div>
+
+        <div class="section">
+            <h2>📤 Smart Output Distribution</h2>
+            <textarea id="outputData" placeholder="Enter data to output (JSON format)" rows="4"></textarea>
+            <div style="margin-top: 15px;">
+                <label style="display: block; margin-bottom: 10px; font-weight: 700;">Select Destinations:</label>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" name="destination" value="aws"> AWS S3
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" name="destination" value="web3"> Web3 Bridge
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" name="destination" value="betpartner"> BetPartner
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" name="destination" value="oddsexchange"> OddsExchange
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" name="destination" value="github"> GitHub
+                    </label>
+                </div>
+            </div>
+            <button class="btn" onclick="sendOutput()" style="margin-top: 15px;">🚀 Send to Destinations</button>
+        </div>
+
+        <div class="section">
+            <h2>🔗 Connect External Sportsbook</h2>
+            <input type="text" id="sportsbookId" placeholder="Sportsbook ID">
+            <input type="text" id="webhookUrl" placeholder="Webhook URL">
+            <input type="text" id="apiKey" placeholder="API Key">
+            <button class="btn" onclick="connectSportsbook()">🔌 Connect Sportsbook</button>
+        </div>
+
+        <div class="section">
+            <h2>📡 Output Endpoints</h2>
+            <div id="endpointsList"></div>
+        </div>
+
+        <div class="section">
+            <h2>📤 Cloud Outputs</h2>
+            <div id="outputsList"></div>
         </div>
 
         <div class="section">
@@ -429,15 +475,158 @@
             }
         }
 
+        async function sendOutput() {
+            const outputData = document.getElementById('outputData').value;
+            const checkboxes = document.querySelectorAll('input[name="destination"]:checked');
+            const destinations = Array.from(checkboxes).map(cb => cb.value);
+
+            if (!outputData) {
+                alert('Please enter data to output');
+                return;
+            }
+
+            if (destinations.length === 0) {
+                alert('Please select at least one destination');
+                return;
+            }
+
+            try {
+                const data = JSON.parse(outputData);
+                
+                const response = await fetch(`${API_BASE}/smart-system/output`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data, destinations })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(`✅ Data sent to ${destinations.length} destination(s)!`);
+                    document.getElementById('outputData').value = '';
+                    loadOutputs();
+                } else {
+                    alert('❌ Output failed: ' + result.error);
+                }
+            } catch (error) {
+                alert('❌ Invalid JSON or output failed: ' + error.message);
+            }
+        }
+
+        async function connectSportsbook() {
+            const sportsbookId = document.getElementById('sportsbookId').value;
+            const webhookUrl = document.getElementById('webhookUrl').value;
+            const apiKey = document.getElementById('apiKey').value;
+
+            if (!sportsbookId || !webhookUrl || !apiKey) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/smart-system/connect-sportsbook`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sportsbookId, webhookUrl, apiKey })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Successfully connected to ${sportsbookId}!`);
+                    document.getElementById('sportsbookId').value = '';
+                    document.getElementById('webhookUrl').value = '';
+                    document.getElementById('apiKey').value = '';
+                    loadEndpoints();
+                } else {
+                    alert('❌ Connection failed: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Connection failed: ' + error.message);
+            }
+        }
+
+        async function loadOutputs() {
+            try {
+                const response = await fetch(`${API_BASE}/smart-system/outputs`);
+                const data = await response.json();
+
+                const outputsList = document.getElementById('outputsList');
+
+                if (data.outputs.length === 0) {
+                    outputsList.innerHTML = '<p>No outputs yet</p>';
+                    return;
+                }
+
+                outputsList.innerHTML = data.outputs.map(output => `
+                    <div style="background: #f3f4f6; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid ${
+                        output.status === 'sent' ? '#22c55e' : 
+                        output.status === 'failed' ? '#ef4444' : '#f59e0b'
+                    };">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <strong>${output.destination.toUpperCase()}</strong>
+                            <span style="color: ${
+                                output.status === 'sent' ? '#22c55e' : 
+                                output.status === 'failed' ? '#ef4444' : '#f59e0b'
+                            }; font-weight: 700;">
+                                ${output.status === 'sent' ? '✅ SENT' : 
+                                  output.status === 'failed' ? '❌ FAILED' : '⏳ PENDING'}
+                            </span>
+                        </div>
+                        <div style="font-size: 12px; color: #6b7280;">
+                            ID: ${output.id}<br>
+                            Time: ${new Date(output.timestamp).toLocaleString()}<br>
+                            Retries: ${output.retryCount}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading outputs:', error);
+            }
+        }
+
+        async function loadEndpoints() {
+            try {
+                const response = await fetch(`${API_BASE}/smart-system/endpoints`);
+                const data = await response.json();
+
+                const endpointsList = document.getElementById('endpointsList');
+
+                endpointsList.innerHTML = data.endpoints.map(endpoint => `
+                    <div style="background: #f3f4f6; padding: 15px; margin-bottom: 10px; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>${endpoint.name}</strong>
+                                <div style="font-size: 12px; color: #6b7280; margin-top: 5px;">
+                                    ${endpoint.url}
+                                </div>
+                            </div>
+                            <div>
+                                ${endpoint.connected ? 
+                                    '<span style="color: #22c55e; font-weight: 700;">● CONNECTED</span>' :
+                                    '<span style="color: #6b7280; font-weight: 700;">○ Available</span>'
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading endpoints:', error);
+            }
+        }
+
         // Auto-refresh
         window.addEventListener('load', () => {
             loadStatus();
             loadTraffic();
             loadErrors();
+            loadOutputs();
+            loadEndpoints();
             setInterval(() => {
                 loadStatus();
                 loadTraffic();
                 loadErrors();
+                loadOutputs();
             }, 30000);
         });
     </script>
