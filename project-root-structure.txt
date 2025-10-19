@@ -1,0 +1,28 @@
+betvages23-sportsbook/
+├── backend/
+│   ├── package.json
+│   ├── server.js
+│   ├── routes/
+│   │   └── api.js
+│   ├── models/
+│   │   └── User.js
+│   │   └── Event.js
+│   │   └── Bet.js
+│   └── .env.example
+├── frontend/
+│   ├── package.json
+│   ├── src/
+│   │   ├── App.js
+│   │   ├── index.js
+│   │   ├── components/
+│   │   │   └── Navbar.js
+│   │   │   └── SportsList.js
+│   │   │   └── EventDetails.js
+│   │   │   └── BetForm.js
+│   │   ├── pages/
+│   │   │   └── Home.js
+│   │   │   └── Login.js
+│   │   │   └── Register.js
+│   │   │   └── Admin.js
+│   └── .env.example
+└── README.md
