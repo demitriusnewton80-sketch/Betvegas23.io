@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Betting Zone - WiFi Connection Hub | Young Meeat LLC</title>
+    <title>Betting Zone - Core Network Control | Young Meeat LLC</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #003087 0%, #0070cc 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -30,21 +30,16 @@
             text-align: center;
         }
         .header h1 {
-            color: #003087;
-            font-size: 36px;
+            color: #1e3a8a;
+            font-size: 42px;
             margin-bottom: 10px;
         }
         .zone-icon {
-            font-size: 64px;
+            font-size: 72px;
             margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
         }
         .fcc-badge {
-            background: #003087;
+            background: #1e3a8a;
             color: white;
             padding: 8px 20px;
             border-radius: 25px;
@@ -56,24 +51,23 @@
         .status-banner {
             background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
             color: white;
-            padding: 15px;
+            padding: 15px 30px;
             border-radius: 12px;
-            margin: 20px 0;
+            margin-top: 20px;
             font-weight: 700;
-            text-align: center;
-            animation: pulse 2s infinite;
+            font-size: 16px;
         }
-        .phone-control-section {
+        .section {
             background: white;
             border-radius: 20px;
-            padding: 40px;
+            padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-        .phone-control-section h2 {
-            color: #003087;
-            font-size: 24px;
+        .section h2 {
+            color: #1e3a8a;
             margin-bottom: 20px;
+            font-size: 24px;
         }
         .email-select {
             background: #f3f4f6;
@@ -88,7 +82,7 @@
             margin-bottom: 10px;
             color: #1f2937;
         }
-        select {
+        select, input {
             width: 100%;
             padding: 14px;
             background: white;
@@ -96,20 +90,11 @@
             border-radius: 8px;
             font-size: 15px;
             color: #1f2937;
+            margin-bottom: 10px;
         }
-        select:focus {
-            outline: none;
-            border-color: #003087;
-        }
-        .control-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-        .control-btn {
-            padding: 16px;
-            background: linear-gradient(135deg, #003087 0%, #0070cc 100%);
+        .btn {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
             color: white;
             border: none;
             border-radius: 10px;
@@ -117,13 +102,11 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
+            margin: 5px;
         }
-        .control-btn:hover {
+        .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,48,135,0.3);
-        }
-        .control-btn:active {
-            transform: scale(0.98);
+            box-shadow: 0 8px 20px rgba(30,58,138,0.3);
         }
         .plugin-grid {
             display: grid;
@@ -137,16 +120,15 @@
             padding: 24px;
             border: 3px solid transparent;
             transition: all 0.3s;
-            cursor: pointer;
+        }
+        .plugin-card.host {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            border-color: #fbbf24;
         }
         .plugin-card:hover {
             transform: translateY(-5px);
-            border-color: #003087;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-        }
-        .plugin-card.active {
-            background: linear-gradient(135deg, #003087 0%, #0070cc 100%);
-            color: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
         .plugin-icon {
             font-size: 48px;
@@ -157,342 +139,312 @@
             font-weight: 700;
             margin-bottom: 10px;
         }
-        .plugin-desc {
-            font-size: 14px;
-            line-height: 1.6;
-            opacity: 0.8;
-        }
-        .plugin-status {
+        .plugin-stats {
             margin-top: 15px;
-            padding: 8px;
+            padding: 12px;
             background: rgba(0,0,0,0.1);
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        .status-box {
-            background: #eff6ff;
-            border-left: 4px solid #0070cc;
-            padding: 15px;
             border-radius: 8px;
-            margin: 20px 0;
-        }
-        .status-item {
-            color: #1f2937;
             font-size: 13px;
-            padding: 5px 0;
-            display: flex;
-            justify-content: space-between;
         }
-        .info-grid {
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-            margin-top: 30px;
+            margin-top: 20px;
         }
-        .info-item {
-            background: white;
+        .stat-card {
+            background: #f3f4f6;
             padding: 20px;
             border-radius: 12px;
             text-align: center;
-            border-left: 4px solid #003087;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        .info-label {
+        .stat-label {
             font-size: 12px;
             color: #6b7280;
             margin-bottom: 8px;
             font-weight: 600;
         }
-        .info-value {
-            font-size: 18px;
-            color: #1f2937;
+        .stat-value {
+            font-size: 24px;
+            color: #1e3a8a;
             font-weight: 700;
         }
-        .connection-status {
+        .status-indicator {
             display: inline-block;
-            padding: 6px 12px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-active {
             background: #22c55e;
-            color: white;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            margin-left: 10px;
+        }
+        .status-inactive {
+            background: #ef4444;
+        }
+        .session-info {
+            background: #dcfce7;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+            border-left: 4px solid #16a34a;
+        }
+        .command-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="zone-icon">📱🎯</div>
+            <div class="zone-icon">🎯📱</div>
             <h1>Betting Zone</h1>
             <p style="color: #6b7280; font-size: 18px; margin-top: 10px;">
-                WiFi Connection Hub with Integrated Phone Control
+                Unified Network Control & Content Distribution Platform
             </p>
             <span class="fcc-badge">FCC Entity: 20130314143016</span>
             <span class="fcc-badge">Phone Control Enabled</span>
+            <span class="fcc-badge">WiFi Hub Connected</span>
             <div class="status-banner" id="connectionStatus">
-                ● WiFi Hub Connected - All Systems Active
+                ● All Systems Active - Network Online
             </div>
         </div>
 
-        <div class="phone-control-section">
-            <h2>📱 Phone Control System</h2>
+        <div class="section">
+            <h2>📱 Phone Control Access</h2>
             <p style="color: #6b7280; margin-bottom: 20px;">
-                Control all betting platforms directly from your phone
+                Control all betting platforms and network plugins from your phone
             </p>
-            
             <div class="email-select">
-                <label for="emailSelect">Select Your Authorized Email:</label>
-                <select id="emailSelect" onchange="loadPhoneControl()">
+                <label for="emailSelect">Authorized Email:</label>
+                <select id="emailSelect">
                     <option value="">-- Select Email --</option>
                     <option value="gbemeeat@gmail.com">gbemeeat@gmail.com</option>
                     <option value="meeatupt215@gmail.com">meeatupt215@gmail.com</option>
                 </select>
+                <input type="tel" id="phoneInput" placeholder="Phone Number (Optional)">
+                <button class="btn" onclick="createSession()">🔓 Create Control Session</button>
             </div>
-            
-            <div id="phoneControlDisplay" style="display: none;">
-                <div id="statusDisplay"></div>
-                
-                <div style="margin-top: 20px;">
-                    <h3 style="color: #003087; margin-bottom: 15px;">🎮 Direct Controls</h3>
-                    <div class="control-grid">
-                        <button class="control-btn" onclick="sendControl('connect')">
-                            ✓ Connect All
-                        </button>
-                        <button class="control-btn" onclick="sendControl('start_stream')">
-                            ▶️ Start Stream
-                        </button>
-                        <button class="control-btn" onclick="sendControl('sync_bets')">
-                            🔄 Sync Bets
-                        </button>
-                        <button class="control-btn" onclick="sendControl('refresh')">
-                            🔃 Refresh Hub
-                        </button>
-                    </div>
+            <div id="sessionInfo" style="display: none;">
+                <div class="session-info">
+                    <strong style="color: #16a34a; font-size: 18px;">✓ Session Active</strong>
+                    <div id="sessionDetails" style="margin-top: 15px; color: #1f2937;"></div>
                 </div>
             </div>
         </div>
 
-        <div class="phone-control-section">
-            <h2>🔌 Connected Plugins</h2>
-            <p style="color: #6b7280; margin-bottom: 20px;">
-                All betting platforms connected through unified WiFi hub
-            </p>
-            
-            <div class="plugin-grid">
-                <div class="plugin-card active" onclick="openPlugin('ps5')">
-                    <div class="plugin-icon">🎮</div>
-                    <div class="plugin-title">PlayStation 5</div>
-                    <div class="plugin-desc">
-                        Madden, NBA 2K, UFC & More
-                    </div>
-                    <div class="plugin-status">
-                        <span class="connection-status">Connected</span>
-                    </div>
-                </div>
+        <div class="section">
+            <h2>🔌 Network Plugins & Host Systems</h2>
+            <div class="plugin-grid" id="pluginGrid">
+                <p>Loading plugins...</p>
+            </div>
+        </div>
 
-                <div class="plugin-card" onclick="openPlugin('sportsbook')">
-                    <div class="plugin-icon">🏆</div>
-                    <div class="plugin-title">Live Sportsbook</div>
-                    <div class="plugin-desc">
-                        NFL, NBA, MLB, NHL Betting
-                    </div>
-                    <div class="plugin-status">
-                        <span class="connection-status">Connected</span>
-                    </div>
-                </div>
+        <div class="section">
+            <h2>🎮 Network Commands</h2>
+            <div class="command-buttons">
+                <button class="btn" onclick="sendCommand('activate_all_plugins')">✅ Activate All Plugins</button>
+                <button class="btn" onclick="sendCommand('enable_distribution')">💰 Enable Distribution</button>
+                <button class="btn" onclick="sendCommand('sync_network')">🔄 Sync Network</button>
+                <button class="btn" onclick="loadStats()">📊 Refresh Stats</button>
+            </div>
+        </div>
 
-                <div class="plugin-card" onclick="openPlugin('streaming')">
-                    <div class="plugin-icon">📺</div>
-                    <div class="plugin-title">Live Streaming</div>
-                    <div class="plugin-desc">
-                        Amazon Prime & NBA Direct
-                    </div>
-                    <div class="plugin-status">
-                        <span class="connection-status">Connected</span>
-                    </div>
+        <div class="section">
+            <h2>📊 Network Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Plugins</div>
+                    <div class="stat-value" id="totalPlugins">0</div>
                 </div>
-
-                <div class="plugin-card" onclick="openPlugin('radio')">
-                    <div class="plugin-icon">📻</div>
-                    <div class="plugin-title">Radio Streams</div>
-                    <div class="plugin-desc">
-                        ESPN, Audacy Sports Radio
-                    </div>
-                    <div class="plugin-status">
-                        <span class="connection-status">Connected</span>
-                    </div>
+                <div class="stat-card">
+                    <div class="stat-label">Host Plugins</div>
+                    <div class="stat-value" id="hostPlugins">0</div>
                 </div>
-
-                <div class="plugin-card" onclick="openPlugin('sso')">
-                    <div class="plugin-icon">🔐</div>
-                    <div class="plugin-title">SSO Authentication</div>
-                    <div class="plugin-desc">
-                        Unified Login System
-                    </div>
-                    <div class="plugin-status">
-                        <span class="connection-status">Connected</span>
-                    </div>
+                <div class="stat-card">
+                    <div class="stat-label">Connected Users</div>
+                    <div class="stat-value" id="connectedUsers">0</div>
                 </div>
-
-                <div class="plugin-card" onclick="openPlugin('aws')">
-                    <div class="plugin-icon">☁️</div>
-                    <div class="plugin-title">AWS Integration</div>
-                    <div class="plugin-desc">
-                        Cloud Backup & Deployment
-                    </div>
-                    <div class="plugin-status">
-                        <span class="connection-status">Connected</span>
-                    </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Benefits Distributed</div>
+                    <div class="stat-value" id="totalBenefits">$0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Sessions</div>
+                    <div class="stat-value" id="activeSessions">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">WiFi Strength</div>
+                    <div class="stat-value" id="wifiStrength">100%</div>
                 </div>
             </div>
         </div>
 
-        <div class="info-grid">
-            <div class="info-item">
-                <div class="info-label">WiFi Strength</div>
-                <div class="info-value" id="wifiStrength">Excellent</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Active Plugins</div>
-                <div class="info-value" id="activePlugins">6</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Connection Latency</div>
-                <div class="info-value" id="latency">&lt;50ms</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Phone Control</div>
-                <div class="info-value" id="phoneControl">Ready</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">FCC Compliance</div>
-                <div class="info-value">Verified</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">IP Address</div>
-                <div class="info-value" id="ipAddress">Loading...</div>
+        <div class="section">
+            <h2>🔗 Quick Access Links</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                <a href="/index.html" class="btn" style="text-decoration: none; text-align: center;">
+                    🏆 Live Sportsbook
+                </a>
+                <a href="/ps5-betting.html" class="btn" style="text-decoration: none; text-align: center;">
+                    🎮 PlayStation 5 Betting
+                </a>
+                <a href="/ps5-qr-betting-portal.html" class="btn" style="text-decoration: none; text-align: center;">
+                    📱 QR Betting Portal
+                </a>
+                <a href="/backup-dashboard.html" class="btn" style="text-decoration: none; text-align: center;">
+                    ☁️ AWS Backup Dashboard
+                </a>
             </div>
         </div>
     </div>
 
     <script>
         const API_BASE = window.location.origin;
-        let currentEmail = null;
-        
-        async function loadPhoneControl() {
+        let currentSessionId = null;
+
+        async function createSession() {
             const email = document.getElementById('emailSelect').value;
-            currentEmail = email;
-            
+            const phoneNumber = document.getElementById('phoneInput').value;
+
             if (!email) {
-                document.getElementById('phoneControlDisplay').style.display = 'none';
+                alert('Please select an email');
                 return;
             }
-            
-            document.getElementById('phoneControlDisplay').style.display = 'block';
-            
+
             try {
-                const response = await fetch(`${API_BASE}/streaming/fcc/status/${encodeURIComponent(email)}`);
-                const data = await response.json();
-                
-                document.getElementById('statusDisplay').innerHTML = `
-                    <div class="status-box">
-                        <h4 style="color: #003087; margin-bottom: 10px;">✅ Phone Control Active</h4>
-                        <div class="status-item">
-                            <span>PlayStation Control:</span>
-                            <strong style="color: #22c55e;">${data.services.playstationControl}</strong>
-                        </div>
-                        <div class="status-item">
-                            <span>Streaming Access:</span>
-                            <strong style="color: #22c55e;">${data.services.streamingAccess}</strong>
-                        </div>
-                        <div class="status-item">
-                            <span>Betting Platform:</span>
-                            <strong style="color: #22c55e;">${data.services.bettingPlatform}</strong>
-                        </div>
-                        <div class="status-item">
-                            <span>Active Streams:</span>
-                            <strong>${data.activeStreams}</strong>
-                        </div>
-                    </div>
-                `;
-                
-                document.getElementById('phoneControl').textContent = 'Active';
-                updateConnectionStatus('Phone Control Enabled - All Systems Connected');
-            } catch (error) {
-                console.error('Error loading phone control:', error);
-                alert('Error loading phone control status');
-            }
-        }
-        
-        async function sendControl(action) {
-            if (!currentEmail) {
-                alert('Please select your email first');
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_BASE}/streaming/fcc/playstation-control`, {
+                const response = await fetch(`${API_BASE}/phone-control/session/create`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: currentEmail, action })
+                    body: JSON.stringify({ email, phoneNumber })
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (data.success) {
-                    alert(`✅ ${action.replace(/_/g, ' ').toUpperCase()} successful!`);
-                    updateConnectionStatus(`Action Complete: ${action}`);
-                    loadWiFiStatus();
+                    currentSessionId = data.session.id;
+                    document.getElementById('sessionInfo').style.display = 'block';
+                    document.getElementById('sessionDetails').innerHTML = `
+                        <div style="margin-bottom: 8px;"><strong>Session ID:</strong> ${data.session.id}</div>
+                        <div style="margin-bottom: 8px;"><strong>User ID:</strong> ${data.session.userId}</div>
+                        <div style="margin-bottom: 8px;"><strong>Email:</strong> ${data.session.email}</div>
+                        ${phoneNumber ? `<div style="margin-bottom: 8px;"><strong>Phone:</strong> ${phoneNumber}</div>` : ''}
+                        <div style="margin-bottom: 8px;"><strong>Permissions:</strong> ${data.session.permissions.join(', ')}</div>
+                        <div style="margin-bottom: 8px;"><strong>Active Plugins:</strong> ${data.session.activePlugins.length}</div>
+                        <div style="margin-bottom: 8px;"><strong>Network Status:</strong> ${data.session.networkStatus}</div>
+                    `;
+                    alert('✅ Phone control session created successfully!');
+                    loadPlugins();
+                    loadStats();
                 } else {
-                    alert(`Error: ${data.error}`);
+                    alert('Error: ' + (data.error || 'Failed to create session'));
                 }
             } catch (error) {
-                console.error('Error sending control:', error);
-                alert('Failed to send control command');
+                console.error('Error creating session:', error);
+                alert('Failed to create session');
             }
         }
-        
-        function openPlugin(pluginType) {
-            const urls = {
-                'ps5': `${API_BASE}/ps5-betting.html`,
-                'sportsbook': `${API_BASE}/index.html`,
-                'streaming': `${API_BASE}/streaming/partners`,
-                'radio': `${API_BASE}/streaming/radio/latest`,
-                'sso': `${API_BASE}/sso-plugin-dashboard.html`,
-                'aws': `${API_BASE}/backup-dashboard.html`
-            };
-            
-            if (urls[pluginType]) {
-                window.open(urls[pluginType], '_blank');
-            }
-        }
-        
-        async function loadWiFiStatus() {
+
+        async function loadPlugins() {
             try {
-                const response = await fetch(`${API_BASE}/streaming/wifi-hub/status`);
+                const response = await fetch(`${API_BASE}/phone-control/plugins`);
                 const data = await response.json();
-                
-                document.getElementById('wifiStrength').textContent = data.connectionStrength;
-                document.getElementById('activePlugins').textContent = data.connectedPlugins.length;
-                document.getElementById('latency').textContent = data.latency;
-                document.getElementById('ipAddress').textContent = data.ipAddress;
+
+                const pluginHtml = data.plugins.map(plugin => `
+                    <div class="plugin-card ${plugin.host ? 'host' : ''}">
+                        <div class="plugin-icon">${getPluginIcon(plugin.type)}</div>
+                        <div class="plugin-title">
+                            ${plugin.name}
+                            ${plugin.host ? ' 🏠' : ''}
+                        </div>
+                        <div style="font-size: 13px; opacity: 0.8; margin-bottom: 10px;">
+                            ${plugin.type.toUpperCase()}
+                        </div>
+                        <div class="plugin-stats">
+                            <div style="margin-bottom: 5px;">
+                                <span class="status-indicator status-${plugin.status}"></span>
+                                Status: <strong>${plugin.status}</strong>
+                            </div>
+                            <div style="margin-bottom: 5px;">Connected Users: <strong>${plugin.connectedUsers.length}</strong></div>
+                            <div style="margin-bottom: 5px;">Benefit Share: <strong>${plugin.benefitShare}%</strong></div>
+                            <div>Distribution: <strong>${plugin.distributionEnabled ? 'Enabled ✓' : 'Disabled ✗'}</strong></div>
+                        </div>
+                    </div>
+                `).join('');
+
+                document.getElementById('pluginGrid').innerHTML = pluginHtml;
             } catch (error) {
-                console.error('Error loading WiFi status:', error);
+                console.error('Error loading plugins:', error);
+                document.getElementById('pluginGrid').innerHTML = '<p style="color: #ef4444;">Error loading plugins</p>';
             }
         }
-        
-        function updateConnectionStatus(message) {
-            document.getElementById('connectionStatus').textContent = `● ${message}`;
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/phone-control/stats`);
+                const data = await response.json();
+
+                document.getElementById('totalPlugins').textContent = data.totalPlugins;
+                document.getElementById('hostPlugins').textContent = data.hostPlugins;
+                document.getElementById('connectedUsers').textContent = data.connectedUsers;
+                document.getElementById('totalBenefits').textContent = '$' + data.totalBenefitsDistributed.toFixed(2);
+                document.getElementById('activeSessions').textContent = data.activeSessions;
+                document.getElementById('wifiStrength').textContent = '100%';
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
         }
-        
-        // Initialize on page load
+
+        async function sendCommand(command) {
+            if (!currentSessionId) {
+                alert('Please create a phone control session first');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/phone-control/command`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sessionId: currentSessionId, command })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Command "${command}" executed successfully!`);
+                    loadPlugins();
+                    loadStats();
+                } else {
+                    alert('Error: ' + (data.error || 'Command failed'));
+                }
+            } catch (error) {
+                console.error('Error sending command:', error);
+                alert('Failed to send command');
+            }
+        }
+
+        function getPluginIcon(type) {
+            const icons = {
+                'betting': '🎯',
+                'streaming': '📺',
+                'gaming': '🎮',
+                'content': '📦'
+            };
+            return icons[type] || '🔌';
+        }
+
+        // Auto-load on page load
         window.addEventListener('load', () => {
-            loadWiFiStatus();
-            
-            // Refresh status every 30 seconds
-            setInterval(loadWiFiStatus, 30000);
+            loadPlugins();
+            loadStats();
+            // Auto-refresh every 30 seconds
+            setInterval(() => {
+                loadPlugins();
+                loadStats();
+            }, 30000);
         });
     </script>
 </body>
