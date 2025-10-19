@@ -1894,6 +1894,192 @@ args = "echo \"\""
 task = "shell.exec"
 args = "echo \"=== Recovery Complete ===\""
 
+[[workflows.workflow]]
+name = "Web3 Troubleshooting & Rebuild"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Web3 Bridge Troubleshooting & Rebuild ===\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Entity: 20130314143016\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 1: Checking Web3 bridge status...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/web3/status | jq '.' || echo \"⚠️ Bridge check failed\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 2: Running domain diagnostics...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/web3/troubleshoot/domain | jq '.' || echo \"⚠️ Domain check failed\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 3: Auto-fixing detected issues...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -X POST -H \"Content-Type: application/json\" -d '{\"issueType\":\"domain\"}' http://0.0.0.0:5000/web3/troubleshoot/fix | jq '.'"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -X POST -H \"Content-Type: application/json\" -d '{\"issueType\":\"bridge\"}' http://0.0.0.0:5000/web3/troubleshoot/fix | jq '.'"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 4: Rebuilding Web3 bridge...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -X POST http://0.0.0.0:5000/web3/rebuild | jq '.'"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 5: Verifying all systems...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/web3/status | jq '.stats'"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Troubleshooting Complete ===\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Dashboard: http://0.0.0.0:5000/web3-troubleshooting.html\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Web3 Bridge: http://0.0.0.0:5000/web3-bridge.html\""
+
+[[workflows.workflow]]
+name = "Web3 Troubleshooting & Rebuild"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Web3 Bridge Troubleshooting & Rebuild ===\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Entity: 20130314143016\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 1: Checking Web3 bridge status...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/web3/status | jq '.' || echo \"⚠️ Bridge check failed\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 2: Running domain diagnostics...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/web3/troubleshoot/domain | jq '.' || echo \"⚠️ Domain check failed\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 3: Auto-fixing detected issues...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -X POST -H \"Content-Type: application/json\" -d '{\"issueType\":\"domain\"}' http://0.0.0.0:5000/web3/troubleshoot/fix | jq '.'"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -X POST -H \"Content-Type: application/json\" -d '{\"issueType\":\"bridge\"}' http://0.0.0.0:5000/web3/troubleshoot/fix | jq '.'"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 4: Rebuilding Web3 bridge...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -X POST http://0.0.0.0:5000/web3/rebuild | jq '.'"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 5: Verifying all systems...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/web3/status | jq '.stats'"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Troubleshooting Complete ===\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Dashboard: http://0.0.0.0:5000/web3-troubleshooting.html\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Web3 Bridge: http://0.0.0.0:5000/web3-bridge.html\""
+
 [[ports]]
 localPort = 5000
 externalPort = 5000

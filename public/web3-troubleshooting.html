@@ -1,0 +1,374 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web3 Bridge Troubleshooting - Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        .badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            display: inline-block;
+            margin: 4px;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: transform 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn.success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+        .btn.danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        .btn.warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .status.ok {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid #22c55e;
+            color: #166534;
+        }
+        .status.error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #991b1b;
+        }
+        .status.warning {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid #f59e0b;
+            color: #92400e;
+        }
+        #output {
+            background: #000;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            min-height: 250px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .metric:last-child {
+            border-bottom: none;
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Web3 Bridge Troubleshooting</h1>
+            <p>Domain & Connection Recovery System</p>
+            <div>
+                <span class="badge">FCC Entity: 20130314143016</span>
+                <span class="badge">Auto-Recovery Enabled</span>
+                <span class="badge pulse">Live Monitoring</span>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- Bridge Status -->
+            <div class="card">
+                <h2>🌉 Bridge Status</h2>
+                <div id="bridgeStatus" class="status ok">Checking...</div>
+                <div id="bridgeMetrics"></div>
+                <button class="btn success" onclick="checkBridgeStatus()">Refresh Status</button>
+            </div>
+
+            <!-- Domain Health -->
+            <div class="card">
+                <h2>🌐 Domain Health</h2>
+                <div id="domainStatus" class="status ok">Checking...</div>
+                <div id="domainMetrics"></div>
+                <button class="btn" onclick="checkDomainHealth()">Check Domain</button>
+            </div>
+        </div>
+
+        <!-- Troubleshooting Actions -->
+        <div class="card">
+            <h2>🛠️ Troubleshooting Actions</h2>
+            <div class="grid">
+                <button class="btn warning" onclick="runDiagnostics()">Run Full Diagnostics</button>
+                <button class="btn success" onclick="autoFixIssues()">Auto-Fix Issues</button>
+                <button class="btn danger" onclick="rebuildBridge()">Rebuild Bridge</button>
+                <button class="btn" onclick="fixDomain()">Fix Domain Issues</button>
+                <button class="btn" onclick="refreshConnections()">Refresh Connections</button>
+                <button class="btn" onclick="clearBridgeCache()">Clear Bridge Cache</button>
+            </div>
+        </div>
+
+        <!-- Output Console -->
+        <div class="card">
+            <h2>💻 Console Output</h2>
+            <div id="output">Web3 Bridge Troubleshooting System initialized...\nFCC Entity: 20130314143016\n</div>
+        </div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        const API_BASE = window.CloudConfig ? window.CloudConfig.getAPIBase() : '';
+        const output = document.getElementById('output');
+        let logs = ['Web3 Bridge Troubleshooting System initialized...', 'FCC Entity: 20130314143016'];
+
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logLine = `[${timestamp}] ${message}`;
+            logs.push(logLine);
+            output.textContent = logs.join('\n');
+            output.scrollTop = output.scrollHeight;
+            console.log(message);
+        }
+
+        async function checkBridgeStatus() {
+            log('🔍 Checking Web3 bridge status...');
+            try {
+                const response = await fetch(`${API_BASE}/web3/status`);
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('bridgeStatus').className = 'status ok';
+                    document.getElementById('bridgeStatus').textContent = '✅ Bridge Active';
+                    
+                    document.getElementById('bridgeMetrics').innerHTML = `
+                        <div class="metric">
+                            <span>Chain:</span>
+                            <strong>${data.chain.name}</strong>
+                        </div>
+                        <div class="metric">
+                            <span>Wallets:</span>
+                            <strong>${data.stats.totalWallets}</strong>
+                        </div>
+                        <div class="metric">
+                            <span>Transactions:</span>
+                            <strong>${data.stats.totalTransactions}</strong>
+                        </div>
+                    `;
+                    
+                    log(`✅ Bridge: ${data.bridge}`);
+                    log(`📊 Chain: ${data.chain.name} (${data.chain.id})`);
+                    log(`💼 Wallets: ${data.stats.totalWallets}`);
+                    log(`📝 Transactions: ${data.stats.totalTransactions}`);
+                } else {
+                    throw new Error('Bridge status check failed');
+                }
+            } catch (error) {
+                document.getElementById('bridgeStatus').className = 'status error';
+                document.getElementById('bridgeStatus').textContent = '❌ Bridge Error';
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+
+        async function checkDomainHealth() {
+            log('🌐 Checking domain health...');
+            try {
+                const response = await fetch(`${API_BASE}/web3/troubleshoot/domain`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const hasIssues = data.diagnostics.issues.length > 0;
+                    document.getElementById('domainStatus').className = hasIssues ? 'status warning' : 'status ok';
+                    document.getElementById('domainStatus').textContent = hasIssues ? '⚠️ Issues Detected' : '✅ Domain Healthy';
+                    
+                    document.getElementById('domainMetrics').innerHTML = `
+                        <div class="metric">
+                            <span>Domain:</span>
+                            <strong>${data.diagnostics.checks.domainHealth.currentDomain}</strong>
+                        </div>
+                        <div class="metric">
+                            <span>HTTPS:</span>
+                            <strong>${data.diagnostics.checks.domainHealth.httpsEnabled ? 'Enabled' : 'Disabled'}</strong>
+                        </div>
+                        <div class="metric">
+                            <span>Issues:</span>
+                            <strong>${data.diagnostics.issues.length}</strong>
+                        </div>
+                    `;
+                    
+                    log(`✅ Domain: ${data.diagnostics.checks.domainHealth.currentDomain}`);
+                    log(`🔒 HTTPS: ${data.diagnostics.checks.domainHealth.httpsEnabled ? 'Enabled' : 'Disabled'}`);
+                    
+                    if (data.diagnostics.issues.length > 0) {
+                        log(`⚠️ Issues found: ${data.diagnostics.issues.join(', ')}`);
+                    } else {
+                        log('✅ No issues detected');
+                    }
+                }
+            } catch (error) {
+                document.getElementById('domainStatus').className = 'status error';
+                document.getElementById('domainStatus').textContent = '❌ Check Failed';
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+
+        async function runDiagnostics() {
+            log('🔬 Running full diagnostics...');
+            log('━━━━━━━━━━━━━━━━━━━━━━━━');
+            
+            await checkBridgeStatus();
+            await new Promise(r => setTimeout(r, 500));
+            
+            await checkDomainHealth();
+            await new Promise(r => setTimeout(r, 500));
+            
+            log('━━━━━━━━━━━━━━━━━━━━━━━━');
+            log('✅ Diagnostics complete');
+        }
+
+        async function autoFixIssues() {
+            log('🔧 Running auto-fix...');
+            try {
+                const fixes = ['domain', 'bridge', 'wallets'];
+                
+                for (const fix of fixes) {
+                    const response = await fetch(`${API_BASE}/web3/troubleshoot/fix`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ issueType: fix })
+                    });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        log(`✅ ${fix}: ${data.fixesApplied.join(', ')}`);
+                    }
+                    await new Promise(r => setTimeout(r, 300));
+                }
+                
+                log('✅ Auto-fix complete!');
+                await checkBridgeStatus();
+            } catch (error) {
+                log(`❌ Auto-fix error: ${error.message}`);
+            }
+        }
+
+        async function rebuildBridge() {
+            log('🔨 Rebuilding Web3 bridge...');
+            try {
+                const response = await fetch(`${API_BASE}/web3/rebuild`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    log('✅ Bridge rebuilt successfully');
+                    log(`📊 Before: ${data.beforeRebuild.totalWallets} wallets, ${data.beforeRebuild.totalTransactions} tx`);
+                    log(`📊 After: ${data.afterRebuild.totalWallets} wallets, ${data.afterRebuild.totalTransactions} tx`);
+                    await checkBridgeStatus();
+                }
+            } catch (error) {
+                log(`❌ Rebuild error: ${error.message}`);
+            }
+        }
+
+        async function fixDomain() {
+            log('🌐 Fixing domain issues...');
+            await autoFixIssues();
+        }
+
+        async function refreshConnections() {
+            log('🔄 Refreshing connections...');
+            await checkBridgeStatus();
+            await checkDomainHealth();
+            log('✅ Connections refreshed');
+        }
+
+        async function clearBridgeCache() {
+            log('🗑️ Clearing bridge cache...');
+            localStorage.clear();
+            sessionStorage.clear();
+            log('✅ Cache cleared');
+            await checkBridgeStatus();
+        }
+
+        // Auto-run on load
+        window.addEventListener('load', async () => {
+            log('🚀 System initialized');
+            await checkBridgeStatus();
+            await checkDomainHealth();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(async () => {
+                await checkBridgeStatus();
+            }, 30000);
+        });
+    </script>
+</body>
+</html>
