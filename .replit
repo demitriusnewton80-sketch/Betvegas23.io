@@ -487,6 +487,374 @@ args = "echo \"=== Troubleshooting Complete ===\""
 task = "shell.exec"
 args = "echo \"Dashboard: http://0.0.0.0:5000/public-troubleshooting.html\""
 
+[[workflows.workflow]]
+name = "Sportsbook Health Check"
+author = 48739577
+mode = "parallel"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/health"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/sportsbook/games"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/api/core/status"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/streaming/workflows/all"
+
+[[workflows.workflow]]
+name = "Rebuild Sportsbook"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Sportsbook Rebuild System ===\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Entity: 20130314143016\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 1: Stopping current services...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pkill -f \"npm run dev\" || echo \"No running services\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 2: Clearing cache and temp files...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "rm -rf node_modules/.cache"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "rm -rf dist"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Cache cleared\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 3: Reinstalling dependencies...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 4: TypeScript compilation check...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx tsc --noEmit"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 5: Building production assets...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run build"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 6: Verifying sportsbook endpoints...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Checking core routes...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "grep -r \"router.get\" src/routes/sportsbook.ts | head -5"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 7: Starting development server...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev &"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "sleep 5"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 8: Testing sportsbook API...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/sportsbook/games | head -20 || echo \"⚠️ API check pending...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Rebuild Complete ===\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Access sportsbook at: http://0.0.0.0:5000\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Enhanced UI: http://0.0.0.0:5000/enhanced-sportsbook.html\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Mobile App: http://0.0.0.0:5000/mobile-sportsbook-app.html\""
+
+[[workflows.workflow]]
+name = "Quick Sportsbook Restart"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Quick Sportsbook Restart ===\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Entity: 20130314143016\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pkill -f \"npm run dev\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "sleep 2"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev &"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "sleep 3"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"✅ Sportsbook restarted\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Access at: http://0.0.0.0:5000\""
+
+[[workflows.workflow]]
+name = "Full System Rebuild"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Full System Rebuild - Young Meeat LLC ===\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Entity: 20130314143016\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Registration: 0024454324\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 1: Stopping all services...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pkill -f \"node\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pkill -f \"npm\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "sleep 3"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 2: Deep clean...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "rm -rf node_modules"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "rm -rf dist"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "rm -rf .cache"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm cache clean --force"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 3: Fresh install...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 4: TypeScript check...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx tsc --noEmit"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 5: Build production...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run build"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 6: Initialize services...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev &"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "sleep 8"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 7: Verify all endpoints...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/health"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/sportsbook"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/streaming/partners"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/ps5/games"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== System Rebuild Complete ===\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Sportsbook: http://0.0.0.0:5000/enhanced-sportsbook.html\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Mobile Hub: http://0.0.0.0:5000/mobile-sportsbook-hub.html\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Betting Zone: http://0.0.0.0:5000/betting-zone.html\""
+
 [[ports]]
 localPort = 5000
 externalPort = 5000
