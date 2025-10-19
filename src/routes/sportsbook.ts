@@ -174,6 +174,7 @@ router.post('/bet', (req: Request, res: Response) => {
     bet: result.bet,
     sport: event.sport,
     radioLink: event.radioLink,
+    loyaltyPointsEarned: 10,
     fccEntity: '20130314143016'
   });
 });
