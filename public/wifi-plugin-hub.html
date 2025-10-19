@@ -1,0 +1,606 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Betting Zone - Core Network Control | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .header h1 {
+            color: #1e3a8a;
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+        .zone-icon {
+            font-size: 72px;
+            margin-bottom: 20px;
+        }
+        .fcc-badge {
+            background: #1e3a8a;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 12px;
+            display: inline-block;
+            margin: 10px 5px;
+            font-weight: 700;
+        }
+        .status-banner {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            margin-top: 20px;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .section h2 {
+            color: #1e3a8a;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .email-select {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .email-select label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+        select, input {
+            width: 100%;
+            padding: 14px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        .btn {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 5px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30,58,138,0.3);
+        }
+        .plugin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .plugin-card {
+            background: linear-gradient(135deg, #f9fafb 0%, #e5e7eb 100%);
+            border-radius: 16px;
+            padding: 24px;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .plugin-card.host {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            border-color: #fbbf24;
+        }
+        .plugin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .plugin-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .plugin-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .plugin-stats {
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 8px;
+            font-size: 13px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-card {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .stat-value {
+            font-size: 24px;
+            color: #1e3a8a;
+            font-weight: 700;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-active {
+            background: #22c55e;
+        }
+        .status-inactive {
+            background: #ef4444;
+        }
+        .session-info {
+            background: #dcfce7;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+            border-left: 4px solid #16a34a;
+        }
+        .command-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="zone-icon">🎯📱</div>
+            <h1>Betting Zone</h1>
+            <p style="color: #6b7280; font-size: 18px; margin-top: 10px;">
+                Unified Network Control & Content Distribution Platform
+            </p>
+            <span class="fcc-badge">FCC Entity: 20130314143016</span>
+            <span class="fcc-badge">Phone Control Enabled</span>
+            <span class="fcc-badge">WiFi Hub Connected</span>
+            <div class="status-banner" id="connectionStatus">
+                ● All Systems Active - Network Online
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📱 Phone Control Access</h2>
+            <p style="color: #6b7280; margin-bottom: 20px;">
+                Control all betting platforms and network plugins from your phone
+            </p>
+            <div class="email-select">
+                <label for="emailSelect">Authorized Email:</label>
+                <select id="emailSelect">
+                    <option value="">-- Select Email --</option>
+                    <option value="gbemeeat@gmail.com">gbemeeat@gmail.com</option>
+                    <option value="meeatupt215@gmail.com">meeatupt215@gmail.com</option>
+                </select>
+                <input type="tel" id="phoneInput" placeholder="Phone Number (Optional)">
+                <button class="btn" onclick="createSession()">🔓 Create Control Session</button>
+            </div>
+            <div id="sessionInfo" style="display: none;">
+                <div class="session-info">
+                    <strong style="color: #16a34a; font-size: 18px;">✓ Session Active</strong>
+                    <div id="sessionDetails" style="margin-top: 15px; color: #1f2937;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔌 Network Plugins & Host Systems</h2>
+            <div class="plugin-grid" id="pluginGrid">
+                <p>Loading plugins...</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎮 Network Commands</h2>
+            <div class="command-buttons">
+                <button class="btn" onclick="sendCommand('activate_all_plugins')">✅ Activate All Plugins</button>
+                <button class="btn" onclick="sendCommand('enable_distribution')">💰 Enable Distribution</button>
+                <button class="btn" onclick="sendCommand('sync_network')">🔄 Sync Network</button>
+                <button class="btn" onclick="loadStats()">📊 Refresh Stats</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Network Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Plugins</div>
+                    <div class="stat-value" id="totalPlugins">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Host Plugins</div>
+                    <div class="stat-value" id="hostPlugins">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Connected Users</div>
+                    <div class="stat-value" id="connectedUsers">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Benefits Distributed</div>
+                    <div class="stat-value" id="totalBenefits">$0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Sessions</div>
+                    <div class="stat-value" id="activeSessions">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">WiFi Strength</div>
+                    <div class="stat-value" id="wifiStrength">100%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>💰 Winner Cash Payout System</h2>
+            <p style="color: #6b7280; margin-bottom: 20px;">
+                Cash out your winnings with revival bonuses
+            </p>
+            <div class="email-select">
+                <label>Device Connection:</label>
+                <input type="text" id="deviceIdInput" placeholder="Device ID (auto-generated)">
+                <button class="btn" onclick="connectDeviceToNetwork()">📡 Connect Device to Network</button>
+            </div>
+            <div id="winnerSection" style="display: none; margin-top: 20px;">
+                <div class="session-info" style="background: #fef3c7; border-left-color: #f59e0b;">
+                    <strong style="color: #92400e; font-size: 18px;">🏆 Winner Dashboard</strong>
+                    <div id="winnerInfo" style="margin-top: 15px; color: #1f2937;"></div>
+                    <div style="margin-top: 15px;">
+                        <button class="btn" onclick="processWinnerCashout()">💵 Cash Out Winnings</button>
+                        <button class="btn" onclick="getRevivalCash()">⚡ Get Revival Cash Bonus</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔗 Quick Access Links</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                <a href="/index.html" class="btn" style="text-decoration: none; text-align: center;">
+                    🏆 Live Sportsbook
+                </a>
+                <a href="/ps5-betting.html" class="btn" style="text-decoration: none; text-align: center;">
+                    🎮 PlayStation 5 Betting
+                </a>
+                <a href="/ps5-qr-betting-portal.html" class="btn" style="text-decoration: none; text-align: center;">
+                    📱 QR Betting Portal
+                </a>
+                <a href="/backup-dashboard.html" class="btn" style="text-decoration: none; text-align: center;">
+                    ☁️ AWS Backup Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let currentSessionId = null;
+
+        async function createSession() {
+            const email = document.getElementById('emailSelect').value;
+            const phoneNumber = document.getElementById('phoneInput').value;
+
+            if (!email) {
+                alert('Please select an email');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/phone-control/session/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, phoneNumber })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentSessionId = data.session.id;
+                    document.getElementById('sessionInfo').style.display = 'block';
+                    document.getElementById('sessionDetails').innerHTML = `
+                        <div style="margin-bottom: 8px;"><strong>Session ID:</strong> ${data.session.id}</div>
+                        <div style="margin-bottom: 8px;"><strong>User ID:</strong> ${data.session.userId}</div>
+                        <div style="margin-bottom: 8px;"><strong>Email:</strong> ${data.session.email}</div>
+                        ${phoneNumber ? `<div style="margin-bottom: 8px;"><strong>Phone:</strong> ${phoneNumber}</div>` : ''}
+                        <div style="margin-bottom: 8px;"><strong>Permissions:</strong> ${data.session.permissions.join(', ')}</div>
+                        <div style="margin-bottom: 8px;"><strong>Active Plugins:</strong> ${data.session.activePlugins.length}</div>
+                        <div style="margin-bottom: 8px;"><strong>Network Status:</strong> ${data.session.networkStatus}</div>
+                    `;
+                    alert('✅ Phone control session created successfully!');
+                    loadPlugins();
+                    loadStats();
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to create session'));
+                }
+            } catch (error) {
+                console.error('Error creating session:', error);
+                alert('Failed to create session');
+            }
+        }
+
+        async function loadPlugins() {
+            try {
+                const response = await fetch(`${API_BASE}/phone-control/plugins`);
+                const data = await response.json();
+
+                const pluginHtml = data.plugins.map(plugin => `
+                    <div class="plugin-card ${plugin.host ? 'host' : ''}">
+                        <div class="plugin-icon">${getPluginIcon(plugin.type)}</div>
+                        <div class="plugin-title">
+                            ${plugin.name}
+                            ${plugin.host ? ' 🏠' : ''}
+                        </div>
+                        <div style="font-size: 13px; opacity: 0.8; margin-bottom: 10px;">
+                            ${plugin.type.toUpperCase()}
+                        </div>
+                        <div class="plugin-stats">
+                            <div style="margin-bottom: 5px;">
+                                <span class="status-indicator status-${plugin.status}"></span>
+                                Status: <strong>${plugin.status}</strong>
+                            </div>
+                            <div style="margin-bottom: 5px;">Connected Users: <strong>${plugin.connectedUsers.length}</strong></div>
+                            <div style="margin-bottom: 5px;">Benefit Share: <strong>${plugin.benefitShare}%</strong></div>
+                            <div>Distribution: <strong>${plugin.distributionEnabled ? 'Enabled ✓' : 'Disabled ✗'}</strong></div>
+                        </div>
+                    </div>
+                `).join('');
+
+                document.getElementById('pluginGrid').innerHTML = pluginHtml;
+            } catch (error) {
+                console.error('Error loading plugins:', error);
+                document.getElementById('pluginGrid').innerHTML = '<p style="color: #ef4444;">Error loading plugins</p>';
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/phone-control/stats`);
+                const data = await response.json();
+
+                document.getElementById('totalPlugins').textContent = data.totalPlugins;
+                document.getElementById('hostPlugins').textContent = data.hostPlugins;
+                document.getElementById('connectedUsers').textContent = data.connectedUsers;
+                document.getElementById('totalBenefits').textContent = '$' + data.totalBenefitsDistributed.toFixed(2);
+                document.getElementById('activeSessions').textContent = data.activeSessions;
+                document.getElementById('wifiStrength').textContent = '100%';
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function sendCommand(command) {
+            if (!currentSessionId) {
+                alert('Please create a phone control session first');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/phone-control/command`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sessionId: currentSessionId, command })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Command "${command}" executed successfully!`);
+                    loadPlugins();
+                    loadStats();
+                } else {
+                    alert('Error: ' + (data.error || 'Command failed'));
+                }
+            } catch (error) {
+                console.error('Error sending command:', error);
+                alert('Failed to send command');
+            }
+        }
+
+        function getPluginIcon(type) {
+            const icons = {
+                'betting': '🎯',
+                'streaming': '📺',
+                'gaming': '🎮',
+                'content': '📦'
+            };
+            return icons[type] || '🔌';
+        }
+
+        let currentDeviceId = null;
+
+        async function connectDeviceToNetwork() {
+            const deviceIdInput = document.getElementById('deviceIdInput').value;
+            const deviceId = deviceIdInput || `device-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            const email = document.getElementById('emailSelect').value;
+
+            if (!email) {
+                alert('Please select an email first');
+                return;
+            }
+
+            const userId = `user-${email.split('@')[0]}`;
+
+            try {
+                const response = await fetch(`${API_BASE}/winner-payout/device/connect`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        deviceId,
+                        userId,
+                        wifiStrength: 100,
+                        connectionType: 'wifi'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentDeviceId = deviceId;
+                    document.getElementById('deviceIdInput').value = deviceId;
+                    alert('✅ Device connected to WiFi plugin network!');
+                    loadWinnerInfo(userId);
+                }
+            } catch (error) {
+                console.error('Error connecting device:', error);
+                alert('Failed to connect device');
+            }
+        }
+
+        async function loadWinnerInfo(userId) {
+            try {
+                const response = await fetch(`${API_BASE}/winner-payout/user/${userId}/winnings`);
+                const data = await response.json();
+
+                if (data.totalGamesWon > 0) {
+                    document.getElementById('winnerSection').style.display = 'block';
+                    document.getElementById('winnerInfo').innerHTML = `
+                        <div style="margin-bottom: 8px;"><strong>Total Games Won:</strong> ${data.totalGamesWon}</div>
+                        <div style="margin-bottom: 8px;"><strong>Total Winnings:</strong> $${data.totalWinnings.toFixed(2)}</div>
+                        <div style="margin-bottom: 8px;"><strong>Revival Cash Eligible:</strong> ${data.revivalCashEligible ? 'Yes ✓' : 'No'}</div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading winner info:', error);
+            }
+        }
+
+        async function processWinnerCashout() {
+            const email = document.getElementById('emailSelect').value;
+            if (!email || !currentDeviceId) {
+                alert('Please connect device first');
+                return;
+            }
+
+            const userId = `user-${email.split('@')[0]}`;
+
+            try {
+                const winningsResponse = await fetch(`${API_BASE}/winner-payout/user/${userId}/winnings`);
+                const winningsData = await winningsResponse.json();
+
+                if (winningsData.winnings.length === 0) {
+                    alert('No winnings to cash out');
+                    return;
+                }
+
+                const latestWin = winningsData.winnings[winningsData.winnings.length - 1];
+                const winnerId = `${latestWin.gameId}-${latestWin.betId}`;
+
+                const response = await fetch(`${API_BASE}/winner-payout/cashout`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId,
+                        winnerId,
+                        paymentMethod: 'direct_deposit',
+                        deviceId: currentDeviceId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Cash payout processing!\nAmount: $${data.payment.amount.toFixed(2)}\nEstimated completion: ${data.estimatedCompletion}`);
+                }
+            } catch (error) {
+                console.error('Error processing cashout:', error);
+                alert('Failed to process cashout');
+            }
+        }
+
+        async function getRevivalCash() {
+            const email = document.getElementById('emailSelect').value;
+            if (!email || !currentDeviceId) {
+                alert('Please connect device first');
+                return;
+            }
+
+            const userId = `user-${email.split('@')[0]}`;
+
+            try {
+                const response = await fetch(`${API_BASE}/winner-payout/revival-cash`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId,
+                        deviceId: currentDeviceId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`⚡ Revival Cash Bonus Processing!\nBonus Amount: $${data.payment.amount.toFixed(2)}\n${data.message}`);
+                } else {
+                    alert(data.error || 'Not eligible for revival cash');
+                }
+            } catch (error) {
+                console.error('Error getting revival cash:', error);
+                alert('Failed to process revival cash');
+            }
+        }
+
+        // Auto-load on page load
+        window.addEventListener('load', () => {
+            loadPlugins();
+            loadStats();
+            // Auto-refresh every 30 seconds
+            setInterval(() => {
+                loadPlugins();
+                loadStats();
+            }, 30000);
+        });
+    </script>
+</body>
+</html>

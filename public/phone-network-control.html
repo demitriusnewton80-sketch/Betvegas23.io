@@ -1,0 +1,390 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Network Control - Core Plugin System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .header h1 {
+            color: #1e3a8a;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        .fcc-badge {
+            background: #1e3a8a;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 12px;
+            display: inline-block;
+            margin: 10px 5px;
+            font-weight: 700;
+        }
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .section h2 {
+            color: #1e3a8a;
+            margin-bottom: 20px;
+        }
+        .email-select {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .email-select label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+        select, input {
+            width: 100%;
+            padding: 14px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        .btn {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 5px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30,58,138,0.3);
+        }
+        .plugin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .plugin-card {
+            background: linear-gradient(135deg, #f9fafb 0%, #e5e7eb 100%);
+            border-radius: 16px;
+            padding: 24px;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .plugin-card.host {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            border-color: #fbbf24;
+        }
+        .plugin-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .plugin-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .plugin-stats {
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 8px;
+            font-size: 13px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-card {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .stat-value {
+            font-size: 24px;
+            color: #1e3a8a;
+            font-weight: 700;
+        }
+        .distribution-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .distribution-item {
+            background: #f3f4f6;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #1e3a8a;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-active {
+            background: #22c55e;
+        }
+        .status-inactive {
+            background: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="icon">📱🌐</div>
+            <h1>Phone Network Control System</h1>
+            <p style="color: #6b7280; font-size: 18px; margin-top: 10px;">
+                Core Plugin Host & Content Distribution Network
+            </p>
+            <span class="fcc-badge">FCC Entity: 20130314143016</span>
+            <span class="fcc-badge">Network Status: Online</span>
+        </div>
+
+        <div class="section">
+            <h2>📱 Phone Control Access</h2>
+            <div class="email-select">
+                <label for="emailSelect">Authorized Email:</label>
+                <select id="emailSelect">
+                    <option value="">-- Select Email --</option>
+                    <option value="gbemeaat@gmail.com">gbemeaat@gmail.com</option>
+                    <option value="meeatupt215@gmail.com">meeatupt215@gmail.com</option>
+                </select>
+                <input type="tel" id="phoneInput" placeholder="Phone Number (Optional)">
+                <button class="btn" onclick="createSession()">🔓 Create Control Session</button>
+            </div>
+            <div id="sessionInfo" style="display: none;">
+                <div style="background: #dcfce7; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                    <strong style="color: #16a34a;">✓ Session Active</strong>
+                    <div id="sessionDetails" style="margin-top: 10px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔌 Network Plugins (Core Hosts)</h2>
+            <div class="plugin-grid" id="pluginGrid">
+                <p>Loading plugins...</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎮 Phone Commands</h2>
+            <button class="btn" onclick="sendCommand('activate_all_plugins')">✅ Activate All Plugins</button>
+            <button class="btn" onclick="sendCommand('enable_distribution')">💰 Enable Distribution</button>
+            <button class="btn" onclick="sendCommand('sync_network')">🔄 Sync Network</button>
+            <button class="btn" onclick="loadStats()">📊 Refresh Stats</button>
+        </div>
+
+        <div class="section">
+            <h2>📊 Network Statistics</h2>
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Plugins</div>
+                    <div class="stat-value" id="totalPlugins">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Host Plugins</div>
+                    <div class="stat-value" id="hostPlugins">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Connected Users</div>
+                    <div class="stat-value" id="connectedUsers">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Benefits Distributed</div>
+                    <div class="stat-value" id="totalBenefits">$0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let currentSessionId = null;
+
+        async function createSession() {
+            const email = document.getElementById('emailSelect').value;
+            const phoneNumber = document.getElementById('phoneInput').value;
+
+            if (!email) {
+                alert('Please select an email');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/phone-control/session/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, phoneNumber })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentSessionId = data.session.id;
+                    document.getElementById('sessionInfo').style.display = 'block';
+                    document.getElementById('sessionDetails').innerHTML = `
+                        <div>Session ID: ${data.session.id}</div>
+                        <div>User ID: ${data.session.userId}</div>
+                        <div>Permissions: ${data.session.permissions.join(', ')}</div>
+                        <div>Active Plugins: ${data.session.activePlugins.length}</div>
+                    `;
+                    alert('✅ Phone control session created!');
+                    loadPlugins();
+                    loadStats();
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to create session'));
+                }
+            } catch (error) {
+                console.error('Error creating session:', error);
+                alert('Failed to create session');
+            }
+        }
+
+        async function loadPlugins() {
+            try {
+                const response = await fetch(`${API_BASE}/phone-control/plugins`);
+                const data = await response.json();
+
+                const pluginHtml = data.plugins.map(plugin => `
+                    <div class="plugin-card ${plugin.host ? 'host' : ''}">
+                        <div class="plugin-icon">${getPluginIcon(plugin.type)}</div>
+                        <div class="plugin-title">
+                            ${plugin.name}
+                            ${plugin.host ? ' 🏠' : ''}
+                        </div>
+                        <div style="font-size: 13px; opacity: 0.8; margin-bottom: 10px;">
+                            ${plugin.type.toUpperCase()}
+                        </div>
+                        <div class="plugin-stats">
+                            <div><span class="status-indicator status-${plugin.status}"></span>Status: ${plugin.status}</div>
+                            <div>Connected Users: ${plugin.connectedUsers.length}</div>
+                            <div>Benefit Share: ${plugin.benefitShare}%</div>
+                            <div>Distribution: ${plugin.distributionEnabled ? 'Enabled' : 'Disabled'}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                document.getElementById('pluginGrid').innerHTML = pluginHtml;
+            } catch (error) {
+                console.error('Error loading plugins:', error);
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/phone-control/stats`);
+                const data = await response.json();
+
+                document.getElementById('totalPlugins').textContent = data.totalPlugins;
+                document.getElementById('hostPlugins').textContent = data.hostPlugins;
+                document.getElementById('connectedUsers').textContent = data.connectedUsers;
+                document.getElementById('totalBenefits').textContent = '$' + data.totalBenefitsDistributed.toFixed(2);
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function sendCommand(command) {
+            if (!currentSessionId) {
+                alert('Please create a phone control session first');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/phone-control/command`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sessionId: currentSessionId, command })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Command "${command}" executed successfully!`);
+                    loadPlugins();
+                    loadStats();
+                } else {
+                    alert('Error: ' + (data.error || 'Command failed'));
+                }
+            } catch (error) {
+                console.error('Error sending command:', error);
+                alert('Failed to send command');
+            }
+        }
+
+        function getPluginIcon(type) {
+            const icons = {
+                'betting': '🎯',
+                'streaming': '📺',
+                'gaming': '🎮',
+                'content': '📦'
+            };
+            return icons[type] || '🔌';
+        }
+
+        // Auto-load on page load
+        window.addEventListener('load', () => {
+            loadPlugins();
+            loadStats();
+            setInterval(() => {
+                loadPlugins();
+                loadStats();
+            }, 30000);
+        });
+    </script>
+</body>
+</html>
