@@ -326,6 +326,7 @@
 
         async function checkWeb3Status() {
             try {
+                const API_BASE = window.CloudConfig.getAPIBase();
                 const response = await fetch(`${API_BASE}/web3/status`);
                 const data = await response.json();
                 

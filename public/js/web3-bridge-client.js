@@ -5,11 +5,8 @@
 (function() {
   'use strict';
 
-  // Only declare API_BASE if it doesn't already exist
-  if (typeof window.API_BASE === 'undefined') {
-    window.API_BASE = window.location.origin;
-  }
-  const API_BASE = window.API_BASE;
+  // Use CloudConfig if available, otherwise fallback
+  const API_BASE = window.CloudConfig ? window.CloudConfig.getAPIBase() : window.location.origin;
 
   class Web3BridgeClient {
     constructor() {
