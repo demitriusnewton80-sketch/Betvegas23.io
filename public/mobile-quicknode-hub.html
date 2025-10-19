@@ -1,0 +1,454 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>QuickNode Mobile Hub - Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            min-height: 100vh;
+            padding-bottom: 80px;
+            color: white;
+        }
+        .header {
+            background: rgba(15, 23, 42, 0.95);
+            padding: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .header h1 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .search-container {
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px 40px 12px 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+        }
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+        }
+        .clear-search {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: none;
+        }
+        .status-bar {
+            padding: 12px 16px;
+            background: rgba(34, 197, 94, 0.1);
+            border-left: 3px solid #22c55e;
+            margin: 16px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .content {
+            padding: 0 16px;
+        }
+        .section {
+            margin-bottom: 24px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+        .card:active {
+            transform: scale(0.98);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .card-badge {
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .card-info {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 14px;
+        }
+        .card-info:last-child {
+            border-bottom: none;
+        }
+        .card-label {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .card-value {
+            font-weight: 600;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #6366f1;
+            margin-bottom: 4px;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 12px;
+            padding: 8px 16px;
+        }
+        .nav-item.active {
+            color: #6366f1;
+        }
+        .nav-icon {
+            font-size: 24px;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            <span>⚡</span>
+            QuickNode Mobile Hub
+        </h1>
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" class="search-input" placeholder="Search games, wallets, transactions...">
+            <button class="clear-search" id="clearSearch" onclick="clearSearch()">✕</button>
+        </div>
+    </div>
+
+    <div class="status-bar">
+        <span class="status-dot"></span>
+        <span id="statusText">Connecting to QuickNode Polygon...</span>
+    </div>
+
+    <div class="content">
+        <div class="section">
+            <div class="section-title">Network Stats</div>
+            <div class="grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="walletCount">0</div>
+                    <div class="stat-label">Wallets</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="txCount">0</div>
+                    <div class="stat-label">Transactions</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Available Games</div>
+            <div id="gamesList"></div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Recent Activity</div>
+            <div id="activityList"></div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="#" class="nav-item active" onclick="switchTab('games')">
+            <div class="nav-icon">🎮</div>
+            <div>Games</div>
+        </a>
+        <a href="#" class="nav-item" onclick="switchTab('wallet')">
+            <div class="nav-icon">💰</div>
+            <div>Wallet</div>
+        </a>
+        <a href="#" class="nav-item" onclick="switchTab('activity')">
+            <div class="nav-icon">📊</div>
+            <div>Activity</div>
+        </a>
+        <a href="#" class="nav-item" onclick="switchTab('more')">
+            <div class="nav-icon">⚙️</div>
+            <div>More</div>
+        </a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script>
+        let allGames = [];
+        let allActivity = [];
+        let fuse = null;
+
+        const API_BASE = window.location.origin;
+
+        // Initialize Fuse.js for fuzzy search
+        function initializeFuse(data) {
+            const options = {
+                keys: ['sport', 'homeTeam', 'awayTeam', 'id', 'status'],
+                threshold: 0.3,
+                includeScore: true
+            };
+            fuse = new Fuse(data, options);
+        }
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const clearBtn = document.getElementById('clearSearch');
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value;
+            clearBtn.style.display = query ? 'block' : 'none';
+            
+            if (query && fuse) {
+                const results = fuse.search(query);
+                displayGames(results.map(r => r.item));
+            } else {
+                displayGames(allGames);
+            }
+        });
+
+        function clearSearch() {
+            searchInput.value = '';
+            clearBtn.style.display = 'none';
+            displayGames(allGames);
+        }
+
+        // Load data from QuickNode-connected endpoints
+        async function loadData() {
+            try {
+                // Load games
+                const gamesResponse = await fetch(`${API_BASE}/sportsbook/games`);
+                const gamesData = await gamesResponse.json();
+                allGames = gamesData.games || [];
+                initializeFuse(allGames);
+                displayGames(allGames);
+
+                // Load Web3 stats
+                const web3Response = await fetch(`${API_BASE}/web3/status`);
+                const web3Data = await web3Response.json();
+                
+                if (web3Data.success) {
+                    document.getElementById('walletCount').textContent = web3Data.stats.totalWallets;
+                    document.getElementById('txCount').textContent = web3Data.stats.totalTransactions;
+                    document.getElementById('statusText').textContent = `Connected to ${web3Data.chain.name} via QuickNode`;
+                }
+
+                // Load transactions for activity
+                const txResponse = await fetch(`${API_BASE}/web3/transactions`);
+                const txData = await txResponse.json();
+                allActivity = txData.transactions || [];
+                displayActivity(allActivity);
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('statusText').textContent = 'Connection error';
+            }
+        }
+
+        function displayGames(games) {
+            const gamesList = document.getElementById('gamesList');
+            
+            if (!games || games.length === 0) {
+                gamesList.innerHTML = '<div class="empty-state">No games found</div>';
+                return;
+            }
+
+            gamesList.innerHTML = games.map(game => `
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">${game.homeTeam} vs ${game.awayTeam}</div>
+                        <div class="card-badge">${game.sport}</div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-label">Game ID</span>
+                        <span class="card-value">#${game.id}</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-label">Odds</span>
+                        <span class="card-value">${game.odds.home} / ${game.odds.away}</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-label">Status</span>
+                        <span class="card-value">${game.status}</span>
+                    </div>
+                    <button class="btn" onclick="placeBet('${game.id}')">Place Bet</button>
+                </div>
+            `).join('');
+        }
+
+        function displayActivity(activities) {
+            const activityList = document.getElementById('activityList');
+            
+            if (!activities || activities.length === 0) {
+                activityList.innerHTML = '<div class="empty-state">No recent activity</div>';
+                return;
+            }
+
+            activityList.innerHTML = activities.slice(0, 5).map(tx => `
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Transaction</div>
+                        <div class="card-badge">${tx.status}</div>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-label">Amount</span>
+                        <span class="card-value">${tx.amount} MATIC</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="card-label">From</span>
+                        <span class="card-value">${tx.from.substring(0, 8)}...</span>
+                    </div>
+                    ${tx.hash ? `
+                    <div class="card-info">
+                        <span class="card-label">Hash</span>
+                        <span class="card-value">${tx.hash.substring(0, 10)}...</span>
+                    </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function placeBet(gameId) {
+            alert(`Betting on game ${gameId}. Connect your wallet to continue.`);
+        }
+
+        function switchTab(tab) {
+            // Update active state
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.nav-item').classList.add('active');
+
+            // Handle tab switching
+            if (tab === 'wallet') {
+                window.location.href = '/web3-bridge.html';
+            } else if (tab === 'more') {
+                window.location.href = '/wifi-plugin-hub.html';
+            }
+        }
+
+        // Initialize
+        loadData();
+        setInterval(loadData, 10000); // Refresh every 10 seconds
+    </script>
+</body>
+</html>

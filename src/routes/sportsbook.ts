@@ -104,6 +104,31 @@ router.get('/blockchain-data', async (req: Request, res: Response) => {
   }
 });
 
+// Mobile-optimized endpoint with fuse search data
+router.get('/mobile/games', async (req: Request, res: Response) => {
+  try {
+    const games = bettingService.getAllGames();
+    
+    res.json({
+      success: true,
+      games,
+      quicknode: {
+        endpoint: 'https://billowing-billowing-glitter.matic.quiknode.pro',
+        chain: 'Polygon',
+        chainId: 137
+      },
+      fccEntity: '20130314143016',
+      mobileOptimized: true,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch mobile games'
+    });
+  }
+});
+
 router.get('/games/:id', (req: Request, res: Response) => {
   const event = sportsDataService.getEvent(req.params.id);
   
