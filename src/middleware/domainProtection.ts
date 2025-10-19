@@ -33,6 +33,7 @@ export const domainProtection = (req: Request, res: Response, next: NextFunction
   });
 
   if (!isAllowed && process.env.NODE_ENV === 'production') {
+    console.warn(`🚨 Unauthorized domain access attempt: ${host} from ${origin}`);
     return res.status(403).json({
       error: 'Domain not authorized',
       fccEntity: config.fccEntity,
@@ -41,20 +42,32 @@ export const domainProtection = (req: Request, res: Response, next: NextFunction
     });
   }
 
-  // Add security headers
+  // Enhanced security headers
   res.setHeader('X-FCC-Entity', config.fccEntity);
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('X-DNS-Prefetch-Control', 'off');
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
+  res.setHeader('Content-Security-Policy', 
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'self';");
   
   // Add CORS headers for allowed domains
   if (isAllowed) {
     res.setHeader('Access-Control-Allow-Origin', origin || '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-API-Key');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-API-Key, X-CSRF-Token');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Max-Age', '86400');
   }
+
+  // Prevent clickjacking
+  res.setHeader('X-Frame-Options', 'DENY');
+  
+  // MIME type sniffing protection
+  res.setHeader('X-Download-Options', 'noopen');
 
   next();
 };

@@ -3,6 +3,9 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { appCore } from './core/AppCore.js';
+import { domainProtection } from './middleware/domainProtection.js';
+import { rateLimiter } from './middleware/rateLimiter.js';
+import { sanitizeInput, validateRequest, auditLog } from './middleware/security.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -43,6 +46,9 @@ import smartSystemRoutes from './routes/smart-system.js';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Security: Disable powered-by header
+app.disable('x-powered-by');
+
 // Middleware - Secure CORS configuration
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
   'https://*.replit.dev',
@@ -68,8 +74,14 @@ app.use(cors({
   credentials: true,
   maxAge: 86400
 }));
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(express.json({ limit: '10mb' })); // Reduced from 50mb for security
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Security middleware (order matters)
+app.use(validateRequest); // Request validation
+app.use(sanitizeInput); // Input sanitization
+app.use(domainProtection); // Domain protection
+app.use(rateLimiter()); // Rate limiting
 
 // Traffic monitoring middleware
 app.use((req, res, next) => {
@@ -77,11 +89,12 @@ app.use((req, res, next) => {
   next();
 });
 
-// Apply domain protection middleware
-app.use(domainProtection);
-
-// Apply rate limiting middleware
-app.use(rateLimiter());
+// Audit logging for sensitive endpoints
+app.use('/sportsbook', auditLog('sportsbook'));
+app.use('/streaming', auditLog('streaming'));
+app.use('/phone-control', auditLog('phone-control'));
+app.use('/web3', auditLog('web3'));
+app.use('/backup', auditLog('backup'));
 
 // Initialize App Core
 appCore.initialize();
