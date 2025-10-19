@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
+import cors from 'cors'; // Import cors
 import sportsbookRouter from './routes/sportsbook.js';
 import streamingRoutes from './routes/streaming.js'; // Renamed from streamingRouter for consistency with other route imports
 import webhookRoutes from './routes/webhooks.js'; // Renamed from webhooksRouter for consistency
@@ -25,11 +26,20 @@ const HOST = '0.0.0.0';
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Middleware
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
 app.use(express.json());
 app.use(cookieParser());
-
-// Serve static files from public directory
 app.use(express.static('public'));
+
+// Domain and streaming info middleware
+app.use((req, res, next) => {
+  res.locals.domain = req.get('host');
+  res.locals.baseUrl = `${req.protocol}://${req.get('host')}`;
+  next();
+});
 
 // Personal SSO login route
 app.get('/login', (req, res) => {
@@ -86,6 +96,10 @@ app.use('/spotify', spotifyRoutes); // Mount Spotify routes
 app.use('/qr', qrRoutes);
 app.use('/ps5', ps5Routes); // Mount PS5 routes
 
+// Import and use domain routes
+import domainRoutes from './routes/domain.js';
+app.use('/domain', domainRoutes);
+
 // Ensure all routes are mounted
 console.log('📍 Routes registered:');
 console.log('   - /sportsbook');
@@ -105,6 +119,7 @@ console.log('   - /login'); // Added for personal SSO login
 console.log('   - /public-access'); // Added for public access view
 console.log('   - /qr'); // Added for QR code routes
 console.log('   - /ps5'); // Added for PS5 sports betting routes
+console.log('   - /domain'); // Added for domain routes
 
 // 404 handler for API
 app.use((req: Request, res: Response) => {

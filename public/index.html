@@ -1461,11 +1461,16 @@
 
         // Radio & Stream Links
         function openRadioLink(url) {
-            window.open(url, '_blank', 'noopener,noreferrer');
+            if (url && url.startsWith('http')) {
+                window.open(url, '_blank', 'noopener,noreferrer');
+            } else {
+                window.open(`${API_BASE}${url}`, '_blank', 'noopener,noreferrer');
+            }
         }
 
         function openStream(gameId) {
-            window.open(`${API_BASE}/streaming/amazon-prime/${userId}/${gameId}`, '_blank', 'noopener,noreferrer');
+            const streamUrl = `${API_BASE}/streaming/amazon-prime/${userId}/${gameId}`;
+            window.open(streamUrl, '_blank', 'noopener,noreferrer');
         }
 
         // Bet Slip - FanDuel Style

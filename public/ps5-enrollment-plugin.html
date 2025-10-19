@@ -247,8 +247,8 @@
 
             <div class="connection-info">
                 <h3>📡 Active Connection Point:</h3>
-                <div class="connection-url">
-                    https://2ff2dd2c-0218-43d5-83da-e4e4577d5b62-00-2ntrr3ce4l5i4.picard.replit.dev
+                <div class="connection-url" id="connectionUrl">
+                    Loading...
                 </div>
             </div>
 
@@ -328,8 +328,13 @@
     </div>
 
     <script>
-        const API_BASE = 'https://2ff2dd2c-0218-43d5-83da-e4e4577d5b62-00-2ntrr3ce4l5i4.picard.replit.dev';
+        const API_BASE = window.location.origin;
         let enrolledUser = null;
+        
+        // Update connection URL display
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('connectionUrl').textContent = API_BASE;
+        });
 
         async function enrollToPlugin() {
             const psnId = document.getElementById('psnId').value.trim();
