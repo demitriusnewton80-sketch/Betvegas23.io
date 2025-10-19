@@ -105,8 +105,18 @@ app.use('/espn-tracker', espnTracker);
 app.use('/web3', web3Routes);
 app.use('/analytics', analyticsRouter);
 
-// Static files
-app.use(express.static(path.join(__dirname, '../public')));
+// Static files - serve with proper MIME types
+app.use(express.static(path.join(__dirname, '../public'), {
+  setHeaders: (res, filepath) => {
+    if (filepath.endsWith('.html')) {
+      res.setHeader('Content-Type', 'text/html');
+    } else if (filepath.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (filepath.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    }
+  }
+}));
 
 // Core status endpoint
 app.get('/api/core/status', (req, res) => {
@@ -118,8 +128,13 @@ app.get('/api/core/status', (req, res) => {
   });
 });
 
-// Fallback route for SPA
-app.get('*', (req, res) => {
+// Fallback route for SPA - only for non-file requests
+app.get('*', (req, res, next) => {
+  // If the request has a file extension, let static middleware handle it
+  if (req.path.includes('.')) {
+    return next();
+  }
+  // Otherwise, serve the SPA
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
