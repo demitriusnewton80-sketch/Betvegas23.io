@@ -274,6 +274,33 @@ router.get('/wifi-hub/metrics', (req: Request, res: Response) => {
   });
 });
 
+// Betting Zone unified endpoint
+router.get('/betting-zone/status', (req: Request, res: Response) => {
+  res.json({
+    zoneName: 'Betting Zone',
+    status: 'active',
+    phoneControlEnabled: true,
+    wifiHubConnected: true,
+    fccEntity: '20130314143016',
+    features: {
+      phoneControl: 'enabled',
+      wifiConnection: 'excellent',
+      unifiedPlugins: 'active',
+      liveStreaming: 'active'
+    },
+    connectedPlugins: [
+      { name: 'PlayStation 5', endpoint: '/ps5-betting.html', status: 'connected' },
+      { name: 'Live Sportsbook', endpoint: '/index.html', status: 'connected' },
+      { name: 'Streaming Services', endpoint: '/streaming/partners', status: 'connected' },
+      { name: 'Radio Networks', endpoint: '/streaming/radio/latest', status: 'connected' },
+      { name: 'SSO System', endpoint: '/sso-plugin-dashboard.html', status: 'connected' },
+      { name: 'AWS Integration', endpoint: '/backup-dashboard.html', status: 'connected' }
+    ],
+    phoneControlEmails: ['gbemeeat@gmail.com', 'meeatupt215@gmail.com'],
+    timestamp: new Date().toISOString()
+  });
+});
+
 export default router;
 
 
