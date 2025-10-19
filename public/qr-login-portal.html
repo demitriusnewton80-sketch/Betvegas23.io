@@ -175,51 +175,34 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <script>
         const API_BASE = window.location.origin;
         const SSO_LOGIN_URL = `${API_BASE}/personal-sso-login.html`;
 
         // Generate QR Code (fallback without library)
-        function generateQRCode() {
-            const canvas = document.getElementById('qrCode');
-            if (!canvas) {
-                setTimeout(generateQRCode, 100);
-                return;
-            }
-            
-            canvas.width = 280;
-            canvas.height = 280;
-            const ctx = canvas.getContext('2d');
-            
-            if (!ctx) {
-                console.error('Cannot get canvas context');
-                return;
-            }
-            
-            const size = 280;
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, size, size);
-            
-            ctx.fillStyle = '#1e3a8a';
-            const moduleSize = 8;
-            const modules = Math.floor(size / moduleSize);
-            
-            let hash = 0;
-            for (let i = 0; i < SSO_LOGIN_URL.length; i++) {
-                hash = ((hash << 5) - hash) + SSO_LOGIN_URL.charCodeAt(i);
-                hash = hash & hash;
-            }
-            
-            for (let y = 0; y < modules; y++) {
-                for (let x = 0; x < modules; x++) {
-                    const seed = (x * modules + y + hash) * 2654435761;
-                    const isFinderPattern = (x < 7 && y < 7) || 
-                                          (x >= modules - 7 && y < 7) || 
-                                          (x < 7 && y >= modules - 7);
-                    
-                    if (isFinderPattern || (seed & 1)) {
-                        ctx.fillRect(x * moduleSize, y * moduleSize, moduleSize - 1, moduleSize - 1);
+        async function generateQRCode() {
+            try {
+                const qrCanvas = document.getElementById('qrCode');
+                if (!qrCanvas) {
+                    console.error('QR canvas element not found');
+                    return;
+                }
+
+                const qrData = `${API_BASE}/sso-plugin/login/playstation-network?source=qr`;
+
+                await QRCode.toCanvas(qrCanvas, qrData, {
+                    width: 256,
+                    color: {
+                        dark: '#000000',
+                        light: '#ffffff'
                     }
+                });
+            } catch (error) {
+                console.error('QR Code generation error:', error);
+                const qrContainer = document.querySelector('.qr-code-container');
+                if (qrContainer) {
+                    qrContainer.innerHTML = '<p style="color: #ff6b6b;">QR Code generation failed. Please use manual login.</p>';
                 }
             }
         }

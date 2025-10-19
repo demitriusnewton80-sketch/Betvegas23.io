@@ -18,7 +18,11 @@ args = "npm install"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run dev"
+args = "npm run build"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node dist/index.js"
 
 [[workflows.workflow]]
 name = "Run"
@@ -49,6 +53,23 @@ args = "nix"
 [[workflows.workflow.tasks]]
 task = "workflow.run"
 args = "Direct contact "
+
+[[workflows.workflow]]
+name = "Direct Contact Info"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Entity: 20130314143016\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Contact: gbemeeat@gmail.com\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"SAM.gov Registered: Young Meeat LLC\""
 
 [[ports]]
 localPort = 5000
