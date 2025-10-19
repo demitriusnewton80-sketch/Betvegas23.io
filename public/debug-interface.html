@@ -1,0 +1,397 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Interface - Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0e27;
+            color: #00ff00;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1f3a 0%, #0a0e27 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 2px solid #00ff00;
+        }
+
+        .header h1 {
+            color: #00ff00;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .fcc-badge {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            border: 1px solid #00ff00;
+        }
+
+        .debug-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .debug-card {
+            background: #1a1f3a;
+            border: 2px solid #00ff00;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .debug-card h2 {
+            color: #00ff00;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+
+        .status-ok {
+            background: #00ff00;
+        }
+
+        .status-error {
+            background: #ff0000;
+        }
+
+        .status-warning {
+            background: #ffff00;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .log-entry {
+            background: rgba(0, 255, 0, 0.05);
+            border-left: 3px solid #00ff00;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .log-error {
+            border-left-color: #ff0000;
+            background: rgba(255, 0, 0, 0.05);
+        }
+
+        .log-warning {
+            border-left-color: #ffff00;
+            background: rgba(255, 255, 0, 0.05);
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+        }
+
+        .metric-label {
+            color: #00ff00;
+        }
+
+        .metric-value {
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .console-output {
+            background: #000;
+            padding: 15px;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-size: 12px;
+            border: 1px solid #00ff00;
+        }
+
+        .console-output::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .console-output::-webkit-scrollbar-track {
+            background: #1a1f3a;
+        }
+
+        .console-output::-webkit-scrollbar-thumb {
+            background: #00ff00;
+            border-radius: 4px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%);
+            color: #0a0e27;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 255, 0, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+            color: white;
+        }
+
+        .timestamp {
+            color: #666;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔧 Debug Interface</h1>
+        <p style="margin: 10px 0;">Real-time debugging and monitoring</p>
+        <span class="fcc-badge">FCC Entity: 20130314143016</span>
+    </div>
+
+    <div class="debug-grid">
+        <!-- Core Status -->
+        <div class="debug-card">
+            <h2>
+                <span class="status-indicator status-ok" id="coreStatus"></span>
+                Core Status
+            </h2>
+            <div id="coreMetrics">
+                <div class="metric">
+                    <span class="metric-label">Status:</span>
+                    <span class="metric-value">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Endpoints -->
+        <div class="debug-card">
+            <h2>
+                <span class="status-indicator status-ok" id="apiStatus"></span>
+                API Health
+            </h2>
+            <div id="apiMetrics">
+                <div class="metric">
+                    <span class="metric-label">Health:</span>
+                    <span class="metric-value">Checking...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Web3 Bridge -->
+        <div class="debug-card">
+            <h2>
+                <span class="status-indicator status-ok" id="web3Status"></span>
+                Web3 Bridge
+            </h2>
+            <div id="web3Metrics">
+                <div class="metric">
+                    <span class="metric-label">Status:</span>
+                    <span class="metric-value">Initializing...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Console Output -->
+    <div class="debug-card">
+        <h2>📟 System Console</h2>
+        <div class="console-output" id="consoleOutput">
+            <div class="log-entry">
+                <span class="timestamp">[00:00:00]</span> Debug interface initialized
+            </div>
+        </div>
+        <div style="margin-top: 15px;">
+            <button class="btn" onclick="clearConsole()">Clear Console</button>
+            <button class="btn" onclick="refreshAll()">Refresh All</button>
+            <button class="btn btn-danger" onclick="testErrorHandling()">Test Error</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let logCount = 0;
+
+        function log(message, type = 'info') {
+            const console = document.getElementById('consoleOutput');
+            const timestamp = new Date().toLocaleTimeString();
+            const logClass = type === 'error' ? 'log-error' : type === 'warning' ? 'log-warning' : 'log-entry';
+            
+            const entry = document.createElement('div');
+            entry.className = logClass;
+            entry.innerHTML = `<span class="timestamp">[${timestamp}]</span> ${message}`;
+            
+            console.appendChild(entry);
+            console.scrollTop = console.scrollHeight;
+            
+            logCount++;
+            if (logCount > 100) {
+                console.removeChild(console.firstChild);
+                logCount--;
+            }
+        }
+
+        async function checkCoreStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/api/core/status`);
+                const data = await response.json();
+                
+                const metrics = document.getElementById('coreMetrics');
+                metrics.innerHTML = `
+                    <div class="metric">
+                        <span class="metric-label">Active Connections:</span>
+                        <span class="metric-value">${data.core.active}/${data.core.total}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Health:</span>
+                        <span class="metric-value">${Math.round((data.core.active/data.core.total)*100)}%</span>
+                    </div>
+                `;
+                
+                document.getElementById('coreStatus').className = 
+                    `status-indicator ${data.core.active === data.core.total ? 'status-ok' : 'status-warning'}`;
+                
+                log(`Core status: ${data.core.active}/${data.core.total} connections active`);
+            } catch (error) {
+                log(`Core status check failed: ${error.message}`, 'error');
+                document.getElementById('coreStatus').className = 'status-indicator status-error';
+            }
+        }
+
+        async function checkAPIHealth() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                
+                const metrics = document.getElementById('apiMetrics');
+                metrics.innerHTML = `
+                    <div class="metric">
+                        <span class="metric-label">Status:</span>
+                        <span class="metric-value">${data.status}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Uptime:</span>
+                        <span class="metric-value">${Math.floor(data.uptime / 60)}m ${data.uptime % 60}s</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Memory:</span>
+                        <span class="metric-value">${data.memory.used}MB / ${data.memory.total}MB</span>
+                    </div>
+                `;
+                
+                document.getElementById('apiStatus').className = 
+                    `status-indicator ${data.status === 'healthy' ? 'status-ok' : 'status-warning'}`;
+                
+                log(`API health: ${data.status}`);
+            } catch (error) {
+                log(`API health check failed: ${error.message}`, 'error');
+                document.getElementById('apiStatus').className = 'status-indicator status-error';
+            }
+        }
+
+        async function checkWeb3Status() {
+            try {
+                const response = await fetch(`${API_BASE}/web3/status`);
+                const data = await response.json();
+                
+                const metrics = document.getElementById('web3Metrics');
+                metrics.innerHTML = `
+                    <div class="metric">
+                        <span class="metric-label">Status:</span>
+                        <span class="metric-value">${data.status}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Chain:</span>
+                        <span class="metric-value">${data.chainName || 'N/A'}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Wallets:</span>
+                        <span class="metric-value">${data.connectedWallets || 0}</span>
+                    </div>
+                `;
+                
+                document.getElementById('web3Status').className = 'status-indicator status-ok';
+                log(`Web3 bridge: ${data.status}`);
+            } catch (error) {
+                log(`Web3 status check failed: ${error.message}`, 'error');
+                document.getElementById('web3Status').className = 'status-indicator status-error';
+            }
+        }
+
+        function clearConsole() {
+            document.getElementById('consoleOutput').innerHTML = 
+                '<div class="log-entry"><span class="timestamp">[' + 
+                new Date().toLocaleTimeString() + 
+                ']</span> Console cleared</div>';
+            logCount = 1;
+        }
+
+        function refreshAll() {
+            log('Refreshing all systems...', 'info');
+            checkCoreStatus();
+            checkAPIHealth();
+            checkWeb3Status();
+        }
+
+        function testErrorHandling() {
+            log('Testing error handling...', 'warning');
+            setTimeout(() => {
+                log('Simulated error: Test error triggered', 'error');
+            }, 500);
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            log('Debug interface loaded successfully');
+            refreshAll();
+            
+            // Auto-refresh every 10 seconds
+            setInterval(refreshAll, 10000);
+        });
+
+        // Capture console errors
+        window.addEventListener('error', (event) => {
+            log(`JavaScript Error: ${event.message} at ${event.filename}:${event.lineno}`, 'error');
+        });
+
+        window.addEventListener('unhandledrejection', (event) => {
+            log(`Unhandled Promise Rejection: ${event.reason}`, 'error');
+        });
+    </script>
+</body>
+</html>
