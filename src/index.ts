@@ -25,6 +25,7 @@ import qrRoutes from './routes/qr.js';
 import ps5Routes from './routes/ps5.js'; // Added for PS5 sports betting routes
 import phoneControlRouter from './routes/phone-control.js'; // Added for phone control
 import winnerPayoutRouter from './routes/winner-payout.js';
+import sshRoutes from './routes/ssh.js';
 import espnTracker from './routes/espn-tracker.js'; // Added for ESPN tracker
 import web3Routes from './routes/web3.js'; // Added for Web3 bridge
 
@@ -110,6 +111,7 @@ app.use('/winner-payout', winnerPayoutRouter);
 app.use('/espn-tracker', espnTracker); // Mount ESPN tracker routes
 app.use('/wifi-infusion', wifiInfusionRoutes);
 app.use('/web3', web3Routes); // Mount Web3 bridge routes
+app.use('/ssh', sshRoutes);
 
 // Route registry for monitoring
 const routes = [
