@@ -1,0 +1,368 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Sports Live Streams | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            border: 2px solid rgba(34,197,94,0.3);
+        }
+
+        .header h1 {
+            font-size: 56px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #22c55e, #3b82f6, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-shift 3s ease infinite;
+        }
+
+        @keyframes gradient-shift {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(20deg); }
+        }
+
+        .fcc-badge {
+            display: inline-block;
+            background: rgba(34,197,94,0.2);
+            color: #22c55e;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 800;
+            margin-top: 15px;
+            border: 2px solid #22c55e;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: #22c55e;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #9ca3af;
+            text-transform: uppercase;
+        }
+
+        .league-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .league-section {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .league-section:hover {
+            border-color: #22c55e;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(34,197,94,0.2);
+        }
+
+        .league-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .league-title {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .live-count {
+            background: #ef4444;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .game-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .game-card {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .game-card:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: #22c55e;
+        }
+
+        .game-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .team {
+            flex: 1;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .vs {
+            color: #6b7280;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .listeners {
+            color: #22c55e;
+        }
+
+        .stream-btn {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .stream-btn:hover {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            transform: scale(1.02);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 36px;
+            }
+            .league-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 All Sports Live Streams</h1>
+            <p style="color: #9ca3af; margin-top: 10px;">NFL • NBA • MLB • NHL - Complete Coverage</p>
+            <span class="fcc-badge">FCC Entity: 20130314143016 | All Teams • All Games</span>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value" id="totalStreams">0</div>
+                <div class="stat-label">Live Streams</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalListeners">0</div>
+                <div class="stat-label">Total Listeners</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalLeagues">4</div>
+                <div class="stat-label">Leagues</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalTeams">32</div>
+                <div class="stat-label">Teams</div>
+            </div>
+        </div>
+
+        <div class="league-grid" id="leagueGrid"></div>
+    </div>
+
+    <script>
+        let allStreams = [];
+        let eventSource = null;
+
+        const leagueConfig = {
+            'NFL': { icon: '🏈', color: '#ef4444' },
+            'NBA': { icon: '🏀', color: '#3b82f6' },
+            'MLB': { icon: '⚾', color: '#22c55e' },
+            'NHL': { icon: '🏒', color: '#a855f7' }
+        };
+
+        async function loadAllStreams() {
+            try {
+                const response = await fetch(`${window.location.origin}/sports-radio/streams`);
+                const data = await response.json();
+                allStreams = data.streams;
+                updateStats();
+                displayLeagues();
+            } catch (error) {
+                console.error('Error loading streams:', error);
+            }
+        }
+
+        function updateStats() {
+            const liveStreams = allStreams.filter(s => s.status === 'live');
+            const totalListeners = allStreams.reduce((sum, s) => sum + s.listeners, 0);
+            
+            document.getElementById('totalStreams').textContent = liveStreams.length;
+            document.getElementById('totalListeners').textContent = totalListeners.toLocaleString();
+        }
+
+        function displayLeagues() {
+            const grid = document.getElementById('leagueGrid');
+            const leagues = ['NFL', 'NBA', 'MLB', 'NHL'];
+
+            grid.innerHTML = leagues.map(league => {
+                const leagueStreams = allStreams.filter(s => s.league === league);
+                const liveCount = leagueStreams.filter(s => s.status === 'live').length;
+                const config = leagueConfig[league];
+
+                return `
+                    <div class="league-section">
+                        <div class="league-header">
+                            <div class="league-title">${config.icon} ${league}</div>
+                            <div class="live-count">● ${liveCount} LIVE</div>
+                        </div>
+                        <div class="game-list">
+                            ${leagueStreams.map(stream => `
+                                <div class="game-card" onclick="openStream('${stream.streamUrl}')">
+                                    <div class="game-teams">
+                                        <div class="team">
+                                            <img src="${window.location.origin}/sports-radio/logo/${stream.league}/${encodeURIComponent(stream.awayTeam)}" 
+                                                 alt="${stream.awayTeam}" 
+                                                 style="width: 40px; height: 40px; margin: 0 auto 5px; display: block;"
+                                                 onerror="this.style.display='none'">
+                                            <div>${stream.awayTeam}</div>
+                                        </div>
+                                        <div class="vs">@</div>
+                                        <div class="team">
+                                            <img src="${window.location.origin}/sports-radio/logo/${stream.league}/${encodeURIComponent(stream.homeTeam)}" 
+                                                 alt="${stream.homeTeam}"
+                                                 style="width: 40px; height: 40px; margin: 0 auto 5px; display: block;"
+                                                 onerror="this.style.display='none'">
+                                            <div>${stream.homeTeam}</div>
+                                        </div>
+                                    </div>
+                                    <div class="game-info">
+                                        <span class="listeners">👥 ${stream.listeners.toLocaleString()}</span>
+                                        <span>Quality: ${stream.quality.toUpperCase()}</span>
+                                    </div>
+                                    <button class="stream-btn" onclick="event.stopPropagation(); openStream('${stream.streamUrl}')">
+                                        🎧 Listen Live
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openStream(url) {
+            window.open(url, '_blank');
+        }
+
+        function connectToLiveUpdates() {
+            if (eventSource) {
+                eventSource.close();
+            }
+
+            eventSource = new EventSource(`${window.location.origin}/sports-radio/stream-updates`);
+
+            eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'radioUpdate' || data.type === 'connected') {
+                    loadAllStreams();
+                }
+            };
+
+            eventSource.onerror = () => {
+                console.error('EventSource error, reconnecting...');
+                setTimeout(connectToLiveUpdates, 5000);
+            };
+        }
+
+        window.addEventListener('load', () => {
+            loadAllStreams();
+            connectToLiveUpdates();
+            setInterval(loadAllStreams, 30000);
+        });
+
+        window.addEventListener('beforeunload', () => {
+            if (eventSource) {
+                eventSource.close();
+            }
+        });
+    </script>
+</body>
+</html>

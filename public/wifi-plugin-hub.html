@@ -150,22 +150,9 @@
         }
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 15px;
-        }
-        @media (min-width: 768px) {
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 12px;
-            }
-        }
-        @media (min-width: 1024px) {
-            .stats-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 15px;
-                margin-top: 20px;
-            }
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
         }
         .stat-card {
             background: #f3f4f6;
@@ -342,6 +329,7 @@
     <script>
         const API_BASE = window.location.origin;
         let currentSessionId = null;
+        let currentDeviceId = null;
 
         async function createSession() {
             const email = document.getElementById('emailSelect').value;
@@ -473,8 +461,6 @@
             return icons[type] || '🔌';
         }
 
-        let currentDeviceId = null;
-
         async function connectDeviceToNetwork() {
             const deviceIdInput = document.getElementById('deviceIdInput').value;
             const deviceId = deviceIdInput || `device-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -603,15 +589,6 @@
             } catch (error) {
                 console.error('Error getting revival cash:', error);
                 alert('Failed to process revival cash request');
-            }
-        }
-
-        // Note: All npm packages are automatically installed when you click the Run button
-        // No manual npm install required - the system handles dependencies automaticallylert(data.error || 'Not eligible for revival cash');
-                }
-            } catch (error) {
-                console.error('Error getting revival cash:', error);
-                alert('Failed to process revival cash');
             }
         }
 

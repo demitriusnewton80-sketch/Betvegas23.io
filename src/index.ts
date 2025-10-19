@@ -1,4 +1,3 @@
-
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import path from 'path';
@@ -27,18 +26,43 @@ import ps5Routes from './routes/ps5.js';
 import phoneControlRouter from './routes/phone-control.js';
 import winnerPayoutRouter from './routes/winner-payout.js';
 import sshRoutes from './routes/ssh.js';
-import espnTracker from './routes/espn-tracker.js';
+import espnTrackerRouter from './routes/espn-tracker.js';
+import espnBettingRouter from './routes/espn-betting.js';
+import sportsRadioRouter from './routes/sports-radio.js';
 import web3Routes from './routes/web3.js';
 import analyticsRouter from './routes/analytics.js';
 import { trafficMonitor } from './routes/analytics.js';
+import publicAccessRoutes from './routes/public-access.js';
+import { rateLimiter } from './middleware/rateLimiter.js';
+import { domainProtection, addCustomDomain, getAllowedDomains } from './middleware/domainProtection.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// Middleware - Secure CORS configuration
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
+  'https://*.replit.dev',
+  'https://*.replit.app'
+];
+
 app.use(cors({
-  origin: true,
-  credentials: true
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+
+    const isAllowed = allowedOrigins.some(pattern => {
+      const regex = new RegExp(pattern.replace('*', '.*'));
+      return regex.test(origin);
+    });
+
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  maxAge: 86400
 }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
@@ -49,14 +73,20 @@ app.use((req, res, next) => {
   next();
 });
 
+// Apply domain protection middleware
+app.use(domainProtection);
+
+// Apply rate limiting middleware
+app.use(rateLimiter());
+
 // Initialize App Core
 appCore.initialize();
 
 // Health check endpoint for deployment monitoring
-app.get('/health', (req, res) => {
+app.get('/health', (req: Request, res: Response) => {
   const coreStatus = appCore.getConnectionStatus();
   const isHealthy = coreStatus.active >= coreStatus.total * 0.8; // 80% threshold
-  
+
   res.status(isHealthy ? 200 : 503).json({
     status: isHealthy ? 'healthy' : 'degraded',
     timestamp: new Date().toISOString(),
@@ -81,6 +111,35 @@ app.get('/ready', (req, res) => {
   }
 });
 
+// Domain management endpoint
+app.get('/domain/status', (req: Request, res: Response) => {
+  res.json({
+    allowedDomains: getAllowedDomains(),
+    currentDomain: req.headers.host,
+    fccEntity: '20130314143016',
+    protection: 'active',
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.post('/domain/add', (req: Request, res: Response) => {
+  const { domain, email } = req.body;
+
+  // Verify authorized email
+  const authorizedEmails = ['gbemeeat@gmail.com', 'meeatupt215@gmail.com'];
+  if (!authorizedEmails.includes(email)) {
+    return res.status(403).json({ error: 'Unauthorized email' });
+  }
+
+  addCustomDomain(domain);
+  res.json({
+    success: true,
+    domain,
+    allowedDomains: getAllowedDomains(),
+    message: 'Domain added successfully'
+  });
+});
+
 // API Routes - All properly integrated
 app.use('/sportsbook', sportsbookRouter);
 app.use('/streaming', streamingRoutes);
@@ -101,12 +160,25 @@ app.use('/ps5', ps5Routes);
 app.use('/phone-control', phoneControlRouter);
 app.use('/winner-payout', winnerPayoutRouter);
 app.use('/ssh', sshRoutes);
-app.use('/espn-tracker', espnTracker);
+app.use('/espn-tracker', espnTrackerRouter);
+app.use('/espn-betting', espnBettingRouter);
+app.use('/sports-radio', sportsRadioRouter);
 app.use('/web3', web3Routes);
 app.use('/analytics', analyticsRouter);
+app.use('/public-access', publicAccessRoutes);
 
-// Static files
-app.use(express.static(path.join(__dirname, '../public')));
+// Static files - serve with proper MIME types
+app.use(express.static(path.join(__dirname, '../public'), {
+  setHeaders: (res, filepath) => {
+    if (filepath.endsWith('.html')) {
+      res.setHeader('Content-Type', 'text/html');
+    } else if (filepath.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (filepath.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    }
+  }
+}));
 
 // Core status endpoint
 app.get('/api/core/status', (req, res) => {
@@ -118,8 +190,13 @@ app.get('/api/core/status', (req, res) => {
   });
 });
 
-// Fallback route for SPA
-app.get('*', (req, res) => {
+// Fallback route for SPA - only for non-file requests
+app.get('*', (req, res, next) => {
+  // If the request has a file extension, let static middleware handle it
+  if (req.path.includes('.')) {
+    return next();
+  }
+  // Otherwise, serve the SPA
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
@@ -169,7 +246,7 @@ process.on('unhandledRejection', (reason, promise) => {
 // Graceful shutdown for zero-downtime deployments
 const gracefulShutdown = (signal: string) => {
   console.log(`${signal} received, shutting down gracefully...`);
-  
+
   server.close(() => {
     console.log('HTTP server closed');
     appCore.shutdown();
