@@ -330,14 +330,13 @@
     </div>
 
     <script>
-        const API_BASE_RADIO = window.location.origin;
         let allStreams = [];
         let currentLeague = 'ALL';
         let eventSource = null;
 
         async function loadRadioStreams() {
             try {
-                const response = await fetch(`${API_BASE_RADIO}/sports-radio/live`);
+                const response = await fetch(`${window.location.origin}/sports-radio/live`);
                 const data = await response.json();
                 allStreams = data.streams;
                 displayStreams();
@@ -416,7 +415,7 @@
                 eventSource.close();
             }
 
-            eventSource = new EventSource(`${API_BASE_RADIO}/sports-radio/stream-updates`);
+            eventSource = new EventSource(`${window.location.origin}/sports-radio/stream-updates`);
 
             eventSource.onmessage = (event) => {
                 const data = JSON.parse(event.data);

@@ -99,80 +99,120 @@ class SportsRadioService extends EventEmitter {
   }
 
   private initializeRadioStreams() {
-    // NFL Live Radio Streams
-    this.addRadioStream({
-      id: 'nfl-radio-1',
-      league: 'NFL',
-      gameId: 'nfl-live-1',
-      homeTeam: 'Kansas City Chiefs',
-      awayTeam: 'Buffalo Bills',
-      homeTeamLogo: this.getTeamLogo('NFL', 'Kansas City Chiefs'),
-      awayTeamLogo: this.getTeamLogo('NFL', 'Buffalo Bills'),
-      streamUrl: 'https://www.iheart.com/live/espn-radio-3959/',
-      fallbackUrls: [
-        'https://tunein.com/radio/ESPN-Radio-s20368/',
-        'https://www.audacy.com/stations/sports'
-      ],
-      status: 'live',
-      listeners: Math.floor(Math.random() * 50000) + 10000,
-      quality: 'high'
+    const nflGames = [
+      { home: 'Kansas City Chiefs', away: 'Buffalo Bills' },
+      { home: 'San Francisco 49ers', away: 'Dallas Cowboys' },
+      { home: 'Philadelphia Eagles', away: 'Miami Dolphins' },
+      { home: 'Baltimore Ravens', away: 'Cincinnati Bengals' }
+    ];
+
+    const nbaGames = [
+      { home: 'Los Angeles Lakers', away: 'Boston Celtics' },
+      { home: 'Golden State Warriors', away: 'Milwaukee Bucks' },
+      { home: 'Phoenix Suns', away: 'Brooklyn Nets' },
+      { home: 'Denver Nuggets', away: 'Miami Heat' }
+    ];
+
+    const mlbGames = [
+      { home: 'New York Yankees', away: 'Boston Red Sox' },
+      { home: 'Los Angeles Dodgers', away: 'San Francisco Giants' },
+      { home: 'Houston Astros', away: 'Atlanta Braves' },
+      { home: 'Chicago Cubs', away: 'St. Louis Cardinals' }
+    ];
+
+    const nhlGames = [
+      { home: 'Toronto Maple Leafs', away: 'Montreal Canadiens' },
+      { home: 'Edmonton Oilers', away: 'Colorado Avalanche' },
+      { home: 'Tampa Bay Lightning', away: 'Boston Bruins' },
+      { home: 'New York Rangers', away: 'Vegas Golden Knights' }
+    ];
+
+    // NFL Live Streams
+    nflGames.forEach((game, index) => {
+      this.addRadioStream({
+        id: `nfl-radio-${index + 1}`,
+        league: 'NFL',
+        gameId: `nfl-live-${index + 1}`,
+        homeTeam: game.home,
+        awayTeam: game.away,
+        homeTeamLogo: this.getTeamLogo('NFL', game.home),
+        awayTeamLogo: this.getTeamLogo('NFL', game.away),
+        streamUrl: 'https://www.iheart.com/live/espn-radio-3959/',
+        fallbackUrls: [
+          'https://tunein.com/radio/ESPN-Radio-s20368/',
+          'https://www.audacy.com/stations/sports',
+          'https://player.radio.com/listen/station/nfl-live'
+        ],
+        status: 'live',
+        listeners: Math.floor(Math.random() * 50000) + 10000,
+        quality: 'high'
+      });
     });
 
-    // NBA Live Radio Streams
-    this.addRadioStream({
-      id: 'nba-radio-1',
-      league: 'NBA',
-      gameId: 'nba-live-1',
-      homeTeam: 'Los Angeles Lakers',
-      awayTeam: 'Boston Celtics',
-      homeTeamLogo: this.getTeamLogo('NBA', 'Los Angeles Lakers'),
-      awayTeamLogo: this.getTeamLogo('NBA', 'Boston Celtics'),
-      streamUrl: 'https://www.nba.com/watch',
-      fallbackUrls: [
-        'https://tunein.com/radio/NBA-Radio-s231160/',
-        'https://www.iheart.com/live/nba-radio/'
-      ],
-      status: 'live',
-      listeners: Math.floor(Math.random() * 40000) + 8000,
-      quality: 'high'
+    // NBA Live Streams
+    nbaGames.forEach((game, index) => {
+      this.addRadioStream({
+        id: `nba-radio-${index + 1}`,
+        league: 'NBA',
+        gameId: `nba-live-${index + 1}`,
+        homeTeam: game.home,
+        awayTeam: game.away,
+        homeTeamLogo: this.getTeamLogo('NBA', game.home),
+        awayTeamLogo: this.getTeamLogo('NBA', game.away),
+        streamUrl: 'https://www.nba.com/watch',
+        fallbackUrls: [
+          'https://tunein.com/radio/NBA-Radio-s231160/',
+          'https://www.iheart.com/live/nba-radio/',
+          'https://www.siriusxm.com/channels/nba-radio'
+        ],
+        status: 'live',
+        listeners: Math.floor(Math.random() * 40000) + 8000,
+        quality: 'high'
+      });
     });
 
-    // MLB Live Radio Streams
-    this.addRadioStream({
-      id: 'mlb-radio-1',
-      league: 'MLB',
-      gameId: 'mlb-live-1',
-      homeTeam: 'New York Yankees',
-      awayTeam: 'Boston Red Sox',
-      homeTeamLogo: this.getTeamLogo('MLB', 'New York Yankees'),
-      awayTeamLogo: this.getTeamLogo('MLB', 'Boston Red Sox'),
-      streamUrl: 'https://www.mlb.com/live-stream-games/subscribe',
-      fallbackUrls: [
-        'https://tunein.com/radio/MLB-Network-Radio-s230237/',
-        'https://www.iheart.com/live/mlb-network-radio/'
-      ],
-      status: 'live',
-      listeners: Math.floor(Math.random() * 30000) + 5000,
-      quality: 'high'
+    // MLB Live Streams
+    mlbGames.forEach((game, index) => {
+      this.addRadioStream({
+        id: `mlb-radio-${index + 1}`,
+        league: 'MLB',
+        gameId: `mlb-live-${index + 1}`,
+        homeTeam: game.home,
+        awayTeam: game.away,
+        homeTeamLogo: this.getTeamLogo('MLB', game.home),
+        awayTeamLogo: this.getTeamLogo('MLB', game.away),
+        streamUrl: 'https://www.mlb.com/live-stream-games/subscribe',
+        fallbackUrls: [
+          'https://tunein.com/radio/MLB-Network-Radio-s230237/',
+          'https://www.iheart.com/live/mlb-network-radio/',
+          'https://www.siriusxm.com/channels/mlb-network-radio'
+        ],
+        status: 'live',
+        listeners: Math.floor(Math.random() * 30000) + 5000,
+        quality: 'high'
+      });
     });
 
-    // NHL Live Radio Streams
-    this.addRadioStream({
-      id: 'nhl-radio-1',
-      league: 'NHL',
-      gameId: 'nhl-live-1',
-      homeTeam: 'Toronto Maple Leafs',
-      awayTeam: 'Montreal Canadiens',
-      homeTeamLogo: this.getTeamLogo('NHL', 'Toronto Maple Leafs'),
-      awayTeamLogo: this.getTeamLogo('NHL', 'Montreal Canadiens'),
-      streamUrl: 'https://www.nhl.com/tv',
-      fallbackUrls: [
-        'https://tunein.com/radio/NHL-Radio-s231161/',
-        'https://www.siriusxm.com/channels/nhl-network-radio'
-      ],
-      status: 'live',
-      listeners: Math.floor(Math.random() * 25000) + 4000,
-      quality: 'high'
+    // NHL Live Streams
+    nhlGames.forEach((game, index) => {
+      this.addRadioStream({
+        id: `nhl-radio-${index + 1}`,
+        league: 'NHL',
+        gameId: `nhl-live-${index + 1}`,
+        homeTeam: game.home,
+        awayTeam: game.away,
+        homeTeamLogo: this.getTeamLogo('NHL', game.home),
+        awayTeamLogo: this.getTeamLogo('NHL', game.away),
+        streamUrl: 'https://www.nhl.com/tv',
+        fallbackUrls: [
+          'https://tunein.com/radio/NHL-Radio-s231161/',
+          'https://www.siriusxm.com/channels/nhl-network-radio',
+          'https://www.iheart.com/live/nhl-network-radio/'
+        ],
+        status: 'live',
+        listeners: Math.floor(Math.random() * 25000) + 4000,
+        quality: 'high'
+      });
     });
   }
 
