@@ -5,7 +5,7 @@ expertMode = true
 channel = "stable-25_05"
 
 [workflows]
-runButton = "Diagnostics & Run"
+runButton = "Run"
 
 [[workflows.workflow]]
 name = "Run6"
@@ -27,6 +27,10 @@ mode = "parallel"
 
 [[workflows.workflow.tasks]]
 task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
