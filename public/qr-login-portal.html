@@ -149,7 +149,7 @@
         <div class="portal-body">
             <div class="qr-section">
                 <h2>Scan QR Code</h2>
-                <div class="qr-code-container">
+                <div class="qr-code-container" id="qrContainer">
                     <canvas id="qrCode"></canvas>
                 </div>
 
@@ -186,6 +186,10 @@
                 const qrCanvas = document.getElementById('qrCode');
                 if (!qrCanvas) {
                     console.error('QR canvas element not found');
+                    const qrContainer = document.getElementById('qrContainer');
+                    if (qrContainer) {
+                        qrContainer.innerHTML = '<p style="color: #ff6b6b;">QR Code generation failed. Please use manual login.</p>';
+                    }
                     return;
                 }
 
@@ -210,6 +214,10 @@
         // Download QR Code
         function downloadQR() {
             const canvas = document.getElementById('qrCode');
+            if (!canvas) {
+                console.error('QR Code canvas element not found for download.');
+                return;
+            }
             const link = document.createElement('a');
             link.download = 'young-meeat-llc-sso-qr.png';
             link.href = canvas.toDataURL();

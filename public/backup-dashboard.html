@@ -202,9 +202,15 @@
         let sessionId = 'demo-session-' + Date.now(); // Replace with actual SSO session
 
         async function loadSSOOptions() {
+            const ssoElement = document.getElementById('ssoOptions');
+            if (!ssoElement) {
+                console.error('SSO options element not found');
+                return;
+            }
+            
             // WiFi Core Network Connection Check
             if (!navigator.onLine) {
-                document.getElementById('ssoOptions').innerHTML = '<p style="color: orange;">📶 WiFi network connection required</p>';
+                ssoElement.innerHTML = '<p style="color: orange;">📶 WiFi network connection required</p>';
                 return;
             }
             
@@ -225,9 +231,10 @@
                     </div>
                 `).join('');
                 
-                document.getElementById('ssoOptions').innerHTML = optionsHtml || '<p>WiFi network connected - No options available</p>';
+                ssoElement.innerHTML = optionsHtml || '<p>WiFi network connected - No options available</p>';
             } catch (error) {
-                document.getElementById('ssoOptions').innerHTML = '<p>📶 WiFi network error - Check connection</p>';
+                console.error('Error loading SSO options:', error);
+                ssoElement.innerHTML = '<p>📶 WiFi network error - Check connection</p>';
             }
         }
 

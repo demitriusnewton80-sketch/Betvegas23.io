@@ -327,10 +327,14 @@ router.get('/radio/ip-lookup', async (req: Request, res: Response) => {
       note: 'IP addresses for streaming services may change. Consider using the hostname instead.'
     });
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('DNS lookup error:', errorMessage);
     res.status(500).json({
       error: 'Failed to lookup IP address',
-      message: error instanceof Error ? error.message : 'WiFi network connection error',
-      wifiCoreNetwork: 'connection_failed'
+      message: errorMessage,
+      wifiCoreNetwork: 'connection_failed',
+      hostname: url ? new URL(url).hostname : 'invalid',
+      fallback: 'Use hostname directly for streaming'
     });
   }
 });

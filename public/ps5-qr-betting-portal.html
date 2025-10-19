@@ -454,7 +454,7 @@
         async function generateQRCode() {
             const canvas = document.getElementById('qrCodeCanvas');
             if (!canvas) {
-                console.error('QR canvas element not found');
+                console.error('QR Code canvas element not found');
                 setTimeout(generateQRCode, 100); // Retry after a short delay
                 return;
             }
