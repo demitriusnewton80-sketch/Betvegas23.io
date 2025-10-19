@@ -88,3 +88,44 @@ export const removeCustomDomain = (domain: string) => {
 };
 
 export const getAllowedDomains = () => config.allowedDomains;
+import { Request, Response, NextFunction } from 'express';
+
+const allowedDomains = new Set([
+  'replit.dev',
+  'replit.app',
+  'replit.co',
+  '0.0.0.0',
+  'localhost'
+]);
+
+export const domainProtection = (req: Request, res: Response, next: NextFunction) => {
+  const host = req.headers.host;
+  
+  if (!host) {
+    return res.status(400).json({ error: 'Invalid request' });
+  }
+
+  const domain = host.split(':')[0];
+  const isAllowed = Array.from(allowedDomains).some(allowed => 
+    domain.endsWith(allowed) || domain === allowed
+  );
+
+  if (!isAllowed) {
+    console.warn(`🚨 Blocked request from unauthorized domain: ${domain}`);
+    return res.status(403).json({
+      error: 'Unauthorized domain',
+      fccEntity: '20130314143016'
+    });
+  }
+
+  next();
+};
+
+export const getAllowedDomains = (): string[] => {
+  return Array.from(allowedDomains);
+};
+
+export const addCustomDomain = (domain: string): void => {
+  allowedDomains.add(domain);
+  console.log(`✅ Custom domain added: ${domain}`);
+};

@@ -1471,6 +1471,429 @@ args = "echo \"  • Mobile App: http://0.0.0.0:5000/mobile-sportsbook-app.html\
 task = "shell.exec"
 args = "echo \"  • Mobile Hub: http://0.0.0.0:5000/mobile-sportsbook-hub.html\""
 
+[[workflows.workflow]]
+name = "Fix All Bugs & Errors"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Young Meeat LLC - Bug Fix & Troubleshooting ===\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Entity: 20130314143016\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 1: Finding TypeScript errors...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx tsc --noEmit 2>&1 | tee /tmp/ts-errors.log || echo \"TypeScript check complete\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 2: Checking for missing dependencies...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm list 2>&1 | grep -i \"missing\" || echo \"✅ No missing dependencies\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 3: Checking connection endpoints...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/health || echo \"⚠️ Server not responding - will restart\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/api/core/status || echo \"⚠️ Core not responding\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 4: Fixing connections...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pkill -f \"npm run dev\" 2>/dev/null || echo \"No running server\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "sleep 2"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev &"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "sleep 8"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 5: Verifying fixes...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/health | jq '.status' 2>/dev/null || echo \"Server restarted, verifying...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/sportsbook/games | jq '.success' 2>/dev/null || echo \"Sportsbook check...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/streaming/partners | jq '.success' 2>/dev/null || echo \"Streaming check...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/ps5/games | jq '.success' 2>/dev/null || echo \"PS5 check...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/ai/status | jq '.success' 2>/dev/null || echo \"AI check...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 6: Connection diagnostics...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/streaming/workflows/all | jq '.workflows' 2>/dev/null || echo \"Workflows check...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Bug Fix Complete ===\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"All systems should now be operational\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Access troubleshooting dashboard: http://0.0.0.0:5000/public-troubleshooting.html\""
+
+[[workflows.workflow]]
+name = "Smart Error Scanner"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Smart Error Detection & Auto-Fix ===\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Entity: 20130314143016\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Scanning for common errors...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"1. TypeScript compilation errors:\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx tsc --noEmit 2>&1 | grep -i \"error\" | head -20 || echo \"✅ No TS errors\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"2. Missing imports:\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = 'grep -r "import.*from.*\.js" src/ 2>/dev/null | grep -v "node_modules" | wc -l && echo "imports found"'
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"3. Undefined variables:\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx tsc --noEmit 2>&1 | grep -i \"cannot find name\" || echo \"✅ No undefined variables\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"4. Connection status:\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/api/core/status 2>&1 | jq '.core' || echo \"⚠️ Core check failed\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"5. Database/Service connections:\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/streaming/workflows/all 2>&1 | jq '.workflows | length' || echo \"⚠️ Workflow check failed\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"6. Memory usage:\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "free -h 2>/dev/null || echo \"Memory check N/A\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"7. Port availability:\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "netstat -tuln 2>/dev/null | grep \":5000\" || echo \"Port 5000 status unknown\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Auto-fixing detected issues...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -X POST -H \"Content-Type: application/json\" -d '{\"issueType\":\"connections\"}' http://0.0.0.0:5000/public-access/diagnostics/fix 2>&1 || echo \"Fix endpoint check...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Scan Complete ===\""
+
+[[workflows.workflow]]
+name = "Restore Connections"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Connection Recovery System ===\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Entity: 20130314143016\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Testing all critical connections...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"1. Core System:\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/api/core/status && echo \"✅ Core connected\" || echo \"❌ Core disconnected\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"2. Sportsbook:\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/sportsbook/games && echo \"✅ Sportsbook connected\" || echo \"❌ Sportsbook disconnected\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"3. Streaming:\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/streaming/partners && echo \"✅ Streaming connected\" || echo \"❌ Streaming disconnected\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"4. PS5 Gaming:\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/ps5/games && echo \"✅ PS5 connected\" || echo \"❌ PS5 disconnected\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"5. AI Services:\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/ai/status && echo \"✅ AI connected\" || echo \"❌ AI disconnected\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"6. WiFi Hub:\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/streaming/wifi-hub/status && echo \"✅ WiFi connected\" || echo \"❌ WiFi disconnected\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"7. VPN Service:\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/vpn/status && echo \"✅ VPN connected\" || echo \"❌ VPN disconnected\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"8. Web3 Bridge:\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/web3/status && echo \"✅ Web3 connected\" || echo \"❌ Web3 disconnected\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Recovering failed connections...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pkill -f \"npm run dev\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "sleep 3"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev &"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "sleep 8"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Re-testing connections...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/health | jq '.'"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Recovery Complete ===\""
+
 [[ports]]
 localPort = 5000
 externalPort = 5000

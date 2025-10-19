@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { appCore } from './core/AppCore.js';
-import { domainProtection } from './middleware/domainProtection.js';
+import { domainProtection, getAllowedDomains, addCustomDomain } from './middleware/domainProtection.js';
 import { rateLimiter } from './middleware/rateLimiter.js';
 import { sanitizeInput, validateRequest, auditLog } from './middleware/security.js';
 import { createApplicationBuilder } from './core/ApplicationBuilder.js';
