@@ -284,6 +284,28 @@
         </div>
 
         <div class="section">
+            <h2>💰 Winner Cash Payout System</h2>
+            <p style="color: #6b7280; margin-bottom: 20px;">
+                Cash out your winnings with revival bonuses
+            </p>
+            <div class="email-select">
+                <label>Device Connection:</label>
+                <input type="text" id="deviceIdInput" placeholder="Device ID (auto-generated)">
+                <button class="btn" onclick="connectDeviceToNetwork()">📡 Connect Device to Network</button>
+            </div>
+            <div id="winnerSection" style="display: none; margin-top: 20px;">
+                <div class="session-info" style="background: #fef3c7; border-left-color: #f59e0b;">
+                    <strong style="color: #92400e; font-size: 18px;">🏆 Winner Dashboard</strong>
+                    <div id="winnerInfo" style="margin-top: 15px; color: #1f2937;"></div>
+                    <div style="margin-top: 15px;">
+                        <button class="btn" onclick="processWinnerCashout()">💵 Cash Out Winnings</button>
+                        <button class="btn" onclick="getRevivalCash()">⚡ Get Revival Cash Bonus</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
             <h2>🔗 Quick Access Links</h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
                 <a href="/index.html" class="btn" style="text-decoration: none; text-align: center;">
@@ -434,6 +456,139 @@
                 'content': '📦'
             };
             return icons[type] || '🔌';
+        }
+
+        let currentDeviceId = null;
+
+        async function connectDeviceToNetwork() {
+            const deviceIdInput = document.getElementById('deviceIdInput').value;
+            const deviceId = deviceIdInput || `device-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            const email = document.getElementById('emailSelect').value;
+
+            if (!email) {
+                alert('Please select an email first');
+                return;
+            }
+
+            const userId = `user-${email.split('@')[0]}`;
+
+            try {
+                const response = await fetch(`${API_BASE}/winner-payout/device/connect`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        deviceId,
+                        userId,
+                        wifiStrength: 100,
+                        connectionType: 'wifi'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentDeviceId = deviceId;
+                    document.getElementById('deviceIdInput').value = deviceId;
+                    alert('✅ Device connected to WiFi plugin network!');
+                    loadWinnerInfo(userId);
+                }
+            } catch (error) {
+                console.error('Error connecting device:', error);
+                alert('Failed to connect device');
+            }
+        }
+
+        async function loadWinnerInfo(userId) {
+            try {
+                const response = await fetch(`${API_BASE}/winner-payout/user/${userId}/winnings`);
+                const data = await response.json();
+
+                if (data.totalGamesWon > 0) {
+                    document.getElementById('winnerSection').style.display = 'block';
+                    document.getElementById('winnerInfo').innerHTML = `
+                        <div style="margin-bottom: 8px;"><strong>Total Games Won:</strong> ${data.totalGamesWon}</div>
+                        <div style="margin-bottom: 8px;"><strong>Total Winnings:</strong> $${data.totalWinnings.toFixed(2)}</div>
+                        <div style="margin-bottom: 8px;"><strong>Revival Cash Eligible:</strong> ${data.revivalCashEligible ? 'Yes ✓' : 'No'}</div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading winner info:', error);
+            }
+        }
+
+        async function processWinnerCashout() {
+            const email = document.getElementById('emailSelect').value;
+            if (!email || !currentDeviceId) {
+                alert('Please connect device first');
+                return;
+            }
+
+            const userId = `user-${email.split('@')[0]}`;
+
+            try {
+                const winningsResponse = await fetch(`${API_BASE}/winner-payout/user/${userId}/winnings`);
+                const winningsData = await winningsResponse.json();
+
+                if (winningsData.winnings.length === 0) {
+                    alert('No winnings to cash out');
+                    return;
+                }
+
+                const latestWin = winningsData.winnings[winningsData.winnings.length - 1];
+                const winnerId = `${latestWin.gameId}-${latestWin.betId}`;
+
+                const response = await fetch(`${API_BASE}/winner-payout/cashout`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId,
+                        winnerId,
+                        paymentMethod: 'direct_deposit',
+                        deviceId: currentDeviceId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Cash payout processing!\nAmount: $${data.payment.amount.toFixed(2)}\nEstimated completion: ${data.estimatedCompletion}`);
+                }
+            } catch (error) {
+                console.error('Error processing cashout:', error);
+                alert('Failed to process cashout');
+            }
+        }
+
+        async function getRevivalCash() {
+            const email = document.getElementById('emailSelect').value;
+            if (!email || !currentDeviceId) {
+                alert('Please connect device first');
+                return;
+            }
+
+            const userId = `user-${email.split('@')[0]}`;
+
+            try {
+                const response = await fetch(`${API_BASE}/winner-payout/revival-cash`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId,
+                        deviceId: currentDeviceId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`⚡ Revival Cash Bonus Processing!\nBonus Amount: $${data.payment.amount.toFixed(2)}\n${data.message}`);
+                } else {
+                    alert(data.error || 'Not eligible for revival cash');
+                }
+            } catch (error) {
+                console.error('Error getting revival cash:', error);
+                alert('Failed to process revival cash');
+            }
         }
 
         // Auto-load on page load
