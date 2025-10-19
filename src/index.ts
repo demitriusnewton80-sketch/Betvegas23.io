@@ -51,6 +51,7 @@ import draftKingsRoutes from './routes/draftkings.js';
 import mobileRoutes from './routes/mobile.js';
 import microsoftDiagnostics from './routes/microsoft-diagnostics.js';
 import aiRoutes from './routes/ai.js';
+import feedBuilderRoutes from './routes/feed-builder.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -222,6 +223,7 @@ app.use('/draftkings', draftKingsRoutes);
 app.use('/mobile', mobileRoutes);
 app.use('/microsoft', microsoftDiagnostics);
 app.use('/ai', aiRoutes);
+app.use('/feed-builder', feedBuilderRoutes);
 
 // Static files - serve with proper MIME types
 app.use(express.static(path.join(__dirname, '../public'), {
@@ -287,6 +289,15 @@ app.get('/troubleshooting', (req: Request, res: Response) => {
 
 app.get('/public-troubleshooting.html', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../public/public-troubleshooting.html'));
+});
+
+// Feed Builder Dashboard
+app.get('/feed-builder', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/feed-builder.html'));
+});
+
+app.get('/feed-builder.html', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/feed-builder.html'));
 });
 
 // Fallback route for SPA - only for non-file requests
