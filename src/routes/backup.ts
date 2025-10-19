@@ -76,7 +76,10 @@ router.get('/sso-options', requireAuth, (req: Request, res: Response) => {
         id: 'github-streaming',
         label: 'GitHub Streaming Foundation',
         enabled: true,
-        link: 'https://github.com/betvages23/betvages23.in'
+        link: 'https://github.com/betvages23/betvages23.in',
+        streamingFoundation: 'active',
+        pullEnabled: true,
+        autoSync: true
       },
       {
         id: 'intel-core',

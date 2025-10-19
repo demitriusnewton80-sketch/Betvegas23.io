@@ -9,7 +9,9 @@
     "phone-control": "tsx src/index.ts"
   },
   "dependencies": {
+    "@types/cors": "^2.8.19",
     "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "express": "^4.18.2",
     "node-fetch": "^3.3.2",
     "tsx": "^4.20.6"
