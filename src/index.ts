@@ -29,6 +29,8 @@ import winnerPayoutRouter from './routes/winner-payout.js';
 import sshRoutes from './routes/ssh.js';
 import espnTracker from './routes/espn-tracker.js';
 import web3Routes from './routes/web3.js';
+import analyticsRouter from './routes/analytics.js';
+import { trafficMonitor } from './routes/analytics.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -40,6 +42,12 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Traffic monitoring middleware
+app.use((req, res, next) => {
+  trafficMonitor.trackRequest(req);
+  next();
+});
 
 // Initialize App Core
 appCore.initialize();
@@ -95,6 +103,7 @@ app.use('/winner-payout', winnerPayoutRouter);
 app.use('/ssh', sshRoutes);
 app.use('/espn-tracker', espnTracker);
 app.use('/web3', web3Routes);
+app.use('/analytics', analyticsRouter);
 
 // Static files
 app.use(express.static(path.join(__dirname, '../public')));
