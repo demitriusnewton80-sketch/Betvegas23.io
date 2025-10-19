@@ -106,6 +106,26 @@ router.get('/contracts/mobile/status', (req: Request, res: Response) => {
       registeredAt: sb.registeredAt
     })),
     mobileOptimized: true,
+    fccEntity: '20130314143016',
+    httpsEnabled: true,
+    secureConnection: true
+  });
+});
+
+// Mobile sportsbook hub status
+router.get('/mobile/hub/status', (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    workflows: [
+      { name: 'Live Streaming', endpoint: '/streaming/partners', status: 'active' },
+      { name: 'PS5 Gaming', endpoint: '/ps5/games', status: 'connected' },
+      { name: 'WiFi Hub', endpoint: '/streaming/wifi-hub/status', status: 'online' },
+      { name: 'Phone Control', endpoint: '/phone-control/stats', status: 'ready' },
+      { name: 'AWS Backup', endpoint: '/backup/status', status: 'synced' },
+      { name: 'SSO System', endpoint: '/sso-plugin/plugins', status: 'enabled' }
+    ],
+    mobileOptimized: true,
+    httpsEnabled: true,
     fccEntity: '20130314143016'
   });
 });

@@ -1,0 +1,635 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Mobile Sportsbook Hub | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .mobile-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .mobile-header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .fcc-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            display: inline-block;
+            margin: 4px;
+            font-weight: 600;
+        }
+        
+        .container {
+            padding: 16px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .status-bar {
+            background: rgba(34, 197, 94, 0.1);
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .workflow-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        @media (min-width: 640px) {
+            .workflow-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .workflow-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .workflow-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .workflow-card:active {
+            transform: scale(0.98);
+        }
+        
+        .workflow-card:hover {
+            border-color: rgba(59, 130, 246, 0.6);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
+        }
+        
+        .workflow-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+        
+        .workflow-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .workflow-desc {
+            font-size: 13px;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+        
+        .workflow-status {
+            margin-top: 12px;
+            padding: 8px 12px;
+            background: rgba(34, 197, 94, 0.2);
+            border-radius: 8px;
+            font-size: 12px;
+            color: #22c55e;
+            text-align: center;
+        }
+        
+        .games-section {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .section-header {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #60a5fa;
+        }
+        
+        .game-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .game-sport {
+            background: #3b82f6;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .game-time {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .matchup {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .team {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        
+        .vs {
+            opacity: 0.6;
+            font-size: 14px;
+        }
+        
+        .odds-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        
+        .odds-btn {
+            background: rgba(59, 130, 246, 0.1);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .odds-btn:active {
+            transform: scale(0.96);
+        }
+        
+        .odds-btn.selected {
+            background: #3b82f6;
+            border-color: #3b82f6;
+        }
+        
+        .odds-label {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+        
+        .odds-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .bet-controls {
+            margin-top: 12px;
+            display: none;
+        }
+        
+        .bet-controls.active {
+            display: block;
+        }
+        
+        .bet-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        @media (min-width: 640px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        .stat-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #22c55e;
+            margin-bottom: 6px;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            opacity: 0.7;
+            text-transform: uppercase;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .quick-actions {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 50;
+        }
+        
+        .fab {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .fab:active {
+            transform: scale(0.92);
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-header">
+        <h1>🎯 Mobile Sportsbook Hub</h1>
+        <p style="font-size: 14px; margin: 8px 0;">All Workflows • Live Betting • HTTPS Secure</p>
+        <div>
+            <span class="fcc-badge">FCC: 20130314143016</span>
+            <span class="fcc-badge">HTTPS Enabled</span>
+            <span class="fcc-badge">Mobile Optimized</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="status-bar">
+            <div class="status-indicator">
+                <span class="status-dot"></span>
+                <span>System Online</span>
+            </div>
+            <div class="status-indicator">
+                <span id="connectionStatus">Connected</span>
+            </div>
+        </div>
+
+        <div class="section-header">🔌 Integrated Workflows</div>
+        <div class="workflow-grid">
+            <div class="workflow-card" onclick="openWorkflow('/streaming/partners')">
+                <div class="workflow-icon">📺</div>
+                <div class="workflow-title">Live Streaming</div>
+                <div class="workflow-desc">Amazon Prime, NBA Direct, Radio Networks</div>
+                <div class="workflow-status">✓ Active</div>
+            </div>
+
+            <div class="workflow-card" onclick="openWorkflow('/ps5/games')">
+                <div class="workflow-icon">🎮</div>
+                <div class="workflow-title">PS5 Gaming</div>
+                <div class="workflow-desc">Madden, NBA 2K, UFC, Boxing</div>
+                <div class="workflow-status">✓ Connected</div>
+            </div>
+
+            <div class="workflow-card" onclick="openWorkflow('/streaming/wifi-hub/status')">
+                <div class="workflow-icon">📡</div>
+                <div class="workflow-title">WiFi Hub</div>
+                <div class="workflow-desc">Network Control & Distribution</div>
+                <div class="workflow-status">✓ Online</div>
+            </div>
+
+            <div class="workflow-card" onclick="openWorkflow('/phone-control/stats')">
+                <div class="workflow-icon">📱</div>
+                <div class="workflow-title">Phone Control</div>
+                <div class="workflow-desc">Mobile Network Management</div>
+                <div class="workflow-status">✓ Ready</div>
+            </div>
+
+            <div class="workflow-card" onclick="openWorkflow('/backup/status')">
+                <div class="workflow-icon">☁️</div>
+                <div class="workflow-title">AWS Backup</div>
+                <div class="workflow-desc">Cloud Storage & Recovery</div>
+                <div class="workflow-status">✓ Synced</div>
+            </div>
+
+            <div class="workflow-card" onclick="openWorkflow('/sso-plugin/plugins')">
+                <div class="workflow-icon">🔐</div>
+                <div class="workflow-title">SSO System</div>
+                <div class="workflow-desc">Authentication & Security</div>
+                <div class="workflow-status">✓ Enabled</div>
+            </div>
+        </div>
+
+        <div class="games-section">
+            <div class="section-header">🏆 Live & Upcoming Games</div>
+            <div id="gamesContainer">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 16px; opacity: 0.7;">Loading games...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="games-section">
+            <div class="section-header">📊 Platform Statistics</div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="liveGames">0</div>
+                    <div class="stat-label">Live Games</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalWorkflows">6</div>
+                    <div class="stat-label">Workflows</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="activeUsers">0</div>
+                    <div class="stat-label">Active Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <div class="fab" onclick="window.location.href='/betting-zone.html'" title="Betting Zone">
+            🎯
+        </div>
+        <div class="fab" onclick="refreshData()" title="Refresh">
+            🔄
+        </div>
+    </div>
+
+    <script>
+        const API_URL = window.location.origin;
+        let selectedBets = new Map();
+
+        async function loadGames() {
+            try {
+                const response = await fetch(`${API_URL}/sportsbook/mobile/games`);
+                const data = await response.json();
+
+                if (data.success && data.games) {
+                    displayGames(data.games);
+                    updateStats(data.games);
+                } else {
+                    throw new Error('No games data');
+                }
+            } catch (error) {
+                console.error('Error loading games:', error);
+                document.getElementById('gamesContainer').innerHTML = `
+                    <div style="text-align: center; padding: 20px; opacity: 0.7;">
+                        <p>Unable to load games. Please try again.</p>
+                        <button class="btn btn-secondary" onclick="loadGames()" style="margin-top: 12px; max-width: 200px;">
+                            Retry
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function displayGames(games) {
+            const container = document.getElementById('gamesContainer');
+            
+            if (!games || games.length === 0) {
+                container.innerHTML = '<p style="text-align: center; opacity: 0.7;">No games available</p>';
+                return;
+            }
+
+            container.innerHTML = games.slice(0, 10).map((game, index) => `
+                <div class="game-card" id="game-${index}">
+                    <div class="game-header">
+                        <span class="game-sport">${game.sport || 'Sports'}</span>
+                        <span class="game-time">${new Date(game.startTime).toLocaleTimeString()}</span>
+                    </div>
+                    <div class="matchup">
+                        <span class="team">${game.homeTeam}</span>
+                        <span class="vs">VS</span>
+                        <span class="team">${game.awayTeam}</span>
+                    </div>
+                    <div class="odds-container">
+                        <div class="odds-btn" onclick="selectOdds('${index}', 'home', ${game.odds.home})">
+                            <div class="odds-label">Home</div>
+                            <div class="odds-value">${game.odds.home > 0 ? '+' : ''}${game.odds.home}</div>
+                        </div>
+                        <div class="odds-btn" onclick="selectOdds('${index}', 'away', ${game.odds.away})">
+                            <div class="odds-label">Away</div>
+                            <div class="odds-value">${game.odds.away > 0 ? '+' : ''}${game.odds.away}</div>
+                        </div>
+                    </div>
+                    <div class="bet-controls" id="bet-${index}">
+                        <input type="number" class="bet-input" id="amount-${index}" placeholder="Bet amount ($)" min="1" step="1">
+                        <button class="btn" onclick="placeBet('${game.id}', '${index}')">Place Bet</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectOdds(gameIndex, team, odds) {
+            const card = document.getElementById(`game-${gameIndex}`);
+            const buttons = card.querySelectorAll('.odds-btn');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            event.target.closest('.odds-btn').classList.add('selected');
+
+            selectedBets.set(gameIndex, { team, odds });
+            document.getElementById(`bet-${gameIndex}`).classList.add('active');
+        }
+
+        async function placeBet(gameId, gameIndex) {
+            const betInfo = selectedBets.get(gameIndex);
+            if (!betInfo) {
+                alert('Please select odds first');
+                return;
+            }
+
+            const amount = parseFloat(document.getElementById(`amount-${gameIndex}`).value);
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid bet amount');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/sportsbook/bet`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: 'mobile-user',
+                        gameId,
+                        team: betInfo.team,
+                        amount
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(`✅ Bet placed successfully!\nPotential win: $${data.bet.potentialWin.toFixed(2)}`);
+                    document.getElementById(`amount-${gameIndex}`).value = '';
+                    document.getElementById(`bet-${gameIndex}`).classList.remove('active');
+                    selectedBets.delete(gameIndex);
+                } else {
+                    alert('❌ ' + (data.error || 'Failed to place bet'));
+                }
+            } catch (error) {
+                alert('❌ Error placing bet. Please try again.');
+            }
+        }
+
+        function updateStats(games) {
+            const liveCount = games.filter(g => g.status === 'live').length;
+            document.getElementById('liveGames').textContent = liveCount;
+        }
+
+        async function openWorkflow(endpoint) {
+            try {
+                const response = await fetch(`${API_URL}${endpoint}`);
+                const data = await response.json();
+                
+                alert(`✅ Workflow Active\n\nEndpoint: ${endpoint}\nStatus: Connected`);
+            } catch (error) {
+                console.error('Workflow error:', error);
+            }
+        }
+
+        async function refreshData() {
+            document.getElementById('connectionStatus').textContent = 'Refreshing...';
+            await loadGames();
+            document.getElementById('connectionStatus').textContent = 'Connected';
+        }
+
+        // Auto-refresh every 30 seconds
+        setInterval(refreshData, 30000);
+
+        // Load initial data
+        window.addEventListener('load', () => {
+            loadGames();
+            
+            // Check HTTPS status
+            if (window.location.protocol === 'https:') {
+                console.log('✅ HTTPS Enabled - Secure Connection');
+            }
+        });
+    </script>
+</body>
+</html>
