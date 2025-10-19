@@ -251,6 +251,15 @@ app.get('/streaming-hub', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/streaming-management-hub.html'));
 });
 
+// AI Cloud Streaming Hub
+app.get('/ai-cloud-streaming', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/ai-cloud-streaming.html'));
+});
+
+app.get('/ai-cloud-streaming.html', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/ai-cloud-streaming.html'));
+});
+
 // Link Bridge Dashboard
 app.get('/link-bridge-dashboard.html', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../public/link-bridge-dashboard.html'));

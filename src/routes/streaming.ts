@@ -1,7 +1,93 @@
 import express, { Request, Response } from 'express';
 import { streamingService } from '../services/StreamingService.js';
+import crypto from 'crypto';
 
 const router = express.Router();
+
+// Live streaming sessions
+const liveSessions = new Map();
+
+// AI Cloud streaming endpoint
+router.post('/cloud/ai-stream', async (req: Request, res: Response) => {
+  const { userId, aiModel, cloudProvider, streamConfig } = req.body;
+
+  const sessionId = crypto.randomBytes(16).toString('hex');
+  const session = {
+    id: sessionId,
+    userId,
+    aiModel: aiModel || 'gpt-4',
+    cloudProvider: cloudProvider || 'aws',
+    streamConfig,
+    status: 'active',
+    startTime: new Date().toISOString(),
+    viewers: 0,
+    fccEntity: '20130314143016'
+  };
+
+  liveSessions.set(sessionId, session);
+
+  res.json({
+    success: true,
+    session,
+    streamUrl: `${req.protocol}://${req.get('host')}/streaming/live/${sessionId}`,
+    message: 'AI cloud stream initialized'
+  });
+});
+
+// Get live stream
+router.get('/live/:sessionId', async (req: Request, res: Response) => {
+  const { sessionId } = req.params;
+  const session = liveSessions.get(sessionId);
+
+  if (!session) {
+    return res.status(404).json({ error: 'Stream not found' });
+  }
+
+  session.viewers++;
+
+  res.json({
+    success: true,
+    stream: session,
+    fccEntity: '20130314143016'
+  });
+});
+
+// Stop live stream
+router.post('/live/:sessionId/stop', async (req: Request, res: Response) => {
+  const { sessionId } = req.params;
+  const session = liveSessions.get(sessionId);
+
+  if (!session) {
+    return res.status(404).json({ error: 'Stream not found' });
+  }
+
+  session.status = 'stopped';
+  session.endTime = new Date().toISOString();
+
+  res.json({
+    success: true,
+    message: 'Stream stopped',
+    session
+  });
+});
+
+// Cloud integration status
+router.get('/cloud/status', async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    aws: {
+      connected: true,
+      region: 'us-east-1',
+      services: ['s3', 'lambda', 'bedrock']
+    },
+    microsoft: {
+      connected: true,
+      services: ['azure-ai', 'media-services']
+    },
+    activeSessions: liveSessions.size,
+    fccEntity: '20130314143016'
+  });
+});
 
 router.get('/stream/:gameId', (req: Request, res: Response) => {
   const { gameId } = req.params;

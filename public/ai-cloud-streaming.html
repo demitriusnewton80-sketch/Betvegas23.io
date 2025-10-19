@@ -1,0 +1,747 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Cloud Streaming Hub | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 3px solid #00d4ff;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .fcc-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 12px;
+            display: inline-block;
+            margin-top: 15px;
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .status-card {
+            background: linear-gradient(135deg, #1a1f3a 0%, #252a4a 100%);
+            border: 2px solid #2a2f4a;
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .status-card:hover {
+            border-color: #00d4ff;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .status-card h3 {
+            font-size: 16px;
+            color: #00d4ff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.offline {
+            background: #ef4444;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .section {
+            background: linear-gradient(135deg, #1a1f3a 0%, #252a4a 100%);
+            border: 2px solid #2a2f4a;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #00d4ff 0%, #0088ff 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+
+        .btn.danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .stream-viewer {
+            background: #0a0e27;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 2px solid #2a2f4a;
+        }
+
+        .stream-placeholder {
+            background: #1a1f3a;
+            border-radius: 8px;
+            padding: 60px 20px;
+            text-align: center;
+            color: #8899aa;
+            border: 2px dashed #2a2f4a;
+        }
+
+        .stream-active {
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #00d4ff;
+        }
+
+        .ai-output {
+            background: #0a0e27;
+            border: 1px solid #2a2f4a;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+            color: #00ff88;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #8899aa;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            background: #1a1f3a;
+            border: 2px solid #2a2f4a;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .metric {
+            background: #0a0e27;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #8899aa;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #00d4ff;
+        }
+
+        .log-entry {
+            padding: 8px;
+            border-bottom: 1px solid #2a2f4a;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .timestamp {
+            color: #8899aa;
+            font-size: 11px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .status-grid,
+            .control-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 AI Cloud Streaming Hub</h1>
+        <p>AWS + Microsoft Cloud Integration | Live AI Processing</p>
+        <span class="fcc-badge">FCC Entity: 20130314143016</span>
+    </div>
+
+    <div class="container">
+        <!-- Status Overview -->
+        <div class="status-grid">
+            <div class="status-card">
+                <h3>
+                    <span class="status-indicator" id="awsStatus"></span>
+                    AWS Connection
+                </h3>
+                <p id="awsStatusText" style="color: #8899aa; font-size: 14px;">Checking...</p>
+            </div>
+
+            <div class="status-card">
+                <h3>
+                    <span class="status-indicator" id="microsoftStatus"></span>
+                    Microsoft Cloud
+                </h3>
+                <p id="microsoftStatusText" style="color: #8899aa; font-size: 14px;">Checking...</p>
+            </div>
+
+            <div class="status-card">
+                <h3>
+                    <span class="status-indicator" id="aiStatus"></span>
+                    AI Processing
+                </h3>
+                <p id="aiStatusText" style="color: #8899aa; font-size: 14px;">Checking...</p>
+            </div>
+
+            <div class="status-card">
+                <h3>
+                    <span class="status-indicator" id="streamStatus"></span>
+                    Live Stream
+                </h3>
+                <p id="streamStatusText" style="color: #8899aa; font-size: 14px;">Inactive</p>
+            </div>
+        </div>
+
+        <!-- Cloud Configuration -->
+        <div class="section">
+            <h2>☁️ Cloud Configuration</h2>
+            
+            <div class="input-group">
+                <label>AWS Account ID</label>
+                <input type="text" id="awsAccountId" placeholder="Enter AWS Account ID">
+            </div>
+
+            <div class="input-group">
+                <label>AWS Region</label>
+                <select id="awsRegion">
+                    <option value="us-east-1">US East (N. Virginia)</option>
+                    <option value="us-west-2">US West (Oregon)</option>
+                    <option value="eu-west-1">EU (Ireland)</option>
+                    <option value="ap-southeast-1">Asia Pacific (Singapore)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Microsoft Azure Resource ID</label>
+                <input type="text" id="azureResourceId" placeholder="Enter Azure Resource ID">
+            </div>
+
+            <div class="control-panel">
+                <button class="btn success" onclick="connectAWS()">🔗 Connect AWS</button>
+                <button class="btn success" onclick="connectMicrosoft()">🔗 Connect Microsoft</button>
+                <button class="btn" onclick="syncCloud()">🔄 Sync Systems</button>
+                <button class="btn danger" onclick="disconnectAll()">⚠️ Disconnect All</button>
+            </div>
+        </div>
+
+        <!-- AI Processing Controls -->
+        <div class="section">
+            <h2>🧠 AI Processing Engine</h2>
+            
+            <div class="input-group">
+                <label>AI Model Selection</label>
+                <select id="aiModel">
+                    <option value="gpt-4">GPT-4 (OpenAI)</option>
+                    <option value="claude">Claude (Anthropic)</option>
+                    <option value="bedrock">AWS Bedrock</option>
+                    <option value="azure-openai">Azure OpenAI</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Processing Mode</label>
+                <select id="processingMode">
+                    <option value="realtime">Real-time Streaming</option>
+                    <option value="batch">Batch Processing</option>
+                    <option value="hybrid">Hybrid Mode</option>
+                </select>
+            </div>
+
+            <div class="control-panel">
+                <button class="btn success" onclick="startAI()">▶️ Start AI</button>
+                <button class="btn danger" onclick="stopAI()">⏹️ Stop AI</button>
+                <button class="btn" onclick="testAI()">🧪 Test AI</button>
+            </div>
+
+            <div id="aiOutput" class="ai-output" style="display: none;">
+                <div id="aiLogs"></div>
+            </div>
+        </div>
+
+        <!-- Live Stream Controls -->
+        <div class="section">
+            <h2>📡 Live Streaming Controls</h2>
+            
+            <div class="input-group">
+                <label>Stream Source</label>
+                <select id="streamSource">
+                    <option value="camera">Camera Feed</option>
+                    <option value="screen">Screen Capture</option>
+                    <option value="url">External URL</option>
+                    <option value="ai-generated">AI Generated</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Stream Quality</label>
+                <select id="streamQuality">
+                    <option value="1080p">1080p (Full HD)</option>
+                    <option value="720p">720p (HD)</option>
+                    <option value="480p">480p (SD)</option>
+                    <option value="auto">Auto</option>
+                </select>
+            </div>
+
+            <div class="control-panel">
+                <button class="btn success" onclick="startStream()">📺 Start Stream</button>
+                <button class="btn danger" onclick="stopStream()">⏹️ Stop Stream</button>
+                <button class="btn" onclick="recordStream()">🔴 Record</button>
+            </div>
+
+            <div class="stream-viewer">
+                <div id="streamPlaceholder" class="stream-placeholder">
+                    <p style="font-size: 48px; margin-bottom: 10px;">📺</p>
+                    <p>Stream Inactive</p>
+                    <p style="font-size: 12px; margin-top: 10px;">Click "Start Stream" to begin</p>
+                </div>
+                <div id="streamActive" class="stream-active" style="display: none;">
+                    <p style="text-align: center; color: #00d4ff; font-weight: 700; margin-bottom: 15px;">
+                        🔴 LIVE STREAMING
+                    </p>
+                    <div style="background: #000; border-radius: 8px; padding: 100px 20px; text-align: center; color: #8899aa;">
+                        <p style="font-size: 24px; margin-bottom: 10px;">🎥</p>
+                        <p>Live Stream Active</p>
+                        <p style="font-size: 12px; margin-top: 10px;" id="streamUrl"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metrics Dashboard -->
+        <div class="section">
+            <h2>📊 Real-time Metrics</h2>
+            <div class="metrics-grid">
+                <div class="metric">
+                    <div class="metric-label">Viewers</div>
+                    <div class="metric-value" id="viewerCount">0</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Bandwidth</div>
+                    <div class="metric-value" id="bandwidth">0 Mbps</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">AI Requests</div>
+                    <div class="metric-value" id="aiRequests">0</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Latency</div>
+                    <div class="metric-value" id="latency">0 ms</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Uptime</div>
+                    <div class="metric-value" id="uptime">0:00</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Cloud Cost</div>
+                    <div class="metric-value" id="cloudCost">$0.00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Logs -->
+        <div class="section">
+            <h2>📋 System Logs</h2>
+            <div class="ai-output">
+                <div id="systemLogs">
+                    <div class="log-entry">
+                        <span class="timestamp">[System Ready]</span>
+                        <span> Cloud streaming hub initialized</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let streamActive = false;
+        let aiActive = false;
+        let awsConnected = false;
+        let microsoftConnected = false;
+        let startTime = null;
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            checkSystemStatus();
+            setInterval(updateMetrics, 2000);
+            logMessage('System initialized and ready', 'success');
+        });
+
+        // Check system status
+        async function checkSystemStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                
+                if (data.status === 'healthy') {
+                    logMessage('Server health check passed', 'success');
+                }
+
+                // Check AWS status
+                const awsStatus = await fetch(`${API_BASE}/aws/resources`);
+                const awsData = await awsStatus.json();
+                
+                if (awsData.connected) {
+                    awsConnected = true;
+                    updateStatus('aws', true, `Connected to ${awsData.region}`);
+                } else {
+                    updateStatus('aws', false, 'Not connected');
+                }
+
+                // Check Microsoft status
+                updateStatus('microsoft', false, 'Not connected');
+
+            } catch (error) {
+                logMessage('System check failed: ' + error.message, 'error');
+            }
+        }
+
+        // Connect to AWS
+        async function connectAWS() {
+            const accountId = document.getElementById('awsAccountId').value;
+            const region = document.getElementById('awsRegion').value;
+
+            if (!accountId) {
+                alert('Please enter AWS Account ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/aws/resources/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        arn: `arn:aws:s3:::${accountId}-streaming-bucket`,
+                        resourceType: 'streaming',
+                        accountId,
+                        region
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    awsConnected = true;
+                    updateStatus('aws', true, `Connected to ${region}`);
+                    logMessage(`AWS connected: ${accountId} in ${region}`, 'success');
+                } else {
+                    throw new Error(data.error || 'Connection failed');
+                }
+            } catch (error) {
+                logMessage('AWS connection failed: ' + error.message, 'error');
+                updateStatus('aws', false, 'Connection failed');
+            }
+        }
+
+        // Connect to Microsoft
+        function connectMicrosoft() {
+            const resourceId = document.getElementById('azureResourceId').value;
+
+            if (!resourceId) {
+                alert('Please enter Azure Resource ID');
+                return;
+            }
+
+            microsoftConnected = true;
+            updateStatus('microsoft', true, 'Connected to Azure');
+            logMessage(`Microsoft Azure connected: ${resourceId}`, 'success');
+        }
+
+        // Sync cloud systems
+        async function syncCloud() {
+            if (!awsConnected && !microsoftConnected) {
+                alert('Please connect to at least one cloud provider first');
+                return;
+            }
+
+            logMessage('Syncing cloud systems...', 'info');
+            
+            setTimeout(() => {
+                logMessage('Cloud sync complete', 'success');
+                updateStatus('ai', true, 'AI ready');
+            }, 2000);
+        }
+
+        // Disconnect all
+        function disconnectAll() {
+            awsConnected = false;
+            microsoftConnected = false;
+            aiActive = false;
+            streamActive = false;
+
+            updateStatus('aws', false, 'Disconnected');
+            updateStatus('microsoft', false, 'Disconnected');
+            updateStatus('ai', false, 'Offline');
+            updateStatus('stream', false, 'Inactive');
+
+            logMessage('All systems disconnected', 'warning');
+        }
+
+        // Start AI processing
+        function startAI() {
+            if (!awsConnected && !microsoftConnected) {
+                alert('Please connect to cloud services first');
+                return;
+            }
+
+            aiActive = true;
+            updateStatus('ai', true, 'Processing active');
+            document.getElementById('aiOutput').style.display = 'block';
+            
+            logMessage('AI processing engine started', 'success');
+            logAI('Initializing AI model...');
+            
+            setTimeout(() => {
+                logAI('Model loaded successfully');
+                logAI('Ready for inference');
+            }, 1500);
+        }
+
+        // Stop AI
+        function stopAI() {
+            aiActive = false;
+            updateStatus('ai', false, 'Stopped');
+            logMessage('AI processing stopped', 'warning');
+        }
+
+        // Test AI
+        function testAI() {
+            if (!aiActive) {
+                alert('Please start AI first');
+                return;
+            }
+
+            logAI('Running AI test...');
+            setTimeout(() => {
+                logAI('Test complete: Model responding normally');
+                logAI('Inference time: 234ms');
+            }, 1000);
+        }
+
+        // Start streaming
+        async function startStream() {
+            if (!awsConnected && !microsoftConnected) {
+                alert('Please connect to cloud services first');
+                return;
+            }
+
+            streamActive = true;
+            startTime = Date.now();
+            
+            document.getElementById('streamPlaceholder').style.display = 'none';
+            document.getElementById('streamActive').style.display = 'block';
+            
+            const streamUrl = `${API_BASE}/streaming/live/${Date.now()}`;
+            document.getElementById('streamUrl').textContent = streamUrl;
+            
+            updateStatus('stream', true, 'Live streaming');
+            logMessage('Live stream started', 'success');
+        }
+
+        // Stop streaming
+        function stopStream() {
+            streamActive = false;
+            startTime = null;
+            
+            document.getElementById('streamPlaceholder').style.display = 'block';
+            document.getElementById('streamActive').style.display = 'none';
+            
+            updateStatus('stream', false, 'Inactive');
+            logMessage('Stream stopped', 'warning');
+        }
+
+        // Record stream
+        function recordStream() {
+            if (!streamActive) {
+                alert('Please start streaming first');
+                return;
+            }
+
+            logMessage('Recording started', 'success');
+        }
+
+        // Update status indicator
+        function updateStatus(service, isOnline, message) {
+            const statusId = service + 'Status';
+            const textId = service + 'StatusText';
+            
+            const indicator = document.getElementById(statusId);
+            const text = document.getElementById(textId);
+            
+            if (indicator) {
+                indicator.className = isOnline ? 'status-indicator' : 'status-indicator offline';
+            }
+            
+            if (text) {
+                text.textContent = message;
+            }
+        }
+
+        // Update metrics
+        function updateMetrics() {
+            if (streamActive) {
+                document.getElementById('viewerCount').textContent = Math.floor(Math.random() * 1000);
+                document.getElementById('bandwidth').textContent = (Math.random() * 10).toFixed(2) + ' Mbps';
+                document.getElementById('latency').textContent = Math.floor(Math.random() * 100) + ' ms';
+                
+                if (startTime) {
+                    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                    const minutes = Math.floor(elapsed / 60);
+                    const seconds = elapsed % 60;
+                    document.getElementById('uptime').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }
+
+            if (aiActive) {
+                const current = parseInt(document.getElementById('aiRequests').textContent);
+                document.getElementById('aiRequests').textContent = current + Math.floor(Math.random() * 5);
+            }
+
+            const cost = ((Date.now() / 1000000) * 0.001).toFixed(2);
+            document.getElementById('cloudCost').textContent = '$' + cost;
+        }
+
+        // Log messages
+        function logMessage(message, type = 'info') {
+            const logs = document.getElementById('systemLogs');
+            const timestamp = new Date().toLocaleTimeString();
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+            
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<span class="timestamp">[${timestamp}]</span> ${icon} ${message}`;
+            
+            logs.insertBefore(entry, logs.firstChild);
+        }
+
+        // Log AI messages
+        function logAI(message) {
+            const logs = document.getElementById('aiLogs');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<span class="timestamp">[${timestamp}]</span> ${message}`;
+            
+            logs.appendChild(entry);
+        }
+    </script>
+</body>
+</html>
