@@ -1,0 +1,331 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Content Upload - Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #1DB954 0%, #191414 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: white;
+            margin-bottom: 10px;
+        }
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .card h2 {
+            margin-bottom: 15px;
+            color: #58a6ff;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #8b949e;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-size: 14px;
+        }
+        .btn {
+            background: #1DB954;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background: #1ed760;
+        }
+        .btn-secondary {
+            background: #238636;
+        }
+        .upload-item {
+            background: #21262d;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #1DB954;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-badge.connected {
+            background: #22c55e;
+            color: white;
+        }
+        .status-badge.disconnected {
+            background: #6b7280;
+            color: white;
+        }
+        .error {
+            background: #da3633;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        .success {
+            background: #238636;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎵 Spotify Content Upload</h1>
+        <p>Upload your Spotify tracks, playlists, and albums to Young Meeat LLC</p>
+    </div>
+
+    <div class="card">
+        <h2>Connection Status</h2>
+        <div id="connectionStatus">
+            <p>Checking connection...</p>
+        </div>
+        <button class="btn" onclick="connectSpotify()">Connect Spotify Account</button>
+    </div>
+
+    <div class="card">
+        <h2>Upload Content</h2>
+        <div id="uploadMessage"></div>
+        <div class="form-group">
+            <label>Content Type</label>
+            <select id="contentType">
+                <option value="track">Track</option>
+                <option value="playlist">Playlist</option>
+                <option value="album">Album</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Spotify ID or URL</label>
+            <input type="text" id="spotifyId" placeholder="e.g., 3n3Ppam7vgaVa1iaRUc9Lp">
+        </div>
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" id="contentName" placeholder="Track/Playlist/Album name">
+        </div>
+        <div class="form-group">
+            <label>Description (Optional)</label>
+            <textarea id="contentDescription" rows="3" placeholder="Add a description"></textarea>
+        </div>
+        <button class="btn" onclick="uploadContent()">Upload to Server</button>
+    </div>
+
+    <div class="card">
+        <h2>My Uploads</h2>
+        <button class="btn btn-secondary" onclick="loadUploads()">Refresh</button>
+        <div id="uploadsList" style="margin-top: 20px;">
+            <p>No uploads yet</p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let sessionId = null;
+
+        // Check connection status on load
+        async function checkConnection() {
+            try {
+                const response = await fetch(`${API_BASE}/spotify/status`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                const statusHtml = `
+                    <div>
+                        <span class="status-badge ${data.connected ? 'connected' : 'disconnected'}">
+                            ${data.connected ? 'Connected' : 'Not Connected'}
+                        </span>
+                    </div>
+                `;
+                document.getElementById('connectionStatus').innerHTML = statusHtml;
+                
+                if (data.connected) {
+                    loadUploads();
+                }
+            } catch (error) {
+                document.getElementById('connectionStatus').innerHTML = 
+                    '<div class="error">Error checking connection. Please login first.</div>';
+            }
+        }
+
+        // Connect Spotify account
+        function connectSpotify() {
+            // In production, this would redirect to Spotify OAuth
+            const accessToken = prompt('Enter Spotify Access Token (for demo):');
+            const refreshToken = prompt('Enter Spotify Refresh Token (for demo):');
+            
+            if (!accessToken || !refreshToken) return;
+            
+            fetch(`${API_BASE}/spotify/connect`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    accessToken,
+                    refreshToken,
+                    expiresIn: 3600
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                showMessage('success', 'Spotify connected successfully!');
+                checkConnection();
+            })
+            .catch(err => {
+                showMessage('error', 'Failed to connect Spotify: ' + err.message);
+            });
+        }
+
+        // Upload content
+        async function uploadContent() {
+            const type = document.getElementById('contentType').value;
+            const spotifyId = document.getElementById('spotifyId').value.trim();
+            const name = document.getElementById('contentName').value.trim();
+            const description = document.getElementById('contentDescription').value.trim();
+            
+            if (!spotifyId || !name) {
+                showMessage('error', 'Please fill in Spotify ID and Name');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/spotify/upload`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        spotifyId,
+                        type,
+                        name,
+                        metadata: { description }
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('success', 'Content uploaded successfully!');
+                    document.getElementById('spotifyId').value = '';
+                    document.getElementById('contentName').value = '';
+                    document.getElementById('contentDescription').value = '';
+                    loadUploads();
+                } else {
+                    showMessage('error', data.error || 'Upload failed');
+                }
+            } catch (error) {
+                showMessage('error', 'Upload error: ' + error.message);
+            }
+        }
+
+        // Load user's uploads
+        async function loadUploads() {
+            try {
+                const response = await fetch(`${API_BASE}/spotify/uploads`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (data.uploads && data.uploads.length > 0) {
+                    const uploadsHtml = data.uploads.map(upload => `
+                        <div class="upload-item">
+                            <div>
+                                <strong>${upload.name}</strong><br>
+                                <small>Type: ${upload.type} | Uploaded: ${new Date(upload.uploadedAt).toLocaleString()}</small><br>
+                                <small>Content ID: ${upload.contentId}</small>
+                            </div>
+                            <button class="btn" onclick="deleteUpload('${upload.id}')">Delete</button>
+                        </div>
+                    `).join('');
+                    
+                    document.getElementById('uploadsList').innerHTML = uploadsHtml;
+                } else {
+                    document.getElementById('uploadsList').innerHTML = '<p>No uploads yet</p>';
+                }
+            } catch (error) {
+                console.error('Error loading uploads:', error);
+            }
+        }
+
+        // Delete upload
+        async function deleteUpload(uploadId) {
+            if (!confirm('Are you sure you want to delete this upload?')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/spotify/uploads/${uploadId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    showMessage('success', 'Upload deleted');
+                    loadUploads();
+                } else {
+                    showMessage('error', 'Failed to delete upload');
+                }
+            } catch (error) {
+                showMessage('error', 'Delete error: ' + error.message);
+            }
+        }
+
+        function showMessage(type, message) {
+            const div = document.createElement('div');
+            div.className = type;
+            div.textContent = message;
+            
+            const container = document.getElementById('uploadMessage');
+            container.innerHTML = '';
+            container.appendChild(div);
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        // Initialize
+        checkConnection();
+    </script>
+</body>
+</html>

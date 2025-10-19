@@ -1,0 +1,245 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Login Portal - Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .portal-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            overflow: hidden;
+        }
+        .portal-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+        .portal-header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .fcc-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            display: inline-block;
+            margin-top: 12px;
+            font-weight: 600;
+        }
+        .portal-body {
+            padding: 40px 30px;
+        }
+        .qr-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .qr-section h2 {
+            color: #1f2937;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .qr-code-container {
+            background: #f9fafb;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #e5e7eb;
+        }
+        #qrCode {
+            margin: 0 auto;
+            display: block;
+        }
+        .qr-info {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .qr-info p {
+            color: #1e40af;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .provider-section {
+            margin-top: 30px;
+        }
+        .provider-section h3 {
+            color: #1f2937;
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+        .provider-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .provider-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        .provider-icon {
+            font-size: 24px;
+        }
+        .provider-name {
+            font-weight: 500;
+            color: #1f2937;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px 24px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.2s;
+            margin-top: 20px;
+        }
+        .btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+        .download-btn {
+            background: #10b981;
+        }
+        .download-btn:hover {
+            background: #059669;
+        }
+    </style>
+</head>
+<body>
+    <div class="portal-container">
+        <div class="portal-header">
+            <h1>📱 QR Login Portal</h1>
+            <p>Scan to access SSO providers</p>
+            <span class="fcc-badge">FCC Entity: 20130314143016</span>
+        </div>
+        
+        <div class="portal-body">
+            <div class="qr-section">
+                <h2>Scan QR Code</h2>
+                <div class="qr-code-container">
+                    <canvas id="qrCode"></canvas>
+                </div>
+                
+                <div class="qr-info">
+                    <p><strong>📲 How to use:</strong> Scan this QR code with your mobile device to access all available SSO login providers and management services.</p>
+                </div>
+                
+                <button class="btn download-btn" onclick="downloadQR()">
+                    Download QR Code
+                </button>
+            </div>
+            
+            <div class="provider-section">
+                <h3>Available Providers</h3>
+                <div class="provider-list" id="providerList">
+                    <p style="text-align: center; color: #6b7280;">Loading providers...</p>
+                </div>
+            </div>
+            
+            <a href="/personal-sso-login.html" class="btn">
+                Direct Login Access →
+            </a>
+        </div>
+    </div>
+
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
+    <script>
+        const API_BASE = window.location.origin;
+        const SSO_LOGIN_URL = `${API_BASE}/personal-sso-login.html`;
+        
+        // Generate QR Code
+        async function generateQRCode() {
+            const canvas = document.getElementById('qrCode');
+            try {
+                await QRCode.toCanvas(canvas, SSO_LOGIN_URL, {
+                    width: 280,
+                    margin: 2,
+                    color: {
+                        dark: '#1e3a8a',
+                        light: '#ffffff'
+                    }
+                });
+            } catch (err) {
+                console.error('QR Code generation error:', err);
+            }
+        }
+        
+        // Download QR Code
+        function downloadQR() {
+            const canvas = document.getElementById('qrCode');
+            const link = document.createElement('a');
+            link.download = 'young-meeat-llc-sso-qr.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        // Load available SSO providers
+        async function loadProviders() {
+            try {
+                const response = await fetch(`${API_BASE}/sso-plugin/plugins/enabled`);
+                const data = await response.json();
+                
+                const providerList = document.getElementById('providerList');
+                
+                if (data.plugins && data.plugins.length > 0) {
+                    providerList.innerHTML = data.plugins.map(plugin => `
+                        <div class="provider-item">
+                            <div class="provider-icon">${plugin.icon || '🔑'}</div>
+                            <div class="provider-name">${plugin.name}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    providerList.innerHTML = `
+                        <p style="text-align: center; color: #6b7280;">No providers available</p>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading providers:', error);
+                document.getElementById('providerList').innerHTML = `
+                    <p style="text-align: center; color: #ef4444;">Failed to load providers</p>
+                `;
+            }
+        }
+        
+        // Initialize on page load
+        generateQRCode();
+        loadProviders();
+    </script>
+</body>
+</html>

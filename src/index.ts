@@ -10,7 +10,13 @@ import backupRoutes from './routes/backup.js'; // New import for backup routes
 import accountRouter from './routes/account.js';
 import contactRoutes from './routes/contact.js'; // Renamed from contactRoutes for consistency
 import contentRoutes from './routes/content.js'; // New import for content routes
+import samRoutes from './routes/sam.js'; // New import for SAM.gov routes
+import ssoPluginRoutes from './routes/sso-plugin.js'; // New import for SSO plugin routes
+import spotifyRoutes from './routes/spotify.js'; // New import for Spotify routes
+import qrRoutes from './routes/qr.js';
+import ps5Routes from './routes/ps5.js'; // Added for PS5 sports betting routes
 import { sportsDataService } from './services/SportsDataService.js';
+import path from 'path'; // Import path module
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -23,6 +29,16 @@ app.use(cookieParser());
 
 // Serve static files from public directory
 app.use(express.static('public'));
+
+// Personal SSO login route
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/personal-sso-login.html'));
+});
+
+// Public access route (authenticated users)
+app.get('/public-access', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/public-access.html'));
+});
 
 // CORS for external device connections
 app.use((req, res, next) => {
@@ -63,6 +79,11 @@ app.use('/ecommerce', ecommerceRoutes); // Mount e-commerce routes
 app.use('/aws', awsRoutes); // Mount AWS routes
 app.use('/backup', backupRoutes); // Mount backup routes
 app.use('/content', contentRoutes); // Mount content routes
+app.use('/sam', samRoutes); // Mount SAM.gov routes
+app.use('/sso-plugin', ssoPluginRoutes); // Mount SSO plugin routes
+app.use('/spotify', spotifyRoutes); // Mount Spotify routes
+app.use('/qr', qrRoutes);
+app.use('/ps5', ps5Routes); // Mount PS5 routes
 
 // Ensure all routes are mounted
 console.log('📍 Routes registered:');
@@ -76,6 +97,13 @@ console.log('   - /ecommerce'); // Added for new e-commerce routes
 console.log('   - /aws'); // Added for new AWS routes
 console.log('   - /backup'); // Added for new backup routes
 console.log('   - /content'); // Added for new content routes
+console.log('   - /sam'); // Added for new SAM.gov routes
+console.log('   - /sso-plugin'); // Added for new SSO plugin routes
+console.log('   - /spotify'); // Added for new Spotify routes
+console.log('   - /login'); // Added for personal SSO login
+console.log('   - /public-access'); // Added for public access view
+console.log('   - /qr'); // Added for QR code routes
+console.log('   - /ps5'); // Added for PS5 sports betting routes
 
 // 404 handler for API
 app.use((req: Request, res: Response) => {

@@ -32,6 +32,47 @@ Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 - `POST /auth/logout` - Logout
 - `GET /auth/status` - SSO status
 
+### PlayStation Network Integration
+- `GET /playstation-network-sso.html` - PlayStation 5 users landing page
+- `GET /sso-plugin/login/playstation-network` - PSN SSO login
+- `GET /sportsbook/games?source=psn` - Gaming content betting
+- `GET /ps5-betting.html` - PS5 sports betting interface
+
+### PS5 Sports Betting (Madden, NBA 2K, UFC, Undisputed, 5v5)
+- `GET /ps5/games` - Get all PS5 games
+- `GET /ps5/games?type=madden` - Filter by game type
+- `GET /ps5/games/:gameId` - Get specific game
+- `POST /ps5/enroll` - Enroll user in PS5 betting
+- `POST /ps5/bet` - Place bet on PS5 game
+- `GET /ps5/user/:userId` - Get user info and enrollment points
+- `GET /ps5/user/psn/:psnId` - Get user by PSN ID
+- `GET /ps5/user/:userId/bets` - Get user's bets
+- `POST /ps5/user/:userId/deposit` - Deposit funds
+- `GET /ps5/user/:userId/points` - Get enrollment points
+- `GET /ps5/plugin/status` - Get public plugin approval status
+- `POST /ps5/plugin/verify` - Verify plugin connection
+- `GET /ps5-enrollment-plugin.html` - Public plugin enrollment page
+
+### SSO Plugin System
+- `GET /sso-plugin/plugins` - Get all SSO plugins
+- `GET /sso-plugin/plugins/enabled` - Get enabled plugins
+- `GET /sso-plugin/plugins/:pluginId` - Get plugin details (SSO protected)
+- `GET /sso-plugin/login/:pluginId` - Login with specific plugin
+- `GET /sso-plugin/callback` - SSO plugin callback handler
+- `POST /sso-plugin/plugins/:pluginId/toggle` - Enable/disable plugin (SSO protected)
+- `PUT /sso-plugin/plugins/:pluginId/config` - Update plugin config (SSO protected)
+- `GET /sso-plugin/stats` - Get plugin statistics (SSO protected)
+- `GET /sso-plugin/session` - Get current plugin session (SSO protected)
+
+### Spotify Integration (SSO Protected)
+- `POST /spotify/connect` - Connect Spotify account
+- `GET /spotify/status` - Check Spotify connection status
+- `POST /spotify/upload` - Upload Spotify content to server
+- `GET /spotify/uploads` - Get user's uploads
+- `GET /spotify/uploads/:uploadId` - Get specific upload
+- `DELETE /spotify/uploads/:uploadId` - Delete upload
+- `GET /spotify/fetch/:type/:spotifyId` - Fetch data from Spotify
+
 ### Content Control (SSO Protected)
 - `POST /content/create` - Create new content item
 - `GET /content/:contentId` - Get content by ID
@@ -47,6 +88,18 @@ Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 ### Webhooks
 - `POST /webhooks/receive/:sportsbookId` - Receive external updates
 - `POST /webhooks/test/:sportsbookId` - Test webhook connection
+
+### SAM.gov Integration
+- `GET /sam/entity/young-meeat-llc` - Get Young Meeat LLC entity data
+- `GET /sam/entity/search?name=` - Search entity by name
+- `GET /sam/entity/uei/:uei` - Get entity by UEI
+- `GET /sam/validate/:entityName` - Validate SAM registration
+- `GET /sam/sso/login` - Initiate SAM.gov SSO login
+- `GET /sam/sso/callback` - SAM.gov SSO callback
+- `GET /sam/config` - Get SAM.gov configuration (SSO protected)
+- `POST /sam/config/api-key` - Update API key (SSO protected)
+- `GET /sam/cache` - Get cached entities (SSO protected)
+- `GET /sam/profile-link` - Get direct SAM.gov profile link
 
 ## Deployment on Replit
 

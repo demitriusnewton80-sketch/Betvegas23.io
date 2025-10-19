@@ -31,7 +31,7 @@ router.get('/', (req: Request, res: Response) => {
 });
 
 router.get('/games', (req: Request, res: Response) => {
-  const { sport, status } = req.query;
+  const { sport, status, source } = req.query;
   
   let events = sport ? sportsDataService.getEventsBySport(sport as string) : sportsDataService.getAllEvents();
   
@@ -50,10 +50,22 @@ router.get('/games', (req: Request, res: Response) => {
     radioLink: event.radioLink
   }));
   
-  res.json({
+  const response: any = {
     games,
     count: games.length
-  });
+  };
+
+  // Add PlayStation Network specific info
+  if (source === 'psn') {
+    response.psnGaming = {
+      maddenNFL: games.filter(g => g.sport === 'NFL').length,
+      nba2k: games.filter(g => g.sport === 'NBA').length,
+      undisputedBoxing: games.filter(g => g.sport === 'Boxing').length,
+      message: 'Bet on your favorite PlayStation 5 gaming content'
+    };
+  }
+  
+  res.json(response);
 });
 
 router.get('/external-data', async (req: Request, res: Response) => {

@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSO Plugin Manager - Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: white;
+            margin-bottom: 10px;
+        }
+        .fcc-badge {
+            background: #22c55e;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .plugin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .plugin-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .plugin-card:hover {
+            transform: translateY(-2px);
+            border-color: #58a6ff;
+        }
+        .plugin-card.disabled {
+            opacity: 0.6;
+        }
+        .plugin-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .plugin-icon {
+            font-size: 32px;
+            margin-right: 15px;
+        }
+        .plugin-info h3 {
+            color: #58a6ff;
+            margin-bottom: 5px;
+        }
+        .plugin-provider {
+            color: #8b949e;
+            font-size: 14px;
+        }
+        .plugin-description {
+            color: #c9d1d9;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .plugin-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .plugin-status.enabled {
+            background: #22c55e;
+            color: white;
+        }
+        .plugin-status.disabled {
+            background: #6b7280;
+            color: white;
+        }
+        .btn {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background: #2ea043;
+        }
+        .btn-login {
+            background: #1f6feb;
+        }
+        .btn-login:hover {
+            background: #388bfd;
+        }
+        .btn-danger {
+            background: #da3633;
+        }
+        .btn-danger:hover {
+            background: #f85149;
+        }
+        .stats-bar {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-around;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #58a6ff;
+        }
+        .stat-label {
+            color: #8b949e;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔐 SSO Plugin Manager</h1>
+        <p>Young Meeat LLC - Extensible Authentication System</p>
+        <span class="fcc-badge">FCC Entity: 20130314143016</span>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-value" id="totalPlugins">0</div>
+            <div class="stat-label">Total Plugins</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="enabledPlugins">0</div>
+            <div class="stat-label">Enabled</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="activeSessions">0</div>
+            <div class="stat-label">Active Sessions</div>
+        </div>
+    </div>
+
+    <div class="plugin-grid" id="pluginGrid">
+        <p style="text-align: center; color: #8b949e;">Loading SSO plugins...</p>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        async function loadPlugins() {
+            try {
+                const response = await fetch(`${API_BASE}/sso-plugin/plugins`);
+                const data = await response.json();
+
+                const grid = document.getElementById('pluginGrid');
+                grid.innerHTML = data.plugins.map(plugin => `
+                    <div class="plugin-card ${plugin.enabled ? '' : 'disabled'}">
+                        <div class="plugin-header">
+                            <div class="plugin-icon">${plugin.icon || '🔑'}</div>
+                            <div class="plugin-info">
+                                <h3>${plugin.name}</h3>
+                                <div class="plugin-provider">${plugin.provider}</div>
+                            </div>
+                        </div>
+                        <div class="plugin-description">${plugin.description || 'SSO authentication provider'}</div>
+                        <span class="plugin-status ${plugin.enabled ? 'enabled' : 'disabled'}">
+                            ${plugin.enabled ? '✓ Enabled' : '✗ Disabled'}
+                        </span>
+                        ${plugin.enabled ? `
+                            <button class="btn btn-login" onclick="loginWith('${plugin.id}')">
+                                Login with ${plugin.name}
+                            </button>
+                        ` : ''}
+                        <button class="btn ${plugin.enabled ? 'btn-danger' : ''}" onclick="togglePlugin('${plugin.id}', ${!plugin.enabled})">
+                            ${plugin.enabled ? 'Disable' : 'Enable'} Plugin
+                        </button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading plugins:', error);
+                document.getElementById('pluginGrid').innerHTML = 
+                    '<p style="text-align: center; color: #da3633;">Error loading plugins</p>';
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const sessionId = getCookie('session_id');
+                if (!sessionId) return;
+
+                const response = await fetch(`${API_BASE}/sso-plugin/stats`, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`
+                    }
+                });
+                const data = await response.json();
+
+                document.getElementById('totalPlugins').textContent = data.totalPlugins;
+                document.getElementById('enabledPlugins').textContent = data.enabledPlugins;
+                document.getElementById('activeSessions').textContent = data.activeSessions;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        function loginWith(pluginId) {
+            window.location.href = `${API_BASE}/sso-plugin/login/${pluginId}`;
+        }
+
+        async function togglePlugin(pluginId, enable) {
+            const sessionId = getCookie('session_id');
+            if (!sessionId) {
+                alert('Please login first');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/sso-plugin/plugins/${pluginId}/toggle`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${sessionId}`
+                    },
+                    body: JSON.stringify({ enabled: enable })
+                });
+
+                if (response.ok) {
+                    await loadPlugins();
+                    await loadStats();
+                } else {
+                    alert('Failed to toggle plugin');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        // Load data on page load
+        loadPlugins();
+        loadStats();
+
+        // Refresh every 10 seconds
+        setInterval(() => {
+            loadPlugins();
+            loadStats();
+        }, 10000);
+    </script>
+</body>
+</html>
