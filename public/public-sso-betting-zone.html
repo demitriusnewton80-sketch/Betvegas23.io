@@ -1,0 +1,516 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Public Betting Zone - Unified Access | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .hero {
+            text-align: center;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            border-radius: 24px;
+            padding: 50px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .hero p {
+            font-size: 20px;
+            opacity: 0.95;
+            margin-bottom: 25px;
+        }
+        .fcc-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-size: 13px;
+            display: inline-block;
+            margin: 5px;
+            font-weight: 700;
+        }
+        .section {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        .section h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #60a5fa;
+        }
+        .auth-methods {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        @media (min-width: 768px) {
+            .auth-methods {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        .auth-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .auth-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(34, 197, 94, 0.6);
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.2);
+        }
+        .auth-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .auth-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .auth-desc {
+            font-size: 14px;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+        .email-control {
+            background: rgba(15, 23, 42, 0.6);
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #cbd5e1;
+        }
+        select, input {
+            width: 100%;
+            padding: 16px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            font-size: 16px;
+            color: white;
+            margin-bottom: 12px;
+        }
+        select:focus, input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        .btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        @media (min-width: 640px) {
+            .platforms-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (min-width: 1024px) {
+            .platforms-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        .platform-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .platform-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.6);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+        .platform-icon {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+        .platform-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .platform-status {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .session-info {
+            background: rgba(34, 197, 94, 0.1);
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+        .stat-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #22c55e;
+            margin-bottom: 8px;
+        }
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.7;
+            text-transform: uppercase;
+        }
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>🎯 Public Betting Zone</h1>
+            <p>Unified SSO Access • Phone Control • Fuse Network</p>
+            <span class="fcc-badge">FCC Entity: 20130314143016</span>
+            <span class="fcc-badge">Public Access Portal</span>
+            <span class="fcc-badge">All Platforms Unified</span>
+        </div>
+
+        <div class="section">
+            <h2>🔐 Authentication Methods</h2>
+            <div class="auth-methods">
+                <div class="auth-card" onclick="loadSSOOptions()">
+                    <div class="auth-icon">🔑</div>
+                    <div class="auth-title">SSO Login</div>
+                    <div class="auth-desc">
+                        Sign in with your SSO provider<br>
+                        PlayStation Network, Google, or Custom
+                    </div>
+                </div>
+                <div class="auth-card" onclick="showPhoneControl()">
+                    <div class="auth-icon">📱</div>
+                    <div class="auth-title">Phone Control</div>
+                    <div class="auth-desc">
+                        Direct access with authorized email<br>
+                        Phone-based authentication
+                    </div>
+                </div>
+            </div>
+
+            <div id="phoneControlSection" style="display: none;">
+                <div class="email-control">
+                    <label for="emailSelect">Authorized Email:</label>
+                    <select id="emailSelect">
+                        <option value="">-- Select Email --</option>
+                        <option value="gbemeeat@gmail.com">gbemeeat@gmail.com</option>
+                        <option value="meeatupt215@gmail.com">meeatupt215@gmail.com</option>
+                    </select>
+                    <input type="tel" id="phoneInput" placeholder="Phone Number (Optional)">
+                    <button class="btn" onclick="activateBettingZone()">
+                        🚀 Activate Betting Zone
+                    </button>
+                </div>
+            </div>
+
+            <div id="ssoOptionsSection" style="display: none;">
+                <div id="ssoProviders"></div>
+            </div>
+
+            <div id="sessionInfo" style="display: none;">
+                <div class="session-info">
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <strong style="font-size: 22px; color: #22c55e;">✅ Betting Zone Activated</strong>
+                    </div>
+                    <div id="sessionDetails"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="platformsSection" style="display: none;">
+            <h2>🔌 Connected Platforms</h2>
+            <div class="platforms-grid">
+                <div class="platform-card" onclick="openPlatform('sportsbook')">
+                    <div class="platform-icon">🏆</div>
+                    <div class="platform-title">Live Sportsbook</div>
+                    <span class="platform-status"><span>●</span> Live</span>
+                </div>
+
+                <div class="platform-card" onclick="openPlatform('ps5')">
+                    <div class="platform-icon">🎮</div>
+                    <div class="platform-title">PlayStation 5</div>
+                    <span class="platform-status"><span>●</span> Connected</span>
+                </div>
+
+                <div class="platform-card" onclick="openPlatform('streaming')">
+                    <div class="platform-icon">📺</div>
+                    <div class="platform-title">Live Streaming</div>
+                    <span class="platform-status"><span>●</span> Online</span>
+                </div>
+
+                <div class="platform-card" onclick="openPlatform('phone-control')">
+                    <div class="platform-icon">📱</div>
+                    <div class="platform-title">Phone Network</div>
+                    <span class="platform-status"><span>●</span> Active</span>
+                </div>
+
+                <div class="platform-card" onclick="openPlatform('betting-zone')">
+                    <div class="platform-icon">🎯</div>
+                    <div class="platform-title">Betting Zone</div>
+                    <span class="platform-status"><span>●</span> Ready</span>
+                </div>
+
+                <div class="platform-card" onclick="openPlatform('wifi-hub')">
+                    <div class="platform-icon">📡</div>
+                    <div class="platform-title">WiFi Hub</div>
+                    <span class="platform-status"><span>●</span> Online</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Network Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalPlugins">6</div>
+                    <div class="stat-label">Total Plugins</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="activeUsers">0</div>
+                    <div class="stat-label">Active Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="liveGames">0</div>
+                    <div class="stat-label">Live Games</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = window.location.origin;
+        let currentSessionId = null;
+
+        const platformUrls = {
+            'sportsbook': '/index.html',
+            'ps5': '/ps5-betting.html',
+            'streaming': '/index.html',
+            'phone-control': '/phone-network-control.html',
+            'betting-zone': '/betting-zone.html',
+            'wifi-hub': '/wifi-plugin-hub.html'
+        };
+
+        function showPhoneControl() {
+            document.getElementById('phoneControlSection').style.display = 'block';
+            document.getElementById('ssoOptionsSection').style.display = 'none';
+        }
+
+        async function loadSSOOptions() {
+            document.getElementById('ssoOptionsSection').style.display = 'block';
+            document.getElementById('phoneControlSection').style.display = 'none';
+            
+            const providersDiv = document.getElementById('ssoProviders');
+            providersDiv.innerHTML = '<div class="spinner"></div>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/sso-plugin/plugins/enabled`);
+                const data = await response.json();
+
+                if (data.plugins && data.plugins.length > 0) {
+                    providersDiv.innerHTML = data.plugins.map(plugin => `
+                        <div class="email-control" style="margin-bottom: 15px;">
+                            <a href="${plugin.authUrl}" class="btn btn-secondary" style="text-decoration: none; display: block;">
+                                ${plugin.icon || '🔑'} Sign in with ${plugin.name}
+                            </a>
+                        </div>
+                    `).join('');
+                } else {
+                    providersDiv.innerHTML = `
+                        <div style="text-align: center; padding: 20px; color: #94a3b8;">
+                            <p>No SSO providers configured</p>
+                            <button class="btn" onclick="showPhoneControl()" style="margin-top: 15px;">
+                                Use Phone Control Instead
+                            </button>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading SSO options:', error);
+                providersDiv.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: #ef4444;">
+                        <p>Failed to load SSO options</p>
+                        <button class="btn" onclick="loadSSOOptions()" style="margin-top: 15px;">
+                            Retry
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        async function activateBettingZone() {
+            const email = document.getElementById('emailSelect').value;
+            const phoneNumber = document.getElementById('phoneInput').value;
+
+            if (!email) {
+                alert('Please select an email address');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/phone-control/session/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, phoneNumber })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentSessionId = data.session.id;
+                    document.getElementById('sessionInfo').style.display = 'block';
+                    document.getElementById('platformsSection').style.display = 'block';
+                    document.getElementById('sessionDetails').innerHTML = `
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 14px;">
+                            <div><strong>Session ID:</strong> ${data.session.id.substring(0, 20)}...</div>
+                            <div><strong>Email:</strong> ${data.session.email}</div>
+                            <div><strong>Active Plugins:</strong> ${data.session.activePlugins.length}</div>
+                            <div><strong>Network:</strong> <span style="color: #22c55e;">Connected</span></div>
+                        </div>
+                    `;
+                    alert('✅ Betting Zone activated! All platforms are now accessible.');
+                    loadStats();
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to activate'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to activate Betting Zone. Please try again.');
+            }
+        }
+
+        function openPlatform(platformId) {
+            const url = platformUrls[platformId];
+            if (url) {
+                window.open(url, '_blank');
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const [statsRes, gamesRes] = await Promise.all([
+                    fetch(`${API_BASE_URL}/phone-control/stats`),
+                    fetch(`${API_BASE_URL}/sportsbook/games`)
+                ]);
+
+                const stats = await statsRes.json();
+                const games = await gamesRes.json();
+
+                document.getElementById('totalPlugins').textContent = stats.totalPlugins || 6;
+                document.getElementById('activeUsers').textContent = stats.connectedUsers || 0;
+                document.getElementById('liveGames').textContent = games.games?.filter(g => g.status === 'live').length || 0;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Check for SSO callback
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('authenticated') === 'true') {
+            const provider = urlParams.get('provider') || 'SSO';
+            document.getElementById('sessionInfo').style.display = 'block';
+            document.getElementById('platformsSection').style.display = 'block';
+            document.getElementById('sessionDetails').innerHTML = `
+                <div style="text-align: center;">
+                    <p style="font-size: 16px; margin-bottom: 10px;">✅ Authenticated with ${provider}</p>
+                    <p style="font-size: 14px; opacity: 0.8;">You now have access to all platforms</p>
+                </div>
+            `;
+        }
+
+        // Auto-load stats
+        window.addEventListener('load', () => {
+            loadStats();
+            setInterval(loadStats, 30000);
+        });
+    </script>
+</body>
+</html>

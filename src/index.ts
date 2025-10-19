@@ -1,4 +1,3 @@
-
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import path from 'path';
@@ -31,6 +30,7 @@ import espnTracker from './routes/espn-tracker.js';
 import web3Routes from './routes/web3.js';
 import analyticsRouter from './routes/analytics.js';
 import { trafficMonitor } from './routes/analytics.js';
+import publicAccessRoutes from './routes/public-access.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -56,7 +56,7 @@ appCore.initialize();
 app.get('/health', (req, res) => {
   const coreStatus = appCore.getConnectionStatus();
   const isHealthy = coreStatus.active >= coreStatus.total * 0.8; // 80% threshold
-  
+
   res.status(isHealthy ? 200 : 503).json({
     status: isHealthy ? 'healthy' : 'degraded',
     timestamp: new Date().toISOString(),
@@ -99,11 +99,12 @@ app.use('/spotify', spotifyRoutes);
 app.use('/qr', qrRoutes);
 app.use('/ps5', ps5Routes);
 app.use('/phone-control', phoneControlRouter);
-app.use('/winner-payout', winnerPayoutRouter);
+app.use('/winner-payout', winnerPayoutRoutes);
 app.use('/ssh', sshRoutes);
 app.use('/espn-tracker', espnTracker);
 app.use('/web3', web3Routes);
 app.use('/analytics', analyticsRouter);
+app.use('/public-access', publicAccessRoutes);
 
 // Static files - serve with proper MIME types
 app.use(express.static(path.join(__dirname, '../public'), {
@@ -184,7 +185,7 @@ process.on('unhandledRejection', (reason, promise) => {
 // Graceful shutdown for zero-downtime deployments
 const gracefulShutdown = (signal: string) => {
   console.log(`${signal} received, shutting down gracefully...`);
-  
+
   server.close(() => {
     console.log('HTTP server closed');
     appCore.shutdown();
