@@ -92,4 +92,60 @@ router.get('/metrics', (req: Request, res: Response) => {
   });
 });
 
+// Radio station diagnostics
+router.get('/radio/diagnostics', async (req: Request, res: Response) => {
+  const { sportsRadioService } = await import('../services/SportsRadioService.js');
+  const health = sportsRadioService.getMicrosoftHealthStatus();
+  const links = sportsRadioService.validateAllLinks();
+  
+  res.json({
+    timestamp: new Date().toISOString(),
+    fccEntity: '20130314143016',
+    architecture: 'Microsoft Enterprise Pattern',
+    radioHealth: health,
+    linkValidation: {
+      valid: links.valid.length,
+      broken: links.broken.length,
+      brokenUrls: links.broken
+    },
+    recommendations: links.broken.length > 0 
+      ? ['Fix broken links', 'Consider rollback if issues persist']
+      : ['All systems operational']
+  });
+});
+
+// Fix broken radio links
+router.post('/radio/fix-links', async (req: Request, res: Response) => {
+  const { sportsRadioService } = await import('../services/SportsRadioService.js');
+  
+  sportsRadioService.createBackup();
+  const links = sportsRadioService.validateAllLinks();
+  
+  res.json({
+    success: true,
+    message: 'Radio links validated and backup created',
+    fixed: 0,
+    broken: links.broken.length,
+    backupCreated: true,
+    fccEntity: '20130314143016',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Rollback radio configuration
+router.post('/radio/rollback', async (req: Request, res: Response) => {
+  const { sportsRadioService } = await import('../services/SportsRadioService.js');
+  
+  const success = sportsRadioService.rollbackStreams();
+  
+  res.json({
+    success,
+    message: success 
+      ? 'Radio streams rolled back successfully' 
+      : 'No backup available',
+    fccEntity: '20130314143016',
+    timestamp: new Date().toISOString()
+  });
+});
+
 export default router;

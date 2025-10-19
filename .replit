@@ -2080,6 +2080,148 @@ args = "echo \"Dashboard: http://0.0.0.0:5000/web3-troubleshooting.html\""
 task = "shell.exec"
 args = "echo \"Web3 Bridge: http://0.0.0.0:5000/web3-bridge.html\""
 
+[[workflows.workflow]]
+name = "Microsoft Radio Diagnostics"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Microsoft Radio Station Diagnostics ===\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Entity: 20130314143016\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 1: Checking radio stream health...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/api/microsoft/radio/diagnostics | jq '.'"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 2: Validating all links...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -X POST -s http://0.0.0.0:5000/sports-radio/microsoft/validate-links | jq '.'"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 3: Creating backup...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -X POST -s http://0.0.0.0:5000/api/microsoft/radio/fix-links | jq '.'"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 4: Checking Microsoft integration...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/streaming/microsoft/radio-integration | jq '.radioStations'"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Diagnostics Complete ===\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Radio Hub: http://0.0.0.0:5000/sports-radio-hub.html\""
+
+[[workflows.workflow]]
+name = "Radio Link Rollback"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Radio Link Rollback System ===\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Entity: 20130314143016\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 1: Validating current links...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -X POST -s http://0.0.0.0:5000/sports-radio/microsoft/validate-links | jq '.validation'"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 2: Creating backup of current state...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -X POST -s http://0.0.0.0:5000/api/microsoft/radio/fix-links | jq '.'"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 3: Rolling back to last good configuration...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -X POST -s http://0.0.0.0:5000/api/microsoft/radio/rollback | jq '.'"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Step 4: Verifying rollback...\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -s http://0.0.0.0:5000/api/microsoft/radio/diagnostics | jq '.radioHealth'"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"=== Rollback Complete ===\""
+
 [[ports]]
 localPort = 5000
 externalPort = 5000

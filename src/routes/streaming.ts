@@ -177,6 +177,36 @@ router.get('/partners', (req: Request, res: Response) => {
   });
 });
 
+// Microsoft radio station integration
+router.get('/microsoft/radio-integration', async (req: Request, res: Response) => {
+  const { sportsRadioService } = await import('../services/SportsRadioService.js');
+  const health = sportsRadioService.getMicrosoftHealthStatus();
+  const streams = sportsRadioService.getLiveRadioStreams();
+  
+  res.json({
+    success: true,
+    integration: 'Microsoft Enterprise Pattern',
+    fccEntity: '20130314143016',
+    radioStations: {
+      total: streams.length,
+      live: streams.filter(s => s.status === 'live').length,
+      health: health.healthPercentage,
+      streams: streams.map(s => ({
+        id: s.id,
+        league: s.league,
+        game: `${s.awayTeam} @ ${s.homeTeam}`,
+        status: s.status,
+        listeners: s.listeners
+      }))
+    },
+    diagnostics: {
+      endpoint: '/api/microsoft/radio/diagnostics',
+      rollback: '/api/microsoft/radio/rollback',
+      fixLinks: '/api/microsoft/radio/fix-links'
+    }
+  });
+});
+
 // Mobile contract management - Get contract status
 router.get('/contracts/mobile/status', (req: Request, res: Response) => {
   const sportsbooks = streamingService.getExternalSportsbooks();
