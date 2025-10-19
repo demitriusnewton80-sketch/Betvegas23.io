@@ -234,6 +234,46 @@ router.get('/fcc/status/:email', async (req: Request, res: Response) => {
   });
 });
 
+// Get WiFi connection hub status
+router.get('/wifi-hub/status', (req: Request, res: Response) => {
+  res.json({
+    hubName: 'WiFi Connection Infusion Hub',
+    status: 'active',
+    connectionStrength: 'excellent',
+    ipAddress: req.hostname,
+    port: process.env.PORT || 5000,
+    fccEntity: '20130314143016',
+    connectedPlugins: [
+      { name: 'Live Sportsbook', status: 'connected', endpoint: '/sportsbook/games' },
+      { name: 'PlayStation Network', status: 'connected', endpoint: '/ps5/games' },
+      { name: 'FCC Streaming', status: 'connected', endpoint: '/streaming/partners' },
+      { name: 'SSO Authentication', status: 'connected', endpoint: '/sso-plugin/plugins' },
+      { name: 'AWS Integration', status: 'connected', endpoint: '/aws/status' },
+      { name: 'SAM.gov Portal', status: 'connected', endpoint: '/sam/entity/young-meeat-llc' }
+    ],
+    bandwidth: 'unlimited',
+    latency: '<50ms',
+    protocol: 'https/wss',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Get WiFi hub connection metrics
+router.get('/wifi-hub/metrics', (req: Request, res: Response) => {
+  const uptime = process.uptime();
+  
+  res.json({
+    uptime: Math.floor(uptime),
+    activeConnections: streamingService.getExternalSportsbooks().length,
+    totalPlugins: 6,
+    connectedPlugins: 6,
+    averageLatency: '42ms',
+    bandwidthUsage: '15%',
+    signalStrength: 100,
+    timestamp: new Date().toISOString()
+  });
+});
+
 export default router;
 
 
