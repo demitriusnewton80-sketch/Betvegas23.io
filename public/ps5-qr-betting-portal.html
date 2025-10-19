@@ -1,0 +1,360 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PS5 Betting Zone - QR Portal | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #003087 0%, #0070cc 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .header h1 {
+            color: #003087;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .ps-logo {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .entity-badge {
+            background: #003087;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 12px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: 700;
+        }
+        .qr-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .qr-section h2 {
+            color: #003087;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .qr-code-display {
+            background: #f9fafb;
+            padding: 30px;
+            border-radius: 16px;
+            margin: 20px auto;
+            display: inline-block;
+            border: 3px solid #003087;
+        }
+        #qrCodeCanvas {
+            display: block;
+            margin: 0 auto;
+        }
+        .betting-zone-url {
+            background: #eff6ff;
+            border: 2px solid #0070cc;
+            padding: 16px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            word-break: break-all;
+            color: #003087;
+            font-weight: 600;
+        }
+        .programs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .program-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .program-card:hover {
+            transform: translateY(-5px);
+            border-color: #003087;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        .program-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .program-title {
+            color: #003087;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .program-desc {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 14px 24px;
+            background: #003087;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #0070cc;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,48,135,0.3);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #003087 0%, #0070cc 100%);
+        }
+        .btn-secondary {
+            background: #22c55e;
+        }
+        .btn-secondary:hover {
+            background: #16a34a;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .info-item {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border-left: 4px solid #003087;
+        }
+        .info-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .info-value {
+            font-size: 16px;
+            color: #1f2937;
+            font-weight: 700;
+        }
+        .download-btn {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="ps-logo">🎮</div>
+            <h1>PlayStation 5 Betting Zone</h1>
+            <p style="color: #6b7280; font-size: 16px; margin-top: 10px;">
+                QR Code Access Portal - All Domain Programs
+            </p>
+            <span class="entity-badge">FCC Entity: 20130314143016</span>
+        </div>
+
+        <div class="qr-section">
+            <h2>📱 Scan QR Code to Access Betting Zone</h2>
+            <p style="color: #6b7280; margin-bottom: 20px;">
+                Direct link to all PlayStation 5 Network betting programs
+            </p>
+            
+            <div class="qr-code-display">
+                <canvas id="qrCodeCanvas"></canvas>
+            </div>
+
+            <div class="betting-zone-url">
+                <strong>Betting Zone URL:</strong><br>
+                https://2ff2dd2c-0218-43d5-83da-e4e4577d5b62-00-2ntrr3ce4l5i4.picard.replit.dev
+            </div>
+
+            <button class="btn btn-primary download-btn" onclick="downloadQR()">
+                📥 Download QR Code
+            </button>
+            
+            <a href="https://2ff2dd2c-0218-43d5-83da-e4e4577d5b62-00-2ntrr3ce4l5i4.picard.replit.dev" 
+               target="_blank" 
+               class="btn btn-secondary download-btn">
+                🚀 Open Betting Zone Directly
+            </a>
+        </div>
+
+        <div class="programs-grid">
+            <div class="program-card">
+                <div class="program-icon">🏈</div>
+                <div class="program-title">Madden NFL</div>
+                <div class="program-desc">
+                    Bet on virtual NFL games with real-time odds and live streaming
+                </div>
+                <a href="https://2ff2dd2c-0218-43d5-83da-e4e4577d5b62-00-2ntrr3ce4l5i4.picard.replit.dev/ps5/games?type=madden" 
+                   class="btn" target="_blank">
+                    View Madden Games
+                </a>
+            </div>
+
+            <div class="program-card">
+                <div class="program-icon">🏀</div>
+                <div class="program-title">NBA 2K</div>
+                <div class="program-desc">
+                    Basketball betting on NBA 2K matchups with competitive odds
+                </div>
+                <a href="https://2ff2dd2c-0218-43d5-83da-e4e4577d5b62-00-2ntrr3ce4l5i4.picard.replit.dev/ps5/games?type=nba2k" 
+                   class="btn" target="_blank">
+                    View NBA 2K Games
+                </a>
+            </div>
+
+            <div class="program-card">
+                <div class="program-icon">🥋</div>
+                <div class="program-title">UFC</div>
+                <div class="program-desc">
+                    MMA fight betting with knockout potential payouts
+                </div>
+                <a href="https://2ff2dd2c-0218-43d5-83da-e4e4577d5b62-00-2ntrr3ce4l5i4.picard.replit.dev/ps5/games?type=ufc" 
+                   class="btn" target="_blank">
+                    View UFC Fights
+                </a>
+            </div>
+
+            <div class="program-card">
+                <div class="program-icon">🥊</div>
+                <div class="program-title">Undisputed</div>
+                <div class="program-desc">
+                    Boxing match wagering with championship odds
+                </div>
+                <a href="https://2ff2dd2c-0218-43d5-83da-e4e4577d5b62-00-2ntrr3ce4l5i4.picard.replit.dev/ps5/games?type=undisputed" 
+                   class="btn" target="_blank">
+                    View Boxing Matches
+                </a>
+            </div>
+
+            <div class="program-card">
+                <div class="program-icon">⛹️</div>
+                <div class="program-title">5v5 Basketball</div>
+                <div class="program-desc">
+                    Pick-up basketball games with team betting options
+                </div>
+                <a href="https://2ff2dd2c-0218-43d5-83da-e4e4577d5b62-00-2ntrr3ce4l5i4.picard.replit.dev/ps5/games?type=5v5-basketball" 
+                   class="btn" target="_blank">
+                    View 5v5 Games
+                </a>
+            </div>
+
+            <div class="program-card">
+                <div class="program-icon">🎯</div>
+                <div class="program-title">Plugin Enrollment</div>
+                <div class="program-desc">
+                    Register your PlayStation Network account and earn 100 points
+                </div>
+                <a href="https://2ff2dd2c-0218-43d5-83da-e4e4577d5b62-00-2ntrr3ce4l5i4.picard.replit.dev/ps5-enrollment-plugin.html" 
+                   class="btn" target="_blank">
+                    Enroll Now
+                </a>
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Entity License</div>
+                <div class="info-value">20130314143016</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">SAM.gov Status</div>
+                <div class="info-value">Active</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">FCC Compliance</div>
+                <div class="info-value">Verified</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Platform</div>
+                <div class="info-value">PlayStation 5</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
+    <script>
+        const BETTING_ZONE_URL = 'https://2ff2dd2c-0218-43d5-83da-e4e4577d5b62-00-2ntrr3ce4l5i4.picard.replit.dev';
+        
+        // Generate QR Code on page load
+        async function generateQRCode() {
+            const canvas = document.getElementById('qrCodeCanvas');
+            try {
+                await QRCode.toCanvas(canvas, BETTING_ZONE_URL, {
+                    width: 300,
+                    margin: 2,
+                    color: {
+                        dark: '#003087',
+                        light: '#ffffff'
+                    },
+                    errorCorrectionLevel: 'H'
+                });
+            } catch (err) {
+                console.error('QR Code generation error:', err);
+                canvas.parentElement.innerHTML = '<p style="color: #ef4444;">Failed to generate QR code</p>';
+            }
+        }
+        
+        // Download QR Code as image
+        function downloadQR() {
+            const canvas = document.getElementById('qrCodeCanvas');
+            const link = document.createElement('a');
+            link.download = 'ps5-betting-zone-qr-20130314143016.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            generateQRCode();
+        });
+    </script>
+</body>
+</html>
