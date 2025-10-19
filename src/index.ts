@@ -308,7 +308,7 @@ async function startApplication() {
     await builder.startup();
 
     // Start server
-    app.listen(PORT, '0.0.0.0', () => {
+    const server = app.listen(PORT, '0.0.0.0', () => {
       console.log('═══════════════════════════════════════════════════');
       console.log('🏢 Young Meeat LLC - Microsoft-Style Architecture');
       console.log('═══════════════════════════════════════════════════');
@@ -320,17 +320,19 @@ async function startApplication() {
       console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
       console.log('═══════════════════════════════════════════════════');
     });
+
+    // Keep server alive with proper timeout settings
+    server.keepAliveTimeout = 65000;
+    server.headersTimeout = 66000;
+
+    return server;
   } catch (error) {
     console.error('❌ Application startup failed:', error);
     process.exit(1);
   }
 }
 
-startApplication();
-
-// Keep server alive with proper timeout settings
-server.keepAliveTimeout = 65000;
-server.headersTimeout = 66000;
+const serverInstance = await startApplication();
 
 // Prevent server crashes from unhandled errors
 process.on('uncaughtException', (error) => {
@@ -347,11 +349,15 @@ process.on('unhandledRejection', (reason, promise) => {
 const gracefulShutdown = (signal: string) => {
   console.log(`${signal} received, shutting down gracefully...`);
 
-  server.close(() => {
-    console.log('HTTP server closed');
-    appCore.shutdown();
+  if (serverInstance) {
+    serverInstance.close(() => {
+      console.log('HTTP server closed');
+      appCore.shutdown();
+      process.exit(0);
+    });
+  } else {
     process.exit(0);
-  });
+  }
 
   // Force shutdown after 30 seconds
   setTimeout(() => {
