@@ -11,6 +11,19 @@ interface VPNConnection {
   connectedAt: Date;
   dataTransferred: number;
   bandwidth: number;
+  streamingEnabled?: boolean;
+  tvChannels?: string[];
+}
+
+interface TVStream {
+  id: string;
+  name: string;
+  category: 'sports' | 'news' | 'entertainment' | 'live-tv';
+  streamUrl: string;
+  quality: '720p' | '1080p' | '4K';
+  vpnRequired: boolean;
+  fccCompliant: boolean;
+  viewers: number;
 }
 
 interface VPNServer {
@@ -29,12 +42,15 @@ class VPNService {
   private connections: Map<string, VPNConnection>;
   private servers: Map<string, VPNServer>;
   private ipPool: string[];
+  private tvStreams: Map<string, TVStream>;
 
   constructor() {
     this.connections = new Map();
     this.servers = new Map();
     this.ipPool = this.generateIPPool();
+    this.tvStreams = new Map();
     this.initializeServers();
+    this.initializeTVStreams();
   }
 
   private generateIPPool(): string[] {
@@ -207,6 +223,150 @@ class VPNService {
     // IP is automatically released when connection is removed
   }
 
+  private initializeTVStreams(): void {
+    // Sports Channels
+    this.tvStreams.set('espn-live', {
+      id: 'espn-live',
+      name: 'ESPN Live Sports',
+      category: 'sports',
+      streamUrl: 'https://www.espn.com/watch',
+      quality: '1080p',
+      vpnRequired: true,
+      fccCompliant: true,
+      viewers: 0
+    });
+
+    this.tvStreams.set('nfl-network', {
+      id: 'nfl-network',
+      name: 'NFL Network',
+      category: 'sports',
+      streamUrl: 'https://www.nfl.com/network',
+      quality: '1080p',
+      vpnRequired: true,
+      fccCompliant: true,
+      viewers: 0
+    });
+
+    this.tvStreams.set('nba-tv', {
+      id: 'nba-tv',
+      name: 'NBA TV',
+      category: 'sports',
+      streamUrl: 'https://www.nba.com/watch',
+      quality: '1080p',
+      vpnRequired: true,
+      fccCompliant: true,
+      viewers: 0
+    });
+
+    this.tvStreams.set('fox-sports', {
+      id: 'fox-sports',
+      name: 'FOX Sports',
+      category: 'sports',
+      streamUrl: 'https://www.foxsports.com/live',
+      quality: '1080p',
+      vpnRequired: true,
+      fccCompliant: true,
+      viewers: 0
+    });
+
+    this.tvStreams.set('nbc-sports', {
+      id: 'nbc-sports',
+      name: 'NBC Sports',
+      category: 'sports',
+      streamUrl: 'https://www.nbcsports.com/live',
+      quality: '1080p',
+      vpnRequired: true,
+      fccCompliant: true,
+      viewers: 0
+    });
+
+    // Live TV Channels
+    this.tvStreams.set('cbs-live', {
+      id: 'cbs-live',
+      name: 'CBS Live',
+      category: 'live-tv',
+      streamUrl: 'https://www.cbs.com/live-tv',
+      quality: '1080p',
+      vpnRequired: true,
+      fccCompliant: true,
+      viewers: 0
+    });
+
+    this.tvStreams.set('nbc-live', {
+      id: 'nbc-live',
+      name: 'NBC Live',
+      category: 'live-tv',
+      streamUrl: 'https://www.nbc.com/live',
+      quality: '1080p',
+      vpnRequired: true,
+      fccCompliant: true,
+      viewers: 0
+    });
+
+    this.tvStreams.set('abc-live', {
+      id: 'abc-live',
+      name: 'ABC Live',
+      category: 'live-tv',
+      streamUrl: 'https://abc.com/watch-live',
+      quality: '1080p',
+      vpnRequired: true,
+      fccCompliant: true,
+      viewers: 0
+    });
+
+    this.tvStreams.set('fox-live', {
+      id: 'fox-live',
+      name: 'FOX Live',
+      category: 'live-tv',
+      streamUrl: 'https://www.fox.com/live',
+      quality: '1080p',
+      vpnRequired: true,
+      fccCompliant: true,
+      viewers: 0
+    });
+  }
+
+  enableStreamingForConnection(connectionId: string, channels: string[]): boolean {
+    const connection = this.connections.get(connectionId);
+    if (!connection) {
+      throw new Error('Connection not found');
+    }
+
+    connection.streamingEnabled = true;
+    connection.tvChannels = channels;
+    
+    channels.forEach(channelId => {
+      const stream = this.tvStreams.get(channelId);
+      if (stream) {
+        stream.viewers++;
+      }
+    });
+
+    return true;
+  }
+
+  getTVStreams(category?: string): TVStream[] {
+    const streams = Array.from(this.tvStreams.values());
+    if (category) {
+      return streams.filter(s => s.category === category);
+    }
+    return streams;
+  }
+
+  getStreamUrl(streamId: string, connectionId: string): string | null {
+    const connection = this.connections.get(connectionId);
+    if (!connection || !connection.connected || !connection.streamingEnabled) {
+      return null;
+    }
+
+    const stream = this.tvStreams.get(streamId);
+    if (!stream) {
+      return null;
+    }
+
+    return stream.streamUrl;
+  }
+
   getStats() {
     const activeConnections = this.getActiveConnections();
     const totalDataTransferred = activeConnections.reduce(
@@ -214,15 +374,21 @@ class VPNService {
       0
     );
 
+    const streamingConnections = activeConnections.filter(c => c.streamingEnabled).length;
+    const totalViewers = Array.from(this.tvStreams.values()).reduce((sum, s) => sum + s.viewers, 0);
+
     return {
       totalServers: this.servers.size,
       onlineServers: Array.from(this.servers.values()).filter(s => s.status === 'online').length,
       activeConnections: activeConnections.length,
+      streamingConnections,
       totalDataTransferred,
       averageLoad: Math.round(
         Array.from(this.servers.values()).reduce((sum, s) => sum + s.load, 0) / this.servers.size
       ),
-      ipPoolUtilization: Math.round((activeConnections.length / this.ipPool.length) * 100)
+      ipPoolUtilization: Math.round((activeConnections.length / this.ipPool.length) * 100),
+      totalTVStreams: this.tvStreams.size,
+      totalViewers
     };
   }
 }

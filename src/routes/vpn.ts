@@ -140,4 +140,80 @@ router.get('/status', (req: Request, res: Response) => {
   });
 });
 
+// Get all TV streams
+router.get('/tv-streams', (req: Request, res: Response) => {
+  const { category } = req.query;
+  const streams = vpnService.getTVStreams(category as string);
+
+  res.json({
+    success: true,
+    streams,
+    count: streams.length,
+    fccEntity: '20130314143016',
+    fccCompliant: true,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Enable streaming for a connection
+router.post('/connection/:connectionId/enable-streaming', (req: Request, res: Response) => {
+  const { connectionId } = req.params;
+  const { channels } = req.body;
+
+  if (!channels || !Array.isArray(channels)) {
+    return res.status(400).json({
+      success: false,
+      error: 'channels array is required'
+    });
+  }
+
+  try {
+    vpnService.enableStreamingForConnection(connectionId, channels);
+
+    res.json({
+      success: true,
+      message: 'TV streaming enabled',
+      connectionId,
+      channels,
+      fccEntity: '20130314143016',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to enable streaming'
+    });
+  }
+});
+
+// Get stream URL for a specific channel
+router.get('/stream/:streamId/url', (req: Request, res: Response) => {
+  const { streamId } = req.params;
+  const { connectionId } = req.query;
+
+  if (!connectionId) {
+    return res.status(400).json({
+      success: false,
+      error: 'connectionId is required'
+    });
+  }
+
+  const streamUrl = vpnService.getStreamUrl(streamId, connectionId as string);
+
+  if (!streamUrl) {
+    return res.status(403).json({
+      success: false,
+      error: 'Stream access denied. Ensure VPN is connected and streaming is enabled.'
+    });
+  }
+
+  res.json({
+    success: true,
+    streamId,
+    streamUrl,
+    fccCompliant: true,
+    timestamp: new Date().toISOString()
+  });
+});
+
 export default router;

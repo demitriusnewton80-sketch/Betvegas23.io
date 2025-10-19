@@ -1,0 +1,400 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VPN TV Streaming | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid #ef4444;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 700;
+            animation: pulse 2s infinite;
+            margin-top: 10px;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        .fcc-badge {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid #22c55e;
+            color: #22c55e;
+            padding: 8px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            margin: 5px;
+        }
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .connection-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .stat-card {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .streams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .stream-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .stream-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        .stream-card.enabled {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            border-color: #22c55e;
+        }
+        .stream-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .stream-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .stream-category {
+            background: rgba(99, 102, 241, 0.3);
+            color: #a5b4fc;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .stream-quality {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        .btn {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 5px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.3);
+        }
+        .btn.success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+        input {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 15px;
+            color: white;
+            margin-bottom: 10px;
+        }
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="font-size: 72px; margin-bottom: 20px;">📺🔒</div>
+            <h1>VPN TV Streaming Hub</h1>
+            <p style="opacity: 0.9; margin-top: 10px;">Secure Live Television & Sports Streaming</p>
+            <div style="margin-top: 15px;">
+                <span class="fcc-badge">FCC Entity: 20130314143016</span>
+                <span class="fcc-badge">FCC Compliant</span>
+            </div>
+            <div style="margin-top: 15px;">
+                <span class="live-indicator">
+                    <span class="pulse-dot"></span>
+                    Live Streaming Active
+                </span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔐 VPN Connection</h2>
+            <div class="connection-panel">
+                <div>
+                    <input type="text" id="userIdInput" placeholder="Enter User ID (e.g., user-gbemeeat)">
+                    <input type="text" id="serverIdInput" placeholder="VPN Server ID (e.g., vpn-server-1)">
+                    <button class="btn success" onclick="connectVPN()">🔒 Connect to VPN</button>
+                    <button class="btn" onclick="disconnectVPN()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">🔓 Disconnect</button>
+                </div>
+                <div class="status-grid" style="margin-top: 20px;">
+                    <div class="stat-card">
+                        <div class="stat-label">Connection Status</div>
+                        <div class="stat-value" id="connectionStatus">Not Connected</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">VPN IP</div>
+                        <div class="stat-value" id="vpnIP">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Streaming</div>
+                        <div class="stat-value" id="streamingStatus">Disabled</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📺 Sports Channels</h2>
+            <div class="streams-grid" id="sportsStreams"></div>
+        </div>
+
+        <div class="section">
+            <h2>🎬 Live TV Channels</h2>
+            <div class="streams-grid" id="liveTVStreams"></div>
+        </div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        const API_BASE = window.CloudConfig.getAPIBase();
+        let currentConnection = null;
+        let selectedChannels = new Set();
+
+        async function loadTVStreams() {
+            try {
+                const response = await fetch(`${API_BASE}/vpn/tv-streams`);
+                const data = await response.json();
+
+                const sports = data.streams.filter(s => s.category === 'sports');
+                const liveTV = data.streams.filter(s => s.category === 'live-tv');
+
+                displayStreams(sports, 'sportsStreams');
+                displayStreams(liveTV, 'liveTVStreams');
+            } catch (error) {
+                console.error('Error loading TV streams:', error);
+            }
+        }
+
+        function displayStreams(streams, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = streams.map(stream => `
+                <div class="stream-card ${selectedChannels.has(stream.id) ? 'enabled' : ''}" onclick="toggleChannel('${stream.id}')">
+                    <div class="stream-icon">${stream.category === 'sports' ? '🏈' : '📺'}</div>
+                    <div class="stream-name">${stream.name}</div>
+                    <span class="stream-category">${stream.category}</span>
+                    <div class="stream-quality">Quality: ${stream.quality}</div>
+                    <div style="margin-top: 10px; font-size: 12px; opacity: 0.8;">
+                        👁️ ${stream.viewers} viewers
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleChannel(channelId) {
+            if (selectedChannels.has(channelId)) {
+                selectedChannels.delete(channelId);
+            } else {
+                selectedChannels.add(channelId);
+            }
+            loadTVStreams();
+        }
+
+        async function connectVPN() {
+            const userId = document.getElementById('userIdInput').value.trim();
+            const serverId = document.getElementById('serverIdInput').value.trim();
+
+            if (!userId || !serverId) {
+                alert('Please enter User ID and Server ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/vpn/connect`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, serverId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentConnection = data.connection;
+                    document.getElementById('connectionStatus').textContent = 'Connected ✓';
+                    document.getElementById('vpnIP').textContent = data.connection.vpnIP;
+                    
+                    if (selectedChannels.size > 0) {
+                        await enableStreaming();
+                    }
+                    
+                    alert(`✅ Connected to VPN!\nVPN IP: ${data.connection.vpnIP}`);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error connecting to VPN:', error);
+                alert('Failed to connect to VPN');
+            }
+        }
+
+        async function enableStreaming() {
+            if (!currentConnection) {
+                alert('Please connect to VPN first');
+                return;
+            }
+
+            if (selectedChannels.size === 0) {
+                alert('Please select at least one channel');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/vpn/connection/${currentConnection.id}/enable-streaming`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ channels: Array.from(selectedChannels) })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('streamingStatus').textContent = 'Enabled ✓';
+                    alert(`✅ TV Streaming enabled!\nChannels: ${selectedChannels.size}`);
+                    loadTVStreams();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error enabling streaming:', error);
+                alert('Failed to enable streaming');
+            }
+        }
+
+        async function disconnectVPN() {
+            if (!currentConnection) {
+                alert('No active VPN connection');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/vpn/disconnect/${currentConnection.id}`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentConnection = null;
+                    selectedChannels.clear();
+                    document.getElementById('connectionStatus').textContent = 'Not Connected';
+                    document.getElementById('vpnIP').textContent = '-';
+                    document.getElementById('streamingStatus').textContent = 'Disabled';
+                    alert('✅ Disconnected from VPN');
+                    loadTVStreams();
+                }
+            } catch (error) {
+                console.error('Error disconnecting:', error);
+                alert('Failed to disconnect from VPN');
+            }
+        }
+
+        window.addEventListener('load', () => {
+            loadTVStreams();
+            setInterval(loadTVStreams, 30000);
+        });
+
+        // Auto-enable streaming when channels are selected and VPN is connected
+        setInterval(() => {
+            if (currentConnection && selectedChannels.size > 0 && document.getElementById('streamingStatus').textContent === 'Disabled') {
+                enableStreaming();
+            }
+        }, 2000);
+    </script>
+</body>
+</html>
