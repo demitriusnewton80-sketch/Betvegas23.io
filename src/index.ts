@@ -114,9 +114,9 @@ app.use('/web3', web3Routes); // Mount Web3 bridge routes
 const routes = [
   '/sportsbook', '/streaming', '/auth', '/webhooks',
   '/account', '/contact', '/ecommerce', '/aws',
-  '/backup', '/content', '/sam', '/sso-plugin',
+  '/aws-data', '/backup', '/content', '/sam', '/sso-plugin',
   '/spotify', '/qr', '/ps5', '/phone-control',
-  '/winner-payout', '/espn-tracker', '/wifi-infusion', '/web3'
+  '/winner-payout', '/espn-tracker', '/wifi-infusion'
 ];
 
 console.log('📍 Routes registered:', routes.length);
@@ -138,7 +138,7 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
   const errorId = `ERR-${Date.now()}`;
   console.error(`[${errorId}] Server error:`, err.message);
   console.error('Stack:', err.stack);
-  
+
   res.status(500).json({
     success: false,
     error: 'Internal server error',
@@ -157,7 +157,7 @@ const server = app.listen(PORT, HOST, () => {
   console.log(`📺 FCC Streaming: Enabled`);
   console.log(`💚 Health Check: http://${HOST}:${PORT}/health`);
   console.log(`🌐 Server is ready to accept connections`);
-  
+
   // Initialize App Core
   appCore.initialize();
 });
