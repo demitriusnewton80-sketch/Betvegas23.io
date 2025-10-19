@@ -1,0 +1,380 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Troubleshooting | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            color: #3b82f6;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+        .btn.success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+        .btn.danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        .status {
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        .status.success {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid #22c55e;
+        }
+        .status.error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+        }
+        .status.info {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid #3b82f6;
+        }
+        #output {
+            background: #000;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(59, 130, 246, 0.3);
+            border: 1px solid #3b82f6;
+            border-radius: 12px;
+            font-size: 11px;
+            margin: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="font-size: 48px; margin-bottom: 15px;">🔧</div>
+            <h1>System Troubleshooting Dashboard</h1>
+            <p style="opacity: 0.9; margin-top: 8px;">Young Meeat LLC - Public Access</p>
+            <div style="margin-top: 12px;">
+                <span class="badge">FCC: 20130314143016</span>
+                <span class="badge">Public Access</span>
+                <span class="badge">No Auth Required</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🏥 Quick Health Checks</h2>
+            <div class="grid">
+                <button class="btn success" onclick="checkHealth()">✅ Server Health</button>
+                <button class="btn success" onclick="checkAPI()">📡 API Status</button>
+                <button class="btn success" onclick="checkCore()">⚙️ Core Systems</button>
+                <button class="btn success" onclick="checkDomain()">🌐 Domain Status</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔍 System Diagnostics</h2>
+            <div class="grid">
+                <button class="btn" onclick="checkAllWorkflows()">📊 All Workflows</button>
+                <button class="btn" onclick="checkVPN()">🔒 VPN Service</button>
+                <button class="btn" onclick="checkStreaming()">📺 Streaming</button>
+                <button class="btn" onclick="checkSportsbook()">🏆 Sportsbook</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🛠️ Troubleshooting Tools</h2>
+            <div class="grid">
+                <button class="btn danger" onclick="clearCache()">🗑️ Clear Cache</button>
+                <button class="btn danger" onclick="resetConnections()">🔄 Reset Connections</button>
+                <button class="btn" onclick="runFullDiagnostics()">🔬 Full Diagnostics</button>
+                <button class="btn" onclick="exportLogs()">📋 Export Logs</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Current Status</h2>
+            <div id="statusDisplay"></div>
+        </div>
+
+        <div class="section">
+            <h2>💻 Console Output</h2>
+            <div id="output">Waiting for commands...</div>
+        </div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        const API_BASE = window.CloudConfig ? window.CloudConfig.getAPIBase() : '';
+        const output = document.getElementById('output');
+        const statusDisplay = document.getElementById('statusDisplay');
+        let logs = [];
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logLine = `[${timestamp}] ${message}`;
+            logs.push(logLine);
+            output.textContent = logs.join('\n');
+            output.scrollTop = output.scrollHeight;
+            
+            if (type === 'error') console.error(message);
+            else console.log(message);
+        }
+
+        async function fetchJSON(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                throw new Error(`Failed to fetch ${url}: ${error.message}`);
+            }
+        }
+
+        async function checkHealth() {
+            log('🏥 Checking server health...');
+            try {
+                const data = await fetchJSON(`${API_BASE}/health`);
+                log(`✅ Server Status: ${data.status}`, 'success');
+                log(`⏱️ Uptime: ${data.uptime} seconds`);
+                log(`📦 Memory: ${data.memory?.used || 'N/A'}MB / ${data.memory?.total || 'N/A'}MB`);
+                updateStatus('Server Health', 'success', JSON.stringify(data, null, 2));
+            } catch (error) {
+                log(`❌ Health check failed: ${error.message}`, 'error');
+                updateStatus('Server Health', 'error', error.message);
+            }
+        }
+
+        async function checkAPI() {
+            log('📡 Checking API endpoints...');
+            try {
+                const data = await fetchJSON(`${API_BASE}/api`);
+                log('✅ API is operational');
+                log(`📍 Available routes: ${Object.keys(data.routes || {}).length}`);
+                updateStatus('API Status', 'success', 'All endpoints accessible');
+            } catch (error) {
+                log(`❌ API check failed: ${error.message}`, 'error');
+                updateStatus('API Status', 'error', error.message);
+            }
+        }
+
+        async function checkCore() {
+            log('⚙️ Checking core systems...');
+            try {
+                const data = await fetchJSON(`${API_BASE}/api/core/status`);
+                log(`✅ Core Status: Active ${data.core?.active || 0} / Total ${data.core?.total || 0}`);
+                updateStatus('Core Systems', 'success', JSON.stringify(data.core, null, 2));
+            } catch (error) {
+                log(`❌ Core check failed: ${error.message}`, 'error');
+                updateStatus('Core Systems', 'error', error.message);
+            }
+        }
+
+        async function checkDomain() {
+            log('🌐 Checking domain status...');
+            try {
+                const data = await fetchJSON(`${API_BASE}/domain/status`);
+                log(`✅ Current Domain: ${data.currentDomain}`);
+                log(`🔐 Protection: ${data.protection}`);
+                updateStatus('Domain Status', 'success', data.currentDomain);
+            } catch (error) {
+                log(`❌ Domain check failed: ${error.message}`, 'error');
+                updateStatus('Domain Status', 'error', error.message);
+            }
+        }
+
+        async function checkAllWorkflows() {
+            log('📊 Checking all workflows...');
+            try {
+                const data = await fetchJSON(`${API_BASE}/streaming/workflows/all`);
+                log('✅ Workflows loaded successfully');
+                Object.keys(data.workflows || {}).forEach(key => {
+                    log(`  📦 ${key}: ${data.workflows[key].status}`);
+                });
+                updateStatus('Workflows', 'success', `${Object.keys(data.workflows || {}).length} workflows active`);
+            } catch (error) {
+                log(`❌ Workflow check failed: ${error.message}`, 'error');
+                updateStatus('Workflows', 'error', error.message);
+            }
+        }
+
+        async function checkVPN() {
+            log('🔒 Checking VPN service...');
+            try {
+                const data = await fetchJSON(`${API_BASE}/vpn/status`);
+                log(`✅ VPN Service: ${data.vpnService}`);
+                log(`📊 Stats: ${JSON.stringify(data.stats)}`);
+                updateStatus('VPN Service', 'success', data.vpnService);
+            } catch (error) {
+                log(`❌ VPN check failed: ${error.message}`, 'error');
+                updateStatus('VPN Service', 'error', error.message);
+            }
+        }
+
+        async function checkStreaming() {
+            log('📺 Checking streaming services...');
+            try {
+                const data = await fetchJSON(`${API_BASE}/streaming/partners`);
+                log(`✅ Streaming Partners: ${data.count || 0}`);
+                updateStatus('Streaming', 'success', `${data.count || 0} partners connected`);
+            } catch (error) {
+                log(`❌ Streaming check failed: ${error.message}`, 'error');
+                updateStatus('Streaming', 'error', error.message);
+            }
+        }
+
+        async function checkSportsbook() {
+            log('🏆 Checking sportsbook...');
+            try {
+                const data = await fetchJSON(`${API_BASE}/sportsbook/games`);
+                log(`✅ Sportsbook Games: ${data.games?.length || 0}`);
+                updateStatus('Sportsbook', 'success', `${data.games?.length || 0} games available`);
+            } catch (error) {
+                log(`❌ Sportsbook check failed: ${error.message}`, 'error');
+                updateStatus('Sportsbook', 'error', error.message);
+            }
+        }
+
+        async function clearCache() {
+            log('🗑️ Clearing cache...');
+            localStorage.clear();
+            sessionStorage.clear();
+            log('✅ Cache cleared successfully');
+            updateStatus('Cache', 'success', 'Cleared');
+        }
+
+        async function resetConnections() {
+            log('🔄 Resetting connections...');
+            log('✅ Connection reset simulated (client-side only)');
+            updateStatus('Connections', 'success', 'Reset complete');
+        }
+
+        async function runFullDiagnostics() {
+            log('🔬 Running full system diagnostics...');
+            log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            
+            await checkHealth();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await checkAPI();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await checkCore();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await checkDomain();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await checkAllWorkflows();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await checkVPN();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await checkStreaming();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await checkSportsbook();
+            
+            log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            log('✅ Full diagnostics complete!');
+        }
+
+        function exportLogs() {
+            const blob = new Blob([logs.join('\n')], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `troubleshooting-${Date.now()}.log`;
+            a.click();
+            URL.revokeObjectURL(url);
+            log('📋 Logs exported successfully');
+        }
+
+        function updateStatus(name, type, message) {
+            const statusHTML = `
+                <div class="status ${type}">
+                    <strong>${name}:</strong> ${message}
+                </div>
+            `;
+            statusDisplay.innerHTML += statusHTML;
+        }
+
+        // Auto-run health check on load
+        window.addEventListener('load', () => {
+            log('🚀 Troubleshooting dashboard loaded');
+            log('📍 FCC Entity: 20130314143016');
+            log('🌐 Public Access Enabled');
+            checkHealth();
+        });
+    </script>
+</body>
+</html>

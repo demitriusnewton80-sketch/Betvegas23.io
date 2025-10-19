@@ -266,6 +266,15 @@ app.get('/phone-vpn-domain.html', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../public/phone-vpn-domain.html'));
 });
 
+// Public Troubleshooting Dashboard
+app.get('/troubleshooting', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/public-troubleshooting.html'));
+});
+
+app.get('/public-troubleshooting.html', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/public-troubleshooting.html'));
+});
+
 // Fallback route for SPA - only for non-file requests
 app.get('*', (req, res, next) => {
   // If the request has a file extension, let static middleware handle it
