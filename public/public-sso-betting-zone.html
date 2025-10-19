@@ -369,11 +369,6 @@
     <script>
         const API_BASE_URL = window.location.origin;
         let currentSessionId = null;
-        
-        // Prevent duplicate declarations
-        if (typeof API_BASE !== 'undefined') {
-            console.warn('API_BASE already defined, skipping redeclaration');
-        }
 
         const platformUrls = {
             'sportsbook': '/index.html',

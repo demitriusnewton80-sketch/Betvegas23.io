@@ -149,7 +149,10 @@ router.get('/stream-updates', (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.setHeader('X-Stream-Protected', 'true');
+  res.setHeader('X-FCC-Entity', '20130314143016');
+  res.setHeader('X-Copyright', '© 2025 Young Meeat LLC');
 
   const updateHandler = (update: any) => {
     res.write(`data: ${JSON.stringify(update)}\n\n`);

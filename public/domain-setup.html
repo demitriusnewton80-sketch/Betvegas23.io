@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domain Setup & Protection | Young Meeat LLC</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: white;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .header {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .header h1 { font-size: 42px; margin-bottom: 10px; }
+        .section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .status-good { color: #22c55e; font-weight: 700; }
+        .status-bad { color: #ef4444; font-weight: 700; }
+        .domain-list {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+        .domain-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            border-left: 4px solid #22c55e;
+        }
+        input, button {
+            padding: 14px;
+            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.3);
+            margin: 8px 0;
+            width: 100%;
+            font-size: 16px;
+        }
+        input {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        button {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        button:hover { opacity: 0.9; }
+        .code-block {
+            background: rgba(0,0,0,0.5);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔒 Domain Setup & Protection</h1>
+            <p>Young Meeat LLC - FCC Entity: 20130314143016</p>
+        </div>
+
+        <div class="section">
+            <h2>📊 Current Domain Status</h2>
+            <div id="statusInfo">
+                <p>Loading...</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>✅ Allowed Domains</h2>
+            <div id="domainList" class="domain-list">
+                <p>Loading...</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>➕ Add Custom Domain</h2>
+            <p style="margin-bottom: 15px; opacity: 0.9;">Add your custom domain to enable streaming services</p>
+            <input type="email" id="emailInput" placeholder="Your Email (gbemeeat@gmail.com or meeatupt215@gmail.com)">
+            <input type="text" id="domainInput" placeholder="Your Custom Domain (e.g., yourdomain.com)">
+            <button onclick="addDomain()">Add Domain</button>
+            <div id="addResult" style="margin-top: 15px;"></div>
+        </div>
+
+        <div class="section">
+            <h2>📝 Replit Deployment Setup</h2>
+            <p style="margin-bottom: 15px;">To connect a custom domain to your Replit deployment:</p>
+            <ol style="line-height: 2; margin-left: 20px;">
+                <li>Go to the <strong>Deployments</strong> tab in Replit</li>
+                <li>Under Settings → Domains, click "Link a domain"</li>
+                <li>Enter your domain name</li>
+                <li>Add the provided DNS records to your domain registrar</li>
+                <li>Wait for DNS propagation (usually a few minutes)</li>
+                <li>Come back here and add your domain using the form above</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h2>🔐 Protection Features</h2>
+            <ul style="line-height: 2; margin-left: 20px;">
+                <li>✅ Domain whitelisting enabled</li>
+                <li>✅ FCC entity verification active</li>
+                <li>✅ Streaming service protection</li>
+                <li>✅ CORS protection for authorized domains</li>
+                <li>✅ Rate limiting on all endpoints</li>
+                <li>✅ Security headers on all responses</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = window.location.origin;
+
+        async function loadStatus() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/domain/status`);
+                const data = await response.json();
+
+                document.getElementById('statusInfo').innerHTML = `
+                    <p><strong>Current Domain:</strong> <span class="status-good">${data.currentDomain}</span></p>
+                    <p><strong>Protection Status:</strong> <span class="status-good">${data.protection.toUpperCase()}</span></p>
+                    <p><strong>FCC Entity:</strong> ${data.fccEntity}</p>
+                    <p><strong>Last Check:</strong> ${new Date(data.timestamp).toLocaleString()}</p>
+                `;
+
+                document.getElementById('domainList').innerHTML = data.allowedDomains.map(domain => `
+                    <div class="domain-item">✅ ${domain}</div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading status:', error);
+                document.getElementById('statusInfo').innerHTML = `
+                    <p class="status-bad">Failed to load status</p>
+                `;
+            }
+        }
+
+        async function addDomain() {
+            const email = document.getElementById('emailInput').value;
+            const domain = document.getElementById('domainInput').value;
+            const resultDiv = document.getElementById('addResult');
+
+            if (!email || !domain) {
+                resultDiv.innerHTML = '<p class="status-bad">Please fill in all fields</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/domain/add`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, domain })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultDiv.innerHTML = `<p class="status-good">✅ Domain added successfully!</p>`;
+                    loadStatus();
+                    document.getElementById('domainInput').value = '';
+                } else {
+                    resultDiv.innerHTML = `<p class="status-bad">❌ ${data.error || 'Failed to add domain'}</p>`;
+                }
+            } catch (error) {
+                console.error('Error adding domain:', error);
+                resultDiv.innerHTML = '<p class="status-bad">❌ Failed to add domain</p>';
+            }
+        }
+
+        window.addEventListener('load', loadStatus);
+    </script>
+</body>
+</html>

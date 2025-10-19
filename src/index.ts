@@ -33,6 +33,8 @@ import web3Routes from './routes/web3.js';
 import analyticsRouter from './routes/analytics.js';
 import { trafficMonitor } from './routes/analytics.js';
 import publicAccessRoutes from './routes/public-access.js';
+import { rateLimiter } from './middleware/rateLimiter.js';
+import { domainProtection, addCustomDomain, getAllowedDomains } from './middleware/domainProtection.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -71,11 +73,17 @@ app.use((req, res, next) => {
   next();
 });
 
+// Apply domain protection middleware
+app.use(domainProtection);
+
+// Apply rate limiting middleware
+app.use(rateLimiter());
+
 // Initialize App Core
 appCore.initialize();
 
 // Health check endpoint for deployment monitoring
-app.get('/health', (req, res) => {
+app.get('/health', (req: Request, res: Response) => {
   const coreStatus = appCore.getConnectionStatus();
   const isHealthy = coreStatus.active >= coreStatus.total * 0.8; // 80% threshold
 
@@ -101,6 +109,35 @@ app.get('/ready', (req, res) => {
   } else {
     res.status(503).json({ ready: false, waiting: 'core initialization' });
   }
+});
+
+// Domain management endpoint
+app.get('/domain/status', (req: Request, res: Response) => {
+  res.json({
+    allowedDomains: getAllowedDomains(),
+    currentDomain: req.headers.host,
+    fccEntity: '20130314143016',
+    protection: 'active',
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.post('/domain/add', (req: Request, res: Response) => {
+  const { domain, email } = req.body;
+
+  // Verify authorized email
+  const authorizedEmails = ['gbemeeat@gmail.com', 'meeatupt215@gmail.com'];
+  if (!authorizedEmails.includes(email)) {
+    return res.status(403).json({ error: 'Unauthorized email' });
+  }
+
+  addCustomDomain(domain);
+  res.json({
+    success: true,
+    domain,
+    allowedDomains: getAllowedDomains(),
+    message: 'Domain added successfully'
+  });
 });
 
 // API Routes - All properly integrated
