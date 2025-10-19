@@ -32,6 +32,17 @@ Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 - `POST /auth/logout` - Logout
 - `GET /auth/status` - SSO status
 
+### SSO Plugin System
+- `GET /sso-plugin/plugins` - Get all SSO plugins
+- `GET /sso-plugin/plugins/enabled` - Get enabled plugins
+- `GET /sso-plugin/plugins/:pluginId` - Get plugin details (SSO protected)
+- `GET /sso-plugin/login/:pluginId` - Login with specific plugin
+- `GET /sso-plugin/callback` - SSO plugin callback handler
+- `POST /sso-plugin/plugins/:pluginId/toggle` - Enable/disable plugin (SSO protected)
+- `PUT /sso-plugin/plugins/:pluginId/config` - Update plugin config (SSO protected)
+- `GET /sso-plugin/stats` - Get plugin statistics (SSO protected)
+- `GET /sso-plugin/session` - Get current plugin session (SSO protected)
+
 ### Content Control (SSO Protected)
 - `POST /content/create` - Create new content item
 - `GET /content/:contentId` - Get content by ID
