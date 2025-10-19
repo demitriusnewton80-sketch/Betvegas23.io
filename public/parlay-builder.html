@@ -1,0 +1,440 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Parlay Builder | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 48px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .fcc-badge {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid #22c55e;
+            color: #22c55e;
+            padding: 8px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .section {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+        }
+        .section h2 {
+            color: #3b82f6;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .ai-suggestions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .suggestion-card {
+            background: rgba(59, 130, 246, 0.1);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .suggestion-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+        .suggestion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .confidence-badge {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .risk-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+        .risk-low { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .risk-medium { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .risk-high { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .suggestion-legs {
+            font-size: 14px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        .suggestion-reasoning {
+            font-size: 13px;
+            color: #94a3b8;
+            font-style: italic;
+        }
+        .parlay-slip {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            position: sticky;
+            top: 20px;
+        }
+        .parlay-slip h2 {
+            color: #8b5cf6;
+            margin-bottom: 20px;
+        }
+        .leg-item {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+        .leg-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .leg-team {
+            font-weight: 700;
+            font-size: 15px;
+        }
+        .leg-odds {
+            color: #22c55e;
+            font-weight: 700;
+        }
+        .remove-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        .stake-input {
+            width: 100%;
+            padding: 14px;
+            background: rgba(0,0,0,0.3);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            margin: 15px 0;
+        }
+        .payout-info {
+            background: rgba(34, 197, 94, 0.1);
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .payout-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        .payout-total {
+            font-size: 24px;
+            font-weight: 700;
+            color: #22c55e;
+        }
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
+        }
+        .btn-secondary {
+            background: rgba(59, 130, 246, 0.2);
+            border: 2px solid #3b82f6;
+            color: #3b82f6;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Live Parlay Builder</h1>
+            <p style="font-size: 18px; margin-top: 10px;">AI-Powered Parlay Suggestions & Real-Time Odds</p>
+            <span class="fcc-badge">FCC Entity: 20130314143016</span>
+        </div>
+
+        <div class="main-grid">
+            <div class="section">
+                <h2>🤖 AI Parlay Suggestions</h2>
+                <div id="suggestionsContainer" class="ai-suggestions">
+                    <div class="empty-state">Loading AI suggestions...</div>
+                </div>
+            </div>
+
+            <div class="parlay-slip">
+                <h2>Your Parlay Slip</h2>
+                <div id="parlayLegs">
+                    <div class="empty-state">
+                        <p>Add legs to build your parlay</p>
+                    </div>
+                </div>
+                
+                <input type="number" id="stakeInput" class="stake-input" placeholder="Enter stake amount ($)" min="1" step="10">
+                
+                <div id="payoutInfo" class="payout-info" style="display: none;">
+                    <div class="payout-row">
+                        <span>Total Odds:</span>
+                        <span id="totalOdds" style="color: #3b82f6; font-weight: 700;">-</span>
+                    </div>
+                    <div class="payout-row">
+                        <span>Win Probability:</span>
+                        <span id="winProb" style="color: #f59e0b; font-weight: 700;">-</span>
+                    </div>
+                    <div class="payout-row">
+                        <span>Potential Payout:</span>
+                        <span class="payout-total" id="potentialPayout">$0.00</span>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="placeParlayBet()" id="placeBetBtn" disabled>
+                    Place Parlay Bet
+                </button>
+                <button class="btn btn-secondary" onclick="clearParlay()">
+                    Clear All
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        const userId = 'demo-user';
+        let selectedLegs = [];
+
+        async function loadSuggestions() {
+            try {
+                const response = await fetch(`${API_BASE}/parlay/suggestions/${userId}`);
+                const data = await response.json();
+
+                const container = document.getElementById('suggestionsContainer');
+                container.innerHTML = data.suggestions.map((suggestion, idx) => `
+                    <div class="suggestion-card" onclick="applySuggestion(${idx})">
+                        <div class="suggestion-header">
+                            <div>
+                                <span class="confidence-badge">🎯 ${suggestion.confidence}% Confidence</span>
+                                <span class="risk-badge risk-${suggestion.riskLevel}">${suggestion.riskLevel.toUpperCase()} RISK</span>
+                            </div>
+                        </div>
+                        <div class="suggestion-legs">
+                            <strong>${suggestion.parlayLegs.length} Legs:</strong> 
+                            ${suggestion.parlayLegs.map(leg => `${leg.homeTeam} vs ${leg.awayTeam}`).join(' • ')}
+                        </div>
+                        <div class="suggestion-reasoning">
+                            💡 ${suggestion.reasoning}
+                        </div>
+                    </div>
+                `).join('');
+
+                // Store suggestions globally
+                window.aiSuggestions = data.suggestions;
+            } catch (error) {
+                console.error('Error loading suggestions:', error);
+            }
+        }
+
+        function applySuggestion(index) {
+            const suggestion = window.aiSuggestions[index];
+            selectedLegs = [...suggestion.parlayLegs];
+            renderParlaySlip();
+            calculatePayout();
+        }
+
+        function renderParlaySlip() {
+            const container = document.getElementById('parlayLegs');
+            
+            if (selectedLegs.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>Add legs to build your parlay</p></div>';
+                document.getElementById('placeBetBtn').disabled = true;
+                return;
+            }
+
+            container.innerHTML = selectedLegs.map((leg, idx) => `
+                <div class="leg-item">
+                    <div class="leg-header">
+                        <span class="leg-team">${leg.selection === 'home' ? leg.homeTeam : leg.awayTeam}</span>
+                        <span class="leg-odds">${leg.odds > 0 ? '+' : ''}${leg.odds}</span>
+                    </div>
+                    <div style="font-size: 13px; opacity: 0.8;">
+                        ${leg.homeTeam} vs ${leg.awayTeam} • ${leg.betType}
+                    </div>
+                    <button class="remove-btn" onclick="removeLeg(${idx})">Remove</button>
+                </div>
+            `).join('');
+
+            document.getElementById('placeBetBtn').disabled = false;
+        }
+
+        function removeLeg(index) {
+            selectedLegs.splice(index, 1);
+            renderParlaySlip();
+            calculatePayout();
+        }
+
+        function calculatePayout() {
+            const stake = parseFloat(document.getElementById('stakeInput').value) || 0;
+            
+            if (selectedLegs.length < 2 || stake <= 0) {
+                document.getElementById('payoutInfo').style.display = 'none';
+                return;
+            }
+
+            // Calculate combined odds
+            let combinedOdds = 1;
+            selectedLegs.forEach(leg => {
+                const decimalOdds = leg.odds > 0 
+                    ? (leg.odds / 100 + 1) 
+                    : (100 / Math.abs(leg.odds) + 1);
+                combinedOdds *= decimalOdds;
+            });
+
+            const americanOdds = combinedOdds > 2 
+                ? Math.round((combinedOdds - 1) * 100) 
+                : Math.round(-100 / (combinedOdds - 1));
+
+            const potentialPayout = stake * combinedOdds;
+
+            // Calculate win probability
+            let totalProb = 1;
+            selectedLegs.forEach(leg => {
+                const prob = leg.odds < 0
+                    ? Math.abs(leg.odds) / (Math.abs(leg.odds) + 100)
+                    : 100 / (leg.odds + 100);
+                totalProb *= prob;
+            });
+
+            document.getElementById('totalOdds').textContent = americanOdds > 0 ? `+${americanOdds}` : americanOdds;
+            document.getElementById('winProb').textContent = (totalProb * 100).toFixed(1) + '%';
+            document.getElementById('potentialPayout').textContent = '$' + potentialPayout.toFixed(2);
+            document.getElementById('payoutInfo').style.display = 'block';
+        }
+
+        async function placeParlayBet() {
+            const stake = parseFloat(document.getElementById('stakeInput').value);
+            
+            if (!stake || stake <= 0) {
+                alert('Please enter a valid stake amount');
+                return;
+            }
+
+            if (selectedLegs.length < 2) {
+                alert('Please select at least 2 legs for your parlay');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/parlay/build`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId,
+                        legs: selectedLegs,
+                        stake
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Parlay placed successfully!\n\nPotential Payout: $${data.parlay.potentialPayout.toFixed(2)}\nWin Probability: ${data.winProbability}`);
+                    clearParlay();
+                    loadSuggestions();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Failed to place parlay bet');
+                console.error(error);
+            }
+        }
+
+        function clearParlay() {
+            selectedLegs = [];
+            document.getElementById('stakeInput').value = '';
+            renderParlaySlip();
+            calculatePayout();
+        }
+
+        // Event listeners
+        document.getElementById('stakeInput').addEventListener('input', calculatePayout);
+
+        // Initialize
+        loadSuggestions();
+    </script>
+</body>
+</html>
