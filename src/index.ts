@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import cookieParser from 'cookie-parser';
+import { appCore } from './core/AppCore.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -60,6 +61,7 @@ app.use((req, res, next) => {
 
 // Health check endpoint for AWS/deployment monitoring
 app.get('/health', (req: Request, res: Response) => {
+  const coreStatus = appCore.getConnectionStatus();
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
@@ -69,8 +71,18 @@ app.get('/health', (req: Request, res: Response) => {
       aws: 'ready',
       github: 'connected',
       fcc: 'streaming_enabled'
+    },
+    core: {
+      active: coreStatus.active,
+      total: coreStatus.total,
+      status: coreStatus.active === coreStatus.total ? 'all_connected' : 'partial'
     }
   });
+});
+
+// Core connection status endpoint
+app.get('/core/status', (req: Request, res: Response) => {
+  res.json(appCore.getConnectionStatus());
 });
 
 // API Documentation endpoint removed for security
@@ -147,6 +159,9 @@ const server = app.listen(PORT, HOST, () => {
   console.log(`📺 FCC Streaming: Enabled`);
   console.log(`💚 Health Check: http://${HOST}:${PORT}/health`);
   console.log(`🌐 Server is ready to accept connections`);
+  
+  // Initialize App Core
+  appCore.initialize();
 });
 
 server.on('error', (error: any) => {
@@ -156,6 +171,25 @@ server.on('error', (error: any) => {
     console.error('❌ Server error:', error);
   }
   process.exit(1);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('📴 SIGTERM received, shutting down gracefully...');
+  appCore.shutdown();
+  server.close(() => {
+    console.log('✅ Server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('📴 SIGINT received, shutting down gracefully...');
+  appCore.shutdown();
+  server.close(() => {
+    console.log('✅ Server closed');
+    process.exit(0);
+  });
 });
 
 export default app;
