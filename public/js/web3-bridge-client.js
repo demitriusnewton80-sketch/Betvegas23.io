@@ -1,6 +1,6 @@
 
 // Web3 Bridge Client - Handles blockchain integration with S3 data
-// Young Meeat LLC - FCC Entity: 20130314143016
+// Young Meaat LLC - FCC Entity: 20130314143016
 
 (function(window) {
   'use strict';
@@ -22,7 +22,6 @@
       this.isConnected = false;
       this.chainId = null;
       this.s3Enabled = false;
-      this.eventListeners = {};
     }
 
     // Event emitter compatibility
