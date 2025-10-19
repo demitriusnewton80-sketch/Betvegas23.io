@@ -53,6 +53,7 @@ import microsoftDiagnostics from './routes/microsoft-diagnostics.js';
 import aiRoutes from './routes/ai.js';
 import feedBuilderRoutes from './routes/feed-builder.js';
 import appDepositRoutes from './routes/app-deposit.js';
+import functionalStructuresRoutes from './routes/functional-structures.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -226,6 +227,7 @@ app.use('/microsoft', microsoftDiagnostics);
 app.use('/ai', aiRoutes);
 app.use('/feed-builder', feedBuilderRoutes);
 app.use('/app-deposit', appDepositRoutes);
+app.use('/functional-structures', functionalStructuresRoutes);
 
 // Static files - serve with proper MIME types
 app.use(express.static(path.join(__dirname, '../public'), {
@@ -314,6 +316,15 @@ app.get('/public-unified-view.html', (req: Request, res: Response) => {
 // AI Mobile Launcher - serve the HTML directly
 app.get('/ai-mobile-launcher', (req, res) => {
   res.sendFile('public/ai-mobile-launcher.html', { root: '.' });
+});
+
+// Functional Structures Dashboard
+app.get('/functional-structures-dashboard', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/functional-structures-dashboard.html'));
+});
+
+app.get('/functional-structures-dashboard.html', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/functional-structures-dashboard.html'));
 });
 
 // Fallback route for SPA - only for non-file requests
