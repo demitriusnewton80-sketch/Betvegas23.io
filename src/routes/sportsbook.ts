@@ -208,6 +208,13 @@ router.get('/user/:userId/wallet', (req: Request, res: Response) => {
   });
 });
 
+router.get('/user/:userId/stats', (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const stats = bettingService.getUserStats(userId);
+  
+  res.json(stats);
+});
+
 router.post('/user/:userId/deposit', (req: Request, res: Response) => {
   const { userId } = req.params;
   const { amount } = req.body;

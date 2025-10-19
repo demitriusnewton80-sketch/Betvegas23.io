@@ -150,7 +150,22 @@ class BettingService {
   }
 
   getUserBets(userId: string): Bet[] {
-    return Array.from(this.bets.values()).filter(bet => bet.userId === userId);
+    return Array.from(this.bets.values())
+      .filter(bet => bet.userId === userId)
+      .sort((a, b) => new Date(b.placedAt).getTime() - new Date(a.placedAt).getTime());
+  }
+
+  getUserStats(userId: string): { totalBets: number; activeBets: number; wonBets: number; lostBets: number; totalWagered: number; totalWon: number } {
+    const bets = this.getUserBets(userId);
+    
+    return {
+      totalBets: bets.length,
+      activeBets: bets.filter(b => b.status === 'pending').length,
+      wonBets: bets.filter(b => b.status === 'won').length,
+      lostBets: bets.filter(b => b.status === 'lost').length,
+      totalWagered: bets.reduce((sum, bet) => sum + bet.amount, 0),
+      totalWon: bets.filter(b => b.status === 'won').reduce((sum, bet) => sum + (bet.potentialWin || 0), 0)
+    };
   }
 
   private addTransaction(userId: string, transaction: Transaction): void {

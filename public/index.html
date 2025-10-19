@@ -34,6 +34,27 @@
             font-size: 18px;
             opacity: 0.9;
         }
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .dark-mode-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
         .fcc-badge {
             background: rgba(255,255,255,0.2);
             padding: 8px 20px;
@@ -144,6 +165,7 @@
             transform: translateY(-5px);
             border-color: rgba(83, 196, 81, 0.6);
             box-shadow: 0 12px 32px rgba(83, 196, 81, 0.3);
+            background: var(--bg-card-hover);
         }
         .game-header {
             display: flex;
@@ -329,6 +351,11 @@
     </style>
 </head>
 <body>
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()">
+        <span id="darkModeIcon">☀️</span>
+        <span id="darkModeText">Light Mode</span>
+    </button>
+    
     <div class="header">
         <h1>🏆 Live Sportsbook</h1>
         <p>Young Meeat LLC Sports Betting Platform</p>
@@ -419,6 +446,35 @@
         let currentSport = 'all';
         let selectedBets = new Map();
         let allGames = [];
+
+        // Dark mode functionality
+        function toggleDarkMode() {
+            const body = document.body;
+            const icon = document.getElementById('darkModeIcon');
+            const text = document.getElementById('darkModeText');
+            
+            body.classList.toggle('light-mode');
+            
+            if (body.classList.contains('light-mode')) {
+                icon.textContent = '🌙';
+                text.textContent = 'Dark Mode';
+                localStorage.setItem('darkMode', 'light');
+            } else {
+                icon.textContent = '☀️';
+                text.textContent = 'Light Mode';
+                localStorage.setItem('darkMode', 'dark');
+            }
+        }
+
+        // Load dark mode preference
+        function loadDarkModePreference() {
+            const savedMode = localStorage.getItem('darkMode');
+            if (savedMode === 'light') {
+                document.body.classList.add('light-mode');
+                document.getElementById('darkModeIcon').textContent = '🌙';
+                document.getElementById('darkModeText').textContent = 'Dark Mode';
+            }
+        }
 
         async function loadGames() {
             try {
@@ -666,6 +722,7 @@
 
         // Initialize on page load
         window.addEventListener('load', () => {
+            loadDarkModePreference();
             loadGames();
             loadUserData();
             
