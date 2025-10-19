@@ -170,6 +170,13 @@
         <p style="text-align: center; color: #8b949e;">Loading SSO plugins...</p>
     </div>
 
+    <div style="background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 20px; margin-top: 30px;">
+        <h2 style="color: #58a6ff; margin-bottom: 20px;">Plugin Activity Log</h2>
+        <div id="outputsList" style="max-height: 400px; overflow-y: auto;">
+            <p style="text-align: center; color: #8b949e;">Loading activity...</p>
+        </div>
+    </div>
+
     <script>
         const API_BASE = window.location.origin;
 
@@ -267,14 +274,64 @@
             if (parts.length === 2) return parts.pop().split(';').shift();
         }
 
+        async function loadOutputs() {
+            try {
+                const response = await fetch(`${API_BASE}/sso-plugin/outputs`);
+                const data = await response.json();
+
+                const outputsList = document.getElementById('outputsList');
+                
+                if (data.outputs.length === 0) {
+                    outputsList.innerHTML = '<p style="text-align: center; color: #8b949e;">No activity yet</p>';
+                    return;
+                }
+
+                const typeColors = {
+                    success: '#22c55e',
+                    error: '#da3633',
+                    warning: '#f59e0b',
+                    info: '#58a6ff'
+                };
+
+                const typeIcons = {
+                    success: '✅',
+                    error: '❌',
+                    warning: '⚠️',
+                    info: 'ℹ️'
+                };
+
+                outputsList.innerHTML = data.outputs.map(output => `
+                    <div style="background: #0d1117; border-left: 3px solid ${typeColors[output.type]}; padding: 12px; margin-bottom: 10px; border-radius: 6px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div style="flex: 1;">
+                                <div style="color: ${typeColors[output.type]}; font-weight: bold; margin-bottom: 5px;">
+                                    ${typeIcons[output.type]} ${output.type.toUpperCase()}
+                                </div>
+                                <div style="color: #c9d1d9; margin-bottom: 5px;">
+                                    ${output.message}
+                                </div>
+                                <div style="color: #8b949e; font-size: 12px;">
+                                    Plugin: ${output.pluginId} • ${new Date(output.timestamp).toLocaleString()}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading outputs:', error);
+            }
+        }
+
         // Load data on page load
         loadPlugins();
         loadStats();
+        loadOutputs();
 
         // Refresh every 10 seconds
         setInterval(() => {
             loadPlugins();
             loadStats();
+            loadOutputs();
         }, 10000);
     </script>
 </body>

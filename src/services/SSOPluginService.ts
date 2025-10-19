@@ -29,13 +29,61 @@ export interface PluginAuthResult {
   pluginId: string;
 }
 
+export interface PluginOutput {
+  id: string;
+  pluginId: string;
+  timestamp: string;
+  type: 'info' | 'success' | 'warning' | 'error';
+  message: string;
+  metadata?: any;
+}
+
 class SSOPluginService extends EventEmitter {
   private plugins: Map<string, SSOPlugin> = new Map();
   private pluginSessions: Map<string, { pluginId: string; userId: string }> = new Map();
+  private pluginOutputs: PluginOutput[] = [];
+  private maxOutputs = 100; // Keep last 100 outputs
 
   constructor() {
     super();
     this.initializeDefaultPlugins();
+  }
+
+  // Add plugin output
+  private addOutput(pluginId: string, type: PluginOutput['type'], message: string, metadata?: any) {
+    const output: PluginOutput = {
+      id: crypto.randomUUID(),
+      pluginId,
+      timestamp: new Date().toISOString(),
+      type,
+      message,
+      metadata
+    };
+
+    this.pluginOutputs.unshift(output);
+    if (this.pluginOutputs.length > this.maxOutputs) {
+      this.pluginOutputs = this.pluginOutputs.slice(0, this.maxOutputs);
+    }
+
+    this.emit('pluginOutput', output);
+    return output;
+  }
+
+  // Get all outputs
+  getOutputs(pluginId?: string): PluginOutput[] {
+    if (pluginId) {
+      return this.pluginOutputs.filter(o => o.pluginId === pluginId);
+    }
+    return this.pluginOutputs;
+  }
+
+  // Clear outputs
+  clearOutputs(pluginId?: string) {
+    if (pluginId) {
+      this.pluginOutputs = this.pluginOutputs.filter(o => o.pluginId !== pluginId);
+    } else {
+      this.pluginOutputs = [];
+    }
   }
 
   private initializeDefaultPlugins() {
@@ -170,11 +218,13 @@ class SSOPluginService extends EventEmitter {
   registerPlugin(plugin: SSOPlugin): boolean {
     if (this.plugins.has(plugin.id)) {
       console.warn(`Plugin ${plugin.id} already registered`);
+      this.addOutput(plugin.id, 'warning', `Plugin already registered: ${plugin.name}`);
       return false;
     }
 
     this.plugins.set(plugin.id, plugin);
     this.emit('pluginRegistered', plugin);
+    this.addOutput(plugin.id, 'success', `Plugin registered: ${plugin.name}`, { provider: plugin.provider });
     console.log(`✅ SSO Plugin registered: ${plugin.name} (${plugin.id})`);
     return true;
   }
@@ -199,10 +249,15 @@ class SSOPluginService extends EventEmitter {
   // Enable/disable plugin
   togglePlugin(pluginId: string, enabled: boolean): boolean {
     const plugin = this.plugins.get(pluginId);
-    if (!plugin) return false;
+    if (!plugin) {
+      this.addOutput(pluginId, 'error', `Plugin not found: ${pluginId}`);
+      return false;
+    }
 
     plugin.enabled = enabled;
     this.emit('pluginToggled', { pluginId, enabled });
+    this.addOutput(pluginId, enabled ? 'success' : 'info', 
+      `Plugin ${enabled ? 'enabled' : 'disabled'}: ${plugin.name}`);
     return true;
   }
 
@@ -228,6 +283,7 @@ class SSOPluginService extends EventEmitter {
     const plugin = this.plugins.get(pluginId);
     
     if (!plugin || !plugin.enabled) {
+      this.addOutput(pluginId, 'error', 'Plugin not found or disabled');
       return {
         success: false,
         error: 'Plugin not found or disabled',
@@ -235,11 +291,15 @@ class SSOPluginService extends EventEmitter {
       };
     }
 
+    this.addOutput(pluginId, 'info', `Starting authentication for ${plugin.name}`);
+
     try {
       // Exchange code for token
+      this.addOutput(pluginId, 'info', 'Exchanging authorization code for token');
       const tokenData = await this.exchangeCodeForToken(plugin, code);
       
       // Get user info
+      this.addOutput(pluginId, 'info', 'Fetching user information');
       const userInfo = await this.getUserInfo(plugin, tokenData.access_token);
       
       // Create SSO user
@@ -257,6 +317,8 @@ class SSOPluginService extends EventEmitter {
       this.pluginSessions.set(user.id, { pluginId, userId: user.id });
       
       this.emit('pluginAuthenticated', { plugin: pluginId, user });
+      this.addOutput(pluginId, 'success', `Authentication successful for ${user.email}`, 
+        { userId: user.id, provider: plugin.provider });
       
       return {
         success: true,
@@ -264,10 +326,12 @@ class SSOPluginService extends EventEmitter {
         pluginId
       };
     } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Authentication failed';
       console.error(`Plugin authentication error (${pluginId}):`, error);
+      this.addOutput(pluginId, 'error', `Authentication failed: ${errorMsg}`);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Authentication failed',
+        error: errorMsg,
         pluginId
       };
     }
