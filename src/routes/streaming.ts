@@ -233,15 +233,25 @@ router.get('/fcc/status/:email', async (req: Request, res: Response) => {
   });
 });
 
-// Get WiFi connection hub status
+// Get WiFi connection hub status with IP infusion
 router.get('/wifi-hub/status', (req: Request, res: Response) => {
+  const clientIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '0.0.0.0';
+  
   res.json({
     hubName: 'WiFi Connection Infusion Hub',
     status: 'active',
     connectionStrength: 'excellent',
-    ipAddress: req.hostname,
+    ipAddress: '0.0.0.0',
+    clientIP: clientIP,
     port: process.env.PORT || 5000,
     fccEntity: '20130314143016',
+    wifiInfusion: {
+      enabled: true,
+      protocol: 'TCP/IP',
+      bandwidth: 'unlimited',
+      signalStrength: 100,
+      encryption: 'WPA3-Enterprise'
+    },
     connectedPlugins: [
       { name: 'Live Sportsbook', status: 'connected', endpoint: '/sportsbook/games' },
       { name: 'PlayStation Network', status: 'connected', endpoint: '/ps5/games' },
