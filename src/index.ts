@@ -37,9 +37,8 @@ import { trafficMonitor } from './routes/analytics.js';
 import publicAccessRoutes from './routes/public-access.js';
 import vpnRoutes from './routes/vpn.js';
 import parlayRoutes from './routes/parlay.js';
-import { rateLimiter } from './middleware/rateLimiter.js';
-import { domainProtection, addCustomDomain, getAllowedDomains } from './middleware/domainProtection.js';
 import linkBridgeRoutes from './routes/link-bridge.js';
+import smartSystemRoutes from './routes/smart-system.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -163,7 +162,7 @@ app.use('/spotify', spotifyRoutes);
 app.use('/qr', qrRoutes);
 app.use('/ps5', ps5Routes);
 app.use('/phone-control', phoneControlRouter);
-app.use('/winner-payout', winnerPayoutRouter);
+app.use('/winner-payout', winnerPayoutRoutes);
 app.use('/ssh', sshRoutes);
 app.use('/espn-tracker', espnTrackerRouter);
 app.use('/espn-betting', espnBettingRouter);
@@ -175,6 +174,7 @@ app.use('/public-access', publicAccessRoutes);
 app.use('/vpn', vpnRoutes);
 app.use('/parlay', parlayRoutes);
 app.use('/link-bridge', linkBridgeRoutes);
+app.use('/smart-system', smartSystemRoutes);
 
 // Static files - serve with proper MIME types
 app.use(express.static(path.join(__dirname, '../public'), {
