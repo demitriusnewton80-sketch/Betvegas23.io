@@ -195,6 +195,16 @@ app.get('/api/core/status', (req, res) => {
   });
 });
 
+// Services index route
+app.get('/services', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/services-index.html'));
+});
+
+// Streaming management hub route
+app.get('/streaming-hub', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/streaming-management-hub.html'));
+});
+
 // Fallback route for SPA - only for non-file requests
 app.get('*', (req, res, next) => {
   // If the request has a file extension, let static middleware handle it
