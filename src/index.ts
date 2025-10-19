@@ -43,6 +43,7 @@ import parlayRoutes from './routes/parlay.js';
 import linkBridgeRoutes from './routes/link-bridge.js';
 import smartSystemRoutes from './routes/smart-system.js';
 import draftKingsRoutes from './routes/draftkings.js';
+import mobileRoutes from './routes/mobile.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -190,6 +191,7 @@ app.use('/parlay', parlayRoutes);
 app.use('/link-bridge', linkBridgeRoutes);
 app.use('/smart-system', smartSystemRoutes);
 app.use('/draftkings', draftKingsRoutes);
+app.use('/mobile', mobileRoutes);
 
 // Static files - serve with proper MIME types
 app.use(express.static(path.join(__dirname, '../public'), {
