@@ -326,11 +326,9 @@
         </div>
     </div>
 
+    <script src="/js/web3-bridge-client.js"></script>
     <script>
-        // Use existing API_BASE if available, otherwise declare it
-        if (typeof API_BASE === 'undefined') {
-            var API_BASE = window.location.origin;
-        }
+        const API_BASE = window.API_BASE || window.location.origin;
         let currentSessionId = null;
         let currentDeviceId = null;
 
@@ -595,11 +593,9 @@
             }
         }
 
-        // Auto-load on page load
         window.addEventListener('load', () => {
             loadPlugins();
             loadStats();
-            // Auto-refresh every 30 seconds
             setInterval(() => {
                 loadPlugins();
                 loadStats();

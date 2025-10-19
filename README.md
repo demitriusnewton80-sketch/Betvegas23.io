@@ -48,6 +48,17 @@ Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 - `GET /transformer/data` - Get transformed data history
 - `GET /transformer/data/:id` - Get specific transformed data
 
+### VPN Service (IP Management & Secure Connections)
+- `GET /vpn/status` - Get VPN service status
+- `GET /vpn/servers` - Get available VPN servers
+- `POST /vpn/connect` - Connect to VPN server
+- `POST /vpn/disconnect/:connectionId` - Disconnect from VPN
+- `GET /vpn/connection/:connectionId` - Get connection details
+- `GET /vpn/user/:userId/connections` - Get user's VPN connections
+- `GET /vpn/active` - Get all active connections
+- `GET /vpn/stats` - Get VPN statistics
+- `GET /vpn-dashboard.html` - VPN dashboard interface
+
 ### Web3 Bridge (Blockchain Integration)
 - `GET /web3/status` - Get Web3 bridge status
 - `POST /web3/wallet/connect` - Connect crypto wallet

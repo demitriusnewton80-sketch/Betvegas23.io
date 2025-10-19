@@ -35,6 +35,7 @@ import awsDataRouter from './routes/aws-data.js';
 import analyticsRouter from './routes/analytics.js';
 import { trafficMonitor } from './routes/analytics.js';
 import publicAccessRoutes from './routes/public-access.js';
+import vpnRoutes from './routes/vpn.js';
 import { rateLimiter } from './middleware/rateLimiter.js';
 import { domainProtection, addCustomDomain, getAllowedDomains } from './middleware/domainProtection.js';
 
@@ -169,6 +170,7 @@ app.use('/web3', web3Routes);
 app.use('/transformer', transformerRouter);
 app.use('/analytics', analyticsRouter);
 app.use('/public-access', publicAccessRoutes);
+app.use('/vpn', vpnRoutes);
 
 // Static files - serve with proper MIME types
 app.use(express.static(path.join(__dirname, '../public'), {
