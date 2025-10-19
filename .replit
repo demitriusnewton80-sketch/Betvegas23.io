@@ -8,7 +8,7 @@ channel = "stable-25_05"
 runButton = "Run"
 
 [[workflows.workflow]]
-name = "Run"
+name = "Run6"
 author = 48739577
 mode = "sequential"
 
@@ -23,11 +23,10 @@ args = "npm run dev"
 [[workflows.workflow]]
 name = "Run"
 author = 48739577
-mode = "sequential"
+mode = "parallel"
 
 [[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm install"
+task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -49,6 +48,15 @@ args = "nix"
 [[workflows.workflow.tasks]]
 task = "workflow.run"
 args = "Direct contact "
+
+[[workflows.workflow]]
+name = "F"
+mode = "parallel"
+author = 48739577
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Run6"
 
 [[ports]]
 localPort = 5000
