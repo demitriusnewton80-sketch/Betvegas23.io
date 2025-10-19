@@ -14,7 +14,8 @@ router.get('/live', (req: Request, res: Response) => {
     fccEntity: '20130314143016',
     protected: true,
     timestamp: new Date().toISOString()
-
+  });
+});
 
 // Proxy endpoint for player23.ag logos
 router.get('/player23/:league/:teamName', async (req: Request, res: Response) => {
