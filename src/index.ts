@@ -300,6 +300,15 @@ app.get('/feed-builder.html', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../public/feed-builder.html'));
 });
 
+// Public Unified View
+app.get('/public-unified-view', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/public-unified-view.html'));
+});
+
+app.get('/public-unified-view.html', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/public-unified-view.html'));
+});
+
 // Fallback route for SPA - only for non-file requests
 app.get('*', (req, res, next) => {
   // If the request has a file extension, let static middleware handle it
