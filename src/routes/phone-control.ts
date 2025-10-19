@@ -1,8 +1,26 @@
 
 import express, { Request, Response } from 'express';
 import { phoneControlService } from '../services/PhoneControlService.js';
+import { ssoService } from '../services/SSOService.js';
 
 const router = express.Router();
+
+// Authentication middleware
+const requireAuth = (req: Request, res: Response, next: Function) => {
+  const sessionId = req.cookies?.session_id || req.headers.authorization?.replace('Bearer ', '');
+  
+  if (!sessionId) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+  
+  const user = ssoService.validateSession(sessionId);
+  if (!user) {
+    return res.status(401).json({ error: 'Invalid or expired session' });
+  }
+  
+  (req as any).user = user;
+  next();
+};
 
 // Create phone control session with WiFi core integration
 router.post('/session/create', (req: Request, res: Response) => {

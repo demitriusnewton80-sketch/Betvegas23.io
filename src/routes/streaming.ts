@@ -143,14 +143,13 @@ router.get('/my-streams/:userId', (req: Request, res: Response) => {
 router.post('/fcc/playstation-control', async (req: Request, res: Response) => {
   const { email, action, gameId } = req.body;
 
-  // Verify FCC authorized emails
-  const authorizedEmails = ['gbemeeat@gmail.com', 'meeatupt215@gmail.com'];
+  // Verify FCC authorized emails from environment
+  const authorizedEmails = (process.env.AUTHORIZED_EMAILS || 'gbemeeat@gmail.com,meeatupt215@gmail.com').split(',');
 
   if (!email || !authorizedEmails.includes(email.toLowerCase())) {
     return res.status(403).json({
       error: 'Unauthorized email address',
-      fccEntity: '20130314143016',
-      authorizedEmails: authorizedEmails.map(e => e.replace(/(.{2}).*(@.*)/, '$1***$2'))
+      fccEntity: '20130314143016'
     });
   }
 

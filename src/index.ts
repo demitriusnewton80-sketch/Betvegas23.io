@@ -35,10 +35,30 @@ import publicAccessRoutes from './routes/public-access.js';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// Middleware - Secure CORS configuration
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
+  'https://*.replit.dev',
+  'https://*.replit.app'
+];
+
 app.use(cors({
-  origin: true,
-  credentials: true
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+
+    const isAllowed = allowedOrigins.some(pattern => {
+      const regex = new RegExp(pattern.replace('*', '.*'));
+      return regex.test(origin);
+    });
+
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  maxAge: 86400
 }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
@@ -99,7 +119,7 @@ app.use('/spotify', spotifyRoutes);
 app.use('/qr', qrRoutes);
 app.use('/ps5', ps5Routes);
 app.use('/phone-control', phoneControlRouter);
-app.use('/winner-payout', winnerPayoutRoutes);
+app.use('/winner-payout', winnerPayoutRouter);
 app.use('/ssh', sshRoutes);
 app.use('/espn-tracker', espnTracker);
 app.use('/web3', web3Routes);
