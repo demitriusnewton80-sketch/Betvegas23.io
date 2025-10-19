@@ -14,6 +14,40 @@ router.get('/live', (req: Request, res: Response) => {
     fccEntity: '20130314143016',
     protected: true,
     timestamp: new Date().toISOString()
+
+
+// Proxy endpoint for player23.ag logos
+router.get('/player23/:league/:teamName', async (req: Request, res: Response) => {
+  const { league, teamName } = req.params;
+  const sanitizedTeam = teamName.toLowerCase().replace(/\s+/g, '-');
+  const leaguePath = league.toLowerCase();
+  const player23Url = `https://player23.ag/assets/logos/${leaguePath}/${sanitizedTeam}.png`;
+  
+  try {
+    const fetch = (await import('node-fetch')).default;
+    const response = await fetch(player23Url);
+    
+    if (!response.ok) {
+      return res.status(404).json({ 
+        error: 'Logo not found on player23.ag',
+        url: player23Url 
+      });
+    }
+    
+    const buffer = await response.buffer();
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.setHeader('X-Logo-Source', 'player23.ag');
+    res.setHeader('X-FCC-Entity', '20130314143016');
+    res.send(buffer);
+  } catch (error) {
+    res.status(500).json({ 
+      error: 'Failed to fetch logo from player23.ag',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
   });
 });
 
@@ -69,6 +103,7 @@ router.get('/logo/:league/:teamName', (req: Request, res: Response) => {
   res.setHeader('Cache-Control', 'public, max-age=86400');
   res.setHeader('X-FCC-Entity', '20130314143016');
   res.setHeader('X-Copyright', '© 2025 Young Meeat LLC. All rights reserved.');
+  res.setHeader('X-Logo-Source', 'player23.ag');
   
   res.send(logoSVG);
 });

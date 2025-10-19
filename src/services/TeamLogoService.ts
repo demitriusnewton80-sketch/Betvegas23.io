@@ -81,7 +81,10 @@ class TeamLogoService {
 
     const { colors, abbreviation } = config;
     
-    // Generate SVG logo with team colors and abbreviation
+    // Use player23.ag logo URL with fallback
+    const player23LogoUrl = this.getPlayer23LogoUrl(league, teamName);
+    
+    // Generate SVG logo with player23.ag image and team colors
     return `
       <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -98,11 +101,15 @@ class TeamLogoService {
         <circle cx="100" cy="100" r="90" fill="url(#grad-${abbreviation})" filter="url(#shadow-${abbreviation})"/>
         <circle cx="100" cy="100" r="85" fill="none" stroke="${colors.accent}" stroke-width="3"/>
         
-        <!-- Team Abbreviation -->
+        <!-- Team Logo from player23.ag -->
+        <image href="${player23LogoUrl}" x="50" y="50" width="100" height="100" 
+               onerror="this.style.display='none'"/>
+        
+        <!-- Fallback Team Abbreviation -->
         <text x="100" y="120" font-family="Arial, sans-serif" font-size="48" font-weight="bold" 
               text-anchor="middle" fill="${colors.accent}" 
               stroke="${colors.primary === '#FFFFFF' ? '#000000' : '#FFFFFF'}" 
-              stroke-width="1">
+              stroke-width="1" class="fallback-text">
           ${abbreviation}
         </text>
         
@@ -116,10 +123,17 @@ class TeamLogoService {
         <!-- FCC Watermark -->
         <text x="100" y="190" font-family="Arial, sans-serif" font-size="8" 
               text-anchor="middle" fill="${colors.accent}" opacity="0.6">
-          Young Meeat LLC
+          Young Meeat LLC • player23.ag
         </text>
       </svg>
     `.trim();
+  }
+
+  private getPlayer23LogoUrl(league: string, teamName: string): string {
+    // Generate player23.ag logo URL
+    const sanitizedTeam = teamName.toLowerCase().replace(/\s+/g, '-');
+    const leaguePath = league.toLowerCase();
+    return `https://player23.ag/assets/logos/${leaguePath}/${sanitizedTeam}.png`;
   }
 
   private generateDefaultLogo(league: string, teamName: string): string {
