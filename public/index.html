@@ -471,7 +471,7 @@
         .money-line-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 12px;
         }
 
         .money-line-grid.has-draw {
@@ -479,62 +479,50 @@
         }
 
         .bet-button {
-            background: rgba(13, 17, 23, 0.6);
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            padding: 14px 12px;
+            background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+            border: 2px solid #30363d;
+            border-radius: 12px;
+            padding: 20px 16px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .bet-button::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(25, 103, 210, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .bet-button:active::after {
-            width: 200px;
-            height: 200px;
-        }
-
-        .bet-button:active {
-            transform: scale(0.95);
         }
 
         .bet-button:hover {
-            background: rgba(33, 38, 45, 0.8);
             border-color: var(--fanduel-blue);
-            box-shadow: 0 0 20px rgba(25, 103, 210, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(25, 103, 210, 0.3);
+        }
+
+        .bet-button:active {
+            transform: translateY(0);
         }
 
         .bet-button.selected {
-            background: linear-gradient(135deg, #1967D2 0%, #0D47A1 100%);
-            border-color: var(--fanduel-blue);
-            box-shadow: 0 0 30px rgba(25, 103, 210, 0.5);
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            border-color: #22c55e;
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
         }
 
         .bet-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 6px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
             font-weight: 600;
         }
 
+        .bet-button.selected .bet-label {
+            color: white;
+        }
+
         .bet-odds {
-            font-size: 18px;
+            font-size: 24px;
             font-weight: 700;
             color: var(--text-primary);
+        }
+
+        .bet-button.selected .bet-odds {
+            color: white;
         }
 
         .bet-odds.positive {
@@ -542,7 +530,7 @@
         }
 
         .bet-odds.negative {
-            color: var(--fanduel-blue);
+            color: #58a6ff;
         }
 
         /* Radio/Stream Links */
@@ -780,33 +768,107 @@
 
         .quick-amounts {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 8px;
-            margin: 12px 0;
+            margin: 16px 0;
         }
 
         .quick-amount-btn {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 10px;
-            color: var(--text-secondary);
-            font-size: 13px;
+            background: #161b22;
+            border: 2px solid #30363d;
+            border-radius: 8px;
+            padding: 12px 8px;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
-            font-weight: 600;
+        }
+
+        .quick-amount-btn:hover {
+            border-color: var(--fanduel-blue);
+            background: #1f2937;
         }
 
         .quick-amount-btn:active {
             transform: scale(0.95);
-            border-color: var(--fanduel-blue);
-            color: var(--fanduel-blue);
+            background: var(--fanduel-blue);
+            color: white;
         }
 
         .potential-payout {
-            background: var(--bg-tertiary);
-            padding: 12px;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 16px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .payout-label {
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
+            font-weight: 600;
+        }
+
+        .payout-amount {
+            font-size: 28px;
+            font-weight: 700;
+            color: #22c55e;
+        }
+
+        .input-group {
+            margin: 16px 0;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px;
+            background: #161b22;
+            border: 2px solid #30363d;
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--fanduel-blue);
+            box-shadow: 0 0 0 3px rgba(25, 103, 210, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }rder-radius: 8px;
             margin: 12px 0;
             display: flex;
             justify-content: space-between;
@@ -1422,25 +1484,31 @@
             document.getElementById('betSlipContent').innerHTML = `
                 <div class="bet-item">
                     <div class="bet-item-header">
-                        <span>
+                        <span style="font-size: 18px; font-weight: 700;">
                             <span class="bet-team-logo">${logo}</span>
                             ${teamName}
                         </span>
-                        <span class="${odds > 0 ? 'positive' : 'negative'}" style="font-size: 16px;">${formatOdds(odds)}</span>
+                        <span class="${odds > 0 ? 'positive' : 'negative'}" style="font-size: 20px; font-weight: 700;">${formatOdds(odds)}</span>
                     </div>
-                    <div class="bet-item-detail">Game ${gameId} • Money Line</div>
-                    <div class="bet-item-detail">Team: ${team}</div>
+                    <div class="bet-item-detail" style="font-size: 13px;">Money Line Bet</div>
                 </div>
                 <div class="input-group">
-                    <label class="input-label">Bet Amount</label>
-                    <input type="number" id="betAmount" placeholder="Enter amount" min="1" step="0.01" oninput="updatePotentialPayout()">
+                    <label class="input-label">Enter Bet Amount</label>
+                    <input type="number" id="betAmount" placeholder="$0.00" min="1" step="1" oninput="updatePotentialPayout()">
                 </div>
                 <div class="quick-amounts">
+                    <button class="quick-amount-btn" onclick="setBetAmount(5)">$5</button>
                     <button class="quick-amount-btn" onclick="setBetAmount(10)">$10</button>
                     <button class="quick-amount-btn" onclick="setBetAmount(25)">$25</button>
                     <button class="quick-amount-btn" onclick="setBetAmount(50)">$50</button>
-                    <button class="quick-amount-btn" onclick="setBetAmount(100)">$100</button>
-                    <button class="quick-amount-btn" onclick="setBetAmount(250)">$250</button>
+                </div>
+                <div class="potential-payout" id="potentialPayout">
+                    <span class="payout-label">Win Amount</span>
+                    <span class="payout-amount">$0.00</span>
+                </div>
+                <button class="btn-primary" onclick="placeBet()">Place Bet</button>
+                <button class="btn-primary" style="background: #374151; margin-top: 8px;" onclick="closeBetSlip()">Cancel</button>
+            `;="setBetAmount(250)">$250</button>
                     <button class="quick-amount-btn" onclick="setBetAmount(500)">$500</button>
                 </div>
                 <div class="potential-payout" id="potentialPayout">
