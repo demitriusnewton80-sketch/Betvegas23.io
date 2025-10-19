@@ -5,7 +5,11 @@
 (function() {
   'use strict';
 
-  const API_BASE = window.location.origin;
+  // Only declare API_BASE if it doesn't already exist
+  if (typeof window.API_BASE === 'undefined') {
+    window.API_BASE = window.location.origin;
+  }
+  const API_BASE = window.API_BASE;
 
   class Web3BridgeClient {
     constructor() {
