@@ -42,6 +42,7 @@ import vpnRoutes from './routes/vpn.js';
 import parlayRoutes from './routes/parlay.js';
 import linkBridgeRoutes from './routes/link-bridge.js';
 import smartSystemRoutes from './routes/smart-system.js';
+import draftKingsRoutes from './routes/draftkings.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -188,6 +189,7 @@ app.use('/vpn', vpnRoutes);
 app.use('/parlay', parlayRoutes);
 app.use('/link-bridge', linkBridgeRoutes);
 app.use('/smart-system', smartSystemRoutes);
+app.use('/draftkings', draftKingsRoutes);
 
 // Static files - serve with proper MIME types
 app.use(express.static(path.join(__dirname, '../public'), {

@@ -17,6 +17,14 @@ Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 - `GET /sportsbook/user/:userId/bets` - Get user's bets
 - `POST /sportsbook/cashout/:betId` - Cash out a bet
 
+### DraftKings Integration
+- `GET /draftkings/odds` - Get all DraftKings odds
+- `GET /draftkings/odds/:gameId` - Get specific game odds
+- `POST /draftkings/compare` - Compare odds with other sportsbooks
+- `POST /draftkings/bet` - Place bet using DraftKings odds
+- `GET /draftkings/best-odds/:gameId` - Get best available odds
+- `POST /draftkings/refresh` - Refresh odds data
+
 ### Live Streaming
 - `GET /streaming/stream/:gameId` - SSE live game stream
 - `POST /streaming/stream/:gameId/start` - Start game stream

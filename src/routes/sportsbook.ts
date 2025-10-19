@@ -42,24 +42,25 @@ router.get('/', (req: Request, res: Response) => {
 
 // Get all games with filtering
 router.get('/games', (req: Request, res: Response) => {
-  const { sport, status, source } = req.query;
-  
-  let events = sport ? sportsDataService.getEventsBySport(sport as string) : sportsDataService.getAllEvents();
-  
-  if (status) {
-    events = events.filter(event => event.status === status);
-  }
-  
-  const games: Game[] = events.map(event => ({
-    id: event.id,
-    sport: event.sport,
-    homeTeam: event.homeTeam,
-    awayTeam: event.awayTeam,
-    startTime: event.startTime,
-    odds: event.moneyLine,
-    status: event.status,
-    radioLink: event.radioLink
-  }));
+  try {
+    const { sport, status, source } = req.query;
+    
+    let events = sport ? sportsDataService.getEventsBySport(sport as string) : sportsDataService.getAllEvents();
+    
+    if (status) {
+      events = events.filter(event => event.status === status);
+    }
+    
+    const games: Game[] = events.map(event => ({
+      id: event.id,
+      sport: event.sport,
+      homeTeam: event.homeTeam,
+      awayTeam: event.awayTeam,
+      startTime: event.startTime,
+      odds: event.moneyLine,
+      status: event.status,
+      radioLink: event.radioLink
+    }));
   
   const response: any = {
     success: true,
@@ -79,6 +80,15 @@ router.get('/games', (req: Request, res: Response) => {
   }
   
   res.json(response);
+  } catch (error) {
+    console.error('Error loading games:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to load games',
+      message: error instanceof Error ? error.message : 'Unknown error',
+      fccEntity: '20130314143016'
+    });
+  }
 });
 
 // Get single game details
@@ -132,51 +142,61 @@ router.get('/games/:id/radio', (req: Request, res: Response) => {
 
 // Place bet
 router.post('/bet', (req: Request, res: Response) => {
-  const { userId = 'demo-user', gameId, team, amount } = req.body;
-  
-  if (!gameId || !team || !amount) {
-    return res.status(400).json({ 
-      success: false,
-      error: 'Missing required fields: gameId, team, amount' 
-    });
-  }
+  try {
+    const { userId = 'demo-user', gameId, team, amount } = req.body;
+    
+    if (!gameId || !team || !amount) {
+      return res.status(400).json({ 
+        success: false,
+        error: 'Missing required fields: gameId, team, amount' 
+      });
+    }
 
-  const event = sportsDataService.getEvent(gameId);
-  
-  if (!event) {
-    return res.status(404).json({ 
-      success: false,
-      error: 'Game not found' 
-    });
-  }
-  
-  if (!amount || amount <= 0) {
-    return res.status(400).json({ 
-      success: false,
-      error: 'Invalid bet amount' 
-    });
-  }
+    const event = sportsDataService.getEvent(gameId);
+    
+    if (!event) {
+      return res.status(404).json({ 
+        success: false,
+        error: 'Game not found' 
+      });
+    }
+    
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ 
+        success: false,
+        error: 'Invalid bet amount' 
+      });
+    }
 
-  const odds = team === 'home' ? event.moneyLine.home : team === 'away' ? event.moneyLine.away : event.moneyLine.draw || 0;
-  
-  const result = bettingService.placeBet(userId, gameId, team, amount, odds);
-  
-  if (!result.success) {
-    return res.status(400).json({ 
+    const odds = team === 'home' ? event.moneyLine.home : team === 'away' ? event.moneyLine.away : event.moneyLine.draw || 0;
+    
+    const result = bettingService.placeBet(userId, gameId, team, amount, odds);
+    
+    if (!result.success) {
+      return res.status(400).json({ 
+        success: false,
+        error: result.error 
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: 'Money line bet placed successfully',
+      bet: result.bet,
+      sport: event.sport,
+      radioLink: event.radioLink,
+      loyaltyPointsEarned: 10,
+      fccEntity: '20130314143016'
+    });
+  } catch (error) {
+    console.error('Error placing bet:', error);
+    res.status(500).json({
       success: false,
-      error: result.error 
+      error: 'Failed to place bet',
+      message: error instanceof Error ? error.message : 'Unknown error',
+      fccEntity: '20130314143016'
     });
   }
-  
-  res.json({
-    success: true,
-    message: 'Money line bet placed successfully',
-    bet: result.bet,
-    sport: event.sport,
-    radioLink: event.radioLink,
-    loyaltyPointsEarned: 10,
-    fccEntity: '20130314143016'
-  });
 });
 
 // Cash out bet
