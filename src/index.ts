@@ -39,6 +39,7 @@ import vpnRoutes from './routes/vpn.js';
 import parlayRoutes from './routes/parlay.js';
 import { rateLimiter } from './middleware/rateLimiter.js';
 import { domainProtection, addCustomDomain, getAllowedDomains } from './middleware/domainProtection.js';
+import linkBridgeRoutes from './routes/link-bridge.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -173,6 +174,7 @@ app.use('/analytics', analyticsRouter);
 app.use('/public-access', publicAccessRoutes);
 app.use('/vpn', vpnRoutes);
 app.use('/parlay', parlayRoutes);
+app.use('/link-bridge', linkBridgeRoutes);
 
 // Static files - serve with proper MIME types
 app.use(express.static(path.join(__dirname, '../public'), {
@@ -207,6 +209,11 @@ app.get('/streaming-hub', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/streaming-management-hub.html'));
 });
 
+// Link Bridge Dashboard
+app.get('/link-bridge-dashboard.html', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/link-bridge-dashboard.html'));
+});
+
 // Fallback route for SPA - only for non-file requests
 app.get('*', (req, res, next) => {
   // If the request has a file extension, let static middleware handle it
@@ -225,6 +232,31 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
     message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
   });
 });
+
+// API documentation endpoint
+app.get('/api', (req: Request, res: Response) => {
+  res.json({
+    message: 'API Documentation',
+    routes: {
+      sportsbook: '/sportsbook',
+      streaming: '/streaming',
+      webhooks: '/webhooks',
+      wifi: '/wifi-infusion/status',
+      sam: '/sam/entity/young-meeat-llc'
+    },
+    linkBridge: {
+      routes: '/link-bridge/routes',
+      validate: '/link-bridge/validate',
+      brokenLinks: '/link-bridge/broken-links',
+      health: '/link-bridge/health',
+      reportBroken: '/link-bridge/report-broken',
+      dashboard: '/link-bridge-dashboard.html'
+    },
+    fccEntity: '20130314143016',
+    timestamp: new Date().toISOString()
+  });
+});
+
 
 // Start server with production-ready configuration
 const server = app.listen(PORT, '0.0.0.0', () => {

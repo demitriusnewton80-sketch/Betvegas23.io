@@ -1,0 +1,322 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Bridge Dashboard | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            border: 2px solid rgba(34,197,94,0.3);
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .fcc-badge {
+            display: inline-block;
+            background: rgba(34,197,94,0.2);
+            color: #22c55e;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 800;
+            margin-top: 15px;
+            border: 2px solid #22c55e;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: #22c55e;
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 42px;
+            font-weight: 800;
+            color: #22c55e;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #9ca3af;
+            text-transform: uppercase;
+        }
+
+        .routes-section {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .routes-section h2 {
+            color: #22c55e;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .route-item {
+            background: rgba(0,0,0,0.3);
+            border-left: 4px solid #22c55e;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .route-item.broken {
+            border-left-color: #ef4444;
+        }
+
+        .route-path {
+            font-family: 'Courier New', monospace;
+            color: #60a5fa;
+        }
+
+        .route-method {
+            background: #3b82f6;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-active {
+            background: #22c55e;
+            color: white;
+        }
+
+        .status-broken {
+            background: #ef4444;
+            color: white;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 5px;
+        }
+
+        .refresh-btn:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 32px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔗 Link Bridge Dashboard</h1>
+            <p style="color: #9ca3af; margin-top: 10px;">Route Mapping & Link Validation System</p>
+            <span class="fcc-badge">FCC Entity: 20130314143016</span>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalRoutes">0</div>
+                <div class="stat-label">Total Routes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="activeRoutes">0</div>
+                <div class="stat-label">Active Routes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="brokenLinks">0</div>
+                <div class="stat-label">Broken Links</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="healthStatus">-</div>
+                <div class="stat-label">System Status</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 30px;">
+            <button class="refresh-btn" onclick="loadAllData()">🔄 Refresh Data</button>
+            <button class="refresh-btn" onclick="validateRoutes()">✅ Validate Routes</button>
+        </div>
+
+        <div class="routes-section">
+            <h2>📡 Route Mappings</h2>
+            <div id="routesList"></div>
+        </div>
+
+        <div class="routes-section" id="brokenLinksSection" style="display: none;">
+            <h2>🔴 Broken Links</h2>
+            <div id="brokenLinksList"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        async function loadHealth() {
+            try {
+                const response = await fetch(`${API_BASE}/link-bridge/health`);
+                const data = await response.json();
+                
+                document.getElementById('totalRoutes').textContent = data.health.totalRoutes;
+                document.getElementById('activeRoutes').textContent = data.health.activeRoutes;
+                document.getElementById('brokenLinks').textContent = data.health.brokenLinks;
+                document.getElementById('healthStatus').textContent = data.health.status.toUpperCase();
+                
+                const statusEl = document.getElementById('healthStatus');
+                statusEl.style.color = data.health.status === 'healthy' ? '#22c55e' : '#ef4444';
+            } catch (error) {
+                console.error('Error loading health:', error);
+            }
+        }
+
+        async function loadRoutes() {
+            try {
+                const response = await fetch(`${API_BASE}/link-bridge/routes`);
+                const data = await response.json();
+                
+                const routesList = document.getElementById('routesList');
+                
+                if (data.routes.length === 0) {
+                    routesList.innerHTML = '<p style="color: #9ca3af;">No routes found</p>';
+                    return;
+                }
+                
+                routesList.innerHTML = data.routes.map(route => `
+                    <div class="route-item ${route.active ? '' : 'broken'}">
+                        <div>
+                            <div class="route-path">${route.frontend}</div>
+                            <small style="color: #6b7280;">→ ${route.backend}</small>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <span class="route-method">${route.method}</span>
+                            <span class="status-badge ${route.active ? 'status-active' : 'status-broken'}">
+                                ${route.active ? 'Active' : 'Broken'}
+                            </span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading routes:', error);
+            }
+        }
+
+        async function loadBrokenLinks() {
+            try {
+                const response = await fetch(`${API_BASE}/link-bridge/broken-links`);
+                const data = await response.json();
+                
+                const section = document.getElementById('brokenLinksSection');
+                const brokenLinksList = document.getElementById('brokenLinksList');
+                
+                if (data.brokenLinks.length === 0) {
+                    section.style.display = 'none';
+                    return;
+                }
+                
+                section.style.display = 'block';
+                brokenLinksList.innerHTML = data.brokenLinks.map(link => `
+                    <div class="route-item broken">
+                        <div class="route-path">${link}</div>
+                        <span class="status-badge status-broken">Broken</span>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading broken links:', error);
+            }
+        }
+
+        async function validateRoutes() {
+            try {
+                const response = await fetch(`${API_BASE}/link-bridge/validate`);
+                const data = await response.json();
+                
+                alert(`Validation Complete:\n\nValid Routes: ${data.validation.valid.length}\nBroken Routes: ${data.validation.broken.length}`);
+                
+                loadAllData();
+            } catch (error) {
+                console.error('Error validating routes:', error);
+                alert('Validation failed. Check console for details.');
+            }
+        }
+
+        async function loadAllData() {
+            await loadHealth();
+            await loadRoutes();
+            await loadBrokenLinks();
+        }
+
+        window.addEventListener('load', () => {
+            loadAllData();
+            setInterval(loadAllData, 30000);
+        });
+    </script>
+</body>
+</html>
