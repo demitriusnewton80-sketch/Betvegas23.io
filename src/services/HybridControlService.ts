@@ -440,8 +440,7 @@ class HybridControlService extends EventEmitter {
         conn.status = 'connected';
       }
     });
-  }
-    });
+  });
   }
 
   private balanceLoad() {

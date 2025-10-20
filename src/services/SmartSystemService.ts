@@ -306,7 +306,6 @@ export class SmartSystemService extends EventEmitter {
   getTrafficData() {
     return this.trafficData;
   }
-  }
 
   getContentUploads() {
     return this.contentUploads;
@@ -347,19 +346,12 @@ export class SmartSystemService extends EventEmitter {
     const autoFixedErrors = Array.from(this.errorLogs.values()).filter(e => e.autoFixed).length;
 
     return {
-      totalErrors,
-      resolvedErrors,
-      autoFixedErrors,
-      unresolvedErrors: totalErrors - resolvedErrors,
-      systemHealth: resolvedErrors / Math.max(totalErrors, 1) * 100
-    };
-  }h;
-
-    return {
       healthy: resolvedErrors === totalErrors,
       totalErrors,
       resolvedErrors,
       autoFixedErrors,
+      unresolvedErrors: totalErrors - resolvedErrors,
+      systemHealth: resolvedErrors / Math.max(totalErrors, 1) * 100,
       pendingUploads: Array.from(this.contentUploads.values()).filter(u => u.bridgeStatus === 'pending').length,
       totalUploads: this.contentUploads.size,
       trafficVolume: this.trafficData.length,

@@ -85,7 +85,6 @@ export class ApplicationBuilder extends EventEmitter {
   // Get configuration
   getConfiguration(): ApplicationConfiguration {
     return this.configuration;
-  }guration;
   }
 
   // Run application startup tasks
