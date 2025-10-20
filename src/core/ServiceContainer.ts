@@ -98,3 +98,4 @@ export class ServiceContainer extends EventEmitter {
 }
 
 export const serviceContainer = ServiceContainer.getInstance();
+export default ServiceContainer;

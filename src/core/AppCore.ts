@@ -208,3 +208,4 @@ export class AppCore extends EventEmitter {
 }
 
 export const appCore = AppCore.getInstance();
+export default AppCore;

@@ -18,6 +18,7 @@ import backupRoutes from './routes/backup.js';
 import publicAccessRoutes from './routes/public-access.js';
 import domainRoutes from './routes/domain.js';
 import vpnRoutes from './routes/vpn.js';
+import functionalStructuresRoutes from './routes/functional-structures.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -48,6 +49,7 @@ app.use('/backup', backupRoutes);
 app.use('/public-access', publicAccessRoutes);
 app.use('/domain', domainRoutes);
 app.use('/vpn', vpnRoutes);
+app.use('/functional-structures', functionalStructuresRoutes);
 
 // Static files
 app.use(express.static(path.join(__dirname, '../public')));

@@ -52,3 +52,18 @@
 
   console.log('✅ CloudConfig initialized:', window.API_BASE);
 })();
+// API Configuration for Young Meeat LLC Sportsbook
+const API_BASE = window.location.origin;
+
+// WebSocket configuration
+const WS_PROTOCOL = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+const WS_BASE = `${WS_PROTOCOL}//${window.location.host}/ws`;
+
+// FCC Entity Information
+const FCC_ENTITY = '20130314143016';
+const FCC_REGISTRATION = '0024454324';
+
+// Export for use in other scripts
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { API_BASE, WS_BASE, FCC_ENTITY, FCC_REGISTRATION };
+}
