@@ -85,18 +85,27 @@ app.get('/', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
+// API 404 handler - must come before SPA catch-all
+app.use('/api/*', (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.status(404).json({
+    success: false,
+    error: 'API endpoint not found',
+    path: req.path
+  });
+});
+
+app.use('/streaming/*', (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.status(404).json({
+    success: false,
+    error: 'Streaming endpoint not found',
+    path: req.path
+  });
+});
+
 // Catch-all for SPA
 app.get('*', (req: Request, res: Response) => {
-  // Return JSON for API routes
-  if (req.path.startsWith('/api/') || req.path.startsWith('/streaming/') || req.path.startsWith('/error-recovery/') || req.path.startsWith('/smart-troubleshooting/')) {
-    res.setHeader('Content-Type', 'application/json');
-    return res.status(404).json({
-      success: false,
-      error: 'Endpoint not found',
-      path: req.path
-    });
-  }
-  
   if (req.path.includes('.')) {
     return res.status(404).send('Not found');
   }
