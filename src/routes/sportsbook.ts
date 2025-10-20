@@ -35,7 +35,18 @@ router.get('/', (req: Request, res: Response) => {
       games: '/sportsbook/games',
       placeBet: '/sportsbook/bet',
       userBets: '/sportsbook/user/:userId/bets',
-      wallet: '/sportsbook/user/:userId/wallet'
+      wallet: '/sportsbook/user/:userId/wallet',
+      landingPage: '/sportsbook-landing.html'
+    },
+    platforms: {
+      liveSportsbook: '/index.html',
+      enhancedSportsbook: '/enhanced-sportsbook.html',
+      ps5Betting: '/ps5-betting.html',
+      mobileHub: '/mobile-sportsbook-hub.html',
+      bettingZone: '/betting-zone.html',
+      parlayBuilder: '/parlay-builder.html',
+      radioHub: '/sports-radio-hub.html',
+      qrPortal: '/public-sportsbook-qr.html'
     }
   });
 });

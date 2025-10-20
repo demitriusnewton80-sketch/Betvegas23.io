@@ -1,0 +1,441 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Sportsbook Hub - Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            background-attachment: fixed;
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .fcc-badge {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid #22c55e;
+            color: #22c55e;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-top: 15px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sportsbook-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .sportsbook-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .sportsbook-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.3);
+        }
+
+        .card-icon {
+            font-size: 52px;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .card-desc {
+            opacity: 0.8;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .card-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .feature-tag {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+
+        .card-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid #22c55e;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #22c55e;
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .stat-box {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.7;
+            text-transform: uppercase;
+        }
+
+        .quick-action-btn {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 32px;
+            }
+            .section-title {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏆 Sportsbook Hub</h1>
+        <p>Unified Access to All Betting Platforms</p>
+        <div class="fcc-badge">FCC Entity: 20130314143016</div>
+    </div>
+
+    <div class="container">
+        <div class="stats-bar">
+            <div class="stat-box">
+                <div class="stat-value" id="totalPlatforms">8</div>
+                <div class="stat-label">Active Platforms</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="liveGames">0</div>
+                <div class="stat-label">Live Games</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">100%</div>
+                <div class="stat-label">System Uptime</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">HTTPS</div>
+                <div class="stat-label">Secure Connection</div>
+            </div>
+        </div>
+
+        <div class="section-title">
+            🎯 Live Betting Platforms
+        </div>
+
+        <div class="sportsbook-grid">
+            <div class="sportsbook-card" onclick="openPlatform('/index.html')">
+                <div class="card-icon">🏈</div>
+                <div class="card-title">Live Sportsbook</div>
+                <div class="card-desc">Real-time betting on NFL, NBA, MLB, NHL with money line odds and live radio streams</div>
+                <div class="card-features">
+                    <span class="feature-tag">Money Line</span>
+                    <span class="feature-tag">Live Odds</span>
+                    <span class="feature-tag">Radio Streams</span>
+                </div>
+                <div class="card-status">
+                    <span class="pulse"></span> Live Now
+                </div>
+                <button class="quick-action-btn" onclick="event.stopPropagation(); openPlatform('/index.html')">
+                    Access Sportsbook →
+                </button>
+            </div>
+
+            <div class="sportsbook-card" onclick="openPlatform('/enhanced-sportsbook.html')">
+                <div class="card-icon">⭐</div>
+                <div class="card-title">Enhanced Sportsbook</div>
+                <div class="card-desc">Premium betting experience with loyalty points, team logos, and SSO integration</div>
+                <div class="card-features">
+                    <span class="feature-tag">Loyalty Points</span>
+                    <span class="feature-tag">Team Logos</span>
+                    <span class="feature-tag">SSO Login</span>
+                </div>
+                <div class="card-status">
+                    <span class="pulse"></span> Active
+                </div>
+                <button class="quick-action-btn" onclick="event.stopPropagation(); openPlatform('/enhanced-sportsbook.html')">
+                    Access Enhanced →
+                </button>
+            </div>
+
+            <div class="sportsbook-card" onclick="openPlatform('/ps5-betting.html')">
+                <div class="card-icon">🎮</div>
+                <div class="card-title">PS5 Sports Betting</div>
+                <div class="card-desc">Bet on PlayStation 5 sports games including Madden NFL, NBA 2K, UFC, and boxing</div>
+                <div class="card-features">
+                    <span class="feature-tag">Madden NFL</span>
+                    <span class="feature-tag">NBA 2K</span>
+                    <span class="feature-tag">UFC/Boxing</span>
+                </div>
+                <div class="card-status">
+                    <span class="pulse"></span> Connected
+                </div>
+                <button class="quick-action-btn" onclick="event.stopPropagation(); openPlatform('/ps5-betting.html')">
+                    Access PS5 Betting →
+                </button>
+            </div>
+
+            <div class="sportsbook-card" onclick="openPlatform('/mobile-sportsbook-hub.html')">
+                <div class="card-icon">📱</div>
+                <div class="card-title">Mobile Sportsbook Hub</div>
+                <div class="card-desc">Mobile-optimized betting hub with all workflows and phone network control</div>
+                <div class="card-features">
+                    <span class="feature-tag">Mobile First</span>
+                    <span class="feature-tag">Touch Optimized</span>
+                    <span class="feature-tag">Quick Bets</span>
+                </div>
+                <div class="card-status">
+                    <span class="pulse"></span> Online
+                </div>
+                <button class="quick-action-btn" onclick="event.stopPropagation(); openPlatform('/mobile-sportsbook-hub.html')">
+                    Access Mobile Hub →
+                </button>
+            </div>
+
+            <div class="sportsbook-card" onclick="openPlatform('/betting-zone.html')">
+                <div class="card-icon">🎯</div>
+                <div class="card-title">Unified Betting Zone</div>
+                <div class="card-desc">Complete betting zone with WiFi hub, phone control, and unified plugin access</div>
+                <div class="card-features">
+                    <span class="feature-tag">WiFi Control</span>
+                    <span class="feature-tag">Phone Network</span>
+                    <span class="feature-tag">All Plugins</span>
+                </div>
+                <div class="card-status">
+                    <span class="pulse"></span> Integrated
+                </div>
+                <button class="quick-action-btn" onclick="event.stopPropagation(); openPlatform('/betting-zone.html')">
+                    Access Betting Zone →
+                </button>
+            </div>
+
+            <div class="sportsbook-card" onclick="openPlatform('/parlay-builder.html')">
+                <div class="card-icon">🔗</div>
+                <div class="card-title">Parlay Builder</div>
+                <div class="card-desc">Build multi-game parlays with automatic odds calculation and payout estimates</div>
+                <div class="card-features">
+                    <span class="feature-tag">Multi-Game</span>
+                    <span class="feature-tag">Auto Calculate</span>
+                    <span class="feature-tag">Max Payout</span>
+                </div>
+                <div class="card-status">
+                    <span class="pulse"></span> Ready
+                </div>
+                <button class="quick-action-btn" onclick="event.stopPropagation(); openPlatform('/parlay-builder.html')">
+                    Build Parlay →
+                </button>
+            </div>
+
+            <div class="sportsbook-card" onclick="openPlatform('/sports-radio-hub.html')">
+                <div class="card-icon">📻</div>
+                <div class="card-title">Sports Radio Hub</div>
+                <div class="card-desc">Live radio streams for all games with Microsoft integration and FCC compliance</div>
+                <div class="card-features">
+                    <span class="feature-tag">Live Radio</span>
+                    <span class="feature-tag">ESPN</span>
+                    <span class="feature-tag">Audacy</span>
+                </div>
+                <div class="card-status">
+                    <span class="pulse"></span> Broadcasting
+                </div>
+                <button class="quick-action-btn" onclick="event.stopPropagation(); openPlatform('/sports-radio-hub.html')">
+                    Access Radio →
+                </button>
+            </div>
+
+            <div class="sportsbook-card" onclick="openPlatform('/public-sportsbook-qr.html')">
+                <div class="card-icon">📱</div>
+                <div class="card-title">QR Login Portal</div>
+                <div class="card-desc">Quick access via QR code with SSO integration for all authentication providers</div>
+                <div class="card-features">
+                    <span class="feature-tag">QR Access</span>
+                    <span class="feature-tag">SSO Login</span>
+                    <span class="feature-tag">Instant</span>
+                </div>
+                <div class="card-status">
+                    <span class="pulse"></span> Available
+                </div>
+                <button class="quick-action-btn" onclick="event.stopPropagation(); openPlatform('/public-sportsbook-qr.html')">
+                    Access QR Portal →
+                </button>
+            </div>
+        </div>
+
+        <div class="section-title">
+            ⚡ Additional Services
+        </div>
+
+        <div class="sportsbook-grid">
+            <div class="sportsbook-card" onclick="openPlatform('/wifi-plugin-hub.html')">
+                <div class="card-icon">📡</div>
+                <div class="card-title">WiFi Plugin Hub</div>
+                <div class="card-desc">Network control center with plugin distribution and phone control integration</div>
+                <div class="card-status">
+                    <span class="pulse"></span> Online
+                </div>
+            </div>
+
+            <div class="sportsbook-card" onclick="openPlatform('/backup-dashboard.html')">
+                <div class="card-icon">☁️</div>
+                <div class="card-title">AWS Backup</div>
+                <div class="card-desc">Cloud backup and recovery system with SAP Marketplace integration</div>
+                <div class="card-status">
+                    <span class="pulse"></span> Synced
+                </div>
+            </div>
+
+            <div class="sportsbook-card" onclick="openPlatform('/sso-plugin-dashboard.html')">
+                <div class="card-icon">🔐</div>
+                <div class="card-title">SSO Plugin Dashboard</div>
+                <div class="card-desc">Unified authentication with PlayStation Network, SAM.gov, and Spotify</div>
+                <div class="card-status">
+                    <span class="pulse"></span> Active
+                </div>
+            </div>
+
+            <div class="sportsbook-card" onclick="openPlatform('/web3-bridge.html')">
+                <div class="card-icon">⛓️</div>
+                <div class="card-title">Web3 Bridge</div>
+                <div class="card-desc">Blockchain integration with QuickNode and crypto wallet connectivity</div>
+                <div class="card-status">
+                    <span class="pulse"></span> Connected
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        function openPlatform(path) {
+            window.location.href = path;
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/sportsbook/games`);
+                const data = await response.json();
+                
+                if (data.success && data.games) {
+                    const liveGames = data.games.filter(g => g.status === 'live').length;
+                    document.getElementById('liveGames').textContent = liveGames || data.games.length;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            loadStats();
+            setInterval(loadStats, 30000);
+        });
+    </script>
+</body>
+</html>
