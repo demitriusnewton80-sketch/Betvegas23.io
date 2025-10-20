@@ -5,7 +5,9 @@ import cors from 'cors';
 import helmet from 'helmet';
 
 // Import routes
-import sportsbookRoutes from './routes/sportsbook.js';
+import authRoutes from './routes/auth.js';
+import bettingRoutes from './routes/sportsbook.js';
+import boxingUFCRoutes from './routes/boxing-ufc.js';
 import streamingRoutes from './routes/streaming.js';
 import sportsRadioRoutes from './routes/sports-radio.js';
 import espnTrackerRoutes from './routes/espn-tracker.js';
@@ -94,7 +96,9 @@ app.use(express.static('public', {
 
 // API Routes (must be before static files)
 try {
-  app.use('/sportsbook', sportsbookRoutes);
+  app.use('/auth', authRoutes);
+  app.use('/sportsbook', bettingRoutes);
+  app.use('/boxing-ufc', boxingUFCRoutes);
   app.use('/streaming', streamingRoutes);
   app.use('/sports-radio', sportsRadioRoutes);
   app.use('/espn-tracker', espnTrackerRoutes);
