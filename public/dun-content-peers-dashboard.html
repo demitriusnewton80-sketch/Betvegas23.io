@@ -1,0 +1,409 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dun & Bradstreet Content Peers - Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .duns-badge {
+            display: inline-block;
+            background: #ff6b35;
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin: 10px 5px;
+            font-weight: bold;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .peers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .peer-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid;
+        }
+
+        .peer-card.primary { border-color: #4CAF50; }
+        .peer-card.secondary { border-color: #2196F3; }
+        .peer-card.tertiary { border-color: #FF9800; }
+
+        .peer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .peer-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .peer-type {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+
+        .peer-info {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .trust-score {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .trust-bar {
+            flex: 1;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .trust-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            transition: width 0.3s;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .content-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .content-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .status-active { background: #4CAF50; }
+        .status-pending { background: #FF9800; }
+        .status-inactive { background: #757575; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏢 Dun & Bradstreet Content Peers Network</h1>
+            <p>Business Relationship Content Exchange Platform</p>
+            <span class="duns-badge">DUNS: 147036693</span>
+            <span class="duns-badge">FCC Entity: 20130314143016</span>
+        </div>
+
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <button class="btn" onclick="refreshData()">🔄 Refresh Network</button>
+            <button class="btn btn-success" onclick="showRegisterEntity()">➕ Register Entity</button>
+            <button class="btn btn-warning" onclick="showShareContent()">📤 Share Content</button>
+        </div>
+
+        <h2 style="margin-bottom: 20px;">📡 Content Peer Network</h2>
+        <div class="peers-grid" id="peersGrid"></div>
+
+        <div class="content-section">
+            <h2 style="margin-bottom: 20px;">📊 Recent Content Exchanges</h2>
+            <div id="contentList"></div>
+        </div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        const API_BASE = window.location.origin;
+
+        async function loadNetworkData() {
+            try {
+                const response = await fetch(`${API_BASE}/dun-content-peers/network`);
+                const data = await response.json();
+
+                if (data.success) {
+                    displayStats(data);
+                    displayPeers(data.peers);
+                }
+            } catch (error) {
+                console.error('Error loading network data:', error);
+            }
+        }
+
+        function displayStats(data) {
+            const statsHtml = `
+                <div class="stat-card">
+                    <div class="stat-value">${data.totalPeers}</div>
+                    <div class="stat-label">Total Peers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${data.activePeers}</div>
+                    <div class="stat-label">Active Peers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${data.totalEntities}</div>
+                    <div class="stat-label">DUNS Entities</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${data.totalContent}</div>
+                    <div class="stat-label">Content Items</div>
+                </div>
+            `;
+            document.getElementById('statsGrid').innerHTML = statsHtml;
+        }
+
+        function displayPeers(peers) {
+            const peersHtml = peers.map(peer => `
+                <div class="peer-card ${peer.peerType}">
+                    <div class="peer-header">
+                        <div>
+                            <div class="peer-name">${peer.entityName}</div>
+                            <div style="opacity: 0.8;">DUNS: ${peer.dunsNumber}</div>
+                        </div>
+                        <span class="peer-type">${peer.peerType.toUpperCase()}</span>
+                    </div>
+                    
+                    <div class="peer-info">
+                        <div class="metric">
+                            <span>Channels:</span>
+                            <span>${peer.contentChannels.length}</span>
+                        </div>
+                        <div class="metric">
+                            <span>Data Sent:</span>
+                            <span>${peer.dataExchange.sent}</span>
+                        </div>
+                        <div class="metric">
+                            <span>Data Received:</span>
+                            <span>${peer.dataExchange.received}</span>
+                        </div>
+                        <div class="metric">
+                            <span>FCC Compliant:</span>
+                            <span>${peer.fccCompliant ? '✅ Yes' : '❌ No'}</span>
+                        </div>
+                    </div>
+
+                    <div class="trust-score">
+                        <span>Trust Score:</span>
+                        <div class="trust-bar">
+                            <div class="trust-fill" style="width: ${peer.trustScore}%"></div>
+                        </div>
+                        <span>${peer.trustScore}%</span>
+                    </div>
+
+                    <div style="margin-top: 15px; text-align: center;">
+                        <button class="btn" onclick="viewPeerDetails('${peer.id}')">📋 View Details</button>
+                        <button class="btn btn-success" onclick="sendContent('${peer.id}')">📤 Send Content</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('peersGrid').innerHTML = peersHtml;
+        }
+
+        async function viewPeerDetails(peerId) {
+            try {
+                const response = await fetch(`${API_BASE}/dun-content-peers/peer/${peerId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`Peer Details:\n\nName: ${data.peer.entityName}\nDUNS: ${data.peer.dunsNumber}\nType: ${data.peer.peerType}\nTrust Score: ${data.peer.trustScore}%\nTotal Content: ${data.metrics.totalContentShared}\nExchange Rate: ${data.metrics.exchangeRate}`);
+                }
+            } catch (error) {
+                alert('Failed to load peer details');
+            }
+        }
+
+        function showRegisterEntity() {
+            const dunsNumber = prompt('Enter DUNS Number:');
+            if (!dunsNumber) return;
+
+            const legalName = prompt('Enter Legal Name:');
+            if (!legalName) return;
+
+            registerEntity(dunsNumber, legalName);
+        }
+
+        async function registerEntity(dunsNumber, legalName) {
+            try {
+                const response = await fetch(`${API_BASE}/dun-content-peers/entity/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        dunsNumber,
+                        legalName,
+                        address: 'United States',
+                        relationshipType: 'customer',
+                        contentAccess: 'limited',
+                        peerStatus: 'pending'
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('Entity registered successfully!');
+                    await refreshData();
+                }
+            } catch (error) {
+                alert('Failed to register entity');
+            }
+        }
+
+        function showShareContent() {
+            const contentType = prompt('Enter content type (business-data, market-intel, financial, operational):');
+            if (!contentType) return;
+
+            shareContent('147036693', contentType, { timestamp: Date.now() });
+        }
+
+        async function shareContent(sourceEntity, contentType, data) {
+            try {
+                const response = await fetch(`${API_BASE}/dun-content-peers/content/share`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sourceEntity, contentType, data })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('Content shared successfully!');
+                    await refreshData();
+                }
+            } catch (error) {
+                alert('Failed to share content');
+            }
+        }
+
+        async function sendContent(peerId) {
+            alert(`Preparing to send content to peer ${peerId}...`);
+        }
+
+        async function refreshData() {
+            await loadNetworkData();
+        }
+
+        // Initialize
+        loadNetworkData();
+
+        // Auto-refresh every 30 seconds
+        setInterval(loadNetworkData, 30000);
+    </script>
+</body>
+</html>
