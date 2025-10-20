@@ -39,6 +39,7 @@ import applePartnershipRouter from './routes/apple-partnership.js';
 import falconBroadcastRouter from './routes/falcon-broadcast.js';
 import partnershipEnrollmentRouter from './routes/partnership-enrollment.js';
 import phoneStreamRoutes from './routes/phone-stream.js';
+import bloombergPhoneBridgeRoutes from './routes/bloomberg-phone-bridge.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -108,6 +109,7 @@ try {
   app.use('/functional-structures', functionalStructuresRouter);
   app.use('/content-integrity', contentIntegrityRouter);
   app.use('/phone-stream', phoneStreamRoutes);
+  app.use('/bloomberg-phone-bridge', bloombergPhoneBridgeRoutes);
   console.log('✅ All API routes registered successfully');
 } catch (error) {
   console.error('❌ Error registering routes:', error);
