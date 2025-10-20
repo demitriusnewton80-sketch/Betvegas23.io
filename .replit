@@ -7,19 +7,10 @@ channel = "stable-25_05"
 [workflows]
 runButton = "Run"
 
-run = "npm run dev"
-
-[deployment]
-run = ["sh", "-c", "npm run dev"]
-
-[[ports]]
-localPort = 5000
-externalPort = 80
-
 [[workflows.workflow]]
 name = "Run"
 author = 48739577
-mode = "parallel"
+mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -30,92 +21,39 @@ task = "shell.exec"
 args = "npm run dev"
 
 [[workflows.workflow]]
-name = "Quick Service Restart"
+name = "Run"
 author = 48739577
 mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"=== Quick Service Restart ===\""
+args = "npm install"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"FCC Entity: 20130314143016\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "pkill -f \"npm run dev\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "sleep 2"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run dev &"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "sleep 5"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"✅ Services restarted\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "curl -s http://0.0.0.0:5000/health"
+args = "npm run dev"
 
 [[workflows.workflow]]
-name = "System Diagnostics"
+name = "Direct contact "
+mode = "parallel"
 author = 48739577
-mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo \"=== Young Meeat LLC System Diagnostics ===\""
+args = "20130314143016"
 
 [[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"FCC Entity: 20130314143016\""
+task = "packager.installForLanguage"
+args = "nix"
 
 [[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "curl -s http://0.0.0.0:5000/health"
+task = "workflow.run"
+args = "Direct contact "
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "curl -s http://0.0.0.0:5000/api/core/status"
+[[ports]]
+localPort = 5000
+externalPort = 5000
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npx tsc --noEmit"
-
-[[workflows.workflow]]
-name = "FCC Contact Info"
-author = 48739577
-mode = "sequential"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"==================================\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"Young Meeat LLC - FCC Entity\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"FCC Entity: 20130314143016\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"FCC Registration: 0024454324\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"Contact: gbemeeat@gmail.com\""
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "echo \"==================================\""
+[deployment]
+run = ["sh", "-c", "NODE_ENV=production node dist/index.js"]
+build = ["sh", "-c", "npm run build"]
