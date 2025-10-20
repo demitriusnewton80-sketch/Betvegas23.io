@@ -25,6 +25,7 @@ import errorRecoveryRoutes from './routes/error-recovery.js';
 import apiTroubleshootingRoutes from './routes/api-troubleshooting.js';
 import apiFusionRoutes from './routes/api-fusion.js';
 import fusionAssemblyRouter from './routes/fusion-assembly.js';
+import contractCallbacksRoutes from './routes/contract-callbacks.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -67,6 +68,7 @@ app.use('/error-recovery', errorRecoveryRoutes);
 app.use('/api-troubleshooting', apiTroubleshootingRoutes);
 app.use('/api-fusion', apiFusionRoutes);
 app.use('/fusion-assembly', fusionAssemblyRouter);
+app.use('/contract-callbacks', contractCallbacksRoutes);
 
 // Static files (must be after API routes)
 app.use(express.static(path.join(__dirname, '../public')));
