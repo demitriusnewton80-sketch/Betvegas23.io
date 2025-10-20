@@ -318,9 +318,8 @@ export class SmartSystemService extends EventEmitter {
   getConnectedSportsbooks() {
     return Array.from(this.connectedSportsbooks);
   }
-}
 
-private analyzeTraffic() {
+  private analyzeTraffic() {
     const recentTraffic = this.trafficData.slice(-100);
     const failed = recentTraffic.filter(t => t.status === 'failed');
 
