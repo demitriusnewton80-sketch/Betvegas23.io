@@ -38,6 +38,7 @@ import smartCommunicationFusionRouter from './routes/smart-communication-fusion.
 import applePartnershipRouter from './routes/apple-partnership.js';
 import falconBroadcastRouter from './routes/falcon-broadcast.js';
 import partnershipEnrollmentRouter from './routes/partnership-enrollment.js';
+import phoneStreamRoutes from './routes/phone-stream.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -106,6 +107,7 @@ try {
   app.use('/remote-streaming-control', remoteStreamingControlRouter);
   app.use('/functional-structures', functionalStructuresRouter);
   app.use('/content-integrity', contentIntegrityRouter);
+  app.use('/phone-stream', phoneStreamRoutes);
   console.log('✅ All API routes registered successfully');
 } catch (error) {
   console.error('❌ Error registering routes:', error);
