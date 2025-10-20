@@ -12,7 +12,7 @@ const liveSessions = new Map();
 router.get('/streams', (req: Request, res: Response) => {
   try {
     const streams = streamingService.getAllStreams();
-    
+
     // Ensure we always return valid JSON
     res.setHeader('Content-Type', 'application/json');
     res.json({
@@ -51,8 +51,8 @@ router.get('/events', (req: Request, res: Response) => {
     const interval = setInterval(() => {
       try {
         const streams = streamingService.getAllStreams() || [];
-        const updateMsg = { 
-          type: 'update', 
+        const updateMsg = {
+          type: 'update',
           streams,
           timestamp: Date.now(),
           fccEntity: '20130314143016'
@@ -61,10 +61,10 @@ router.get('/events', (req: Request, res: Response) => {
       } catch (error) {
         console.error('EventSource update error:', error);
         // Send error notification to client
-        res.write(`data: ${JSON.stringify({ 
-          type: 'error', 
+        res.write(`data: ${JSON.stringify({
+          type: 'error',
           message: 'Stream update failed',
-          timestamp: Date.now() 
+          timestamp: Date.now()
         })}\n\n`);
       }
     }, 5000);
