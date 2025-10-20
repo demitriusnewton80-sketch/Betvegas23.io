@@ -44,6 +44,7 @@ app.use(cookieParser());
 // API routes
 app.use('/sportsbook', sportsbookRoutes);
 app.use('/streaming', streamingRoutes);
+app.use('/api/streaming', streamingRoutes); // Alternative path for frontend compatibility
 app.use('/ps5', ps5Routes);
 app.use('/sso-plugin', ssoPluginRoutes);
 app.use('/backup', backupRoutes);

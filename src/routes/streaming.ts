@@ -8,6 +8,47 @@ const router = express.Router();
 // Live streaming sessions
 const liveSessions = new Map();
 
+// Get all streams endpoint
+router.get('/streams', (req: Request, res: Response) => {
+  try {
+    const streams = streamingService.getAllStreams();
+    res.json({
+      success: true,
+      streams,
+      count: streams.length,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch streams',
+      streams: []
+    });
+  }
+});
+
+// Server-Sent Events endpoint for live updates
+router.get('/events', (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+
+  // Send initial connection message
+  res.write(`data: ${JSON.stringify({ type: 'connected', timestamp: Date.now() })}\n\n`);
+
+  // Send updates every 5 seconds
+  const interval = setInterval(() => {
+    const streams = streamingService.getAllStreams();
+    res.write(`data: ${JSON.stringify({ type: 'update', streams })}\n\n`);
+  }, 5000);
+
+  // Cleanup on connection close
+  req.on('close', () => {
+    clearInterval(interval);
+  });
+});
+
 // Unified Sportsbook Fusion Stream - All sportsbooks in one cloud stream
 router.get('/fusion/unified-stream', async (req: Request, res: Response) => {
   try {
@@ -236,15 +277,15 @@ router.get('/fusion/status', async (req: Request, res: Response) => {
 router.post('/deploy/all-sportsbooks', async (req: Request, res: Response) => {
   try {
     const { includePS5, includePickupGames, deploymentMode } = req.body;
-    
+
     const sportsbooks = streamingService.getExternalSportsbooks();
     const cloudStatus = await hybridControlService.fuseControl();
-    
+
     // Get PS5 games including pickup games
     const ps5Games = await import('../services/PS5SportsService.js');
     const allPS5Games = ps5Games.ps5SportsService.getAllGames();
     const pickupGames = allPS5Games.filter(g => g.type === '5v5-basketball');
-    
+
     // Deployment configuration for each sportsbook
     const deployments = sportsbooks.map(sportsbook => {
       const deployment = {
@@ -291,10 +332,10 @@ router.post('/deploy/all-sportsbooks', async (req: Request, res: Response) => {
           crossPlatformBetting: true
         }
       };
-      
+
       return deployment;
     });
-    
+
     // Log deployment for each sportsbook
     deployments.forEach(deployment => {
       console.log(`📡 Deployed to ${deployment.sportsbookName}`);
@@ -302,7 +343,7 @@ router.post('/deploy/all-sportsbooks', async (req: Request, res: Response) => {
       console.log(`   - PS5 Games: ${deployment.services.ps5Integration.totalGames}`);
       console.log(`   - Pickup Games: ${deployment.services.pickupGames.available}`);
     });
-    
+
     res.json({
       success: true,
       deployment: {
@@ -321,7 +362,7 @@ router.post('/deploy/all-sportsbooks', async (req: Request, res: Response) => {
       fccEntity: '20130314143016',
       message: 'Streaming services deployed to all sportsbooks with PS5 and pickup games integration'
     });
-    
+
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -337,7 +378,7 @@ router.get('/deploy/status', async (req: Request, res: Response) => {
     const sportsbooks = streamingService.getExternalSportsbooks();
     const ps5Games = await import('../services/PS5SportsService.js');
     const allPS5Games = ps5Games.ps5SportsService.getAllGames();
-    
+
     res.json({
       success: true,
       deploymentStatus: {
