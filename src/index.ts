@@ -128,7 +128,7 @@ app.get('/', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-// API 404 handler - must come before SPA catch-all
+// API 404 handlers - must come before SPA catch-all
 app.use('/api/*', (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
   res.status(404).json({
