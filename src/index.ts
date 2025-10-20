@@ -27,6 +27,7 @@ import apiFusionRoutes from './routes/api-fusion.js';
 import fusionAssemblyRouter from './routes/fusion-assembly.js';
 import contractCallbacksRoutes from './routes/contract-callbacks.js';
 import jsonSyncRoutes from './routes/json-sync.js';
+import workflowLandscapeRouter from './routes/workflow-landscape.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -163,17 +164,17 @@ import { fusionAssemblyCore } from './core/FusionAssemblyCore.js';
 try {
   appCore.initialize();
   console.log('✅ AppCore initialized');
-  
+
   // Initialize other systems
   smartTroubleshootingCore;
   console.log('✅ SmartTroubleshooting ready');
-  
+
   errorRecoverySystem;
   console.log('✅ ErrorRecovery ready');
-  
+
   fusionAssemblyCore;
   console.log('✅ FusionAssembly ready');
-  
+
   // Initialize JSON Sync Service
   const { jsonSyncService } = await import('./services/JSONSyncService.js');
   jsonSyncService;
@@ -181,5 +182,8 @@ try {
 } catch (error) {
   console.error('❌ Core system initialization error:', error);
 }
+
+// Mount workflow landscape endpoint
+app.use('/workflow-landscape', workflowLandscapeRouter);
 
 export default app;
