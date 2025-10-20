@@ -230,6 +230,13 @@
                 if (data.success && data.deposits.length > 0) {
                     const list = document.getElementById('depositList');
                     list.innerHTML = data.deposits.map(d => `
+                        <div class="deposit-item">
+                            <strong>Amount:</strong> $${d.amount}<br>
+                            <strong>Status:</strong> ${d.status}<br>
+                            <strong>Date:</strong> ${new Date(d.timestamp).toLocaleString()}
+                        </div>
+                    `).join('');
+                }ap(d => `
                         <li class="deposit-item">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                                 <strong>${d.appName}</strong>

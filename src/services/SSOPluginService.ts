@@ -415,4 +415,4 @@ class SSOPluginService extends EventEmitter {
   }
 }
 
-export const ssoPluginService = new SSOPluginService();
+export const ssoPluginService = new SSOPluginService(); new SSOPluginService();

@@ -441,6 +441,8 @@ class HybridControlService extends EventEmitter {
       }
     });
   }
+    });
+  }
 
   private balanceLoad() {
     // Distribute load across cloud nodes

@@ -273,6 +273,15 @@
                 
                 const metrics = document.getElementById('coreMetrics');
                 metrics.innerHTML = `
+                    <div><strong>Status:</strong> ${data.status}</div>
+                    <div><strong>Uptime:</strong> ${data.uptime}s</div>
+                    <div><strong>Services:</strong> ${data.services || 'N/A'}</div>
+                `;
+                log('Core status loaded successfully');
+            } catch (error) {
+                log('Failed to load core status: ' + error.message, 'error');
+            }
+        }ML = `
                     <div class="metric">
                         <span class="metric-label">Active Connections:</span>
                         <span class="metric-value">${data.core.active}/${data.core.total}</span>
