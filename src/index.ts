@@ -36,6 +36,7 @@ import jsonSyncRoutes from './routes/json-sync.js';
 import workflowLandscapeRouter from './routes/workflow-landscape.js';
 import smartCommunicationFusionRouter from './routes/smart-communication-fusion.js';
 import applePartnershipRouter from './routes/apple-partnership.js';
+import falconBroadcastRouter from './routes/falcon-broadcast.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -221,5 +222,6 @@ Promise.resolve().then(async () => {
 app.use('/workflow-landscape', workflowLandscapeRouter);
 app.use('/smart-communication-fusion', smartCommunicationFusionRouter);
 app.use('/apple-partnership', applePartnershipRouter);
+app.use('/falcon-broadcast', falconBroadcastRouter);
 
 export default app;
