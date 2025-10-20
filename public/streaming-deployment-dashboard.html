@@ -269,27 +269,19 @@
 
         async function loadDeploymentStatus() {
             try {
-                const response = await fetch(`${API_BASE}/streaming/deploy/status`);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    console.error('Invalid response type:', contentType);
-                    return;
-                }
-
-                const data = await response.json();
+                // Use smart fetch with troubleshooting
+                const data = await window.smartFetch(`${API_BASE}/streaming/deploy/status`);
 
                 if (data && data.success) {
-                document.getElementById('totalSportsbooks').textContent = data.deploymentStatus.totalSportsbooks || 0;
-                document.getElementById('ps5Games').textContent = data.deploymentStatus.ps5Integration?.totalGames || 0;
-                document.getElementById('pickupGames').textContent = data.deploymentStatus.pickupGames?.available || 0;
-                document.getElementById('relationships').textContent = data.deploymentStatus.relationships?.established || 0;
+                    document.getElementById('totalSportsbooks').textContent = data.deploymentStatus.totalSportsbooks || 0;
+                    document.getElementById('ps5Games').textContent = data.deploymentStatus.ps5Integration?.totalGames || 0;
+                    document.getElementById('pickupGames').textContent = data.deploymentStatus.pickupGames?.available || 0;
+                    document.getElementById('relationships').textContent = data.deploymentStatus.relationships?.established || 0;
 
-                displayDeployments(data.deploymentStatus);
+                    displayDeployments(data.deploymentStatus);
+                } else if (data && data.error) {
+                    console.warn('API returned error:', data.error);
+                    displayErrorState();
                 } else {
                     console.log('Invalid response format');
                     displayErrorState();

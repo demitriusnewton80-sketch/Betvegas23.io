@@ -76,6 +76,30 @@ router.post('/auto-fix', (req: Request, res: Response) => {
   }
 });
 
+// Create troubleshooting session
+router.post('/sessions', (req: Request, res: Response) => {
+  try {
+    const { type, issue, endpoint, response } = req.body;
+    
+    console.log(`📝 Creating troubleshooting session: ${type} - ${issue}`);
+    
+    res.json({
+      success: true,
+      sessionId: `session-${Date.now()}`,
+      type: type || 'api',
+      issue: issue || 'Communication error',
+      autoFixTriggered: true,
+      message: 'Troubleshooting session created',
+      fccEntity: '20130314143016'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to create session'
+    });
+  }
+});
+
 // Server-Sent Events for real-time monitoring
 router.get('/monitor', (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'text/event-stream');

@@ -258,6 +258,35 @@ router.get('/endpoints', (req: Request, res: Response) => {
   }
 });
 
+// HTML-JSON Communication Bridge
+router.post('/html-json-bridge', async (req: Request, res: Response) => {
+  try {
+    const { endpoint, issue, responseText } = req.body;
+
+    console.log(`🔗 HTML-JSON Communication issue reported for: ${endpoint}`);
+    
+    // Create troubleshooting session
+    const sessionId = `html-json-${Date.now()}`;
+    
+    // Trigger auto-fix
+    smartTroubleshootingCore.setAutoFix(true);
+    
+    res.json({
+      success: true,
+      sessionId,
+      message: 'Communication bridge established',
+      autoFixEnabled: true,
+      recommendation: 'Retry your request',
+      fccEntity: '20130314143016'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Bridge failed'
+    });
+  }
+});
+
 // Reset all troubleshooting systems
 router.post('/reset', async (req: Request, res: Response) => {
   try {
