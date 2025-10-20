@@ -62,7 +62,7 @@ class SSOPluginService extends EventEmitter {
   // Add plugin output
   private addOutput(pluginId: string, type: PluginOutput['type'], message: string, metadata?: any) {
     const output: PluginOutput = {
-      id: crypto.randomUUID(),
+      id: `output-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       pluginId,
       timestamp: new Date().toISOString(),
       type,
@@ -314,7 +314,7 @@ class SSOPluginService extends EventEmitter {
 
       // Create SSO user
       const user: SSOUser = {
-        id: userInfo.id || userInfo.sub || crypto.randomUUID(),
+        id: userInfo.id || userInfo.sub || `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         email: userInfo.email,
         name: userInfo.name || userInfo.login || userInfo.email,
         provider: plugin.provider,

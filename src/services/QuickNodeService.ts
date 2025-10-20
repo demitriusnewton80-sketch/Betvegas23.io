@@ -49,11 +49,11 @@ class QuickNodeService {
 
       const data = await response.json() as any;
 
-      if (data.error) {
+      if (data && data.error) {
         return { success: false, error: data.error.message };
       }
 
-      return { success: true, data: data.result };
+      return { success: true, data: data?.result };
     } catch (error) {
       console.error('QuickNode API error:', error);
       return {

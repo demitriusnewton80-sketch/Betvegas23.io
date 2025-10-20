@@ -21,7 +21,7 @@ const router = express.Router();
 // Mobile-optimized games endpoint
 router.get('/games', async (req: Request, res: Response) => {
   try {
-    const games = bettingService.getAllGames();
+    const games: Game[] = bettingService.getAllGames();
 
     // Return mobile-optimized response with reduced data
     const mobileGames = games.slice(0, 20).map(game => ({
@@ -54,7 +54,7 @@ router.get('/games', async (req: Request, res: Response) => {
 // Mobile quick stats
 router.get('/stats', (req: Request, res: Response) => {
   try {
-    const games = bettingService.getAllGames();
+    const games: Game[] = bettingService.getAllGames();
     const liveGames = games.filter(g => g.status === 'live');
     const upcomingGames = games.filter(g => g.status === 'scheduled');
 

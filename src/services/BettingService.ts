@@ -211,12 +211,12 @@ class BettingService {
     return { success: true };
   }
 
-  getAllGames(): any[] {
+  getAllGames(): Game[] {
     // Import sportsDataService to get all events
     const { sportsDataService } = require('./SportsDataService.js');
     const events = sportsDataService.getAllEvents();
 
-    return events.map(event => ({
+    return events.map((event: any): Game => ({
       id: event.id,
       sport: event.sport,
       homeTeam: event.homeTeam,
