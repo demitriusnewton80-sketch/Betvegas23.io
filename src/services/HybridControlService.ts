@@ -1,10 +1,18 @@
-
 import { EventEmitter } from 'events';
 import { awsBackupService } from './AWSBackupService.js';
 import { web3BridgeService } from './Web3BridgeService.js';
 import { phoneControlService } from './PhoneControlService.js';
 import { ps5SportsService } from './PS5SportsService.js';
 import { streamingService } from './StreamingService.js';
+import { quickNodeService } from './QuickNodeService.js';
+
+interface Game {
+  id: string;
+  sport: string;
+  status: string;
+  homeTeam: string;
+  awayTeam: string;
+}
 
 interface CloudNode {
   id: string;
@@ -35,7 +43,7 @@ interface HybridConnection {
   bandwidth: number;
   latency: number;
   encryption: boolean;
-  status: 'connected' | 'disconnected' | 'syncing';
+  status: 'connected' | 'disconnected' | 'syncing' | 'degraded';
   throughput: number;
 }
 
@@ -188,7 +196,7 @@ class HybridControlService extends EventEmitter {
 
   private createConnection(cloudId: string, systemId: string, bandwidth: number, latency: number) {
     const connId = `${cloudId}-${systemId}`;
-    
+
     this.connections.set(connId, {
       id: connId,
       cloudNode: cloudId,
@@ -316,7 +324,7 @@ class HybridControlService extends EventEmitter {
     };
 
     // Store in cloud
-    await awsBackupService.backupData({
+    await awsBackupService.storeBackup(`game-distribution-${gameId}`, {
       type: 'game-distribution',
       data: distribution,
       metadata: { gameId, fccEntity: '20130314143016' }
@@ -348,7 +356,7 @@ class HybridControlService extends EventEmitter {
 
   private assignPowerStructure(game: any): PowerStructure | undefined {
     for (const [, structure] of this.powerStructures) {
-      if (structure.gameProviders.includes(game.provider) || 
+      if (structure.gameProviders.includes(game.provider) ||
           structure.gameProviders.includes('all')) {
         return structure;
       }
@@ -376,7 +384,7 @@ class HybridControlService extends EventEmitter {
         total: this.connections.size,
         connected: Array.from(this.connections.values()).filter(c => c.status === 'connected').length,
         totalBandwidth: Array.from(this.connections.values()).reduce((sum, c) => sum + c.bandwidth, 0),
-        avgLatency: Math.round(Array.from(this.connections.values()).reduce((sum, c) => sum + c.latency, 0) / this.connections.size)
+        avgLatency: this.connections.size > 0 ? Math.round(Array.from(this.connections.values()).reduce((sum, c) => sum + c.latency, 0) / this.connections.size) : 0
       },
       powerStructures: {
         total: this.powerStructures.size,
@@ -415,7 +423,7 @@ class HybridControlService extends EventEmitter {
 
     // Check system nodes
     this.systemNodes.forEach((node, id) => {
-      const cpuUsage = (node.connectedGames.length / node.resources.cpu) * 100;
+      const cpuUsage = node.resources.cpu > 0 ? (node.connectedGames.length / node.resources.cpu) * 100 : 0;
       if (cpuUsage > 90) {
         node.status = 'maintenance';
         this.emit('node:maintenance', { id, type: 'system', node });
@@ -445,7 +453,7 @@ class HybridControlService extends EventEmitter {
   private balanceLoad() {
     // Distribute load across cloud nodes
     const totalLoad = Array.from(this.cloudNodes.values()).reduce((sum, n) => sum + n.currentLoad, 0);
-    const avgLoad = totalLoad / this.cloudNodes.size;
+    const avgLoad = this.cloudNodes.size > 0 ? totalLoad / this.cloudNodes.size : 0;
 
     this.cloudNodes.forEach((node, id) => {
       if (node.currentLoad > avgLoad * 1.5) {

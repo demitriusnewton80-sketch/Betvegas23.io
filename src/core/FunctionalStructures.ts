@@ -301,3 +301,4 @@ export class FunctionalStructures extends EventEmitter {
 }
 
 export const functionalStructures = FunctionalStructures.getInstance();
+export default functionalStructures;

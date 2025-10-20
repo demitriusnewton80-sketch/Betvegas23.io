@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import { streamingService } from './StreamingService.js';
 import { phoneControlService } from './PhoneControlService.js';
 import { web3BridgeService } from './Web3BridgeService.js';
 import { awsBackupService } from './AWSBackupService.js';
@@ -143,10 +144,13 @@ export class SmartSystemService extends EventEmitter {
     try {
       const cloudKey = `betting-content/${uploadId}.json`;
 
-      await awsBackupService.backupData({
-        type: 'content-upload',
-        data,
-        metadata: { uploadId, timestamp: Date.now() }
+      await awsBackupService.backup({
+        key: `content-upload-${uploadId}`,
+        data: {
+          type: 'content-upload',
+          data,
+          metadata: { uploadId, timestamp: Date.now() }
+        }
       });
 
       const cloudUrl = `https://s3.amazonaws.com/young-meeat-llc/${cloudKey}`;
@@ -350,6 +354,8 @@ export class SmartSystemService extends EventEmitter {
       totalErrors,
       resolvedErrors,
       autoFixedErrors,
+      unresolvedErrors: totalErrors - resolvedErrors,
+      systemHealth: resolvedErrors / Math.max(totalErrors, 1) * 100,
       pendingUploads: Array.from(this.contentUploads.values()).filter(u => u.bridgeStatus === 'pending').length,
       totalUploads: this.contentUploads.size,
       trafficVolume: this.trafficData.length,

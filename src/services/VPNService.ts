@@ -4,6 +4,7 @@ interface VPNConnection {
   userId: string;
   publicIP: string;
   vpnIP: string;
+  serverIP: string;
   location: string;
   protocol: string;
   encryption: string;
@@ -66,7 +67,7 @@ class VPNService {
       {
         location: 'New York, USA',
         country: 'US',
-        ip: '0.0.0.0',
+        ip: '10.8.1.1',
         load: 45,
         maxConnections: 1000,
         currentConnections: 450,
@@ -76,7 +77,7 @@ class VPNService {
       {
         location: 'London, UK',
         country: 'GB',
-        ip: '0.0.0.0',
+        ip: '10.8.2.1',
         load: 30,
         maxConnections: 1000,
         currentConnections: 300,
@@ -86,7 +87,7 @@ class VPNService {
       {
         location: 'Tokyo, Japan',
         country: 'JP',
-        ip: '0.0.0.0',
+        ip: '10.8.3.1',
         load: 60,
         maxConnections: 1000,
         currentConnections: 600,
@@ -96,7 +97,7 @@ class VPNService {
       {
         location: 'Frankfurt, Germany',
         country: 'DE',
-        ip: '0.0.0.0',
+        ip: '10.8.4.1',
         load: 25,
         maxConnections: 1000,
         currentConnections: 250,
@@ -106,7 +107,7 @@ class VPNService {
       {
         location: 'Singapore',
         country: 'SG',
-        ip: '0.0.0.0',
+        ip: '10.8.5.1',
         load: 55,
         maxConnections: 1000,
         currentConnections: 550,
@@ -151,6 +152,7 @@ class VPNService {
       userId,
       publicIP,
       vpnIP,
+      serverIP: server.ip,
       location: server.location,
       protocol: 'WireGuard',
       encryption: 'ChaCha20-Poly1305',
@@ -447,8 +449,49 @@ class VPNService {
     
     return true;
   }
-}
 
-export const vpnService = new VPNService();
+  // Create streaming server for VPN connection
+  createStreamingServer(connectionId: string, appPort: number = 5000): {
+    serverUrl: string;
+    vpnIP: string;
+    streamingPort: number;
+    status: string;
+  } {
+    const connection = this.connections.get(connectionId);
+    if (!connection) {
+      throw new Error('Connection not found');
+    }
+
+    const streamingPort = appPort;
+    const serverUrl = `https://${connection.vpnIP}:${streamingPort}`;
+
+    return {
+      serverUrl,
+      vpnIP: connection.vpnIP,
+      streamingPort,
+      status: 'streaming'
+    };
+  }
+
+  // Get streaming server info
+  getStreamingServerInfo(connectionId: string): {
+    appUrl: string;
+    vpnIP: string;
+    publicAccess: string;
+    fccEntity: string;
+  } | null {
+    const connection = this.connections.get(connectionId);
+    if (!connection) {
+      return null;
+    }
+
+    return {
+      appUrl: `https://${connection.vpnIP}:5000`,
+      vpnIP: connection.vpnIP,
+      publicAccess: `https://0.0.0.0:5000`,
+      fccEntity: '20130314143016'
+    };
+  }
+}
 
 export const vpnService = new VPNService();

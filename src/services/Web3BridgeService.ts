@@ -204,8 +204,8 @@ class Web3BridgeService extends EventEmitter {
     return {
       totalWallets: this.wallets.size,
       totalTransactions: this.transactions.size,
-      pendingTransactions: Array.from(this.transactions.values()).filter(tx => tx.status === 'pending').length,
-      confirmedTransactions: Array.from(this.transactions.values()).filter(tx => tx.status === 'confirmed').length,
+      pendingTransactions: Array.from(this.transactions.values()).filter(tx => tx.getStatus() === 'pending').length,
+      confirmedTransactions: Array.from(this.transactions.values()).filter(tx => tx.getStatus() === 'confirmed').length,
       chainId: this.config.chainId,
       chainName: this.config.chainName
     };

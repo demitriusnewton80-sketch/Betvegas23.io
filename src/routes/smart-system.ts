@@ -1,6 +1,15 @@
 import express, { Request, Response } from 'express';
 import { smartSystemService } from '../services/SmartSystemService.js';
 
+interface ErrorLog {
+  id: string;
+  type: string;
+  message: string;
+  source: string;
+  timestamp: number;
+  resolved: boolean;
+}
+
 const router = express.Router();
 
 // Upload content via phone plugin
@@ -90,7 +99,8 @@ router.get('/traffic', (req: Request, res: Response) => {
 // Get content uploads
 router.get('/uploads/:userId?', (req: Request, res: Response) => {
   const { userId } = req.params;
-  const uploads = smartSystemService.getContentUploads(userId);
+  const allUploads = Array.from(smartSystemService.getContentUploads().values());
+  const uploads = userId ? allUploads.filter(u => u.userId === userId) : allUploads;
 
   res.json({
     success: true,

@@ -329,17 +329,73 @@ router.post('/domain/create', (req: Request, res: Response) => {
     return res.status(404).json({ error: 'VPN connection not found' });
   }
 
-  const domain = `${phoneNumber}.youngmeeat.net`;
+  const domain = `${phoneNumber}.youngmeaat.net`;
   const accessUrl = `https://${domain}`;
 
   res.json({
     success: true,
     domain,
-    vpnIP: connection.assignedIP,
+    vpnIP: connection.vpnIP,
     serverIP: connection.serverIP,
     accessUrl,
     connectionId: vpnConnectionId,
     fccEntity: '20130314143016',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Create streaming server for VPN connection
+router.post('/streaming-server/create', (req: Request, res: Response) => {
+  const { connectionId, appPort } = req.body;
+
+  if (!connectionId) {
+    return res.status(400).json({
+      success: false,
+      error: 'connectionId is required'
+    });
+  }
+
+  try {
+    const streamingServer = vpnService.createStreamingServer(connectionId, appPort || 5000);
+
+    res.json({
+      success: true,
+      message: 'Streaming server created successfully',
+      ...streamingServer,
+      publicUrl: 'https://0.0.0.0:5000',
+      fccEntity: '20130314143016',
+      instructions: {
+        step1: 'Connect to VPN using your credentials',
+        step2: `Access the app at ${streamingServer.serverUrl}`,
+        step3: 'App is now streaming through your VPN connection',
+        step4: 'Public access available at https://0.0.0.0:5000'
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to create streaming server'
+    });
+  }
+});
+
+// Get streaming server info
+router.get('/streaming-server/:connectionId', (req: Request, res: Response) => {
+  const { connectionId } = req.params;
+
+  const serverInfo = vpnService.getStreamingServerInfo(connectionId);
+
+  if (!serverInfo) {
+    return res.status(404).json({
+      success: false,
+      error: 'Streaming server not found'
+    });
+  }
+
+  res.json({
+    success: true,
+    ...serverInfo,
     timestamp: new Date().toISOString()
   });
 });

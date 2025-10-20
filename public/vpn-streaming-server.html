@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VPN Streaming Server | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+        .fcc-badge {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid #22c55e;
+            color: #22c55e;
+            padding: 8px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            margin: 5px;
+        }
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .btn {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 5px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.3);
+        }
+        .btn.success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+        input {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 15px;
+            color: white;
+            margin-bottom: 10px;
+        }
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .server-info {
+            background: rgba(34, 197, 94, 0.1);
+            border: 2px solid #22c55e;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        .info-row {
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        .info-label {
+            color: #22c55e;
+            font-weight: 700;
+        }
+        .copy-btn {
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid #6366f1;
+            color: #a5b4fc;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="font-size: 72px; margin-bottom: 20px;">🌐🔒📡</div>
+            <h1>VPN Streaming Server</h1>
+            <p style="opacity: 0.9; margin-top: 10px;">Stream Your App Through Secure VPN Connection</p>
+            <div style="margin-top: 15px;">
+                <span class="fcc-badge">FCC Entity: 20130314143016</span>
+                <span class="fcc-badge">Secure Streaming</span>
+                <span class="fcc-badge">AWS Compatible</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔐 Connect to VPN</h2>
+            <input type="text" id="userIdInput" placeholder="Enter User ID (e.g., user-meeat21555)">
+            <input type="text" id="serverIdInput" placeholder="VPN Server ID (default: vpn-server-1)" value="vpn-server-1">
+            <button class="btn success" onclick="connectVPN()">🔒 Connect to VPN</button>
+        </div>
+
+        <div class="section" id="streamingSection" style="display: none;">
+            <h2>📡 Create Streaming Server</h2>
+            <p style="opacity: 0.8; margin-bottom: 15px;">Create a streaming server to access your app through VPN</p>
+            <input type="number" id="appPortInput" placeholder="App Port (default: 5000)" value="5000">
+            <button class="btn success" onclick="createStreamingServer()">🚀 Create Streaming Server</button>
+            
+            <div id="serverInfo" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        const API_BASE = window.CloudConfig.getAPIBase();
+        let currentConnection = null;
+
+        async function connectVPN() {
+            const userId = document.getElementById('userIdInput').value.trim();
+            const serverId = document.getElementById('serverIdInput').value.trim() || 'vpn-server-1';
+
+            if (!userId) {
+                alert('Please enter a User ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/vpn/connect`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, serverId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentConnection = data.connection;
+                    document.getElementById('streamingSection').style.display = 'block';
+                    alert(`✅ Connected to VPN!\nVPN IP: ${data.connection.vpnIP}\nLocation: ${data.connection.location}`);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error connecting to VPN:', error);
+                alert('Failed to connect to VPN');
+            }
+        }
+
+        async function createStreamingServer() {
+            if (!currentConnection) {
+                alert('Please connect to VPN first');
+                return;
+            }
+
+            const appPort = document.getElementById('appPortInput').value || '5000';
+
+            try {
+                const response = await fetch(`${API_BASE}/vpn/streaming-server/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        connectionId: currentConnection.id,
+                        appPort: parseInt(appPort)
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayServerInfo(data);
+                    alert('✅ Streaming server created successfully!');
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error creating streaming server:', error);
+                alert('Failed to create streaming server');
+            }
+        }
+
+        function displayServerInfo(data) {
+            const html = `
+                <div class="server-info">
+                    <h3 style="color: #22c55e; margin-bottom: 15px;">🎉 Streaming Server Active!</h3>
+                    <div class="info-row">
+                        <span class="info-label">VPN Server URL:</span> ${data.serverUrl}
+                        <button class="copy-btn" onclick="copyText('${data.serverUrl}')">Copy</button>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Public Access URL:</span> ${data.publicUrl}
+                        <button class="copy-btn" onclick="copyText('${data.publicUrl}')">Copy</button>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">VPN IP:</span> ${data.vpnIP}
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Streaming Port:</span> ${data.streamingPort}
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Status:</span> <span style="color: #22c55e;">● ${data.status}</span>
+                    </div>
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2);">
+                        <h4 style="color: #667eea; margin-bottom: 10px;">📋 Access Instructions:</h4>
+                        <ol style="margin-left: 20px; line-height: 1.8; opacity: 0.9;">
+                            <li>${data.instructions.step1}</li>
+                            <li>${data.instructions.step2}</li>
+                            <li>${data.instructions.step3}</li>
+                            <li>${data.instructions.step4}</li>
+                        </ol>
+                    </div>
+                </div>
+            `;
+            document.getElementById('serverInfo').innerHTML = html;
+            document.getElementById('serverInfo').style.display = 'block';
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+            alert('✅ Copied to clipboard!');
+        }
+    </script>
+</body>
+</html>

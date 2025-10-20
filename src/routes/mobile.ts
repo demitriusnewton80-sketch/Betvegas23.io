@@ -1,16 +1,28 @@
-
 import express, { Request, Response } from 'express';
 import { bettingService } from '../services/BettingService.js';
 import { streamingService } from '../services/StreamingService.js';
 import { ps5SportsService } from '../services/PS5SportsService.js';
+
+interface Game {
+  id: string;
+  sport: string;
+  homeTeam: string;
+  awayTeam: string;
+  startTime: string;
+  status: string;
+  odds: {
+    home: number;
+    away: number;
+  };
+}
 
 const router = express.Router();
 
 // Mobile-optimized games endpoint
 router.get('/games', async (req: Request, res: Response) => {
   try {
-    const games = bettingService.getAllGames();
-    
+    const games: Game[] = bettingService.getAllGames();
+
     // Return mobile-optimized response with reduced data
     const mobileGames = games.slice(0, 20).map(game => ({
       id: game.id,
@@ -42,7 +54,7 @@ router.get('/games', async (req: Request, res: Response) => {
 // Mobile quick stats
 router.get('/stats', (req: Request, res: Response) => {
   try {
-    const games = bettingService.getAllGames();
+    const games: Game[] = bettingService.getAllGames();
     const liveGames = games.filter(g => g.status === 'live');
     const upcomingGames = games.filter(g => g.status === 'scheduled');
 
@@ -92,7 +104,7 @@ router.get('/profile/:userId', (req: Request, res: Response) => {
 router.get('/streaming/status', (req: Request, res: Response) => {
   try {
     const partners = streamingService.getExternalSportsbooks();
-    
+
     res.json({
       success: true,
       streaming: {
@@ -113,7 +125,7 @@ router.get('/streaming/status', (req: Request, res: Response) => {
 router.get('/ps5/games', (req: Request, res: Response) => {
   try {
     const games = ps5SportsService.getAllGames();
-    
+
     const mobileGames = games.slice(0, 15).map(game => ({
       id: game.id,
       type: game.type,

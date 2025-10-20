@@ -1,4 +1,3 @@
-
 import { EventEmitter } from 'events';
 
 export interface LiveGameUpdate {
@@ -32,6 +31,7 @@ interface ExternalSportsbook {
   allowedIPs: string[];
   registeredAt: string;
   githubProject?: string;
+  fccRegistration?: string; // Added to match usage in constructor
 }
 
 class StreamingService extends EventEmitter {
@@ -63,7 +63,7 @@ class StreamingService extends EventEmitter {
       allowedIPs: ['203.0.113.45'],
       registeredAt: new Date().toISOString()
     });
-    
+
     // Add NBA.com direct integration under FCC registration
     this.externalSportsbooks.set('nba-direct', {
       id: 'nba-direct',
@@ -76,7 +76,7 @@ class StreamingService extends EventEmitter {
       fccRegistration: '0024454324'
     });
   }
-  
+
   // Get NBA direct control access
   getNBADirectControl(userId: string, gameId: string): any {
     return {
@@ -96,7 +96,7 @@ class StreamingService extends EventEmitter {
     if (!sportsbook || !sportsbook.active) {
       return false;
     }
-    
+
     // Allow access if IP is in allowed list
     return sportsbook.allowedIPs.includes(clientIP);
   }
@@ -119,7 +119,7 @@ class StreamingService extends EventEmitter {
 
     console.log(`Live stream started for game ${gameId}`);
     this.streamFailures.delete(gameId);
-    
+
     // Simulate live game updates with proper error handling
     const interval = setInterval(() => {
       try {
@@ -134,21 +134,21 @@ class StreamingService extends EventEmitter {
           lastPlay: 'Play in progress',
           timestamp: new Date().toISOString()
         };
-        
+
         this.pushGameUpdate(update);
       } catch (error) {
         console.error(`Error generating update for game ${gameId}:`, error);
         this.recordStreamFailure(gameId);
       }
     }, 3000);
-    
+
     this.activeStreams.set(gameId, interval);
   }
 
   // Method to push live updates from external source
   pushGameUpdate(update: LiveGameUpdate): void {
     this.emit('gameUpdate', update);
-    
+
     // Share update with external sportsbooks if stream is being shared
     const sharedWith = this.sharedStreams.get(update.gameId);
     if (sharedWith && sharedWith.size > 0) {
@@ -160,9 +160,9 @@ class StreamingService extends EventEmitter {
   recordStreamFailure(gameId: string): void {
     const failures = (this.streamFailures.get(gameId) || 0) + 1;
     this.streamFailures.set(gameId, failures);
-    
+
     console.log(`Stream failure recorded for game ${gameId}. Total failures: ${failures}`);
-    
+
     // If connection fails, activate stream sharing to external sportsbooks
     if (failures >= 1) {
       this.activateStreamSharing(gameId);
@@ -174,14 +174,14 @@ class StreamingService extends EventEmitter {
     if (!this.sharedStreams.has(gameId)) {
       this.sharedStreams.set(gameId, new Set());
     }
-    
+
     const activeBooks = Array.from(this.externalSportsbooks.values())
       .filter(sb => sb.active);
-    
+
     activeBooks.forEach(sportsbook => {
       this.sharedStreams.get(gameId)!.add(sportsbook.id);
     });
-    
+
     console.log(`Stream sharing activated for game ${gameId} with ${activeBooks.length} external sportsbooks`);
     this.emit('streamSharingActivated', { gameId, sportsbooksCount: activeBooks.length });
   }
@@ -195,7 +195,7 @@ class StreamingService extends EventEmitter {
       try {
         // In production, send actual HTTP request to webhook
         console.log(`Sharing stream data for game ${update.gameId} with ${sportsbook.name}`);
-        
+
         // Simulated webhook call - replace with actual fetch in production
         // await fetch(sportsbook.webhookUrl, {
         //   method: 'POST',
@@ -271,7 +271,7 @@ class StreamingService extends EventEmitter {
   // Grant Amazon Prime stream access when user places a bet
   grantStreamAccess(userId: string, gameId: string, betId: string): StreamAccess {
     const amazonPrimeStreamUrl = this.generateAmazonPrimeUrl(gameId);
-    
+
     const access: StreamAccess = {
       userId,
       gameId,
@@ -283,12 +283,12 @@ class StreamingService extends EventEmitter {
     if (!this.streamAccess.has(userId)) {
       this.streamAccess.set(userId, []);
     }
-    
+
     this.streamAccess.get(userId)!.push(access);
-    
+
     console.log(`Amazon Prime stream access granted to user ${userId} for game ${gameId}`);
     this.emit('streamAccessGranted', access);
-    
+
     return access;
   }
 
@@ -298,7 +298,7 @@ class StreamingService extends EventEmitter {
     // Using independent writer partnership deal credentials
     const baseUrl = 'https://www.amazon.com/gp/video/detail';
     const streamToken = Buffer.from(`youngmeat-${gameId}-${Date.now()}`).toString('base64');
-    
+
     return `${baseUrl}/${gameId}?autoplay=1&token=${streamToken}&partner=youngmeat-llc`;
   }
 
@@ -306,7 +306,7 @@ class StreamingService extends EventEmitter {
   hasStreamAccess(userId: string, gameId: string): boolean {
     const userAccess = this.streamAccess.get(userId);
     if (!userAccess) return false;
-    
+
     return userAccess.some(access => access.gameId === gameId);
   }
 
@@ -314,7 +314,7 @@ class StreamingService extends EventEmitter {
   getAmazonPrimeUrl(userId: string, gameId: string): string | null {
     const userAccess = this.streamAccess.get(userId);
     if (!userAccess) return null;
-    
+
     const access = userAccess.find(a => a.gameId === gameId);
     return access ? access.amazonPrimeStreamUrl : null;
   }

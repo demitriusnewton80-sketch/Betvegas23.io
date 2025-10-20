@@ -109,3 +109,5 @@ export class ApplicationBuilder extends EventEmitter {
 export function createApplicationBuilder(): ApplicationBuilder {
   return new ApplicationBuilder();
 }
+
+export default ApplicationBuilder;

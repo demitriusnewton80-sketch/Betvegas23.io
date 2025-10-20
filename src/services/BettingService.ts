@@ -9,6 +9,20 @@ import { Bet, User, Transaction } from '../models/User.js';
 import { accountService } from './AccountService.js';
 import { streamingService } from './StreamingService.js';
 
+interface Game {
+  id: string;
+  sport: string;
+  homeTeam: string;
+  awayTeam: string;
+  startTime: string;
+  status: string;
+  odds: {
+    home: number;
+    away: number;
+  };
+  radioLink?: string;
+}
+
 class BettingService {
   private users: Map<string, User> = new Map();
   private bets: Map<string, Bet> = new Map();
@@ -157,7 +171,7 @@ class BettingService {
 
   getUserStats(userId: string): { totalBets: number; activeBets: number; wonBets: number; lostBets: number; totalWagered: number; totalWon: number } {
     const bets = this.getUserBets(userId);
-    
+
     return {
       totalBets: bets.length,
       activeBets: bets.filter(b => b.status === 'pending').length,
@@ -197,12 +211,12 @@ class BettingService {
     return { success: true };
   }
 
-  getAllGames(): any[] {
+  getAllGames(): Game[] {
     // Import sportsDataService to get all events
     const { sportsDataService } = require('./SportsDataService.js');
     const events = sportsDataService.getAllEvents();
-    
-    return events.map(event => ({
+
+    return events.map((event: any): Game => ({
       id: event.id,
       sport: event.sport,
       homeTeam: event.homeTeam,

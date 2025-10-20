@@ -1,6 +1,3 @@
-
-import { createCanvas } from 'canvas';
-
 interface TeamColors {
   primary: string;
   secondary: string;
@@ -74,16 +71,16 @@ class TeamLogoService {
 
   generateLogoSVG(league: string, teamName: string): string {
     const config = this.teamConfigs.get(`${league.toLowerCase()}-${teamName}`);
-    
+
     if (!config) {
       return this.generateDefaultLogo(league, teamName);
     }
 
     const { colors, abbreviation } = config;
-    
+
     // Use player23.ag logo URL with fallback
     const player23LogoUrl = this.getPlayer23LogoUrl(league, teamName);
-    
+
     // Generate SVG logo with player23.ag image and team colors
     return `
       <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
@@ -96,15 +93,15 @@ class TeamLogoService {
             <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.3"/>
           </filter>
         </defs>
-        
+
         <!-- Shield/Circle Background -->
         <circle cx="100" cy="100" r="90" fill="url(#grad-${abbreviation})" filter="url(#shadow-${abbreviation})"/>
         <circle cx="100" cy="100" r="85" fill="none" stroke="${colors.accent}" stroke-width="3"/>
-        
+
         <!-- Team Logo from player23.ag -->
         <image href="${player23LogoUrl}" x="50" y="50" width="100" height="100" 
                onerror="this.style.display='none'"/>
-        
+
         <!-- Fallback Team Abbreviation -->
         <text x="100" y="120" font-family="Arial, sans-serif" font-size="48" font-weight="bold" 
               text-anchor="middle" fill="${colors.accent}" 
@@ -112,14 +109,14 @@ class TeamLogoService {
               stroke-width="1" class="fallback-text">
           ${abbreviation}
         </text>
-        
+
         <!-- League Badge -->
         <rect x="70" y="155" width="60" height="20" rx="10" fill="${colors.accent}" opacity="0.9"/>
         <text x="100" y="169" font-family="Arial, sans-serif" font-size="12" font-weight="bold" 
               text-anchor="middle" fill="${colors.primary}">
           ${league}
         </text>
-        
+
         <!-- FCC Watermark -->
         <text x="100" y="190" font-family="Arial, sans-serif" font-size="8" 
               text-anchor="middle" fill="${colors.accent}" opacity="0.6">

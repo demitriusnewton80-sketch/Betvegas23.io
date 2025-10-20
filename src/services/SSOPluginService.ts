@@ -1,6 +1,15 @@
-
 import { EventEmitter } from 'events';
-import { ssoService, SSOUser } from './SSOService.js';
+import crypto from 'crypto';
+import { ssoService } from './SSOService.js';
+
+export interface SSOUser {
+  id: string;
+  email: string;
+  name: string;
+  provider: string;
+  avatar?: string;
+  metadata?: Record<string, any>;
+}
 
 export interface SSOPlugin {
   id: string;
@@ -52,7 +61,7 @@ class SSOPluginService extends EventEmitter {
   // Add plugin output
   private addOutput(pluginId: string, type: PluginOutput['type'], message: string, metadata?: any) {
     const output: PluginOutput = {
-      id: crypto.randomUUID(),
+      id: `output-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       pluginId,
       timestamp: new Date().toISOString(),
       type,
@@ -281,7 +290,7 @@ class SSOPluginService extends EventEmitter {
   // Authenticate with specific plugin
   async authenticateWithPlugin(pluginId: string, code: string): Promise<PluginAuthResult> {
     const plugin = this.plugins.get(pluginId);
-    
+
     if (!plugin || !plugin.enabled) {
       this.addOutput(pluginId, 'error', 'Plugin not found or disabled');
       return {
@@ -297,14 +306,14 @@ class SSOPluginService extends EventEmitter {
       // Exchange code for token
       this.addOutput(pluginId, 'info', 'Exchanging authorization code for token');
       const tokenData = await this.exchangeCodeForToken(plugin, code);
-      
+
       // Get user info
       this.addOutput(pluginId, 'info', 'Fetching user information');
       const userInfo = await this.getUserInfo(plugin, tokenData.access_token);
-      
+
       // Create SSO user
       const user: SSOUser = {
-        id: userInfo.id || userInfo.sub || crypto.randomUUID(),
+        id: userInfo.id || userInfo.sub || `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         email: userInfo.email,
         name: userInfo.name || userInfo.login || userInfo.email,
         provider: plugin.provider,
@@ -315,11 +324,11 @@ class SSOPluginService extends EventEmitter {
 
       // Store plugin session
       this.pluginSessions.set(user.id, { pluginId, userId: user.id });
-      
+
       this.emit('pluginAuthenticated', { plugin: pluginId, user });
       this.addOutput(pluginId, 'success', `Authentication successful for ${user.email}`, 
         { userId: user.id, provider: plugin.provider });
-      
+
       return {
         success: true,
         user,
@@ -396,7 +405,19 @@ class SSOPluginService extends EventEmitter {
 
   // Generate random state
   private generateState(): string {
-    return crypto.randomBytes(32).toString('hex');
+    // Use Node.js crypto.randomBytes in a Node.js environment
+    if (typeof crypto !== 'undefined' && typeof crypto.randomBytes === 'function') {
+      return crypto.randomBytes(32).toString('hex');
+    }
+    // Fallback for environments where crypto might not be available or different (e.g., browser)
+    // This is a less secure fallback and should be replaced with a proper polyfill if needed
+    console.warn('Using fallback for state generation. Consider a more secure method for your environment.');
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < 32; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
   }
 
   // Get plugin statistics
