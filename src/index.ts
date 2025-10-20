@@ -5,7 +5,9 @@ import cors from 'cors';
 import helmet from 'helmet';
 
 // Import routes
-import sportsbookRoutes from './routes/sportsbook.js';
+import authRoutes from './routes/auth.js';
+import bettingRoutes from './routes/sportsbook.js';
+import boxingUFCRoutes from './routes/boxing-ufc.js';
 import streamingRoutes from './routes/streaming.js';
 import sportsRadioRoutes from './routes/sports-radio.js';
 import espnTrackerRoutes from './routes/espn-tracker.js';
@@ -47,7 +49,11 @@ import liveChatRoutes from './routes/live-chat.js';
 import advancedAnalyticsRoutes from './routes/advanced-analytics.js';
 import dunContentPeersRoutes from './routes/dun-content-peers.js';
 import arnFinderRoutes from './routes/arn-finder.js';
+import awsCoreBuilderRoutes from './routes/aws-core-builder.js';
 import leedsExportRoutes from './routes/leeds-export.js';
+import waveStreamAssemblyRoutes from './routes/wave-stream-assembly.js';
+import radioBroadcastDeploymentRoutes from './routes/radio-broadcast-deployment.js'; // Import the new route
+import unifiedStylesheetRouter from './routes/unified-stylesheet.js';
 
 // Initialize core systems
 const __filename = fileURLToPath(import.meta.url);
@@ -91,7 +97,9 @@ app.use(express.static('public', {
 
 // API Routes (must be before static files)
 try {
-  app.use('/sportsbook', sportsbookRoutes);
+  app.use('/auth', authRoutes);
+  app.use('/sportsbook', bettingRoutes);
+  app.use('/boxing-ufc', boxingUFCRoutes);
   app.use('/streaming', streamingRoutes);
   app.use('/sports-radio', sportsRadioRoutes);
   app.use('/espn-tracker', espnTrackerRoutes);
@@ -125,7 +133,12 @@ try {
   app.use('/advanced-analytics', advancedAnalyticsRoutes);
   app.use('/dun-content-peers', dunContentPeersRoutes);
   app.use('/arn-finder', arnFinderRoutes);
+  app.use('/aws-core-builder', awsCoreBuilderRoutes);
   app.use('/leeds-export', leedsExportRoutes);
+  app.use('/wave-stream-assembly', waveStreamAssemblyRoutes);
+  app.use('/radio-broadcast-deployment', radioBroadcastDeploymentRoutes); // Mount the new route
+  // Unified Stylesheet API
+  app.use('/api/stylesheet', unifiedStylesheetRouter);
   console.log('✅ All API routes registered successfully');
 } catch (error) {
   console.error('❌ Error registering routes:', error);
@@ -134,8 +147,18 @@ try {
 // Static files (must be after API routes)
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Root route - redirect to BettingSites home
+// Root route - serve functional structures sportsbook
 app.get('/', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/functional-sportsbook-structures.html'));
+});
+
+// Alternative production sportsbook route
+app.get('/production', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/my-public-sportsbook.html'));
+});
+
+// Legacy routes
+app.get('/bettingsites-home', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../public/bettingsites-home.html'));
 });
 
@@ -246,6 +269,7 @@ Promise.resolve().then(async () => {
 // Mount workflow landscape endpoint
 app.use('/workflow-landscape', workflowLandscapeRouter);
 app.use('/terminal-bridge', terminalBridgeRoutes);
+app.use('/wave-stream-assembly', waveStreamAssemblyRoutes);
 
 // Health check endpoint
 // Note: This is a placeholder and might need further implementation

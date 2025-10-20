@@ -1,0 +1,392 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wave Stream Assembly Hub | Young Meeat LLC</title>
+    <script src="/js/api-config.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .fcc-badge {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid #22c55e;
+            color: #22c55e;
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 15px;
+            font-weight: 700;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #9ca3af;
+            text-transform: uppercase;
+        }
+
+        .wave-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .wave-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .wave-card.active {
+            border-color: #22c55e;
+        }
+
+        .wave-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .wave-origin {
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .wave-mode {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .mode-organize {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        .mode-broadcast {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .mode-hybrid {
+            background: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
+        }
+
+        .wave-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .metric {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        .metric-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #22c55e;
+        }
+
+        .content-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .content-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+
+        .form-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 32px;
+            }
+            .wave-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌊 Wave Stream Assembly Hub</h1>
+            <p style="opacity: 0.9; margin-top: 10px;">Active Stream Organization • Live Content Management</p>
+            <span class="fcc-badge">FCC Entity: 20130314143016</span>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalWaves">0</div>
+                <div class="stat-label">Total Waves</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="activeWaves">0</div>
+                <div class="stat-label">Active Waves</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalContent">0</div>
+                <div class="stat-label">Live Content</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="organizationModes">0</div>
+                <div class="stat-label">Organization Modes</div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 style="margin-bottom: 20px; color: #667eea;">➕ Create New Wave Origin</h2>
+            <input type="text" id="waveOrigin" placeholder="Wave Origin (e.g., sports-live)">
+            <input type="number" id="waveFrequency" placeholder="Frequency (Hz)">
+            <input type="number" id="waveAmplitude" placeholder="Amplitude (0-100)">
+            <select id="waveMode">
+                <option value="">Select Mode</option>
+                <option value="organize">Organize</option>
+                <option value="broadcast">Broadcast</option>
+                <option value="hybrid">Hybrid</option>
+            </select>
+            <button class="btn btn-success" onclick="createWave()">🌊 Create Wave</button>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 30px;">
+            <button class="btn" onclick="assembleStreams()">🔧 Assemble Active Streams</button>
+            <button class="btn" onclick="loadStatus()">🔄 Refresh Status</button>
+        </div>
+
+        <h2 style="margin-bottom: 20px; color: #667eea;">🌊 Wave Origins</h2>
+        <div class="wave-grid" id="waveGrid"></div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        async function loadStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/wave-stream-assembly/status`);
+                const data = await response.json();
+
+                if (data.success) {
+                    displayWaves(data.waves);
+                    document.getElementById('totalWaves').textContent = data.waves.length;
+                    document.getElementById('activeWaves').textContent = data.waves.filter(w => w.active).length;
+                    document.getElementById('totalContent').textContent = data.content.length;
+                    document.getElementById('organizationModes').textContent = data.modes.length;
+                }
+            } catch (error) {
+                console.error('Error loading status:', error);
+            }
+        }
+
+        function displayWaves(waves) {
+            const container = document.getElementById('waveGrid');
+
+            if (!waves || waves.length === 0) {
+                container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; opacity: 0.7;">No waves created yet</p>';
+                return;
+            }
+
+            container.innerHTML = waves.map(wave => `
+                <div class="wave-card ${wave.active ? 'active' : ''}">
+                    <div class="wave-header">
+                        <div class="wave-origin">${wave.origin}</div>
+                        <div class="wave-mode mode-${wave.mode}">${wave.mode.toUpperCase()}</div>
+                    </div>
+                    <div class="wave-metrics">
+                        <div class="metric">
+                            <div style="opacity: 0.7;">Frequency</div>
+                            <div class="metric-value">${wave.frequency} Hz</div>
+                        </div>
+                        <div class="metric">
+                            <div style="opacity: 0.7;">Amplitude</div>
+                            <div class="metric-value">${wave.amplitude}</div>
+                        </div>
+                        <div class="metric">
+                            <div style="opacity: 0.7;">Phase</div>
+                            <div class="metric-value">${wave.phase.toFixed(2)} rad</div>
+                        </div>
+                        <div class="metric">
+                            <div style="opacity: 0.7;">Content</div>
+                            <div class="metric-value">${wave.contentStreams.length}</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <strong style="font-size: 12px; opacity: 0.7;">Status:</strong>
+                        <span style="color: ${wave.active ? '#22c55e' : '#ef4444'}">
+                            ${wave.active ? '● ACTIVE' : '○ INACTIVE'}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function createWave() {
+            const origin = document.getElementById('waveOrigin').value;
+            const frequency = parseFloat(document.getElementById('waveFrequency').value);
+            const amplitude = parseFloat(document.getElementById('waveAmplitude').value);
+            const mode = document.getElementById('waveMode').value;
+
+            if (!origin || !frequency || !amplitude || !mode) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/wave-stream-assembly/wave/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ origin, frequency, amplitude, mode })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Wave created successfully!\nWave ID: ${data.waveId}`);
+                    document.getElementById('waveOrigin').value = '';
+                    document.getElementById('waveFrequency').value = '';
+                    document.getElementById('waveAmplitude').value = '';
+                    document.getElementById('waveMode').value = '';
+                    loadStatus();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error creating wave:', error);
+                alert('Failed to create wave');
+            }
+        }
+
+        async function assembleStreams() {
+            try {
+                const response = await fetch(`${API_BASE}/wave-stream-assembly/assemble`);
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Stream Assembly Complete!\n\nActive Waves: ${data.activeWaves}\nActive Content: ${data.activeContent}\nTotal Assembly Items: ${data.assembly.length}`);
+                    loadStatus();
+                }
+            } catch (error) {
+                console.error('Error assembling streams:', error);
+                alert('Failed to assemble streams');
+            }
+        }
+
+        // Auto-refresh
+        setInterval(loadStatus, 5000);
+
+        // Initial load
+        window.addEventListener('load', loadStatus);
+    </script>
+</body>
+</html>

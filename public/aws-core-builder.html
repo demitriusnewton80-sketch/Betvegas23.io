@@ -1,0 +1,520 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Core Builder - ARN Integration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #FF9900;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 153, 0, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 153, 0, 0.3);
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #FF9900;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .tool-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 153, 0, 0.2);
+        }
+
+        .tool-card h2 {
+            margin-bottom: 20px;
+            color: #FF9900;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 1em;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #FF9900 0%, #FF6600 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .results {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .connection-item, .resource-item {
+            background: rgba(255, 153, 0, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #FF9900;
+        }
+
+        .detail {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 10px;
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        .detail strong {
+            color: #FF9900;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin: 2px;
+        }
+
+        .badge-success {
+            background: #4CAF50;
+        }
+
+        .badge-warning {
+            background: #FF9900;
+        }
+
+        .badge-error {
+            background: #f44336;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ AWS Core Builder</h1>
+            <p>Build AWS Core Infrastructure Using ARN Integration</p>
+            <span class="badge badge-success">Amazon Root CA Verified</span>
+            <span class="badge badge-warning">FCC Entity: 20130314143016</span>
+        </div>
+
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <div class="tool-grid">
+            <!-- Build Core Connection -->
+            <div class="tool-card">
+                <h2>🏗️ Build Core Connection</h2>
+                <div class="form-group">
+                    <label>AWS Account ID:</label>
+                    <input type="text" id="accountId" placeholder="123456789012">
+                </div>
+                <div class="form-group">
+                    <label>AWS Region:</label>
+                    <select id="region">
+                        <option value="us-east-1">us-east-1 (N. Virginia)</option>
+                        <option value="us-west-2">us-west-2 (Oregon)</option>
+                        <option value="eu-west-1">eu-west-1 (Ireland)</option>
+                        <option value="ap-southeast-1">ap-southeast-1 (Singapore)</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="buildCore()">Build Core Connection</button>
+                <div class="results" id="buildResults"></div>
+            </div>
+
+            <!-- Add Resource -->
+            <div class="tool-card">
+                <h2>➕ Add AWS Resource</h2>
+                <div class="form-group">
+                    <label>Connection ID:</label>
+                    <input type="text" id="connectionId" placeholder="aws-core-...">
+                </div>
+                <div class="form-group">
+                    <label>Service:</label>
+                    <select id="service">
+                        <option value="s3">S3</option>
+                        <option value="ec2">EC2</option>
+                        <option value="lambda">Lambda</option>
+                        <option value="dynamodb">DynamoDB</option>
+                        <option value="rds">RDS</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Resource Type:</label>
+                    <input type="text" id="resourceType" placeholder="bucket">
+                </div>
+                <div class="form-group">
+                    <label>Resource ID:</label>
+                    <input type="text" id="resourceId" placeholder="my-resource">
+                </div>
+                <button class="btn" onclick="addResource()">Add Resource</button>
+                <div class="results" id="resourceResults"></div>
+            </div>
+
+            <!-- Discover ARNs -->
+            <div class="tool-card">
+                <h2>🔍 Discover & Connect</h2>
+                <p style="margin-bottom: 15px;">Scan project for existing ARNs and auto-connect them</p>
+                <button class="btn" onclick="discoverARNs()">Discover ARNs</button>
+                <div class="results" id="discoverResults"></div>
+            </div>
+
+            <!-- Build Service Core -->
+            <div class="tool-card">
+                <h2>🔨 Build Service Core</h2>
+                <div class="form-group">
+                    <label>Connection ID:</label>
+                    <input type="text" id="serviceConnectionId" placeholder="aws-core-...">
+                </div>
+                <div class="form-group">
+                    <label>AWS Service:</label>
+                    <select id="coreService">
+                        <option value="s3">S3 (Storage)</option>
+                        <option value="ec2">EC2 (Compute)</option>
+                        <option value="lambda">Lambda (Serverless)</option>
+                        <option value="dynamodb">DynamoDB (Database)</option>
+                        <option value="rds">RDS (Database)</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="buildServiceCore()">Build Service Core</button>
+                <div class="results" id="serviceResults"></div>
+            </div>
+        </div>
+
+        <!-- Connections List -->
+        <div class="tool-card">
+            <h2>📡 Active Connections</h2>
+            <button class="btn" onclick="loadConnections()">Refresh Connections</button>
+            <div class="results" id="connectionsResults"></div>
+        </div>
+
+        <!-- Resources List -->
+        <div class="tool-card">
+            <h2>📦 AWS Resources</h2>
+            <button class="btn" onclick="loadResources()">Refresh Resources</button>
+            <div class="results" id="resourcesResults"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        async function buildCore() {
+            const accountId = document.getElementById('accountId').value;
+            const region = document.getElementById('region').value;
+            const resultsDiv = document.getElementById('buildResults');
+
+            if (!accountId) {
+                alert('Please enter AWS Account ID');
+                return;
+            }
+
+            resultsDiv.innerHTML = '<p>Building core connection...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE}/aws-core-builder/build`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ accountId, region })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="connection-item">
+                            <h3>✅ Core Built Successfully</h3>
+                            <div class="detail"><strong>Connection ID:</strong> <span>${data.connectionId}</span></div>
+                            <div class="detail"><strong>Account ID:</strong> <span>${data.connection.accountId}</span></div>
+                            <div class="detail"><strong>Region:</strong> <span>${data.connection.region}</span></div>
+                            <div class="detail"><strong>ARNs:</strong> <span>${data.connection.arns.length}</span></div>
+                            <div class="detail"><strong>Root CA:</strong> <span class="badge ${data.connection.rootCA ? 'badge-success' : 'badge-error'}">${data.connection.rootCA ? 'Verified' : 'Missing'}</span></div>
+                        </div>
+                    `;
+                    await loadStatistics();
+                } else {
+                    resultsDiv.innerHTML = `<p style="color: #f44336;">Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: #f44336;">Request failed</p>`;
+            }
+        }
+
+        async function addResource() {
+            const connectionId = document.getElementById('connectionId').value;
+            const service = document.getElementById('service').value;
+            const resourceType = document.getElementById('resourceType').value;
+            const resourceId = document.getElementById('resourceId').value;
+            const resultsDiv = document.getElementById('resourceResults');
+
+            if (!connectionId || !resourceType || !resourceId) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/aws-core-builder/resource/add`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ connectionId, service, resourceType, resourceId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="resource-item">
+                            <h3>✅ Resource Added</h3>
+                            <div class="code-block">${data.arn}</div>
+                            <div class="detail"><strong>Service:</strong> ${data.resource.service}</div>
+                            <div class="detail"><strong>Status:</strong> <span class="badge badge-success">${data.resource.status}</span></div>
+                        </div>
+                    `;
+                    await loadStatistics();
+                } else {
+                    resultsDiv.innerHTML = `<p style="color: #f44336;">Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: #f44336;">Request failed</p>`;
+            }
+        }
+
+        async function discoverARNs() {
+            const resultsDiv = document.getElementById('discoverResults');
+            resultsDiv.innerHTML = '<p>🔍 Discovering ARNs...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE}/aws-core-builder/discover`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="connection-item">
+                            <h3>✅ Discovery Complete</h3>
+                            <div class="detail"><strong>Total Found:</strong> ${data.totalFound}</div>
+                            <div class="detail"><strong>Connected:</strong> ${data.connected}</div>
+                            <h4 style="margin-top: 15px;">ARNs:</h4>
+                            ${data.arns.map(arn => `<div class="code-block">${arn}</div>`).join('')}
+                        </div>
+                    `;
+                    await loadStatistics();
+                } else {
+                    resultsDiv.innerHTML = `<p style="color: #f44336;">Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: #f44336;">Request failed</p>`;
+            }
+        }
+
+        async function buildServiceCore() {
+            const connectionId = document.getElementById('serviceConnectionId').value;
+            const service = document.getElementById('coreService').value;
+            const resultsDiv = document.getElementById('serviceResults');
+
+            if (!connectionId) {
+                alert('Please enter Connection ID');
+                return;
+            }
+
+            resultsDiv.innerHTML = `<p>Building ${service} core...</p>`;
+
+            try {
+                const response = await fetch(`${API_BASE}/aws-core-builder/service/build`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ connectionId, service })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="resource-item">
+                            <h3>✅ ${service.toUpperCase()} Core Built</h3>
+                            <div class="detail"><strong>Resources Created:</strong> ${data.arnsCreated}</div>
+                            <h4 style="margin-top: 15px;">ARNs:</h4>
+                            ${data.arns.map(arn => `<div class="code-block">${arn}</div>`).join('')}
+                        </div>
+                    `;
+                    await loadStatistics();
+                } else {
+                    resultsDiv.innerHTML = `<p style="color: #f44336;">Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: #f44336;">Request failed</p>`;
+            }
+        }
+
+        async function loadConnections() {
+            const resultsDiv = document.getElementById('connectionsResults');
+
+            try {
+                const response = await fetch(`${API_BASE}/aws-core-builder/connections`);
+                const data = await response.json();
+
+                if (data.connections.length === 0) {
+                    resultsDiv.innerHTML = '<p>No connections found</p>';
+                } else {
+                    resultsDiv.innerHTML = data.connections.map(conn => `
+                        <div class="connection-item">
+                            <div class="detail"><strong>ID:</strong> ${conn.id}</div>
+                            <div class="detail"><strong>Account:</strong> ${conn.accountId}</div>
+                            <div class="detail"><strong>Region:</strong> ${conn.region}</div>
+                            <div class="detail"><strong>ARNs:</strong> ${conn.arns.length}</div>
+                            <div class="detail"><strong>Built:</strong> <span class="badge ${conn.coreBuilt ? 'badge-success' : 'badge-warning'}">${conn.coreBuilt ? 'Yes' : 'No'}</span></div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: #f44336;">Request failed</p>`;
+            }
+        }
+
+        async function loadResources() {
+            const resultsDiv = document.getElementById('resourcesResults');
+
+            try {
+                const response = await fetch(`${API_BASE}/aws-core-builder/resources`);
+                const data = await response.json();
+
+                if (data.resources.length === 0) {
+                    resultsDiv.innerHTML = '<p>No resources found</p>';
+                } else {
+                    resultsDiv.innerHTML = data.resources.map(res => `
+                        <div class="resource-item">
+                            <div class="code-block">${res.arn}</div>
+                            <div class="detail"><strong>Service:</strong> ${res.service}</div>
+                            <div class="detail"><strong>Type:</strong> ${res.resourceType}</div>
+                            <div class="detail"><strong>Region:</strong> ${res.region}</div>
+                            <div class="detail"><strong>Status:</strong> <span class="badge badge-success">${res.status}</span></div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: #f44336;">Request failed</p>`;
+            }
+        }
+
+        async function loadStatistics() {
+            try {
+                const response = await fetch(`${API_BASE}/aws-core-builder/status`);
+                const data = await response.json();
+
+                document.getElementById('statsGrid').innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-value">${data.totalConnections}</div>
+                        <div class="stat-label">Connections</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.totalResources}</div>
+                        <div class="stat-label">Resources</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.activeResources}</div>
+                        <div class="stat-label">Active</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${Object.keys(data.byService).length}</div>
+                        <div class="stat-label">Services</div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Failed to load statistics');
+            }
+        }
+
+        // Load statistics on page load
+        loadStatistics();
+        setInterval(loadStatistics, 10000);
+    </script>
+</body>
+</html>

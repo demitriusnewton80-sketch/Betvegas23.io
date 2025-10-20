@@ -1,0 +1,241 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified Sportsbook Stylesheet Demo | Young Meaat LLC</title>
+    <link rel="stylesheet" href="/styles/unified-sportsbook.css">
+    <style>
+        .demo-section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+        }
+        .code-block {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            margin-top: 10px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="sportsbook-header">
+        <h1>🎨 Unified Sportsbook Stylesheet</h1>
+        <p>Powered by All Public Sportsbooks</p>
+        <div>
+            <span class="badge badge-fcc">FCC: 20130314143016</span>
+            <span class="badge badge-web3">Web3 Ready</span>
+            <span class="badge badge-espn">ESPN Powered</span>
+            <span class="badge badge-live">
+                <span class="pulse pulse-live"></span>
+                Live Demo
+            </span>
+        </div>
+    </div>
+
+    <div class="sportsbook-container">
+        <!-- Stats Demo -->
+        <div class="demo-section">
+            <h2 class="section-title">📊 Stats Grid</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">Active Platforms</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">145</div>
+                    <div class="stat-label">Live Games</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$2.5M</div>
+                    <div class="stat-label">Total Volume</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">99.9%</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Card Demo -->
+        <div class="demo-section">
+            <h2 class="section-title">🏈 Game Card Example</h2>
+            <div class="content-grid">
+                <div class="game-card live">
+                    <div class="game-header">
+                        <span class="league-badge">NFL</span>
+                        <span class="status-indicator status-live">
+                            <span class="pulse pulse-live"></span>
+                            LIVE
+                        </span>
+                    </div>
+                    <div class="matchup">
+                        <div class="team">
+                            <div class="team-logo">🏈</div>
+                            <div class="team-name">Patriots</div>
+                            <div class="team-score">24</div>
+                        </div>
+                        <div class="vs-divider">VS</div>
+                        <div class="team">
+                            <div class="team-logo">🏈</div>
+                            <div class="team-name">Bills</div>
+                            <div class="team-score">21</div>
+                        </div>
+                    </div>
+                    <div class="odds-container">
+                        <div class="odds-btn">
+                            <div class="odds-label">Home</div>
+                            <div class="odds-value">-150</div>
+                        </div>
+                        <div class="odds-btn selected">
+                            <div class="odds-label">Away</div>
+                            <div class="odds-value">+130</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-success btn-full mt-3">Place Bet</button>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-header">
+                        <span class="league-badge">NBA</span>
+                        <span class="status-indicator status-pending">UPCOMING</span>
+                    </div>
+                    <div class="matchup">
+                        <div class="team">
+                            <div class="team-logo">🏀</div>
+                            <div class="team-name">Lakers</div>
+                        </div>
+                        <div class="vs-divider">VS</div>
+                        <div class="team">
+                            <div class="team-logo">🏀</div>
+                            <div class="team-name">Celtics</div>
+                        </div>
+                    </div>
+                    <div class="odds-container">
+                        <div class="odds-btn">
+                            <div class="odds-label">Lakers</div>
+                            <div class="odds-value">+180</div>
+                        </div>
+                        <div class="odds-btn">
+                            <div class="odds-label">Celtics</div>
+                            <div class="odds-value">-200</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-full mt-3">View Game</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Buttons Demo -->
+        <div class="demo-section">
+            <h2 class="section-title">🔘 Button Styles</h2>
+            <div class="content-grid">
+                <button class="btn btn-primary">Primary Button</button>
+                <button class="btn btn-success">Success Button</button>
+                <button class="btn btn-accent">Accent Button</button>
+                <button class="btn btn-primary btn-full">Full Width Button</button>
+            </div>
+        </div>
+
+        <!-- Badges Demo -->
+        <div class="demo-section">
+            <h2 class="section-title">🏷️ Badge Styles</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                <span class="badge badge-fcc">FCC Compliant</span>
+                <span class="badge badge-espn">ESPN</span>
+                <span class="badge badge-web3">Web3</span>
+                <span class="badge badge-live">Live</span>
+            </div>
+        </div>
+
+        <!-- Installation Guide -->
+        <div class="demo-section">
+            <h2 class="section-title">📦 Integration Guide</h2>
+            <p style="margin-bottom: 15px;">Add this stylesheet to any sportsbook platform:</p>
+            
+            <div class="code-block">
+&lt;link rel="stylesheet" href="https://[your-domain]/api/stylesheet/unified-sportsbook.css"&gt;
+            </div>
+
+            <h3 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">Using CSS Variables</h3>
+            <div class="code-block">
+/* Use predefined variables */
+.my-element {
+    background: var(--primary-color);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+}
+            </div>
+
+            <h3 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">Using Utility Classes</h3>
+            <div class="code-block">
+&lt;div class="sportsbook-card mt-4 p-3"&gt;
+    &lt;h2 class="section-title text-center"&gt;Game Title&lt;/h2&gt;
+    &lt;button class="btn btn-success btn-full"&gt;Place Bet&lt;/button&gt;
+&lt;/div&gt;
+            </div>
+        </div>
+
+        <!-- API Info -->
+        <div class="demo-section">
+            <h2 class="section-title">🔌 API Endpoints</h2>
+            <div class="sportsbook-card">
+                <h3 style="margin-bottom: 15px;">Available Endpoints:</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="padding: 10px; background: var(--bg-overlay); margin-bottom: 10px; border-radius: 8px;">
+                        <strong>GET</strong> /api/stylesheet/unified-sportsbook.css<br>
+                        <small style="color: var(--text-muted);">Get the stylesheet file</small>
+                    </li>
+                    <li style="padding: 10px; background: var(--bg-overlay); margin-bottom: 10px; border-radius: 8px;">
+                        <strong>GET</strong> /api/stylesheet/metadata<br>
+                        <small style="color: var(--text-muted);">Get stylesheet information</small>
+                    </li>
+                    <li style="padding: 10px; background: var(--bg-overlay); border-radius: 8px;">
+                        <strong>GET</strong> /api/stylesheet/variables<br>
+                        <small style="color: var(--text-muted);">Get CSS variable values</small>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Powered By -->
+        <div class="demo-section text-center">
+            <h2 class="section-title">🌐 Powered By All Public Sportsbooks</h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">
+                This unified stylesheet is available to all public sportsbooks and betting platforms
+            </p>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;">
+                <span class="badge badge-espn">ESPN</span>
+                <span class="badge badge-web3">DraftKings</span>
+                <span class="badge badge-web3">FanDuel</span>
+                <span class="badge badge-web3">BetMGM</span>
+                <span class="badge badge-web3">Caesars</span>
+                <span class="badge badge-fcc">Young Meaat LLC</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        // Load metadata
+        fetch(`${API_BASE}/stylesheet/metadata`)
+            .then(res => res.json())
+            .then(data => {
+                console.log('Stylesheet Info:', data);
+            });
+
+        // Load variables
+        fetch(`${API_BASE}/stylesheet/variables`)
+            .then(res => res.json())
+            .then(data => {
+                console.log('CSS Variables:', data);
+            });
+    </script>
+</body>
+</html>

@@ -1,0 +1,622 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Functional Sportsbook Structures - Young Meeat LLC</title>
+    <link rel="stylesheet" href="/styles/unified-sportsbook.css">
+    <style>
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .platform-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            transition: all var(--transition-normal);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .platform-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transform: scaleX(0);
+            transition: transform var(--transition-normal);
+        }
+
+        .platform-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .platform-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .platform-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .platform-icon {
+            font-size: 48px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .platform-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+            color: var(--primary-color);
+        }
+
+        .platform-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .features-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .feature-badge {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            color: var(--primary-light);
+            padding: 6px 12px;
+            border-radius: var(--radius-md);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .betting-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: var(--spacing-md);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--border-secondary);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .stat-text {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .access-btn {
+            width: 100%;
+            margin-top: var(--spacing-md);
+        }
+
+        .category-section {
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .category-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--status-live);
+            color: var(--status-live);
+            padding: 6px 14px;
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .structure-stats {
+            background: var(--bg-card);
+            border: 2px solid var(--border-success);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .structure-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+        }
+    </style>
+</head>
+<body>
+    <div class="sportsbook-header">
+        <h1>⚡ Functional Sportsbook Structures</h1>
+        <p>Complete Betting Ecosystem - All Platforms Unified</p>
+        <div>
+            <span class="badge badge-fcc">FCC: 20130314143016</span>
+            <span class="badge badge-web3">Microsoft Architecture</span>
+            <span class="badge badge-espn">ESPN Powered</span>
+            <span class="badge badge-live">
+                <span class="pulse pulse-live"></span>
+                Production Ready
+            </span>
+        </div>
+    </div>
+
+    <div class="sportsbook-container">
+        <!-- Overall System Stats -->
+        <div class="structure-stats">
+            <h2 style="font-size: 28px; margin-bottom: 20px; text-align: center;">📊 System Overview</h2>
+            <div class="structure-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalPlatforms">12</div>
+                    <div class="stat-label">Betting Platforms</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="liveGames">0</div>
+                    <div class="stat-label">Live Games</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="powerLevel">98%</div>
+                    <div class="stat-label">System Power</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="activeUsers">2,847</div>
+                    <div class="stat-label">Active Users</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Core Betting Platforms -->
+        <div class="category-section">
+            <h2 class="category-title">
+                🏈 Core Betting Platforms
+                <span class="live-indicator">
+                    <span class="pulse pulse-live"></span>
+                    LIVE NOW
+                </span>
+            </h2>
+            <div class="platform-grid">
+                <div class="platform-card" onclick="navigate('/my-public-sportsbook.html')">
+                    <div class="platform-icon">🏆</div>
+                    <div class="platform-title">My Public Sportsbook</div>
+                    <div class="platform-desc">Complete sports betting platform with all features integrated - your comprehensive betting hub</div>
+                    <div class="features-list">
+                        <span class="feature-badge">All Sports</span>
+                        <span class="feature-badge">Live Odds</span>
+                        <span class="feature-badge">Web3 Enabled</span>
+                    </div>
+                    <div class="betting-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">8+</div>
+                            <div class="stat-text">Platforms</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">LIVE</div>
+                            <div class="stat-text">Status</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-text">Uptime</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary access-btn">Access Hub →</button>
+                </div>
+
+                <div class="platform-card" onclick="navigate('/unified-sports-hub.html')">
+                    <div class="platform-icon">🎯</div>
+                    <div class="platform-title">Unified Sports Hub</div>
+                    <div class="platform-desc">All major sports in one place - NFL, NBA, MLB, NHL, Soccer with real-time money line betting</div>
+                    <div class="features-list">
+                        <span class="feature-badge">NFL</span>
+                        <span class="feature-badge">NBA</span>
+                        <span class="feature-badge">MLB</span>
+                        <span class="feature-badge">NHL</span>
+                    </div>
+                    <div class="betting-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">50+</div>
+                            <div class="stat-text">Games Daily</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">LIVE</div>
+                            <div class="stat-text">Odds</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-text">Access</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary access-btn">Bet Now →</button>
+                </div>
+
+                <div class="platform-card" onclick="navigate('/espn-sportsbook.html')">
+                    <div class="platform-icon">📺</div>
+                    <div class="platform-title">ESPN Sportsbook</div>
+                    <div class="platform-desc">ESPN-powered live betting with comprehensive sports coverage and real-time updates</div>
+                    <div class="features-list">
+                        <span class="feature-badge">ESPN Data</span>
+                        <span class="feature-badge">Live Scores</span>
+                        <span class="feature-badge">Expert Analysis</span>
+                    </div>
+                    <div class="betting-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">ESPN</div>
+                            <div class="stat-text">Powered</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">LIVE</div>
+                            <div class="stat-text">Updates</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">99%</div>
+                            <div class="stat-text">Accuracy</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary access-btn">Watch & Bet →</button>
+                </div>
+
+                <div class="platform-card" onclick="navigate('/enhanced-sportsbook.html')">
+                    <div class="platform-icon">⭐</div>
+                    <div class="platform-title">Enhanced Sportsbook</div>
+                    <div class="platform-desc">Premium betting experience with loyalty rewards, team logos, and SSO integration</div>
+                    <div class="features-list">
+                        <span class="feature-badge">Loyalty Points</span>
+                        <span class="feature-badge">SSO Login</span>
+                        <span class="feature-badge">Premium Features</span>
+                    </div>
+                    <div class="betting-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">VIP</div>
+                            <div class="stat-text">Access</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">5X</div>
+                            <div class="stat-text">Rewards</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-text">Secure</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-success access-btn">Go Premium →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gaming & Entertainment -->
+        <div class="category-section">
+            <h2 class="category-title">🎮 Gaming & Entertainment Betting</h2>
+            <div class="platform-grid">
+                <div class="platform-card" onclick="navigate('/ps5-betting.html')">
+                    <div class="platform-icon">🎮</div>
+                    <div class="platform-title">PS5 Sports Betting</div>
+                    <div class="platform-desc">Bet on PlayStation 5 games - Madden NFL, NBA 2K, UFC, and boxing simulations</div>
+                    <div class="features-list">
+                        <span class="feature-badge">Madden NFL</span>
+                        <span class="feature-badge">NBA 2K</span>
+                        <span class="feature-badge">UFC</span>
+                    </div>
+                    <div class="betting-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">PS5</div>
+                            <div class="stat-text">Integration</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-text">Gaming</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">LIVE</div>
+                            <div class="stat-text">Matches</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary access-btn">Game On →</button>
+                </div>
+
+                <div class="platform-card" onclick="navigate('/parlay-builder.html')">
+                    <div class="platform-icon">🔗</div>
+                    <div class="platform-title">Parlay Builder</div>
+                    <div class="platform-desc">Build multi-game parlays with automatic odds calculation and payout estimates</div>
+                    <div class="features-list">
+                        <span class="feature-badge">Multi-Bet</span>
+                        <span class="feature-badge">Auto Calculate</span>
+                        <span class="feature-badge">Max Payout</span>
+                    </div>
+                    <div class="betting-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">10X</div>
+                            <div class="stat-text">Potential</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">SMART</div>
+                            <div class="stat-text">Builder</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">FAST</div>
+                            <div class="stat-text">Payout</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-accent access-btn">Build Parlay →</button>
+                </div>
+
+                <div class="platform-card" onclick="navigate('/boxing-ufc-betting.html')">
+                    <div class="platform-icon">🥊</div>
+                    <div class="platform-title">Boxing & UFC Hub</div>
+                    <div class="platform-desc">Dedicated combat sports betting - Boxing and UFC/MMA with live odds and fight stats</div>
+                    <div class="features-list">
+                        <span class="feature-badge">Boxing</span>
+                        <span class="feature-badge">UFC</span>
+                        <span class="feature-badge">Live Fights</span>
+                    </div>
+                    <div class="betting-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-text">Fights</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">LIVE</div>
+                            <div class="stat-text">Odds</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">REAL</div>
+                            <div class="stat-text">Time</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-danger access-btn">Fight Bets →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile & Accessibility -->
+        <div class="category-section">
+            <h2 class="category-title">📱 Mobile & Quick Access</h2>
+            <div class="platform-grid">
+                <div class="platform-card" onclick="navigate('/mobile-sportsbook-hub.html')">
+                    <div class="platform-icon">📱</div>
+                    <div class="platform-title">Mobile Sportsbook Hub</div>
+                    <div class="platform-desc">Mobile-optimized betting with touch controls and quick bet placement</div>
+                    <div class="features-list">
+                        <span class="feature-badge">Touch UI</span>
+                        <span class="feature-badge">Quick Bets</span>
+                        <span class="feature-badge">Mobile First</span>
+                    </div>
+                    <div class="betting-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-text">Mobile</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">FAST</div>
+                            <div class="stat-text">Loading</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">1-TAP</div>
+                            <div class="stat-text">Betting</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary access-btn">Mobile Bet →</button>
+                </div>
+
+                <div class="platform-card" onclick="navigate('/public-sportsbook-qr.html')">
+                    <div class="platform-icon">📲</div>
+                    <div class="platform-title">QR Login Portal</div>
+                    <div class="platform-desc">Instant access via QR code scanning - no password required</div>
+                    <div class="features-list">
+                        <span class="feature-badge">QR Code</span>
+                        <span class="feature-badge">Instant Login</span>
+                        <span class="feature-badge">Secure</span>
+                    </div>
+                    <div class="betting-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">2 SEC</div>
+                            <div class="stat-text">Login</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-text">Secure</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">EASY</div>
+                            <div class="stat-text">Access</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-success access-btn">Scan & Bet →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Features -->
+        <div class="category-section">
+            <h2 class="category-title">🚀 Advanced Betting Features</h2>
+            <div class="platform-grid">
+                <div class="platform-card" onclick="navigate('/new-features-dashboard.html')">
+                    <div class="platform-icon">📊</div>
+                    <div class="platform-title">Advanced Analytics</div>
+                    <div class="platform-desc">Deep analytics, odds aggregation, and live chat support</div>
+                    <div class="features-list">
+                        <span class="feature-badge">Analytics</span>
+                        <span class="feature-badge">Odds Compare</span>
+                        <span class="feature-badge">Live Chat</span>
+                    </div>
+                    <div class="betting-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">AI</div>
+                            <div class="stat-text">Powered</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">REAL</div>
+                            <div class="stat-text">Time</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-text">Support</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary access-btn">Analyze →</button>
+                </div>
+
+                <div class="platform-card" onclick="navigate('/web3-bridge.html')">
+                    <div class="platform-icon">⛓️</div>
+                    <div class="platform-title">Web3 Bridge</div>
+                    <div class="platform-desc">Blockchain integration with crypto wallet support and QuickNode Polygon</div>
+                    <div class="features-list">
+                        <span class="feature-badge">Blockchain</span>
+                        <span class="feature-badge">Crypto</span>
+                        <span class="feature-badge">Web3</span>
+                    </div>
+                    <div class="betting-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">WEB3</div>
+                            <div class="stat-text">Ready</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">CRYPTO</div>
+                            <div class="stat-text">Enabled</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">SAFE</div>
+                            <div class="stat-text">Secure</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-success access-btn">Connect Wallet →</button>
+                </div>
+
+                <div class="platform-card" onclick="navigate('/functional-structures-dashboard.html')">
+                    <div class="platform-icon">⚡</div>
+                    <div class="platform-title">System Architecture</div>
+                    <div class="platform-desc">View and manage all functional structures and modules powering the platform</div>
+                    <div class="features-list">
+                        <span class="feature-badge">Infrastructure</span>
+                        <span class="feature-badge">Modules</span>
+                        <span class="feature-badge">Microsoft-Style</span>
+                    </div>
+                    <div class="betting-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">6</div>
+                            <div class="stat-text">Structures</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">10+</div>
+                            <div class="stat-text">Modules</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">98%</div>
+                            <div class="stat-text">Power</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary access-btn">View System →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div style="margin-top: 60px; padding: 30px; background: rgba(59, 130, 246, 0.1); border-radius: 16px; border: 2px solid rgba(59, 130, 246, 0.3);">
+            <h2 style="font-size: 24px; margin-bottom: 20px; text-align: center;">⚡ Quick Navigation</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <button class="btn btn-primary" onclick="navigate('/')">🏠 Home</button>
+                <button class="btn btn-primary" onclick="navigate('/sportsbook-landing.html')">🎯 All Platforms</button>
+                <button class="btn btn-success" onclick="navigate('/account-dashboard.html')">👤 My Account</button>
+                <button class="btn btn-accent" onclick="loadLiveGames()">🔴 Live Games</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        function navigate(path) {
+            window.location.href = path;
+        }
+
+        async function loadLiveGames() {
+            try {
+                const response = await fetch(`${API_BASE}/sportsbook/games`);
+                const data = await response.json();
+                if (data.success) {
+                    const liveCount = data.games.filter(g => g.status === 'live').length;
+                    if (liveCount > 0) {
+                        window.location.href = '/unified-sports-hub.html';
+                    } else {
+                        alert('No live games at the moment. Check back soon!');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading live games:', error);
+                window.location.href = '/unified-sports-hub.html';
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const [gamesRes, structuresRes] = await Promise.all([
+                    fetch(`${API_BASE}/sportsbook/games`),
+                    fetch(`${API_BASE}/functional-structures/status`)
+                ]);
+
+                const gamesData = await gamesRes.json();
+                const structuresData = await structuresRes.json();
+
+                if (gamesData.success) {
+                    const liveCount = gamesData.games.filter(g => g.status === 'live').length;
+                    document.getElementById('liveGames').textContent = liveCount;
+                }
+
+                if (structuresData.success) {
+                    document.getElementById('powerLevel').textContent = structuresData.averagePowerLevel + '%';
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Animate user count
+        let userCount = 2500;
+        setInterval(() => {
+            userCount += Math.floor(Math.random() * 20) - 8;
+            userCount = Math.max(2000, Math.min(3500, userCount));
+            document.getElementById('activeUsers').textContent = userCount.toLocaleString();
+        }, 5000);
+
+        // Load stats on page load
+        window.addEventListener('load', () => {
+            loadStats();
+            setInterval(loadStats, 30000);
+        });
+    </script>
+</body>
+</html>
