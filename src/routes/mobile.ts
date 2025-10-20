@@ -1,4 +1,3 @@
-
 import express, { Request, Response } from 'express';
 import { bettingService } from '../services/BettingService.js';
 import { streamingService } from '../services/StreamingService.js';
@@ -10,7 +9,7 @@ const router = express.Router();
 router.get('/games', async (req: Request, res: Response) => {
   try {
     const games = bettingService.getAllGames();
-    
+
     // Return mobile-optimized response with reduced data
     const mobileGames = games.slice(0, 20).map(game => ({
       id: game.id,
@@ -92,7 +91,7 @@ router.get('/profile/:userId', (req: Request, res: Response) => {
 router.get('/streaming/status', (req: Request, res: Response) => {
   try {
     const partners = streamingService.getExternalSportsbooks();
-    
+
     res.json({
       success: true,
       streaming: {
@@ -113,7 +112,7 @@ router.get('/streaming/status', (req: Request, res: Response) => {
 router.get('/ps5/games', (req: Request, res: Response) => {
   try {
     const games = ps5SportsService.getAllGames();
-    
+
     const mobileGames = games.slice(0, 15).map(game => ({
       id: game.id,
       type: game.type,

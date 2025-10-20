@@ -1,4 +1,3 @@
-
 import fetch from 'node-fetch';
 
 interface QuickNodeResponse {
@@ -49,7 +48,7 @@ class QuickNodeService {
       });
 
       const data = await response.json();
-      
+
       if (data.error) {
         return { success: false, error: data.error.message };
       }
@@ -57,9 +56,9 @@ class QuickNodeService {
       return { success: true, data: data.result };
     } catch (error) {
       console.error('QuickNode API error:', error);
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
       };
     }
   }
@@ -68,7 +67,7 @@ class QuickNodeService {
     try {
       const blockResponse = await this.fetchSportsData('eth_blockNumber');
       const chainIdResponse = await this.fetchSportsData('eth_chainId');
-      
+
       if (!blockResponse.success) {
         console.error('Failed to connect to QuickNode');
         return [];

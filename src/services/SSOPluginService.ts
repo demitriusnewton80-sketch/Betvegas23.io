@@ -1,6 +1,5 @@
-
 import { EventEmitter } from 'events';
-import { ssoService, SSOUser } from './SSOService.js';
+import { ssoService } from './SSOService.js';
 
 export interface SSOPlugin {
   id: string;
@@ -281,7 +280,7 @@ class SSOPluginService extends EventEmitter {
   // Authenticate with specific plugin
   async authenticateWithPlugin(pluginId: string, code: string): Promise<PluginAuthResult> {
     const plugin = this.plugins.get(pluginId);
-    
+
     if (!plugin || !plugin.enabled) {
       this.addOutput(pluginId, 'error', 'Plugin not found or disabled');
       return {
@@ -297,11 +296,11 @@ class SSOPluginService extends EventEmitter {
       // Exchange code for token
       this.addOutput(pluginId, 'info', 'Exchanging authorization code for token');
       const tokenData = await this.exchangeCodeForToken(plugin, code);
-      
+
       // Get user info
       this.addOutput(pluginId, 'info', 'Fetching user information');
       const userInfo = await this.getUserInfo(plugin, tokenData.access_token);
-      
+
       // Create SSO user
       const user: SSOUser = {
         id: userInfo.id || userInfo.sub || crypto.randomUUID(),
@@ -315,11 +314,11 @@ class SSOPluginService extends EventEmitter {
 
       // Store plugin session
       this.pluginSessions.set(user.id, { pluginId, userId: user.id });
-      
+
       this.emit('pluginAuthenticated', { plugin: pluginId, user });
       this.addOutput(pluginId, 'success', `Authentication successful for ${user.email}`, 
         { userId: user.id, provider: plugin.provider });
-      
+
       return {
         success: true,
         user,

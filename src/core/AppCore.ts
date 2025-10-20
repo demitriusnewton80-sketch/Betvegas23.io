@@ -1,5 +1,5 @@
-
 import { EventEmitter } from 'events';
+import { ServiceContainer } from './ServiceContainer.js';
 
 interface CoreConfig {
   port: number;
@@ -117,10 +117,10 @@ export class AppCore extends EventEmitter {
   private startHeartbeat() {
     this.heartbeatInterval = setInterval(() => {
       let recoveredCount = 0;
-      
+
       this.connections.forEach((conn, id) => {
         const timeSinceLastBeat = Date.now() - conn.lastHeartbeat;
-        
+
         if (timeSinceLastBeat > 30000) {
           if (conn.status !== 'error') {
             conn.status = 'error';
@@ -136,7 +136,7 @@ export class AppCore extends EventEmitter {
       });
 
       const activeCount = this.getActiveConnectionCount();
-      
+
       if (recoveredCount > 0) {
         console.log(`✅ Recovered ${recoveredCount} connection(s)`);
       }

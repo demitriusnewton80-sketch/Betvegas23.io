@@ -157,7 +157,7 @@ class BettingService {
 
   getUserStats(userId: string): { totalBets: number; activeBets: number; wonBets: number; lostBets: number; totalWagered: number; totalWon: number } {
     const bets = this.getUserBets(userId);
-    
+
     return {
       totalBets: bets.length,
       activeBets: bets.filter(b => b.status === 'pending').length,
@@ -201,7 +201,7 @@ class BettingService {
     // Import sportsDataService to get all events
     const { sportsDataService } = require('./SportsDataService.js');
     const events = sportsDataService.getAllEvents();
-    
+
     return events.map(event => ({
       id: event.id,
       sport: event.sport,

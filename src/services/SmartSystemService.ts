@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import { streamingService } from './StreamingService.js';
 import { phoneControlService } from './PhoneControlService.js';
 import { web3BridgeService } from './Web3BridgeService.js';
 import { awsBackupService } from './AWSBackupService.js';
