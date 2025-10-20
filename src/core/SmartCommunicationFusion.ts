@@ -187,6 +187,13 @@ export class SmartCommunicationFusion extends EventEmitter {
   recordChannelError(channelId: string): void {
     const channel = this.channels.get(channelId);
     if (!channel) return;
+    
+    channel.errorCount++;
+    if (channel.errorCount >= 3) {
+      channel.status = 'error';
+      this.handlePortFailure(channel.port || 5000);
+    }
+  }!channel) return;
 
     channel.errorCount++;
     channel.status = channel.errorCount > 3 ? 'failed' : 'degraded';

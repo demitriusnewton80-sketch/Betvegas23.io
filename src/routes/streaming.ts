@@ -15,7 +15,7 @@ router.use((req, res, next) => {
 const liveSessions = new Map();
 
 // Get all streams
-router.get('/streams', (req: Request, res: Response) => {
+router.get('/streams', async (req: Request, res: Response) => {
   try {
     const streams = streamingService.getActiveStreams();
 
@@ -573,7 +573,7 @@ router.get('/streams', (req: Request, res: Response) => {
   try {
     const partners = streamingService.getStreamingPartners();
     const streams = streamingService.getAllStreams();
-    
+
     res.json({
       success: true,
       streams: streams || [],
@@ -602,7 +602,7 @@ router.get('/streaming-endpoints', (req: Request, res: Response) => {
       endpoint: `/streaming/partner/${p.id}/stream`,
       status: p.active ? 'active' : 'inactive'
     }));
-    
+
     res.json({
       success: true,
       endpoints,

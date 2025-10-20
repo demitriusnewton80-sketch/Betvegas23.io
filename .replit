@@ -91,7 +91,7 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm install --legacy-peer-deps"
+args = "npm install --legacy-peer-deps --no-audit"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
