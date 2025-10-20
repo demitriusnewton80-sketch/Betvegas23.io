@@ -5,35 +5,42 @@ import crypto from 'crypto';
 
 const router = express.Router();
 
+// Ensure all responses are JSON
+router.use((req, res, next) => {
+  res.setHeader('Content-Type', 'application/json');
+  next();
+});
+
 // Live streaming sessions
 const liveSessions = new Map();
 
-// Get all streams endpoint - FIXED to always return JSON
+// Get all streams
 router.get('/streams', (req: Request, res: Response) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.setHeader('Cache-Control', 'no-cache');
-
   try {
-    const streams = streamingService.getAllStreams();
+    const streams = streamingService.getActiveStreams();
     res.json({
       success: true,
-      streams: streams || [],
-      count: streams ? streams.length : 0,
-      timestamp: new Date().toISOString(),
+      streams: streams.map(stream => ({
+        id: stream.id,
+        name: stream.name,
+        sport: stream.sport,
+        status: stream.status,
+        url: stream.url
+      })),
+      count: streams.length,
       fccEntity: '20130314143016'
     });
   } catch (error) {
-    console.error('Streams endpoint error:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to fetch streams',
       streams: [],
-      fccEntity: '20130314143016'
+      count: 0
     });
   }
 });
 
-// Server-Sent Events endpoint for live updates
+// Get streaming events (SSE)
 router.get('/events', (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
@@ -42,41 +49,24 @@ router.get('/events', (req: Request, res: Response) => {
   res.setHeader('X-Accel-Buffering', 'no');
   res.flushHeaders();
 
-  const sendEvent = (data: any) => {
-    res.write(`data: ${JSON.stringify(data)}\n\n`);
+  const sendEvent = () => {
+    const streams = streamingService.getActiveStreams();
+    res.write(`data: ${JSON.stringify({
+      timestamp: Date.now(),
+      streams: streams.length,
+      status: 'active'
+    })}\n\n`);
   };
 
-  // Send initial connection
-  sendEvent({
-    type: 'connected',
-    timestamp: Date.now(),
-    fccEntity: '20130314143016'
-  });
-
-  // Send updates every 5 seconds
-  const interval = setInterval(() => {
-    try {
-      const streams = streamingService.getAllStreams() || [];
-      sendEvent({
-        type: 'update',
-        streams,
-        timestamp: Date.now(),
-        fccEntity: '20130314143016'
-      });
-    } catch (error) {
-      console.error('EventSource update error:', error);
-      sendEvent({
-        type: 'error',
-        message: 'Stream update failed',
-        timestamp: Date.now()
-      });
-    }
-  }, 5000);
+  sendEvent();
+  const interval = setInterval(sendEvent, 3000);
 
   req.on('close', () => {
     clearInterval(interval);
+    res.end();
   });
 });
+
 
 // Unified Sportsbook Fusion Stream
 router.get('/fusion/unified-stream', async (req: Request, res: Response) => {
