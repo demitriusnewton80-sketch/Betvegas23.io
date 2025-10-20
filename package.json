@@ -1,3 +1,4 @@
+
 {
   "name": "young-meat-llc",
   "version": "1.0.0",
@@ -5,8 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
-    "phone-control": "tsx src/index.ts"
+    "start": "node dist/index.js"
   },
   "dependencies": {
     "@types/cors": "^2.8.19",
