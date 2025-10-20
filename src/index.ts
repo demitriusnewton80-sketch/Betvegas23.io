@@ -40,7 +40,9 @@ import falconBroadcastRouter from './routes/falcon-broadcast.js';
 import partnershipEnrollmentRouter from './routes/partnership-enrollment.js';
 import phoneStreamRoutes from './routes/phone-stream.js';
 import bloombergPhoneBridgeRoutes from './routes/bloomberg-phone-bridge.js';
+import terminalBridgeRoutes from './routes/terminal-bridge.js';
 
+// Initialize core systems
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -225,9 +227,12 @@ Promise.resolve().then(async () => {
 
 // Mount workflow landscape endpoint
 app.use('/workflow-landscape', workflowLandscapeRouter);
-app.use('/smart-communication-fusion', smartCommunicationFusionRouter);
-app.use('/apple-partnership', applePartnershipRouter);
-app.use('/falcon-broadcast', falconBroadcastRouter);
-app.use('/partnership-enrollment', partnershipEnrollmentRouter);
+app.use('/terminal-bridge', terminalBridgeRoutes);
+
+// Health check endpoint
+// Note: This is a placeholder and might need further implementation
+app.get('/health', (req: Request, res: Response) => {
+  res.status(200).json({ status: 'UP', service: 'BettingSites API', timestamp: new Date().toISOString() });
+});
 
 export default app;

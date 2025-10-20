@@ -1,0 +1,442 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Bridge Control - FCC Entity: 20130314143016</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        h1 {
+            color: #1e3a8a;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: #1e3a8a;
+            margin-bottom: 20px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .status-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .status-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .status-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .command-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid;
+        }
+
+        .command-item.completed { border-color: #10b981; }
+        .command-item.executing { border-color: #3b82f6; }
+        .command-item.failed { border-color: #ef4444; }
+
+        .terminal-output {
+            background: #1e293b;
+            color: #10b981;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🖥️ Terminal Bridge Control Center</h1>
+            <p>Content → Amazon → Database → Production Pipeline</p>
+            <div>
+                <span class="badge">FCC Entity: 20130314143016</span>
+                <span class="badge">Fusion Assembly Integrated</span>
+                <span class="badge">Deployment Controls Active</span>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>📊 Bridge Status</h2>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <div class="status-label">Bridge Active</div>
+                        <div class="status-value" id="bridgeActive">-</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Commands Executed</div>
+                        <div class="status-value" id="commandsTotal">0</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Fusion Linked</div>
+                        <div class="status-value" id="fusionLinked">0</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Production Ready</div>
+                        <div class="status-value" id="productionReady">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🖥️ Execute Terminal Command</h2>
+                <select id="commandType">
+                    <option value="deployment">Deployment</option>
+                    <option value="content">Content</option>
+                    <option value="database">Database</option>
+                    <option value="amazon">Amazon</option>
+                    <option value="system">System</option>
+                </select>
+                <textarea id="commandInput" rows="3" placeholder="Enter terminal command (e.g., npm run build)"></textarea>
+                <button class="btn" onclick="executeCommand()">⚡ Execute Command</button>
+                <div id="commandOutput" class="terminal-output" style="display: none;"></div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>📦 Content Analysis</h2>
+                <input type="text" id="contentSource" placeholder="Content source (e.g., website, api)">
+                <textarea id="contentData" rows="4" placeholder='Content data (JSON format)'></textarea>
+                <textarea id="amazonSales" rows="3" placeholder='Amazon sales data (optional, JSON format)'></textarea>
+                <button class="btn" onclick="analyzeContent()">🔍 Analyze & Sync to Database</button>
+            </div>
+
+            <div class="card">
+                <h2>🚀 Deployment Controls</h2>
+                <button class="btn" onclick="fuseDeploymentControls()">🔧 Fuse Deployment Controls</button>
+                <button class="btn" onclick="executeDeployment()">🚀 Execute Deployment</button>
+                <button class="btn" onclick="connectAmazon()">🔗 Connect Amazon to Production</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📜 Command History</h2>
+            <div id="commandHistory"></div>
+        </div>
+
+        <div class="card">
+            <h2>📊 Content Analyses</h2>
+            <div id="contentAnalyses"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '';
+
+        async function loadStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/terminal-bridge/status`);
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('bridgeActive').textContent = data.bridgeActive ? '✅ Active' : '❌ Inactive';
+                    document.getElementById('commandsTotal').textContent = data.commands.total;
+                    document.getElementById('fusionLinked').textContent = data.commands.fusionLinked;
+                    document.getElementById('productionReady').textContent = data.contentAnalysis.productionReady;
+                }
+            } catch (error) {
+                console.error('Status error:', error);
+            }
+        }
+
+        async function executeCommand() {
+            const command = document.getElementById('commandInput').value;
+            const type = document.getElementById('commandType').value;
+
+            if (!command) {
+                alert('Please enter a command');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/terminal-bridge/execute`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command, type })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const outputDiv = document.getElementById('commandOutput');
+                    outputDiv.style.display = 'block';
+                    outputDiv.textContent = data.output;
+                    alert('✅ Command executed successfully');
+                    document.getElementById('commandInput').value = '';
+                    loadStatus();
+                    loadCommandHistory();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Execution error: ' + error.message);
+            }
+        }
+
+        async function analyzeContent() {
+            const source = document.getElementById('contentSource').value;
+            const dataStr = document.getElementById('contentData').value;
+            const salesStr = document.getElementById('amazonSales').value;
+
+            if (!source || !dataStr) {
+                alert('Please provide source and content data');
+                return;
+            }
+
+            try {
+                const data = JSON.parse(dataStr);
+                const amazonSalesData = salesStr ? JSON.parse(salesStr) : null;
+
+                const response = await fetch(`${API_BASE}/terminal-bridge/content/analyze`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ source, data, amazonSalesData })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(`✅ Content analyzed! Analysis ID: ${result.analysisId}`);
+                    document.getElementById('contentSource').value = '';
+                    document.getElementById('contentData').value = '';
+                    document.getElementById('amazonSales').value = '';
+                    loadStatus();
+                    loadContentAnalyses();
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('Analysis error: ' + error.message);
+            }
+        }
+
+        async function fuseDeploymentControls() {
+            try {
+                const response = await fetch(`${API_BASE}/terminal-bridge/deployment/fuse`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ Deployment controls fused into core system!');
+                    loadStatus();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Fusion error: ' + error.message);
+            }
+        }
+
+        async function executeDeployment() {
+            try {
+                const response = await fetch(`${API_BASE}/terminal-bridge/deployment/execute`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ config: {} })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ Deployment executed successfully!');
+                    loadStatus();
+                    loadCommandHistory();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Deployment error: ' + error.message);
+            }
+        }
+
+        async function connectAmazon() {
+            const salesStr = document.getElementById('amazonSales').value;
+
+            if (!salesStr) {
+                alert('Please provide Amazon sales data');
+                return;
+            }
+
+            try {
+                const salesData = JSON.parse(salesStr);
+
+                const response = await fetch(`${API_BASE}/terminal-bridge/amazon/connect`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ salesData })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ Amazon sales connected to production!');
+                    loadStatus();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Connection error: ' + error.message);
+            }
+        }
+
+        async function loadCommandHistory() {
+            try {
+                const response = await fetch(`${API_BASE}/terminal-bridge/commands/history`);
+                const data = await response.json();
+
+                const container = document.getElementById('commandHistory');
+                if (data.commands && data.commands.length > 0) {
+                    container.innerHTML = data.commands.slice(-10).reverse().map(cmd => `
+                        <div class="command-item ${cmd.status}">
+                            <strong>${cmd.type.toUpperCase()}</strong>: ${cmd.command}<br>
+                            Status: ${cmd.status} | Fusion: ${cmd.fusionLinked ? '✅' : '❌'}
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p style="color: #999;">No commands in history</p>';
+                }
+            } catch (error) {
+                console.error('History error:', error);
+            }
+        }
+
+        async function loadContentAnalyses() {
+            try {
+                const response = await fetch(`${API_BASE}/terminal-bridge/content/analyses`);
+                const data = await response.json();
+
+                const container = document.getElementById('contentAnalyses');
+                if (data.analyses && data.analyses.length > 0) {
+                    container.innerHTML = data.analyses.slice(-10).reverse().map(analysis => `
+                        <div class="command-item ${analysis.productionReady ? 'completed' : 'executing'}">
+                            <strong>${analysis.source}</strong><br>
+                            Database: ${analysis.databasePoint}<br>
+                            Amazon: ${analysis.amazonSalesData ? '✅' : '❌'} | Production: ${analysis.productionReady ? '✅' : '❌'}
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p style="color: #999;">No content analyses</p>';
+                }
+            } catch (error) {
+                console.error('Analyses error:', error);
+            }
+        }
+
+        // Auto-refresh
+        setInterval(() => {
+            loadStatus();
+            loadCommandHistory();
+            loadContentAnalyses();
+        }, 5000);
+
+        // Initial load
+        loadStatus();
+        loadCommandHistory();
+        loadContentAnalyses();
+    </script>
+</body>
+</html>
