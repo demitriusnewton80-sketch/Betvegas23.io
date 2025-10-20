@@ -279,7 +279,7 @@ export class FusionAssemblyCore extends EventEmitter {
 
   // Helper methods
   private validateSync(sync: SyncData): boolean {
-    return sync.source && sync.payload !== null && sync.payload !== undefined;
+    return Boolean(sync.source) && sync.payload !== null && sync.payload !== undefined;
   }
 
   private detectComponentType(data: any): string {

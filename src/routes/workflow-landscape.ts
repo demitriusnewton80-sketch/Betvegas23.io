@@ -78,10 +78,7 @@ router.post('/execute-strategy', (req: Request, res: Response) => {
   
   const result = workflowErrorLandscape.executeRecoveryStrategy(zoneId, strategyName);
   
-  res.json({
-    success: true,
-    ...result
-  });
+  res.json(result);
 });
 
 export default router;
