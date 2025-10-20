@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Parlay Builder | Young Meeat LLC</title>
+    <title>Fanatics Sportsbook - Parlay Builder</title>
     <style>
         * {
             margin: 0;
@@ -224,7 +223,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎯 Live Parlay Builder</h1>
+            <h1>🎯 Fanatics Sportsbook Parlay Builder</h1>
             <p style="font-size: 18px; margin-top: 10px;">AI-Powered Parlay Suggestions & Real-Time Odds</p>
             <span class="fcc-badge">FCC Entity: 20130314143016</span>
         </div>
@@ -244,9 +243,9 @@
                         <p>Add legs to build your parlay</p>
                     </div>
                 </div>
-                
+
                 <input type="number" id="stakeInput" class="stake-input" placeholder="Enter stake amount ($)" min="1" step="10">
-                
+
                 <div id="payoutInfo" class="payout-info" style="display: none;">
                     <div class="payout-row">
                         <span>Total Odds:</span>
@@ -317,7 +316,7 @@
 
         function renderParlaySlip() {
             const container = document.getElementById('parlayLegs');
-            
+
             if (selectedLegs.length === 0) {
                 container.innerHTML = '<div class="empty-state"><p>Add legs to build your parlay</p></div>';
                 document.getElementById('placeBetBtn').disabled = true;
@@ -348,7 +347,7 @@
 
         function calculatePayout() {
             const stake = parseFloat(document.getElementById('stakeInput').value) || 0;
-            
+
             if (selectedLegs.length < 2 || stake <= 0) {
                 document.getElementById('payoutInfo').style.display = 'none';
                 return;
@@ -386,7 +385,7 @@
 
         async function placeParlayBet() {
             const stake = parseFloat(document.getElementById('stakeInput').value);
-            
+
             if (!stake || stake <= 0) {
                 alert('Please enter a valid stake amount');
                 return;

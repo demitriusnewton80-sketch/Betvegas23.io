@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>PS5 Sports Betting - Young Meeat LLC</title>
+    <title>Fanatics Sportsbook - PS5 Gaming Bets</title>
     <style>
         * {
             margin: 0;
@@ -325,7 +324,7 @@
         <div class="header">
             <h1>
                 <span class="ps-icon">🎮</span>
-                PlayStation 5 Sports Betting
+                Fanatics Sportsbook
             </h1>
             <p>Bet on Madden, NBA 2K, UFC, Undisputed & 5v5 Basketball</p>
             <div class="header-info" id="userInfo" style="display: none;">
@@ -466,11 +465,11 @@
             try {
                 const response = await fetch(`${API_BASE}/ps5/user/${currentUser.id}`);
                 const data = await response.json();
-                
+
                 currentUser = data.user;
                 document.getElementById('walletBalance').textContent = currentUser.walletBalance.toFixed(2);
                 document.getElementById('enrollmentPoints').textContent = data.enrollmentPoints;
-                
+
                 loadUserBets();
             } catch (error) {
                 console.error('Error loading user data:', error);
@@ -482,10 +481,10 @@
                 const url = currentFilter === 'all' 
                     ? `${API_BASE}/ps5/games`
                     : `${API_BASE}/ps5/games?type=${currentFilter}`;
-                
+
                 const response = await fetch(url);
                 const data = await response.json();
-                
+
                 displayGames(data.games);
             } catch (error) {
                 console.error('Error loading games:', error);
@@ -494,7 +493,7 @@
 
         function displayGames(games) {
             const grid = document.getElementById('gamesGrid');
-            
+
             if (games.length === 0) {
                 grid.innerHTML = '<p style="color: white; text-align: center; grid-column: 1/-1;">No games available for this category</p>';
                 return;
@@ -534,7 +533,7 @@
         function selectTeam(gameId, team, odds) {
             selectedBets.set(gameId, { team, odds });
             document.getElementById(`bet-${gameId}`).style.display = 'block';
-            
+
             // Update button states
             const card = event.target.closest('.game-card');
             card.querySelectorAll('.odds-btn').forEach(btn => btn.classList.remove('selected'));
@@ -591,9 +590,9 @@
             try {
                 const response = await fetch(`${API_BASE}/ps5/user/${currentUser.id}/bets`);
                 const data = await response.json();
-                
+
                 const betsList = document.getElementById('myBetsList');
-                
+
                 if (data.bets.length === 0) {
                     betsList.innerHTML = '<p style="color: #6b7280;">No bets placed yet</p>';
                     return;
@@ -631,7 +630,7 @@
 
         async function processDeposit() {
             const amount = parseFloat(document.getElementById('depositAmount').value);
-            
+
             if (!amount || amount < 10) {
                 alert('Minimum deposit is $10');
                 return;
@@ -665,7 +664,7 @@
                 try {
                     const response = await fetch(`${API_BASE}/ps5/user/${savedUserId}`);
                     const data = await response.json();
-                    
+
                     if (response.ok) {
                         currentUser = data.user;
                         showBettingInterface();
