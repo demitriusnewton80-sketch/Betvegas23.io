@@ -335,7 +335,7 @@ router.post('/domain/create', (req: Request, res: Response) => {
   res.json({
     success: true,
     domain,
-    vpnIP: connection.assignedIP,
+    vpnIP: connection.vpnIP,
     serverIP: connection.serverIP,
     accessUrl,
     connectionId: vpnConnectionId,

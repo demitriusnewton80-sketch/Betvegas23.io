@@ -4,6 +4,7 @@ interface VPNConnection {
   userId: string;
   publicIP: string;
   vpnIP: string;
+  serverIP: string;
   location: string;
   protocol: string;
   encryption: string;
@@ -66,7 +67,7 @@ class VPNService {
       {
         location: 'New York, USA',
         country: 'US',
-        ip: '0.0.0.0',
+        ip: '10.8.1.1',
         load: 45,
         maxConnections: 1000,
         currentConnections: 450,
@@ -76,7 +77,7 @@ class VPNService {
       {
         location: 'London, UK',
         country: 'GB',
-        ip: '0.0.0.0',
+        ip: '10.8.2.1',
         load: 30,
         maxConnections: 1000,
         currentConnections: 300,
@@ -86,7 +87,7 @@ class VPNService {
       {
         location: 'Tokyo, Japan',
         country: 'JP',
-        ip: '0.0.0.0',
+        ip: '10.8.3.1',
         load: 60,
         maxConnections: 1000,
         currentConnections: 600,
@@ -96,7 +97,7 @@ class VPNService {
       {
         location: 'Frankfurt, Germany',
         country: 'DE',
-        ip: '0.0.0.0',
+        ip: '10.8.4.1',
         load: 25,
         maxConnections: 1000,
         currentConnections: 250,
@@ -106,7 +107,7 @@ class VPNService {
       {
         location: 'Singapore',
         country: 'SG',
-        ip: '0.0.0.0',
+        ip: '10.8.5.1',
         load: 55,
         maxConnections: 1000,
         currentConnections: 550,
@@ -151,6 +152,7 @@ class VPNService {
       userId,
       publicIP,
       vpnIP,
+      serverIP: server.ip,
       location: server.location,
       protocol: 'WireGuard',
       encryption: 'ChaCha20-Poly1305',
