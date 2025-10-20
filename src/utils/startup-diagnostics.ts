@@ -68,3 +68,5 @@ export class StartupDiagnostics {
 }
 
 export const startupDiagnostics = new StartupDiagnostics();
+
+export const startupDiagnostics = new StartupDiagnostics();

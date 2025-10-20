@@ -1,4 +1,3 @@
-
 import express, { Request, Response } from 'express';
 import { applePartnershipService } from '../services/ApplePartnershipService.js';
 import { remoteStreamingControlCore } from '../core/RemoteStreamingControlCore.js';
@@ -8,7 +7,7 @@ const router = express.Router();
 // Get Apple partnership status
 router.get('/status', (req: Request, res: Response) => {
   const status = applePartnershipService.getStatus();
-  
+
   res.json({
     success: true,
     ...status,
@@ -63,7 +62,7 @@ router.post('/load-to-remote/:partnershipId', async (req: Request, res: Response
   try {
     // Get partnership data
     const partnership = applePartnershipService.getPartnershipForRemote(partnershipId);
-    
+
     if (!partnership) {
       return res.status(404).json({
         success: false,
