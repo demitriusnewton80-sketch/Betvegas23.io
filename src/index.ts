@@ -42,10 +42,7 @@ app.use(helmet({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Static files
-app.use(express.static(path.join(__dirname, '../public')));
-
-// API Routes
+// API Routes (must be before static files)
 app.use('/sportsbook', sportsbookRoutes);
 app.use('/streaming', streamingRoutes);
 app.use('/sports-radio', sportsRadioRoutes);
@@ -62,6 +59,9 @@ app.use('/smart-system', smartSystemRoutes);
 app.use('/smart-troubleshooting', smartTroubleshootingRoutes);
 app.use('/fusion-troubleshooting', fusionTroubleshootingRoutes);
 app.use('/wifi-web3-fusion', wifiWeb3FusionRoutes);
+
+// Static files (must be after API routes)
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Root route - redirect to BettingSites home
 app.get('/', (req: Request, res: Response) => {
