@@ -99,9 +99,10 @@ httpServer.listen(PORT, HOST, () => {
   console.log('═══════════════════════════════════════════════════');
   console.log('🏈 Young Meeat LLC Sportsbook');
   console.log('═══════════════════════════════════════════════════');
-  console.log(`🚀 Server: http://${HOST}:${PORT}`);
+  console.log(`🚀 Server running on: http://${HOST}:${PORT}`);
   console.log(`📡 FCC Entity: 20130314143016`);
-  console.log(`🌐 Accessible externally on port ${PORT}`);
+  console.log(`🌐 Web URL: https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`);
+  console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log('═══════════════════════════════════════════════════');
 });
 
