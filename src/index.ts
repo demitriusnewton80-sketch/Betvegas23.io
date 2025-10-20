@@ -98,6 +98,10 @@ app.use('/fusion-launch', fusionLaunchRoutes);
 app.use('/port-alliance', portAllianceRoutes);
 app.use('/smart-tunnel', smartTunnelRoutes);
 
+// Remote Streaming Control Routes
+import remoteStreamingControlRoutes from './routes/remote-streaming-control.js';
+app.use('/remote-streaming-control', remoteStreamingControlRoutes);
+
 // Serve static files from public directory
 app.use(express.static('public'));
 
