@@ -33,14 +33,16 @@
 
         /* BettingSites Logo Header */
         .brand-header {
-            background: linear-gradient(135deg, var(--aws-dark) 0%, var(--aws-blue) 100%);
-            padding: 30px 20px;
+            background: linear-gradient(135deg, var(--aws-dark) 0%, #1e3a8a 50%, var(--aws-blue) 100%);
+            padding: 40px 20px;
             text-align: center;
-            box-shadow: 0 8px 40px rgba(0,0,0,0.6);
-            border-bottom: 4px solid var(--aws-orange);
+            box-shadow: 0 12px 50px rgba(0,0,0,0.7), 0 0 100px rgba(255, 153, 0, 0.2);
+            border-bottom: 5px solid var(--aws-orange);
             position: sticky;
             top: 0;
             z-index: 1000;
+            backdrop-filter: blur(15px);
+            border-radius: 0 0 20px 20px;
         }
 
         .logo-container {
