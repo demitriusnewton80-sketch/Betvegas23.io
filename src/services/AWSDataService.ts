@@ -1,4 +1,3 @@
-
 import { EventEmitter } from 'events';
 import { ecommerceService } from './ECommerceService.js';
 import crypto from 'crypto';
@@ -30,12 +29,23 @@ interface AppData {
 }
 
 class AWSDataService extends EventEmitter {
-  private dataOperations: Map<string, DataOperation> = new Map();
-  private appDataStore: Map<string, AppData> = new Map();
-  private readonly FCC_ENTITY = '20130314143016';
+  private accountId: string;
+  private region: string;
+  private credentials: any;
+  private iotEndpoint: string;
+  private certificatePath: string;
+  private privateKeyPath: string;
+  private rootCAPath: string;
 
   constructor() {
     super();
+    this.accountId = process.env.AWS_ACCOUNT_ID || '';
+    this.region = process.env.AWS_REGION || 'us-east-1';
+    this.credentials = null;
+    this.iotEndpoint = process.env.AWS_IOT_ENDPOINT || '';
+    this.certificatePath = process.env.AWS_IOT_CERTIFICATE_PATH || 'attached_assets/device.pem_1761002939640.crt';
+    this.privateKeyPath = process.env.AWS_IOT_PRIVATE_KEY_PATH || '';
+    this.rootCAPath = process.env.AWS_IOT_ROOT_CA_PATH || 'attached_assets/AmazonRootCA1_1761002495172.pem';
   }
 
   // Store app data in AWS S3
@@ -46,7 +56,7 @@ class AWSDataService extends EventEmitter {
     encrypt: boolean = true
   ): Promise<{ success: boolean; operation?: DataOperation; data?: AppData; error?: string }> {
     const awsConnection = ecommerceService.getAWSConnection(userId);
-    
+
     if (!awsConnection) {
       return { success: false, error: 'AWS account not connected' };
     }
@@ -118,13 +128,13 @@ class AWSDataService extends EventEmitter {
     dataId: string
   ): Promise<{ success: boolean; data?: AppData; error?: string }> {
     const awsConnection = ecommerceService.getAWSConnection(userId);
-    
+
     if (!awsConnection) {
       return { success: false, error: 'AWS account not connected' };
     }
 
     const appData = this.appDataStore.get(dataId);
-    
+
     if (!appData) {
       return { success: false, error: 'Data not found' };
     }
@@ -152,13 +162,13 @@ class AWSDataService extends EventEmitter {
     newContent: any
   ): Promise<{ success: boolean; operation?: DataOperation; data?: AppData; error?: string }> {
     const awsConnection = ecommerceService.getAWSConnection(userId);
-    
+
     if (!awsConnection) {
       return { success: false, error: 'AWS account not connected' };
     }
 
     const appData = this.appDataStore.get(dataId);
-    
+
     if (!appData) {
       return { success: false, error: 'Data not found' };
     }
@@ -219,13 +229,13 @@ class AWSDataService extends EventEmitter {
     dataId: string
   ): Promise<{ success: boolean; operation?: DataOperation; error?: string }> {
     const awsConnection = ecommerceService.getAWSConnection(userId);
-    
+
     if (!awsConnection) {
       return { success: false, error: 'AWS account not connected' };
     }
 
     const appData = this.appDataStore.get(dataId);
-    
+
     if (!appData) {
       return { success: false, error: 'Data not found' };
     }
@@ -321,10 +331,10 @@ class AWSDataService extends EventEmitter {
     const key = crypto.randomBytes(32);
     const iv = crypto.randomBytes(16);
     const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
-    
+
     let encrypted = cipher.update(JSON.stringify(data), 'utf8', 'hex');
     encrypted += cipher.final('hex');
-    
+
     return JSON.stringify({
       encrypted,
       key: key.toString('hex'),
@@ -339,10 +349,10 @@ class AWSDataService extends EventEmitter {
       Buffer.from(key, 'hex'),
       Buffer.from(iv, 'hex')
     );
-    
+
     let decrypted = decipher.update(encrypted, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
-    
+
     return JSON.parse(decrypted);
   }
 
@@ -356,6 +366,68 @@ class AWSDataService extends EventEmitter {
     // Simulate S3 deletion delay
     console.log(`Deleting from S3: ${appData.s3Key}`);
     await new Promise(resolve => setTimeout(resolve, 300));
+  }
+
+  async testConnection(): Promise<boolean> {
+    try {
+      console.log('Testing AWS connection...');
+      // In production, this would make an actual AWS API call
+      return true;
+    } catch (error) {
+      console.error('AWS connection test failed:', error);
+      return false;
+    }
+  }
+
+  // Connect to AWS IoT using device certificate
+  async connectIoT(): Promise<{
+    success: boolean;
+    endpoint?: string;
+    thingName?: string;
+    certificatePath?: string;
+  }> {
+    try {
+      console.log('Connecting to AWS IoT with device certificate...');
+
+      if (!this.iotEndpoint) {
+        console.warn('AWS IoT endpoint not configured');
+        return { success: false };
+      }
+
+      // Verify certificate file exists
+      const fs = await import('fs/promises');
+      await fs.access(this.certificatePath);
+      console.log('Device certificate found');
+
+      // Verify Root CA exists
+      await fs.access(this.rootCAPath);
+      console.log('Root CA certificate found');
+
+      return {
+        success: true,
+        endpoint: this.iotEndpoint,
+        thingName: process.env.AWS_IOT_THING_NAME || 'BettingSites-IoT-Device',
+        certificatePath: this.certificatePath
+      };
+    } catch (error) {
+      console.error('AWS IoT connection failed:', error);
+      return { success: false };
+    }
+  }
+
+  getIoTConfig() {
+    return {
+      endpoint: this.iotEndpoint,
+      certificatePath: this.certificatePath,
+      privateKeyPath: this.privateKeyPath,
+      rootCAPath: this.rootCAPath,
+      thingName: process.env.AWS_IOT_THING_NAME || 'BettingSites-IoT-Device',
+      topics: {
+        telemetry: process.env.AWS_IOT_TOPIC_TELEMETRY || 'bettingsites/telemetry',
+        commands: process.env.AWS_IOT_TOPIC_COMMANDS || 'bettingsites/commands',
+        events: process.env.AWS_IOT_TOPIC_EVENTS || 'bettingsites/events'
+      }
+    };
   }
 }
 

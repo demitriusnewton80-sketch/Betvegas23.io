@@ -234,6 +234,11 @@ app.listen(PORT, '0.0.0.0', () => {
 // Initialize core systems with error handling
 Promise.resolve().then(async () => {
   try {
+    // Load environment from certificate files
+    const { environmentLoader } = await import('./services/EnvironmentLoaderService.js');
+    await environmentLoader.loadFromCertificate();
+    console.log('✅ Environment loaded from certificates');
+
     const { appCore } = await import('./core/AppCore.js');
     appCore.initialize();
     console.log('✅ AppCore initialized');

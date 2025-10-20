@@ -57,6 +57,15 @@ export class AWSCoreBuilder extends EventEmitter {
       console.warn('⚠️ Amazon Root CA not found at expected path');
     }
 
+    // Verify IoT device certificate
+    const deviceCertPath = path.join(process.cwd(), 'attached_assets', 'device.pem_1761002939640.crt');
+    try {
+      await fs.access(deviceCertPath);
+      console.log('✅ AWS IoT device certificate verified');
+    } catch (error) {
+      console.warn('⚠️ AWS IoT device certificate not found');
+    }
+
     // Register with app core
     appCore.registerBackgroundService('aws-core-builder', 'backup');
 

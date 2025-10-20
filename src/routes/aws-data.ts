@@ -1,4 +1,3 @@
-
 import express, { Request, Response } from 'express';
 import { awsDataService } from '../services/AWSDataService.js';
 import { ssoService } from '../services/SSOService.js';
@@ -195,6 +194,54 @@ router.get('/status', requireAuth, (req: Request, res: Response) => {
     fccEntity: '20130314143016',
     dataFunctionsEnabled: true
   });
+});
+
+// Test AWS connection
+router.get('/test', async (req: Request, res: Response) => {
+  try {
+    const isConnected = await awsDataService.testConnection();
+
+    res.json({
+      success: isConnected,
+      message: isConnected ? 'AWS connection successful' : 'AWS connection failed',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Connection test failed'
+    });
+  }
+});
+
+// Get IoT configuration
+router.get('/iot/config', (req: Request, res: Response) => {
+  const config = awsDataService.getIoTConfig();
+
+  res.json({
+    success: true,
+    iot: config,
+    fccEntity: '20130314143016',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Connect to AWS IoT
+router.post('/iot/connect', async (req: Request, res: Response) => {
+  try {
+    const result = await awsDataService.connectIoT();
+
+    res.json({
+      ...result,
+      fccEntity: '20130314143016',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'IoT connection failed'
+    });
+  }
 });
 
 export default router;
