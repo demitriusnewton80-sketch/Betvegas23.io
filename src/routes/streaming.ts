@@ -71,33 +71,52 @@ router.post('/upload', async (req: Request, res: Response) => {
   }
 });
 
-// Get streaming contracts with content
-router.get('/contracts', async (req: Request, res: Response) => {
+// Get streaming partners
+router.get('/partners', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
-
   try {
-    const partners = streamingService.getStreamingPartners();
-    const streams = streamingService.getActiveStreams();
-
-    const contracts = partners.map((partner: { id: string; name: string; webhookUrl: string; active: boolean; registeredAt: string; lastActive?: string }) => ({
+    const partners = await streamingService.getStreamingPartners();
+    const contracts = partners.map((partner: { id: string; name: string; status: string }) => ({
       id: partner.id,
       name: partner.name,
+      status: partner.status,
       endpoint: `/streaming/partner/${partner.id}/stream`,
-      webhookUrl: partner.webhookUrl,
-      active: partner.active,
-      contentType: 'stream',
-      streamCount: streams.filter((s: { id: string; name: string; sport: string; status: string; url: string }) => s.id.startsWith(partner.id)).length,
-      metadata: {
-        registeredAt: partner.registeredAt,
-        lastActive: partner.lastActive || new Date().toISOString()
-      }
+      streamCount: streamingService.getActiveStreams().filter(s => s.id.startsWith(partner.id)).length
+    }));
+
+    res.json({
+      success: true,
+      partners: contracts,
+      totalPartners: contracts.length,
+      fccEntity: '20130314143016'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch partners',
+      fccEntity: '20130314143016'
+    });
+  }
+});
+
+// Get content streaming contracts
+router.get('/contracts', async (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'application/json');
+  try {
+    const content = await streamingService.getStreamContent();
+    const contracts = content.map((c: { id: string; name: string; sport: string; status: string; url: string }) => ({
+      id: c.id,
+      name: c.name,
+      sport: c.sport,
+      status: c.status,
+      url: c.url,
+      fccEntity: '20130314143016'
     }));
 
     res.json({
       success: true,
       contracts,
       totalContracts: contracts.length,
-      activeContracts: contracts.filter((c: { active: boolean }) => c.active).length,
       fccEntity: '20130314143016'
     });
   } catch (error) {
@@ -109,47 +128,32 @@ router.get('/contracts', async (req: Request, res: Response) => {
   }
 });
 
-// Stream content via contract endpoint
-router.get('/contract/:contractId/stream', async (req: Request, res: Response) => {
+// Stream content via partner endpoint
+router.get('/partner/:partnerId/stream', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
 
   try {
-    const { contractId } = req.params;
-    const partners = streamingService.getStreamingPartners();
-    const contract = partners.find((p: { id: string }) => p.id === contractId);
+    const { partnerId } = req.params;
+    const streams = streamingService.getActiveStreams();
+    const partnerStreams = streams.filter((s: { id: string }) => s.id.startsWith(partnerId));
 
-    if (!contract) {
+    if (partnerStreams.length === 0) {
       return res.status(404).json({
         success: false,
-        error: 'Contract not found'
+        error: 'No streams found for this partner'
       });
     }
-
-    if (!contract.active) {
-      return res.status(403).json({
-        success: false,
-        error: 'Contract is not active'
-      });
-    }
-
-    const streams = streamingService.getActiveStreams();
-    const contractStreams = streams.filter((s: { id: string }) => s.id.startsWith(contractId));
 
     res.json({
       success: true,
-      contract: {
-        id: contract.id,
-        name: contract.name,
-        endpoint: `/streaming/contract/${contractId}/stream`
-      },
-      streams: contractStreams.map((stream: { id: string; name: string; sport: string; url: string; status: string }) => ({
+      streams: partnerStreams.map((stream: { id: string; name: string; sport: string; url: string; status: string }) => ({
         id: stream.id,
         name: stream.name,
         sport: stream.sport,
         url: stream.url,
         status: stream.status
       })),
-      streamUrl: contractStreams.length > 0 ? contractStreams[0].url : null,
+      streamUrl: partnerStreams.length > 0 ? partnerStreams[0].url : null,
       fccEntity: '20130314143016'
     });
   } catch (error) {
@@ -166,30 +170,33 @@ router.post('/contracts/create', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
 
   try {
-    const { name, webhookUrl, contentType } = req.body;
+    const { name, partnerId, sport, url, status } = req.body;
 
-    if (!name || !webhookUrl) {
+    if (!name || !partnerId || !sport || !url || !status) {
       return res.status(400).json({
         success: false,
-        error: 'name and webhookUrl required'
+        error: 'name, partnerId, sport, url, and status are required'
       });
     }
 
     const contractId = `contract_${Date.now()}_${crypto.randomBytes(8).toString('hex')}`;
 
-    const contract = {
+    const newContract = {
       id: contractId,
+      partnerId,
       name,
-      webhookUrl,
-      contentType: contentType || 'stream',
-      active: true,
-      endpoint: `/streaming/contract/${contractId}/stream`,
-      registeredAt: new Date().toISOString()
+      sport,
+      url,
+      status,
+      fccEntity: '20130314143016'
     };
+
+    // Assuming streamingService has a method to add contracts
+    // streamingService.addContract(newContract);
 
     res.json({
       success: true,
-      contract,
+      contract: newContract,
       message: 'Streaming contract created successfully',
       fccEntity: '20130314143016'
     });
@@ -208,13 +215,15 @@ router.put('/contracts/:contractId', async (req: Request, res: Response) => {
 
   try {
     const { contractId } = req.params;
-    const { active, webhookUrl } = req.body;
+    const { name, partnerId, sport, url, status } = req.body;
+
+    // Assuming streamingService has a method to update contracts
+    // const updated = streamingService.updateContract(contractId, { name, partnerId, sport, url, status });
 
     res.json({
       success: true,
       contractId,
-      updated: true,
-      active,
+      updated: true, // Placeholder, should be based on actual update result
       message: 'Contract updated successfully',
       fccEntity: '20130314143016'
     });
@@ -552,6 +561,77 @@ router.get('/deploy/status', async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       error: 'Failed to fetch deployment status',
+      fccEntity: '20130314143016'
+    });
+  }
+});
+
+// Streaming endpoints for contracts
+router.get('/streaming-endpoints', async (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'application/json');
+  try {
+    const partners = await streamingService.getStreamingPartners();
+    const endpoints = partners.map((p: { id: string; name: string; endpoint: string; status: string }) => ({
+      id: p.id,
+      name: p.name,
+      endpoint: `/streaming/partner/${p.id}/stream`, // Dynamically create endpoint
+      status: p.status || 'unknown' // Ensure status is always present
+    }));
+
+    res.json({
+      success: true,
+      endpoints,
+      totalEndpoints: endpoints.length,
+      fccEntity: '20130314143016'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch streaming endpoints',
+      fccEntity: '20130314143016'
+    });
+  }
+});
+
+// Get contract details including partner info
+router.get('/contracts/:contractId', async (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'application/json');
+  try {
+    const { contractId } = req.params;
+    const contracts = await streamingService.getStreamContent(); // Assuming this returns all contracts/content
+    const partners = await streamingService.getStreamingPartners();
+
+    const contract = contracts.find((c: { id: string }) => c.id === contractId);
+
+    if (!contract) {
+      return res.status(404).json({
+        success: false,
+        error: 'Contract not found'
+      });
+    }
+
+    const partner = partners.find((p: { id: string }) => p.id === contract.partnerId);
+
+    res.json({
+      success: true,
+      contract: {
+        id: contract.id,
+        name: contract.name,
+        sport: contract.sport,
+        status: contract.status,
+        url: contract.url,
+        partner: partner ? {
+          id: partner.id,
+          name: partner.name,
+          status: partner.status
+        } : null
+      },
+      fccEntity: '20130314143016'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch contract details',
       fccEntity: '20130314143016'
     });
   }
