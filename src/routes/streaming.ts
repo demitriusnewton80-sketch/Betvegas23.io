@@ -70,10 +70,10 @@ router.post('/upload', async (req: Request, res: Response) => {
 });
 
 // Get streaming partners
-router.get('/partners', async (req: Request, res: Response) => {
+router.get('/partners', (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
   try {
-    const partners = await streamingService.getStreamingPartners();
+    const partners = streamingService.getStreamingPartners();
     const contracts = partners.map((partner) => ({
       id: partner.id,
       name: partner.name,
@@ -130,7 +130,7 @@ router.get('/contracts', async (req: Request, res: Response) => {
 });
 
 // Stream content via partner endpoint
-router.get('/partner/:partnerId/stream', async (req: Request, res: Response) => {
+router.get('/partner/:partnerId/stream', (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
 
   try {
@@ -167,7 +167,7 @@ router.get('/partner/:partnerId/stream', async (req: Request, res: Response) => 
 });
 
 // Create new streaming contract
-router.post('/contracts/create', async (req: Request, res: Response) => {
+router.post('/contracts/create', (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
 
   try {
@@ -211,7 +211,7 @@ router.post('/contracts/create', async (req: Request, res: Response) => {
 });
 
 // Update streaming contract
-router.put('/contracts/:contractId', async (req: Request, res: Response) => {
+router.put('/contracts/:contractId', (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
 
   try {
