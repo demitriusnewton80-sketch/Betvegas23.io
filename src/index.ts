@@ -48,27 +48,32 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // API Routes (must be before static files)
-app.use('/sportsbook', sportsbookRoutes);
-app.use('/streaming', streamingRoutes);
-app.use('/sports-radio', sportsRadioRoutes);
-app.use('/espn-tracker', espnTrackerRoutes);
-app.use('/espn-betting', espnBettingRoutes);
-app.use('/ps5', ps5Routes);
-app.use('/web3', web3Routes);
-app.use('/sso-plugin', ssoPluginRoutes);
-app.use('/phone-control', phoneControlRoutes);
-app.use('/backup', backupRoutes);
-app.use('/version', versionRoutes);
-app.use('/parlay', parlayRoutes);
-app.use('/smart-system', smartSystemRoutes);
-app.use('/smart-troubleshooting', smartTroubleshootingRoutes);
-app.use('/fusion-troubleshooting', fusionTroubleshootingRoutes);
-app.use('/wifi-web3-fusion', wifiWeb3FusionRoutes);
-app.use('/error-recovery', errorRecoveryRoutes);
-app.use('/api-troubleshooting', apiTroubleshootingRoutes);
-app.use('/api-fusion', apiFusionRoutes);
-app.use('/fusion-assembly', fusionAssemblyRouter);
-app.use('/contract-callbacks', contractCallbacksRoutes);
+try {
+  app.use('/sportsbook', sportsbookRoutes);
+  app.use('/streaming', streamingRoutes);
+  app.use('/sports-radio', sportsRadioRoutes);
+  app.use('/espn-tracker', espnTrackerRoutes);
+  app.use('/espn-betting', espnBettingRoutes);
+  app.use('/ps5', ps5Routes);
+  app.use('/web3', web3Routes);
+  app.use('/sso-plugin', ssoPluginRoutes);
+  app.use('/phone-control', phoneControlRoutes);
+  app.use('/backup', backupRoutes);
+  app.use('/version', versionRoutes);
+  app.use('/parlay', parlayRoutes);
+  app.use('/smart-system', smartSystemRoutes);
+  app.use('/smart-troubleshooting', smartTroubleshootingRoutes);
+  app.use('/fusion-troubleshooting', fusionTroubleshootingRoutes);
+  app.use('/wifi-web3-fusion', wifiWeb3FusionRoutes);
+  app.use('/error-recovery', errorRecoveryRoutes);
+  app.use('/api-troubleshooting', apiTroubleshootingRoutes);
+  app.use('/api-fusion', apiFusionRoutes);
+  app.use('/fusion-assembly', fusionAssemblyRouter);
+  app.use('/contract-callbacks', contractCallbacksRoutes);
+  console.log('✅ All API routes registered successfully');
+} catch (error) {
+  console.error('❌ Error registering routes:', error);
+}
 
 // Static files (must be after API routes)
 app.use(express.static(path.join(__dirname, '../public')));

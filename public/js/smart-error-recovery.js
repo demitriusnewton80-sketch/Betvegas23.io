@@ -23,6 +23,7 @@ class SmartErrorRecovery {
         ...options,
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
           ...options.headers
         }
       });
@@ -35,16 +36,38 @@ class SmartErrorRecovery {
 
       // Check if response is JSON before parsing
       const contentType = response.headers.get('content-type');
+      const text = await response.text();
+      
+      // Detect if we received HTML instead of JSON
+      if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
+        console.error(`Received HTML instead of JSON from ${url}`);
+        if (retries < this.maxRetries) {
+          console.log(`Retrying ${retries + 1}/${this.maxRetries} due to HTML response`);
+          await this.delay(2000 * (retries + 1));
+          return this.fetchWithRetry(url, options, retries + 1);
+        }
+        throw new Error('Server returned HTML instead of JSON');
+      }
+      
       if (contentType && contentType.includes('application/json')) {
-        return response;
+        // Create a new response with the text we already read
+        return new Response(text, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: response.headers
+        });
       } else {
         console.warn(`Non-JSON response from ${url}, content-type: ${contentType}`);
-        return response;
+        return new Response(text, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: response.headers
+        });
       }
     } catch (error) {
       if (retries < this.maxRetries) {
         console.log(`Network error, retry ${retries + 1}/${this.maxRetries}`, error);
-        await this.delay(1000 * (retries + 1));
+        await this.delay(2000 * (retries + 1));
         return this.fetchWithRetry(url, options, retries + 1);
       }
       throw error;

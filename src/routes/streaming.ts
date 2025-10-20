@@ -564,6 +564,30 @@ router.get('/deploy/status', async (req: Request, res: Response) => {
   }
 });
 
+// Get all streaming data
+router.get('/streams', async (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'application/json');
+  try {
+    const partners = await streamingService.getStreamingPartners();
+    const streams = await streamingService.getAllStreams();
+    
+    res.json({
+      success: true,
+      streams: streams || [],
+      partners: partners || [],
+      count: (streams || []).length,
+      fccEntity: '20130314143016'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch streams',
+      streams: [],
+      fccEntity: '20130314143016'
+    });
+  }
+});
+
 // Streaming endpoints for contracts
 router.get('/streaming-endpoints', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
@@ -575,6 +599,20 @@ router.get('/streaming-endpoints', async (req: Request, res: Response) => {
       endpoint: `/streaming/partner/${p.id}/stream`,
       status: p.active ? 'active' : 'inactive'
     }));
+    
+    res.json({
+      success: true,
+      endpoints,
+      fccEntity: '20130314143016'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch streaming endpoints',
+      fccEntity: '20130314143016'
+    });
+  }
+});
 
     res.json({
       success: true,
