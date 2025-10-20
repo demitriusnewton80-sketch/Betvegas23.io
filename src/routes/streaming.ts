@@ -40,6 +40,32 @@ router.get('/streams', (req: Request, res: Response) => {
   }
 });
 
+// Upload content for streaming
+router.post('/upload', async (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'application/json');
+  
+  try {
+    const { fileName, fileType, fileSize } = req.body;
+    
+    const uploadId = crypto.randomBytes(16).toString('hex');
+    
+    res.json({
+      success: true,
+      uploadId,
+      fileName,
+      streamUrl: `/streaming/uploaded/${uploadId}`,
+      message: 'File uploaded and ready for streaming',
+      fccEntity: '20130314143016'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Upload failed',
+      fccEntity: '20130314143016'
+    });
+  }
+});
+
 // Get streaming events (SSE)
 router.get('/events', (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'text/event-stream');
