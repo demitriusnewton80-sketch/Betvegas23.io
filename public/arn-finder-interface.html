@@ -1,0 +1,544 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS ARN Finder & Builder - Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .tool-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+        }
+
+        .tool-card h2 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 1em;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .results {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .arn-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .arn-detail {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 10px;
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        .arn-detail strong {
+            color: #4CAF50;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            opacity: 0.8;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin: 2px;
+        }
+
+        .badge-valid {
+            background: #4CAF50;
+        }
+
+        .badge-invalid {
+            background: #f44336;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 AWS ARN Finder & Builder</h1>
+            <p>Parse, Validate, Search, and Build Amazon Resource Names</p>
+            <span class="badge badge-valid">FCC Entity: 20130314143016</span>
+        </div>
+
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <div class="tool-grid">
+            <!-- Parse ARN -->
+            <div class="tool-card">
+                <h2>📋 Parse ARN</h2>
+                <div class="form-group">
+                    <label>ARN String:</label>
+                    <input type="text" id="parseInput" placeholder="arn:aws:s3:::my-bucket/key">
+                </div>
+                <button class="btn" onclick="parseARN()">Parse ARN</button>
+                <div class="results" id="parseResults"></div>
+            </div>
+
+            <!-- Build ARN -->
+            <div class="tool-card">
+                <h2>🔨 Build ARN</h2>
+                <div class="form-group">
+                    <label>Service:</label>
+                    <input type="text" id="buildService" placeholder="s3">
+                </div>
+                <div class="form-group">
+                    <label>Region:</label>
+                    <input type="text" id="buildRegion" placeholder="us-east-1">
+                </div>
+                <div class="form-group">
+                    <label>Account ID:</label>
+                    <input type="text" id="buildAccountId" placeholder="123456789012">
+                </div>
+                <div class="form-group">
+                    <label>Resource Type:</label>
+                    <input type="text" id="buildResourceType" placeholder="bucket">
+                </div>
+                <div class="form-group">
+                    <label>Resource ID:</label>
+                    <input type="text" id="buildResourceId" placeholder="my-bucket">
+                </div>
+                <button class="btn" onclick="buildARN()">Build ARN</button>
+                <div class="results" id="buildResults"></div>
+            </div>
+
+            <!-- Find in Text -->
+            <div class="tool-card">
+                <h2>🔎 Find ARNs in Text</h2>
+                <div class="form-group">
+                    <label>Paste Text or Code:</label>
+                    <textarea id="searchText" placeholder="Paste content containing ARNs..."></textarea>
+                </div>
+                <button class="btn" onclick="findInText()">Search for ARNs</button>
+                <div class="results" id="textResults"></div>
+            </div>
+
+            <!-- Validate ARN -->
+            <div class="tool-card">
+                <h2>✅ Validate ARN</h2>
+                <div class="form-group">
+                    <label>ARN to Validate:</label>
+                    <input type="text" id="validateInput" placeholder="arn:aws:...">
+                </div>
+                <button class="btn" onclick="validateARN()">Validate</button>
+                <div class="results" id="validateResults"></div>
+            </div>
+        </div>
+
+        <!-- Project Search -->
+        <div class="tool-card">
+            <h2>🗂️ Search Entire Project</h2>
+            <p style="margin-bottom: 15px;">Scan all project files for AWS ARNs</p>
+            <button class="btn btn-primary" onclick="searchProject()">🔍 Search Project</button>
+            <button class="btn btn-danger" onclick="clearCache()">🗑️ Clear Cache</button>
+            <div class="results" id="projectResults"></div>
+        </div>
+
+        <!-- Cached ARNs -->
+        <div class="tool-card">
+            <h2>💾 Cached ARNs</h2>
+            <button class="btn" onclick="loadCachedARNs()">Load Cached ARNs</button>
+            <button class="btn btn-primary" onclick="groupByService()">Group by Service</button>
+            <div class="results" id="cachedResults"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        async function parseARN() {
+            const arn = document.getElementById('parseInput').value;
+            const resultsDiv = document.getElementById('parseResults');
+
+            if (!arn) {
+                resultsDiv.innerHTML = '<p>Please enter an ARN</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/arn-finder/parse`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ arn })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="arn-item">
+                            <div class="arn-detail"><strong>ARN:</strong> <span>${data.arn.arn}</span></div>
+                            <div class="arn-detail"><strong>Service:</strong> <span>${data.arn.service}</span></div>
+                            <div class="arn-detail"><strong>Region:</strong> <span>${data.arn.region}</span></div>
+                            <div class="arn-detail"><strong>Account ID:</strong> <span>${data.arn.accountId}</span></div>
+                            <div class="arn-detail"><strong>Resource Type:</strong> <span>${data.arn.resourceType}</span></div>
+                            <div class="arn-detail"><strong>Resource ID:</strong> <span>${data.arn.resourceId}</span></div>
+                            <div class="arn-detail"><strong>Valid:</strong> <span class="badge ${data.arn.isValid ? 'badge-valid' : 'badge-invalid'}">${data.arn.isValid ? 'Yes' : 'No'}</span></div>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `<p style="color: #f44336;">Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: #f44336;">Request failed</p>`;
+            }
+        }
+
+        async function buildARN() {
+            const service = document.getElementById('buildService').value;
+            const region = document.getElementById('buildRegion').value;
+            const accountId = document.getElementById('buildAccountId').value;
+            const resourceType = document.getElementById('buildResourceType').value;
+            const resourceId = document.getElementById('buildResourceId').value;
+            const resultsDiv = document.getElementById('buildResults');
+
+            try {
+                const response = await fetch(`${API_BASE}/arn-finder/build`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ service, region, accountId, resourceType, resourceId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="code-block">${data.arn}</div>
+                        <span class="badge ${data.isValid ? 'badge-valid' : 'badge-invalid'}">
+                            ${data.isValid ? 'Valid ARN' : 'Invalid ARN'}
+                        </span>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `<p style="color: #f44336;">Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: #f44336;">Request failed</p>`;
+            }
+        }
+
+        async function findInText() {
+            const text = document.getElementById('searchText').value;
+            const resultsDiv = document.getElementById('textResults');
+
+            try {
+                const response = await fetch(`${API_BASE}/arn-finder/find-in-text`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    if (data.arns.length === 0) {
+                        resultsDiv.innerHTML = '<p>No ARNs found</p>';
+                    } else {
+                        resultsDiv.innerHTML = `
+                            <p><strong>Found ${data.totalFound} ARN(s)</strong></p>
+                            ${data.arns.map(arn => `
+                                <div class="arn-item">
+                                    <div class="code-block">${arn.arn}</div>
+                                    <div class="arn-detail"><strong>Service:</strong> ${arn.service}</div>
+                                    <div class="arn-detail"><strong>Account:</strong> ${arn.accountId}</div>
+                                </div>
+                            `).join('')}
+                        `;
+                    }
+                } else {
+                    resultsDiv.innerHTML = `<p style="color: #f44336;">Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: #f44336;">Request failed</p>`;
+            }
+        }
+
+        async function validateARN() {
+            const arn = document.getElementById('validateInput').value;
+            const resultsDiv = document.getElementById('validateResults');
+
+            try {
+                const response = await fetch(`${API_BASE}/arn-finder/validate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ arn })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="arn-item">
+                            <div class="code-block">${data.arn}</div>
+                            <h3 style="margin-top: 15px;">
+                                <span class="badge ${data.isValid ? 'badge-valid' : 'badge-invalid'}">
+                                    ${data.isValid ? '✅ Valid ARN' : '❌ Invalid ARN'}
+                                </span>
+                            </h3>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `<p style="color: #f44336;">Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: #f44336;">Request failed</p>`;
+            }
+        }
+
+        async function searchProject() {
+            const resultsDiv = document.getElementById('projectResults');
+            resultsDiv.innerHTML = '<p>🔍 Searching project files...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE}/arn-finder/search-project`);
+                const data = await response.json();
+
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <p><strong>Found ${data.totalFound} ARN(s) in ${data.sources.length} file(s)</strong></p>
+                        ${data.arns.map(arn => `
+                            <div class="arn-item">
+                                <div class="code-block">${arn.arn}</div>
+                                <div class="arn-detail"><strong>Service:</strong> ${arn.service}</div>
+                                <div class="arn-detail"><strong>Source:</strong> ${arn.source}</div>
+                            </div>
+                        `).join('')}
+                    `;
+                    await loadStatistics();
+                } else {
+                    resultsDiv.innerHTML = `<p style="color: #f44336;">Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: #f44336;">Request failed</p>`;
+            }
+        }
+
+        async function loadCachedARNs() {
+            const resultsDiv = document.getElementById('cachedResults');
+
+            try {
+                const response = await fetch(`${API_BASE}/arn-finder/cached`);
+                const data = await response.json();
+
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <p><strong>${data.totalARNs} Cached ARN(s)</strong></p>
+                        ${data.arns.map(arn => `
+                            <div class="arn-item">
+                                <div class="code-block">${arn.arn}</div>
+                                <div class="arn-detail"><strong>Service:</strong> ${arn.service}</div>
+                                <div class="arn-detail"><strong>Region:</strong> ${arn.region}</div>
+                            </div>
+                        `).join('')}
+                    `;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: #f44336;">Request failed</p>`;
+            }
+        }
+
+        async function groupByService() {
+            const resultsDiv = document.getElementById('cachedResults');
+
+            try {
+                const response = await fetch(`${API_BASE}/arn-finder/group-by-service`);
+                const data = await response.json();
+
+                if (data.success) {
+                    let html = '<p><strong>ARNs Grouped by Service</strong></p>';
+                    for (const [service, arns] of Object.entries(data.grouped)) {
+                        html += `
+                            <h3 style="margin-top: 20px; color: #4CAF50;">${service} (${arns.length})</h3>
+                            ${arns.map(arn => `<div class="code-block">${arn.arn}</div>`).join('')}
+                        `;
+                    }
+                    resultsDiv.innerHTML = html;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: #f44336;">Request failed</p>`;
+            }
+        }
+
+        async function loadStatistics() {
+            try {
+                const response = await fetch(`${API_BASE}/arn-finder/statistics`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const stats = data.statistics;
+                    document.getElementById('statsGrid').innerHTML = `
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.totalARNs}</div>
+                            <div class="stat-label">Total ARNs</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${Object.keys(stats.byService).length}</div>
+                            <div class="stat-label">Services</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${Object.keys(stats.byRegion).length}</div>
+                            <div class="stat-label">Regions</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${Object.keys(stats.byAccount).length}</div>
+                            <div class="stat-label">Accounts</div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Failed to load statistics');
+            }
+        }
+
+        async function clearCache() {
+            try {
+                const response = await fetch(`${API_BASE}/arn-finder/cache`, { method: 'DELETE' });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Cache cleared successfully');
+                    await loadStatistics();
+                }
+            } catch (error) {
+                alert('Failed to clear cache');
+            }
+        }
+
+        // Load statistics on page load
+        loadStatistics();
+    </script>
+</body>
+</html>
