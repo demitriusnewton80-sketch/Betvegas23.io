@@ -45,7 +45,8 @@ import bridgePortFusionRoutes from './routes/bridge-port-fusion.js';
 import oddsAggregatorRoutes from './routes/odds-aggregator.js';
 import liveChatRoutes from './routes/live-chat.js';
 import advancedAnalyticsRoutes from './routes/advanced-analytics.js';
-import dunContentPeersRoutes from './routes/dun-content-peers.js'; // Assuming this route file exists
+import dunContentPeersRoutes from './routes/dun-content-peers.js';
+import arnFinderRoutes from './routes/arn-finder.js';
 
 // Initialize core systems
 const __filename = fileURLToPath(import.meta.url);
@@ -121,7 +122,8 @@ try {
   app.use('/odds-aggregator', oddsAggregatorRoutes);
   app.use('/live-chat', liveChatRoutes);
   app.use('/advanced-analytics', advancedAnalyticsRoutes);
-  app.use('/dun-content-peers', dunContentPeersRoutes); // Added for Dun content peers
+  app.use('/dun-content-peers', dunContentPeersRoutes);
+  app.use('/arn-finder', arnFinderRoutes);
   console.log('✅ All API routes registered successfully');
 } catch (error) {
   console.error('❌ Error registering routes:', error);
