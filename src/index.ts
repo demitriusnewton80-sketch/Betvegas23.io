@@ -41,6 +41,7 @@ import winnerPayoutRouter from './routes/winner-payout.js';
 import wifiInfusionRouter from './routes/wifi-infusion.js';
 import systemHealthRouter from './routes/system-health.js';
 import contentRollbackRouter from './routes/content-rollback.js';
+import portManagementRoutes from './routes/port-management.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -83,6 +84,7 @@ app.use('/winner-payout', winnerPayoutRouter);
 app.use('/wifi-infusion', wifiInfusionRouter);
 app.use('/system-health', systemHealthRouter);
 app.use('/content-rollback', contentRollbackRouter);
+app.use('/port-management', portManagementRoutes);
 
 // Static files
 app.use(express.static(path.join(__dirname, '../public')));
