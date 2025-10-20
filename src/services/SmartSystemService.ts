@@ -303,6 +303,26 @@ export class SmartSystemService extends EventEmitter {
     return this.errorLogs;
   }
 
+  getTrafficData() {
+    return this.trafficData;
+  }
+
+  getContentUploads() {
+    return this.contentUploads;
+  }
+
+  getCloudOutputs() {
+    return this.cloudOutputs;
+  }
+
+  getConnectedSportsbooks() {
+    return Array.from(this.connectedSportsbooks);
+  }
+}
+
+export const smartSystemService = new SmartSystemService();
+  }
+
   private analyzeTraffic() {
     const recentTraffic = this.trafficData.slice(-100);
     const failed = recentTraffic.filter(t => t.status === 'failed');
