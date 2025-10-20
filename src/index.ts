@@ -21,6 +21,9 @@ import smartSystemRoutes from './routes/smart-system.js';
 import smartTroubleshootingRoutes from './routes/smart-troubleshooting.js';
 import fusionTroubleshootingRoutes from './routes/fusion-troubleshooting.js';
 import wifiWeb3FusionRoutes from './routes/wifi-web3-fusion.js';
+import errorRecoveryRoutes from './routes/error-recovery.js';
+import apiTroubleshootingRoutes from './routes/api-troubleshooting.js';
+import apiFusionRoutes from './routes/api-fusion.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -59,6 +62,9 @@ app.use('/smart-system', smartSystemRoutes);
 app.use('/smart-troubleshooting', smartTroubleshootingRoutes);
 app.use('/fusion-troubleshooting', fusionTroubleshootingRoutes);
 app.use('/wifi-web3-fusion', wifiWeb3FusionRoutes);
+app.use('/error-recovery', errorRecoveryRoutes);
+app.use('/api-troubleshooting', apiTroubleshootingRoutes);
+app.use('/api-fusion', apiFusionRoutes);
 
 // Static files (must be after API routes)
 app.use(express.static(path.join(__dirname, '../public')));
