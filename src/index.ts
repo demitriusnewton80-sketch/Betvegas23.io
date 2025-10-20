@@ -145,7 +145,12 @@ try {
 }
 
 // Static files (must be after API routes)
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static('public'));
+
+// Public domain builder
+app.get('/public-domain', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/public-domain-builder.html'));
+});
 
 // Root route - serve functional structures sportsbook
 app.get('/', (req: Request, res: Response) => {
