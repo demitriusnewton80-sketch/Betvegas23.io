@@ -16,6 +16,7 @@ import ps5Routes from './routes/ps5.js';
 import ssoPluginRoutes from './routes/sso-plugin.js';
 import backupRoutes from './routes/backup.js';
 import publicAccessRoutes from './routes/public-access.js';
+import domainRoutes from './routes/domain.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -44,6 +45,7 @@ app.use('/ps5', ps5Routes);
 app.use('/sso-plugin', ssoPluginRoutes);
 app.use('/backup', backupRoutes);
 app.use('/public-access', publicAccessRoutes);
+app.use('/domain', domainRoutes);
 
 // Static files
 app.use(express.static(path.join(__dirname, '../public')));

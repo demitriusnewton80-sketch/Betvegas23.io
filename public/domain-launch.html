@@ -1,0 +1,356 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domain Launch Center | Young Meeat LLC</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.3);
+        }
+        .header h1 { font-size: 42px; margin-bottom: 10px; }
+        .badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            color: #60a5fa;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+        }
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        .btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: transform 0.2s;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn.success { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); }
+        .result-box {
+            background: rgba(34, 197, 94, 0.1);
+            border: 2px solid #22c55e;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+        .result-box.show { display: block; }
+        .info-item {
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .info-item strong { color: #60a5fa; }
+        .code-block {
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Domain Launch Center</h1>
+            <p>AWS & GitHub Integration Portal</p>
+            <span class="badge">FCC Entity: 20130314143016</span>
+            <span class="badge">AWS: meaat21555@gmail.com</span>
+        </div>
+
+        <!-- Custom Domain Setup -->
+        <div class="section">
+            <h2>🌐 Launch Custom Domain</h2>
+            <div class="input-group">
+                <label>Your Email (Required)</label>
+                <input type="email" id="email" value="meaat21555@gmail.com">
+            </div>
+            <div class="input-group">
+                <label>Domain Name</label>
+                <input type="text" id="domain" placeholder="example.com">
+            </div>
+            <button class="btn success" onclick="launchDomain()">🚀 Launch Domain</button>
+            
+            <div id="domainResult" class="result-box"></div>
+        </div>
+
+        <!-- Phone Domain Setup -->
+        <div class="section">
+            <h2>📱 Launch Phone Domain</h2>
+            <div class="input-group">
+                <label>User ID</label>
+                <input type="text" id="userId" placeholder="user-meeat">
+            </div>
+            <div class="input-group">
+                <label>Phone Number</label>
+                <input type="tel" id="phoneNumber" placeholder="4459429173">
+            </div>
+            <button class="btn" onclick="launchPhoneDomain()">📱 Create Phone Domain</button>
+            
+            <div id="phoneResult" class="result-box"></div>
+        </div>
+
+        <!-- AWS Provisioning -->
+        <div class="section">
+            <h2>☁️ AWS Domain Provisioning</h2>
+            <div class="input-group">
+                <label>Domain for AWS</label>
+                <input type="text" id="awsDomain" placeholder="example.com">
+            </div>
+            <div class="input-group">
+                <label>AWS Account Email</label>
+                <input type="email" id="awsEmail" value="meaat21555@gmail.com" readonly>
+            </div>
+            <button class="btn" onclick="provisionAWS()">☁️ Provision on AWS</button>
+            
+            <div id="awsResult" class="result-box"></div>
+        </div>
+
+        <!-- GitHub Integration -->
+        <div class="section">
+            <h2>🐙 GitHub Pages Setup</h2>
+            <div class="input-group">
+                <label>Domain for GitHub Pages</label>
+                <input type="text" id="githubDomain" placeholder="example.com">
+            </div>
+            <div class="input-group">
+                <label>Repository URL</label>
+                <input type="text" id="githubRepo" value="https://github.com/betvages23/betvages23.in" readonly>
+            </div>
+            <button class="btn" onclick="setupGitHub()">🐙 Setup GitHub Pages</button>
+            
+            <div id="githubResult" class="result-box"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        async function launchDomain() {
+            const email = document.getElementById('email').value;
+            const domain = document.getElementById('domain').value;
+
+            if (!domain) {
+                alert('Please enter a domain name');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/domain/add`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, domain })
+                });
+
+                const data = await response.json();
+                const resultBox = document.getElementById('domainResult');
+
+                if (data.success) {
+                    resultBox.innerHTML = `
+                        <h3 style="color: #22c55e; margin-bottom: 15px;">✅ Domain Launched Successfully!</h3>
+                        <div class="info-item"><strong>Domain:</strong> ${data.domain}</div>
+                        <div class="info-item"><strong>Email:</strong> ${data.email}</div>
+                        <h4 style="margin: 20px 0 10px; color: #60a5fa;">DNS Configuration:</h4>
+                        <div class="code-block">
+Type: ${data.dnsRecords.type}
+Name: ${data.dnsRecords.name}
+Value: ${data.dnsRecords.value}
+TTL: ${data.dnsRecords.ttl}
+                        </div>
+                        <p style="margin-top: 15px; color: #94a3b8; font-size: 14px;">${data.instructions}</p>
+                    `;
+                    resultBox.classList.add('show');
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Failed to launch domain: ' + error.message);
+            }
+        }
+
+        async function launchPhoneDomain() {
+            const userId = document.getElementById('userId').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const email = document.getElementById('email').value;
+
+            if (!userId || !phoneNumber) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/domain/phone/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, phoneNumber, email })
+                });
+
+                const data = await response.json();
+                const resultBox = document.getElementById('phoneResult');
+
+                if (data.success) {
+                    resultBox.innerHTML = `
+                        <h3 style="color: #22c55e; margin-bottom: 15px;">✅ Phone Domain Created!</h3>
+                        <div class="info-item"><strong>Domain:</strong> ${data.domain}</div>
+                        <div class="info-item"><strong>Access URL:</strong> <a href="${data.accessUrl}" style="color: #60a5fa;">${data.accessUrl}</a></div>
+                        <div class="info-item"><strong>VPN IP:</strong> ${data.vpnIP}</div>
+                        <div class="info-item"><strong>Server:</strong> ${data.serverIP}</div>
+                        <div class="info-item"><strong>AWS Account:</strong> ${data.awsAccount}</div>
+                        <div class="info-item"><strong>GitHub Repo:</strong> ${data.githubRepo}</div>
+                    `;
+                    resultBox.classList.add('show');
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Failed to create phone domain: ' + error.message);
+            }
+        }
+
+        async function provisionAWS() {
+            const domain = document.getElementById('awsDomain').value;
+            const awsAccountEmail = document.getElementById('awsEmail').value;
+
+            if (!domain) {
+                alert('Please enter a domain');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/domain/aws/provision`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ domain, awsAccountEmail })
+                });
+
+                const data = await response.json();
+                const resultBox = document.getElementById('awsResult');
+
+                if (data.success) {
+                    resultBox.innerHTML = `
+                        <h3 style="color: #22c55e; margin-bottom: 15px;">✅ AWS Domain Provisioned!</h3>
+                        <div class="info-item"><strong>Domain:</strong> ${data.domain}</div>
+                        <div class="info-item"><strong>AWS Account:</strong> ${data.awsAccount}</div>
+                        <div class="info-item"><strong>CloudFront:</strong> ${data.cloudFrontDistribution}</div>
+                        <div class="info-item"><strong>S3 Bucket:</strong> ${data.s3Bucket}</div>
+                        <h4 style="margin: 20px 0 10px; color: #60a5fa;">Route 53 Configuration:</h4>
+                        <div class="code-block">
+Hosted Zone ID: ${data.route53Config.hostedZoneId}
+
+Name Servers:
+${data.route53Config.nameServers.join('\n')}
+                        </div>
+                    `;
+                    resultBox.classList.add('show');
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Failed to provision AWS domain: ' + error.message);
+            }
+        }
+
+        async function setupGitHub() {
+            const domain = document.getElementById('githubDomain').value;
+            const repository = document.getElementById('githubRepo').value;
+
+            if (!domain) {
+                alert('Please enter a domain');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/domain/github/setup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ domain, repository })
+                });
+
+                const data = await response.json();
+                const resultBox = document.getElementById('githubResult');
+
+                if (data.success) {
+                    resultBox.innerHTML = `
+                        <h3 style="color: #22c55e; margin-bottom: 15px;">✅ GitHub Pages Configured!</h3>
+                        <div class="info-item"><strong>Domain:</strong> ${data.domain}</div>
+                        <div class="info-item"><strong>Repository:</strong> ${data.repository}</div>
+                        <div class="info-item"><strong>GitHub Pages URL:</strong> <a href="${data.githubPagesUrl}" style="color: #60a5fa;">${data.githubPagesUrl}</a></div>
+                        <h4 style="margin: 20px 0 10px; color: #60a5fa;">Setup Instructions:</h4>
+                        <div class="code-block">
+1. ${data.instructions.step1}
+2. ${data.instructions.step2}
+3. ${data.instructions.step3}
+4. ${data.instructions.step4}
+                        </div>
+                    `;
+                    resultBox.classList.add('show');
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Failed to setup GitHub Pages: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
