@@ -104,11 +104,28 @@ app.use('/streaming/*', (req: Request, res: Response) => {
   });
 });
 
-// Catch-all for SPA
+// Catch-all for SPA - only for non-API routes
 app.get('*', (req: Request, res: Response) => {
+  // Don't catch API routes
+  if (req.path.startsWith('/api/') || 
+      req.path.startsWith('/streaming/') ||
+      req.path.startsWith('/sportsbook/') ||
+      req.path.startsWith('/error-recovery/') ||
+      req.path.startsWith('/smart-troubleshooting/') ||
+      req.path.startsWith('/debug/')) {
+    return res.status(404).json({
+      success: false,
+      error: 'Endpoint not found',
+      path: req.path
+    });
+  }
+  
+  // For file requests, return 404
   if (req.path.includes('.')) {
     return res.status(404).send('Not found');
   }
+  
+  // Otherwise serve index.html
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
