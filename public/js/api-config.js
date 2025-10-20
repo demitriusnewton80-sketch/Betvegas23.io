@@ -1,59 +1,22 @@
-
-// API Configuration for Young Meeat LLC
-// FCC Entity: 20130314143016
-
+// API Configuration for all HTML pages
 (function() {
-  'use strict';
-  
-  // Only declare if not already defined
+  // Only declare if not already set
   if (typeof window.API_BASE === 'undefined') {
-    window.API_BASE = window.location.origin;
-  }
+    // Use Replit's REPL_SLUG and REPL_OWNER for the domain
+    const replSlug = window.REPL_SLUG || '35c0921b-9bf7-44a7-80bc-702201e66ac5-00-1uu6one07tj9j';
+    const replOwner = window.REPL_OWNER || 'picard';
 
-  // Global configuration object
-  if (!window.CloudConfig) {
-    window.CloudConfig = {
-      apiBase: window.API_BASE,
-      fccEntity: '20130314143016',
-      fccRegistration: '0024454324',
-      
-      // Helper methods
-      getAPIBase: function() {
-        return this.apiBase;
-      },
-      
-      buildEndpoint: function(path) {
-        return `${this.apiBase}${path.startsWith('/') ? path : '/' + path}`;
-      },
-      
-      // Visual theme configuration
-      theme: {
-        primary: '#6366f1',
-        secondary: '#8b5cf6',
-        success: '#22c55e',
-        warning: '#f59e0b',
-        danger: '#ef4444',
-        info: '#3b82f6',
-        gradients: {
-          primary: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          success: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
-          blue: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
-          purple: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)'
-        },
-        effects: {
-          cardShadow: '0 10px 30px rgba(0,0,0,0.2)',
-          cardShadowHover: '0 15px 40px rgba(0,0,0,0.3)',
-          glow: '0 0 20px rgba(99, 102, 241, 0.5)',
-          borderRadius: '16px'
-        }
-      }
-    };
-  }
+    // Construct the API base URL
+    if (window.location.hostname.includes('replit.dev')) {
+      window.API_BASE = window.location.origin;
+    } else {
+      window.API_BASE = `https://${replSlug}.${replOwner}.replit.dev:5000`;
+    }
 
-  console.log('✅ CloudConfig initialized:', window.API_BASE);
+    console.log('✅ API_BASE configured:', window.API_BASE);
+  }
 })();
-// API Configuration for Young Meeat LLC Sportsbook
-const API_BASE = window.location.origin;
+
 
 // WebSocket configuration
 const WS_PROTOCOL = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
