@@ -330,6 +330,22 @@
         transactionBackup: this.s3Enabled
       };
     }
+
+    // Get CoinStats portfolio
+    async getPortfolio() {
+      try {
+        const response = await fetch(`${getAPIBase()}/web3/portfolio`);
+        const data = await response.json();
+        
+        if (data.success) {
+          return data.portfolio;
+        }
+        return null;
+      } catch (error) {
+        console.error('Portfolio fetch error:', error);
+        return null;
+      }
+    }
   }
 
   // Export to window

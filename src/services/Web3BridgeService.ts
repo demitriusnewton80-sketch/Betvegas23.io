@@ -207,8 +207,14 @@ class Web3BridgeService extends EventEmitter {
       pendingTransactions: Array.from(this.transactions.values()).filter(tx => tx.getStatus() === 'pending').length,
       confirmedTransactions: Array.from(this.transactions.values()).filter(tx => tx.getStatus() === 'confirmed').length,
       chainId: this.config.chainId,
-      chainName: this.config.chainName
+      chainName: this.config.chainName,
+      coinStatsPortfolio: 'https://coinstats.app/p/TGct2H',
+      portfolioIntegration: true
     };
+  }
+
+  getCoinStatsPortfolio(): string {
+    return 'https://coinstats.app/p/TGct2H';
   }
 }
 

@@ -397,4 +397,25 @@ router.get('/chain/config', (req: Request, res: Response) => {
   });
 });
 
+// Get CoinStats portfolio
+router.get('/portfolio', (req: Request, res: Response) => {
+  const portfolioUrl = web3BridgeService.getCoinStatsPortfolio();
+  
+  res.json({
+    success: true,
+    portfolio: {
+      provider: 'CoinStats',
+      url: portfolioUrl,
+      features: [
+        'Real-time portfolio tracking',
+        'Multi-wallet support',
+        'Price alerts',
+        'Historical performance'
+      ]
+    },
+    integration: 'active',
+    fccEntity: '20130314143016'
+  });
+});
+
 export default router;
