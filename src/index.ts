@@ -25,6 +25,7 @@ import phoneControlRoutes from './routes/phone-control.js';
 import smartSystemRoutes from './routes/smart-system.js';
 import mobileRoutes from './routes/mobile.js';
 import errorRecoveryRoutes from './routes/error-recovery.js';
+import businessRelationshipsRouter from './routes/business-relationships.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -36,15 +37,6 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
-
-// Health check
-app.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    fccEntity: '20130314143016'
-  });
-});
 
 // API routes
 app.use('/sportsbook', sportsbookRoutes);
@@ -60,6 +52,7 @@ app.use('/phone-control', phoneControlRoutes);
 app.use('/smart-system', smartSystemRoutes);
 app.use('/mobile', mobileRoutes);
 app.use('/error-recovery', errorRecoveryRoutes);
+app.use('/business-relationships', businessRelationshipsRouter);
 
 // Static files
 app.use(express.static(path.join(__dirname, '../public')));
@@ -126,7 +119,7 @@ startupDiagnostics.runDiagnostics().then(diagnostics => {
     console.log(`📱 Phone Control: ENABLED`);
     console.log(`🔄 Smart Recovery: ACTIVE`);
     console.log('═══════════════════════════════════════════════════');
-    
+
     // Test endpoint access
     console.log('\n📍 Available endpoints:');
     console.log(`  • Sportsbook: http://${HOST}:${PORT}/sportsbook/games`);
