@@ -347,6 +347,25 @@
         // Initialize
         loadBridgeStatus();
         setInterval(loadBridgeStatus, 10000);
+
+        // Auto-connect user's wallet
+        window.addEventListener('DOMContentLoaded', async () => {
+            const userWalletAddress = '0x00000000219ab540356cbb839cbe05303d7705fa';
+            document.getElementById('walletAddress').value = userWalletAddress;
+            
+            // Auto-connect after page loads
+            setTimeout(async () => {
+                try {
+                    const wallet = await web3Client.connectWallet(userWalletAddress);
+                    updateWalletDisplay(wallet);
+                    console.log('✅ Auto-connected wallet:', userWalletAddress);
+                    loadBridgeStatus();
+                    loadTransactions();
+                } catch (error) {
+                    console.error('Auto-connect failed:', error);
+                }
+            }, 1000);
+        });
     </script>
 </body>
 </html>
