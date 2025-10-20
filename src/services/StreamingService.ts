@@ -431,6 +431,11 @@ class StreamingService extends EventEmitter {
 
     return content;
   }
+
+  // Get all streams (alias for getActiveStreams)
+  getAllStreams(): Array<{id: string, name: string, sport: string, status: string, url: string}> {
+    return this.getActiveStreams();
+  }
 }
 
 export const streamingService = new StreamingService();
