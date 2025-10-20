@@ -7,6 +7,7 @@ import { createServer } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
 import { startupDiagnostics } from './utils/startup-diagnostics.js';
 import { appCore } from './core/AppCore.js';
+import { smartCommunication } from './utils/smart-communication.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,6 +26,10 @@ import phoneControlRoutes from './routes/phone-control.js';
 import smartSystemRoutes from './routes/smart-system.js';
 import mobileRoutes from './routes/mobile.js';
 import errorRecoveryRoutes from './routes/error-recovery.js';
+import businessRelationshipsRouter from './routes/business-relationships.js';
+import espnTrackerRoutes from './routes/espn-tracker.js';
+import espnBettingRoutes from './routes/espn-betting.js';
+import versionRoutes from './routes/version.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -37,18 +42,10 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 
-// Health check
-app.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    fccEntity: '20130314143016'
-  });
-});
-
 // API routes
 app.use('/sportsbook', sportsbookRoutes);
 app.use('/streaming', streamingRoutes);
+app.use('/api/streaming', streamingRoutes); // Alternative path for frontend compatibility
 app.use('/ps5', ps5Routes);
 app.use('/sso-plugin', ssoPluginRoutes);
 app.use('/backup', backupRoutes);
@@ -60,9 +57,22 @@ app.use('/phone-control', phoneControlRoutes);
 app.use('/smart-system', smartSystemRoutes);
 app.use('/mobile', mobileRoutes);
 app.use('/error-recovery', errorRecoveryRoutes);
+app.use('/business-relationships', businessRelationshipsRouter);
+app.use('/espn-tracker', espnTrackerRoutes);
+app.use('/espn-betting', espnBettingRoutes);
+app.use('/version', versionRoutes);
 
 // Static files
 app.use(express.static(path.join(__dirname, '../public')));
+
+// Smart communication status
+app.get('/smart-communication/status', (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    communication: smartCommunication.getStats(),
+    fccEntity: '20130314143016'
+  });
+});
 
 // Main route
 app.get('/', (req: Request, res: Response) => {
@@ -126,7 +136,7 @@ startupDiagnostics.runDiagnostics().then(diagnostics => {
     console.log(`📱 Phone Control: ENABLED`);
     console.log(`🔄 Smart Recovery: ACTIVE`);
     console.log('═══════════════════════════════════════════════════');
-    
+
     // Test endpoint access
     console.log('\n📍 Available endpoints:');
     console.log(`  • Sportsbook: http://${HOST}:${PORT}/sportsbook/games`);
@@ -134,6 +144,7 @@ startupDiagnostics.runDiagnostics().then(diagnostics => {
     console.log(`  • Phone Control: http://${HOST}:${PORT}/phone-control/stats`);
     console.log(`  • Smart System: http://${HOST}:${PORT}/smart-system/status`);
     console.log(`  • Mobile: http://${HOST}:${PORT}/mobile/stats`);
+    console.log(`  • Version: http://${HOST}:${PORT}/version`);
     console.log('\n');
   });
 

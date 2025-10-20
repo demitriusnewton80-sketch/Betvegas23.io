@@ -185,8 +185,7 @@ export class AppCore extends EventEmitter {
       total: this.connections.size,
       active: this.getActiveConnectionCount(),
       connections: Array.from(this.connections.entries()).map(([connId, conn]) => ({
-        ...conn,
-        id: connId
+        ...conn
       })),
       config: this.config
     };
