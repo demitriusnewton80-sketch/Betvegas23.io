@@ -1,0 +1,309 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Integrity Portal | FCC 20130314143016</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            padding: 40px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.3);
+        }
+        .header h1 { font-size: 42px; margin-bottom: 10px; }
+        .fcc-badge {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid #22c55e;
+            color: #22c55e;
+            padding: 8px 16px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: 700;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .stat-value.good { color: #22c55e; }
+        .stat-value.warning { color: #f59e0b; }
+        .stat-value.critical { color: #ef4444; }
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        .portal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .portal-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+        .portal-card:hover {
+            border-color: #6366f1;
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.3);
+        }
+        .portal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .portal-name {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .status-active { background: #22c55e; color: white; }
+        .status-standby { background: #f59e0b; color: white; }
+        .status-maintenance { background: #ef4444; color: white; }
+        .integrity-meter {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            height: 24px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        .integrity-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+            transition: width 0.3s;
+        }
+        .connections-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .connection-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 4px solid #6366f1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .connection-item.verified { border-color: #22c55e; }
+        .connection-item.compromised { border-color: #ef4444; }
+        .btn {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+        }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔒 Content Integrity Portal</h1>
+            <p>Landing Network for Failed Connection Recovery</p>
+            <span class="fcc-badge">FCC Entity: 20130314143016</span>
+        </div>
+
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <button class="btn" onclick="refreshData()">🔄 Refresh Data</button>
+            <button class="btn" onclick="viewAllConnections()">📋 All Connections</button>
+            <button class="btn" onclick="validateIntegrity()">✅ Run Integrity Check</button>
+        </div>
+
+        <h2 style="margin-bottom: 20px;">🚪 Landing Portals</h2>
+        <div class="portal-grid" id="portalsGrid"></div>
+
+        <div class="connections-section">
+            <h2 style="margin-bottom: 20px;">🔌 Failed Connections</h2>
+            <div id="connectionsList"></div>
+        </div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        const API_BASE = window.location.origin;
+
+        async function loadIntegrityData() {
+            try {
+                const response = await fetch(`${API_BASE}/content-integrity/report`);
+                const data = await response.json();
+
+                if (data.success) {
+                    displayStats(data);
+                    displayPortals(data.portals);
+                    displayConnections(data.failedConnections);
+                }
+            } catch (error) {
+                console.error('Error loading integrity data:', error);
+            }
+        }
+
+        function displayStats(data) {
+            const overallIntegrity = Math.round(
+                data.portals.reduce((sum, p) => sum + p.integrityScore, 0) / data.portals.length
+            );
+
+            const statsHtml = `
+                <div class="stat-card">
+                    <div class="stat-value good">${overallIntegrity}%</div>
+                    <div class="stat-label">Overall Integrity</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value ${data.failedConnections.total > 10 ? 'warning' : 'good'}">
+                        ${data.failedConnections.total}
+                    </div>
+                    <div class="stat-label">Failed Connections</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value good">${data.failedConnections.verified}</div>
+                    <div class="stat-label">Verified Safe</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value ${data.failedConnections.compromised > 0 ? 'critical' : 'good'}">
+                        ${data.failedConnections.compromised}
+                    </div>
+                    <div class="stat-label">Compromised</div>
+                </div>
+            `;
+            document.getElementById('statsGrid').innerHTML = statsHtml;
+        }
+
+        function displayPortals(portals) {
+            const portalsHtml = portals.map(portal => `
+                <div class="portal-card">
+                    <div class="portal-header">
+                        <div class="portal-name">${portal.name}</div>
+                        <span class="status-badge status-${portal.status}">${portal.status}</span>
+                    </div>
+                    <div style="font-size: 14px; margin-bottom: 10px;">
+                        Port: <strong>${portal.port}</strong> | 
+                        Connections: <strong>${portal.failedConnectionsCount}/${portal.capacity}</strong>
+                    </div>
+                    <div class="integrity-meter">
+                        <div class="integrity-fill" style="width: ${portal.integrityScore}%"></div>
+                    </div>
+                    <div style="text-align: center; margin-top: 10px;">
+                        Integrity: <strong>${portal.integrityScore}%</strong> | 
+                        Utilization: <strong>${portal.utilization}%</strong>
+                    </div>
+                    <button class="btn" onclick="viewPortalDetails('${portal.id}')" style="width: 100%; margin-top: 15px;">
+                        View Details
+                    </button>
+                </div>
+            `).join('');
+            document.getElementById('portalsGrid').innerHTML = portalsHtml;
+        }
+
+        function displayConnections(connections) {
+            if (connections.total === 0) {
+                document.getElementById('connectionsList').innerHTML = 
+                    '<p style="color: rgba(255,255,255,0.7);">No failed connections detected</p>';
+                return;
+            }
+
+            const connectionsHtml = `
+                <div style="display: grid; gap: 10px;">
+                    <div class="connection-item">
+                        <strong>Pending Verification:</strong> ${connections.pending} connections
+                    </div>
+                    <div class="connection-item verified">
+                        <strong>✅ Verified Safe:</strong> ${connections.verified} connections
+                    </div>
+                    ${connections.compromised > 0 ? `
+                        <div class="connection-item compromised">
+                            <strong>⚠️ Compromised:</strong> ${connections.compromised} connections
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            document.getElementById('connectionsList').innerHTML = connectionsHtml;
+        }
+
+        async function viewPortalDetails(portalId) {
+            try {
+                const response = await fetch(`${API_BASE}/content-integrity/portal/${portalId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`Portal: ${data.portal.name}\nIntegrity: ${data.portal.integrityScore}%\nConnections: ${data.connections.length}\nFCC Compliant: ${data.portal.fccCompliant ? 'Yes' : 'No'}`);
+                }
+            } catch (error) {
+                alert('Failed to load portal details');
+            }
+        }
+
+        function viewAllConnections() {
+            window.open('/port-streaming-portal.html', '_blank');
+        }
+
+        async function validateIntegrity() {
+            alert('Running integrity validation...\n\nThis will check all connections and structures.');
+            await refreshData();
+        }
+
+        async function refreshData() {
+            await loadIntegrityData();
+        }
+
+        // Initialize
+        loadIntegrityData();
+
+        // Auto-refresh every 15 seconds
+        setInterval(loadIntegrityData, 15000);
+    </script>
+</body>
+</html>
