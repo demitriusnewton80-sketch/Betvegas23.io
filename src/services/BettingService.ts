@@ -50,7 +50,14 @@ class BettingService {
     return this.users.get(userId);
   }
 
-  placeBet(userId: string, gameId: string, team: string, amount: number, odds: number): { success: boolean; bet?: Bet; error?: string } {
+  getUserWallet(userId: string): { balance: number } {
+    const user = this.users.get(userId);
+    return {
+      balance: user?.walletBalance || 0
+    };
+  }
+
+  placeBet(userId: string, gameId: string, team: string, amount: number, odds: number): { success: boolean; bet?: Bet; error?: string; streamAccess?: any } {
     const user = this.users.get(userId);
 
     if (!user) {

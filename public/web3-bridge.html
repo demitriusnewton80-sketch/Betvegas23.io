@@ -246,6 +246,51 @@
                     <p style="text-align: center; color: #9ca3af;">No transactions yet</p>
                 </div>
             </div>
+
+            <!-- CoinStats Portfolio -->
+            <div class="card">
+                <h2>📊 Portfolio Analytics</h2>
+                <div class="info-row">
+                    <span class="info-label">CoinStats Integration</span>
+                    <span class="info-value" style="color: #22c55e;">Active</span>
+                </div>
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="window.open('https://coinstats.app/p/TGct2H', '_blank')" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                        View Full Portfolio
+                    </button>
+                </div>
+                <div style="margin-top: 16px; padding: 16px; background: #f3f4f6; border-radius: 8px;">
+                    <p style="font-size: 12px; color: #6b7280; margin: 0;">
+                        Track your crypto assets, view real-time prices, and monitor portfolio performance.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Host Wallet Plug System -->
+            <div class="card">
+                <h2>🔌 Host Wallet Plug System</h2>
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span id="plugSystemStatus">Initializing...</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Host Wallet</span>
+                    <span class="info-value" id="hostWallet" style="font-size: 11px;">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">CoinStats Fusion</span>
+                    <span class="info-value" id="fusionStatus">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Bridge Connected</span>
+                    <span class="info-value" id="bridgeConnected">-</span>
+                </div>
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="fuseWithCoinStats()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        Activate Fusion
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -344,9 +389,71 @@
             }
         }
 
+        async function loadPlugSystemStatus() {
+            try {
+                const response = await fetch(`${getAPIBase()}/web3/plug-system/status`);
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('plugSystemStatus').textContent = data.plugSystem.status.toUpperCase();
+                    document.getElementById('hostWallet').textContent = web3Client.shortenAddress(data.hostWallet.address);
+                    document.getElementById('fusionStatus').textContent = data.coinStatsFusion.active ? 'Active' : 'Inactive';
+                    document.getElementById('fusionStatus').style.color = data.coinStatsFusion.active ? '#22c55e' : '#ef4444';
+                    document.getElementById('bridgeConnected').textContent = data.plugSystem.bridgeConnected ? 'Yes' : 'No';
+                    document.getElementById('bridgeConnected').style.color = data.plugSystem.bridgeConnected ? '#22c55e' : '#ef4444';
+                }
+            } catch (error) {
+                console.error('Error loading plug system status:', error);
+            }
+        }
+
+        async function fuseWithCoinStats() {
+            try {
+                const response = await fetch(`${getAPIBase()}/web3/fuse-coinstats`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`🔌 Fusion Complete!\n\nHost Wallet: ${web3Client.shortenAddress(data.hostWallet)}\nBalance: ${data.bridgeBalance} MATIC\nCoinStats Portfolio: Active`);
+                    loadPlugSystemStatus();
+                } else {
+                    alert('Fusion failed: ' + data.error);
+                }
+            } catch (error) {
+                alert('Fusion error: ' + error.message);
+            }
+        }
+
         // Initialize
         loadBridgeStatus();
+        loadPlugSystemStatus();
         setInterval(loadBridgeStatus, 10000);
+        setInterval(loadPlugSystemStatus, 10000);
+
+        // Auto-connect user's wallet
+        window.addEventListener('DOMContentLoaded', async () => {
+            const userWalletAddress = '0x00000000219ab540356cbb839cbe05303d7705fa';
+            document.getElementById('walletAddress').value = userWalletAddress;
+            
+            // Auto-connect after page loads
+            setTimeout(async () => {
+                try {
+                    const wallet = await web3Client.connectWallet(userWalletAddress);
+                    updateWalletDisplay(wallet);
+                    console.log('✅ Auto-connected wallet:', userWalletAddress);
+                    loadBridgeStatus();
+                    loadTransactions();
+                    loadPlugSystemStatus();
+                } catch (error) {
+                    console.error('Auto-connect failed:', error);
+                }
+            }, 1000);
+        });
     </script>
 </body>
 </html>

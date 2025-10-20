@@ -52,8 +52,47 @@ router.get('/platforms', (req: Request, res: Response) => {
     platforms: [
       { name: 'Live Sportsbook', url: '/index.html' },
       { name: 'Enhanced Sportsbook', url: '/enhanced-sportsbook.html' },
-      { name: 'Mobile Hub', url: '/mobile-sportsbook-hub.html' }
+      { name: 'Mobile Hub', url: '/mobile-sportsbook-hub.html' },
+      { name: 'Unified Sportsbook', url: '/unified-public-sportsbook.html' }
     ]
+  });
+});
+
+router.post('/bet', (req: Request, res: Response) => {
+  const { userId, gameId, team, amount } = req.body;
+  
+  if (!userId || !gameId || !team || !amount) {
+    return res.status(400).json({
+      success: false,
+      error: 'Missing required fields'
+    });
+  }
+
+  const event = sportsDataService.getEvent(gameId);
+  if (!event) {
+    return res.status(404).json({
+      success: false,
+      error: 'Game not found'
+    });
+  }
+
+  const odds = team === 'home' ? event.moneyLine.home : event.moneyLine.away;
+  const potentialWin = amount * Math.abs(odds > 0 ? (odds / 100 + 1) : (100 / Math.abs(odds) + 1));
+
+  res.json({
+    success: true,
+    bet: {
+      id: `BET-${Date.now()}`,
+      userId,
+      gameId,
+      team,
+      amount,
+      odds,
+      potentialWin: potentialWin.toFixed(2),
+      status: 'pending',
+      placedAt: new Date().toISOString()
+    },
+    fccEntity: '20130314143016'
   });
 });
 

@@ -1,4 +1,3 @@
-
 import express, { Request, Response } from 'express';
 import { ssoPluginService } from '../services/SSOPluginService.js';
 
@@ -32,8 +31,8 @@ router.get('/diagnostics', async (req: Request, res: Response) => {
       publicAccess: true,
       cloudStatus: 'operational',
       tests: {
-        server: { 
-          status: 'online', 
+        server: {
+          status: 'online',
           uptime: Math.floor(process.uptime()),
           port: parseInt(process.env.PORT || '5000'),
           host: '0.0.0.0'
@@ -44,7 +43,7 @@ router.get('/diagnostics', async (req: Request, res: Response) => {
           percentage: Math.round((process.memoryUsage().heapUsed / process.memoryUsage().heapTotal) * 100)
         },
         environment: process.env.NODE_ENV || 'development',
-        deployment: process.env.REPLIT_DEPLOYMENT === '1' ? 'production' : 'development'
+        deployment: process.env.REPL_DEPLOYMENT === '1' ? 'production' : 'development'
       },
       endpoints: {
         health: '/health',
@@ -143,6 +142,51 @@ router.get('/cloud/health', async (req: Request, res: Response) => {
       error: error instanceof Error ? error.message : 'Health check failed'
     });
   }
+});
+
+// Get available platforms
+router.get('/platforms', (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    platforms: [
+      { name: 'Unified Scan Portal', path: '/unified-scan-portal.html', featured: true },
+      { name: 'Enhanced Sportsbook', path: '/enhanced-sportsbook.html' },
+      { name: 'Mobile Hub', path: '/mobile-sportsbook-hub.html' },
+      { name: 'Public Access', path: '/public-access.html' },
+      { name: 'Unified View', path: '/public-unified-view.html' }
+    ],
+    fccEntity: '20130314143016'
+  });
+});
+
+// Unified scan portal info
+router.get('/scan-portal', (req: Request, res: Response) => {
+  const baseUrl = process.env.REPL_SLUG
+    ? `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`
+    : req.protocol + '://' + req.get('host');
+
+  res.json({
+    success: true,
+    scanPortal: {
+      url: `${baseUrl}/unified-scan-portal.html`,
+      qrCodes: {
+        sportsbook: `${baseUrl}/unified-public-sportsbook.html`,
+        web3: `${baseUrl}/web3-bridge.html`,
+        sso: `${baseUrl}/personal-sso-login.html`
+      },
+      features: [
+        'Live sports betting',
+        'ESPN tracker integration',
+        'Web3 wallet connection',
+        'Multi-provider SSO',
+        'Radio stream access',
+        'CoinStats portfolio sync'
+      ]
+    },
+    fccEntity: '20130314143016',
+    walletAddress: '0x00000000219ab540356cbb839cbe05303d7705fa',
+    coinStatsPortfolio: 'https://coinstats.app/p/TGct2H'
+  });
 });
 
 export default router;

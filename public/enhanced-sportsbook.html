@@ -438,11 +438,12 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script src="/js/api-config.js"></script>
     <script>
+        // Use API_BASE from api-config.js (already loaded globally)
         let currentUser = null;
         let selectedBets = new Map();
 
         async function loginWithSSO(provider) {
-            window.location.href = `${API_BASE}/sso-plugin/login/${provider}`;
+            window.location.href = `${window.API_BASE}/sso-plugin/login/${provider}`;
         }
 
         function showQRModal() {
@@ -488,7 +489,7 @@
             container.innerHTML = '<p style="text-align: center; opacity: 0.7;">Loading games...</p>';
             
             try {
-                const response = await fetch(`${API_BASE}/sportsbook/games`, {
+                const response = await fetch(`${window.API_BASE}/sportsbook/games`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -614,7 +615,7 @@
             }
 
             try {
-                const response = await fetch(`${API_BASE}/sportsbook/bet`, {
+                const response = await fetch(`${window.API_BASE}/sportsbook/bet`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -651,8 +652,8 @@
 
             try {
                 const [walletRes, statsRes] = await Promise.all([
-                    fetch(`${API_BASE}/sportsbook/user/${currentUser.id}/wallet`),
-                    fetch(`${API_BASE}/sportsbook/user/${currentUser.id}/stats`)
+                    fetch(`${window.API_BASE}/sportsbook/user/${currentUser.id}/wallet`),
+                    fetch(`${window.API_BASE}/sportsbook/user/${currentUser.id}/stats`)
                 ]);
 
                 const wallet = await walletRes.json();
@@ -672,7 +673,7 @@
 
         async function checkAuthStatus() {
             try {
-                const response = await fetch(`${API_BASE}/auth/me`, {
+                const response = await fetch(`${window.API_BASE}/auth/me`, {
                     credentials: 'include'
                 });
 

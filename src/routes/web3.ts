@@ -397,4 +397,73 @@ router.get('/chain/config', (req: Request, res: Response) => {
   });
 });
 
+// Get CoinStats portfolio
+router.get('/portfolio', (req: Request, res: Response) => {
+  const portfolioUrl = web3BridgeService.getCoinStatsPortfolio();
+  
+  res.json({
+    success: true,
+    portfolio: {
+      provider: 'CoinStats',
+      url: portfolioUrl,
+      features: [
+        'Real-time portfolio tracking',
+        'Multi-wallet support',
+        'Price alerts',
+        'Historical performance'
+      ]
+    },
+    integration: 'active',
+    fccEntity: '20130314143016'
+  });
+});
+
+// Get plug system status
+router.get('/plug-system/status', (req: Request, res: Response) => {
+  const status = web3BridgeService.getPlugSystemStatus();
+  
+  res.json({
+    success: true,
+    ...status,
+    fccEntity: '20130314143016',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Get host wallet info
+router.get('/host-wallet', (req: Request, res: Response) => {
+  const hostWallet = web3BridgeService.getHostWallet();
+  const wallet = web3BridgeService.getWallet(hostWallet);
+  
+  res.json({
+    success: true,
+    hostWallet: {
+      address: hostWallet,
+      connected: !!wallet,
+      balance: wallet?.balance || '0',
+      chainId: wallet?.chainId || 137,
+      coinStatsLinked: true
+    },
+    fccEntity: '20130314143016'
+  });
+});
+
+// Fuse with CoinStats
+router.post('/fuse-coinstats', async (req: Request, res: Response) => {
+  try {
+    const fusion = await web3BridgeService.fuseWithCoinStats();
+    
+    res.json({
+      success: true,
+      ...fusion,
+      fccEntity: '20130314143016'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Fusion failed'
+    });
+  }
+});
+
 export default router;

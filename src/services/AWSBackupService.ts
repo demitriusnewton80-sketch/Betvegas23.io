@@ -172,6 +172,18 @@ class AWSBackupService extends EventEmitter {
     const config = this.backupConfigs.get(userId);
     return `arn:aws:marketplace:${config?.region || 'us-east-1'}:${config?.awsAccountId}:sap/youngmeat-llc`;
   }
+
+  // Store backup data
+  async storeBackup(key: string, data: any): Promise<void> {
+    console.log(`Storing backup: ${key}`);
+    // In production, store to S3
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }
+
+  // Backup shorthand method
+  async backup(params: { key: string; data: any }): Promise<void> {
+    await this.storeBackup(params.key, params.data);
+  }
 }
 
 export const awsBackupService = new AWSBackupService();

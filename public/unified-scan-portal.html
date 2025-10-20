@@ -1,0 +1,533 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified Access Portal | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f172a 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #8b5cf6 100%);
+            padding: 60px 20px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><circle cx="100" cy="100" r="80" fill="rgba(255,255,255,0.05)"/><circle cx="1000" cy="400" r="120" fill="rgba(255,255,255,0.03)"/><circle cx="600" cy="300" r="100" fill="rgba(255,255,255,0.04)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff 0%, #e0f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 22px;
+            margin-bottom: 20px;
+            opacity: 0.95;
+        }
+
+        .badge-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .status-badge {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .badge-fcc {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid #22c55e;
+            color: #22c55e;
+        }
+
+        .badge-live {
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid #ef4444;
+            color: #ef4444;
+        }
+
+        .badge-web3 {
+            background: rgba(139, 92, 246, 0.2);
+            border: 2px solid #8b5cf6;
+            color: #8b5cf6;
+        }
+
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            background: currentColor;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.9); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: -30px auto 0;
+            padding: 0 20px 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .scan-section {
+            background: rgba(30, 41, 59, 0.95);
+            border: 3px solid rgba(59, 130, 246, 0.4);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            backdrop-filter: blur(20px);
+        }
+
+        .qr-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .qr-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .qr-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.3);
+        }
+
+        .qr-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .qr-display {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin: 20px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .access-links {
+            display: grid;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .access-btn {
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .access-btn:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+        }
+
+        .access-btn.web3 {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        .access-btn.web3:hover {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+        }
+
+        .access-btn.success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+
+        .access-btn.success:hover {
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+        }
+
+        .features-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .feature-card {
+            background: rgba(30, 41, 59, 0.9);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(59, 130, 246, 0.25);
+        }
+
+        .feature-icon {
+            font-size: 52px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .feature-desc {
+            font-size: 14px;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        .sports-ticker-embed {
+            background: rgba(30, 41, 59, 0.95);
+            border: 3px solid rgba(200, 16, 46, 0.4);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.4);
+        }
+
+        .ticker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .ticker-title {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .live-indicator {
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid #ef4444;
+            color: #ef4444;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ticker-frame {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid rgba(200, 16, 46, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 38px;
+            }
+
+            .qr-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features-showcase {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .download-btn {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            margin-top: 15px;
+        }
+
+        .download-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        .qr-info {
+            font-size: 13px;
+            opacity: 0.7;
+            margin-top: 15px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">🌐 Unified Access Portal</h1>
+            <p class="hero-subtitle">Scan Once • Access Everything • Live Sports • Web3 • Betting</p>
+            <div class="badge-container">
+                <span class="status-badge badge-fcc">
+                    FCC Entity: 20130314143016
+                </span>
+                <span class="status-badge badge-live">
+                    <span class="pulse-dot"></span>
+                    Live Sports Tracking
+                </span>
+                <span class="status-badge badge-web3">
+                    ⛓️ Web3 Connected
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Main QR Scan Section -->
+        <div class="scan-section">
+            <h2 style="font-size: 32px; text-align: center; margin-bottom: 10px;">📱 Scan to Access All Services</h2>
+            <p style="text-align: center; opacity: 0.8; margin-bottom: 30px;">One QR code for complete platform access</p>
+
+            <div class="qr-grid">
+                <!-- Primary Access QR -->
+                <div class="qr-card">
+                    <h3 class="qr-title">
+                        🏆 Sportsbook Access
+                    </h3>
+                    <div class="qr-display">
+                        <canvas id="sportsbookQR" width="250" height="250"></canvas>
+                    </div>
+                    <p class="qr-info">
+                        Scan for instant access to live betting, sports streams, and real-time odds
+                    </p>
+                    <button class="download-btn" onclick="downloadQR('sportsbookQR', 'sportsbook-access')">
+                        📥 Download QR
+                    </button>
+                    <div class="access-links">
+                        <button class="access-btn" onclick="window.location.href='/unified-public-sportsbook.html'">
+                            🎯 Open Sportsbook
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Web3 & SSO QR -->
+                <div class="qr-card">
+                    <h3 class="qr-title">
+                        🔐 Web3 & SSO Login
+                    </h3>
+                    <div class="qr-display">
+                        <canvas id="web3QR" width="250" height="250"></canvas>
+                    </div>
+                    <p class="qr-info">
+                        Connect wallet, access SSO providers, view CoinStats portfolio
+                    </p>
+                    <button class="download-btn" onclick="downloadQR('web3QR', 'web3-access')">
+                        📥 Download QR
+                    </button>
+                    <div class="access-links">
+                        <button class="access-btn web3" onclick="window.location.href='/web3-bridge.html'">
+                            ⛓️ Web3 Bridge
+                        </button>
+                        <button class="access-btn" onclick="window.location.href='/personal-sso-login.html'">
+                            🔑 SSO Login
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Access Buttons -->
+            <div style="margin-top: 30px;">
+                <h3 style="font-size: 20px; margin-bottom: 15px; text-align: center;">⚡ Quick Access Links</h3>
+                <div class="access-links" style="max-width: 600px; margin: 0 auto;">
+                    <button class="access-btn success" onclick="window.location.href='/index.html'">
+                        🏆 Live Sportsbook & Streams
+                    </button>
+                    <button class="access-btn web3" onclick="window.open('https://coinstats.app/p/TGct2H', '_blank')">
+                        📊 CoinStats Portfolio
+                    </button>
+                    <button class="access-btn" onclick="window.location.href='/enhanced-sportsbook.html'">
+                        ⭐ Enhanced Betting
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live ESPN Sports Ticker -->
+        <div class="sports-ticker-embed">
+            <div class="ticker-header">
+                <h2 class="ticker-title">
+                    🏆 Live Sports Tracker
+                </h2>
+                <span class="live-indicator">
+                    <span class="pulse-dot"></span>
+                    Real-Time Updates
+                </span>
+            </div>
+            <div class="ticker-frame">
+                <iframe src="/components/espn-sports-ticker.html" 
+                        style="width: 100%; height: 120px; border: none; display: block;"
+                        title="Live Sports Ticker">
+                </iframe>
+            </div>
+        </div>
+
+        <!-- Feature Showcase -->
+        <div class="features-showcase">
+            <div class="feature-card">
+                <span class="feature-icon">🎯</span>
+                <h3 class="feature-title">Live Betting</h3>
+                <p class="feature-desc">Real-time odds on NFL, NBA, MLB, NHL with instant bet placement</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">📻</span>
+                <h3 class="feature-title">Live Radio Streams</h3>
+                <p class="feature-desc">Listen to games with official team radio broadcasts</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">⛓️</span>
+                <h3 class="feature-title">Web3 Integration</h3>
+                <p class="feature-desc">Connect Polygon wallet, track MATIC balance, CoinStats sync</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🔐</span>
+                <h3 class="feature-title">Multi-SSO Login</h3>
+                <p class="feature-desc">FCC SSO, SAM.gov, PlayStation Network, AWS Cognito</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">📊</span>
+                <h3 class="feature-title">ESPN Tracker</h3>
+                <p class="feature-desc">Live scores, schedules, breaking news from all major leagues</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🏆</span>
+                <h3 class="feature-title">Team Branding</h3>
+                <p class="feature-desc">Official logos and real-time game data integration</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="/js/api-config.js"></script>
+    <script>
+        // Generate QR Codes
+        async function generateQRCodes() {
+            const baseUrl = window.location.origin;
+
+            // Sportsbook QR
+            await QRCode.toCanvas(document.getElementById('sportsbookQR'), 
+                `${baseUrl}/unified-public-sportsbook.html`, {
+                width: 250,
+                margin: 2,
+                color: {
+                    dark: '#1e3a8a',
+                    light: '#ffffff'
+                }
+            });
+
+            // Web3 & SSO QR
+            await QRCode.toCanvas(document.getElementById('web3QR'), 
+                `${baseUrl}/web3-bridge.html`, {
+                width: 250,
+                margin: 2,
+                color: {
+                    dark: '#8b5cf6',
+                    light: '#ffffff'
+                }
+            });
+        }
+
+        function downloadQR(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = `${filename}-qr.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            generateQRCodes();
+        });
+    </script>
+</body>
+</html>
