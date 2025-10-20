@@ -1,0 +1,443 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remote Streaming Control Hub | Young Meeat LLC</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <script src="/js/api-config.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.3);
+        }
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+        .fcc-badge {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid #22c55e;
+            color: #22c55e;
+            padding: 8px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #22c55e;
+            margin-bottom: 8px;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #9ca3af;
+            text-transform: uppercase;
+        }
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .section h2 {
+            color: #6366f1;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .landscape-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #6366f1;
+        }
+        .zone-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .zone-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .tunnel-list {
+            margin-top: 10px;
+        }
+        .tunnel-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+        .health-optimal { color: #22c55e; }
+        .health-degraded { color: #f59e0b; }
+        .health-critical { color: #ef4444; }
+        .status-active { color: #22c55e; }
+        .status-upgrading { color: #3b82f6; }
+        .status-degraded { color: #f59e0b; }
+        .fcc-channel {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid #22c55e;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎮 Remote Streaming Control Hub</h1>
+        <p>FCC-Compliant Content Landscape with Tunnel Architecture</p>
+        <span class="fcc-badge">FCC Entity: 20130314143016</span>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value" id="totalTunnels">0</div>
+            <div class="stat-label">Streaming Tunnels</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="activeTunnels">0</div>
+            <div class="stat-label">Active Tunnels</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="avgUpgradeLevel">0</div>
+            <div class="stat-label">Avg Upgrade Level</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="fccChannels">0</div>
+            <div class="stat-label">FCC Channels</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🚇 Create Streaming Tunnel</h2>
+        <input type="number" id="sourcePort" placeholder="Source Port (e.g., 5000)">
+        <input type="number" id="targetPort" placeholder="Target Port (e.g., 6000)">
+        <select id="fccChannel">
+            <option value="">Select FCC Channel</option>
+            <option value="fcc-sports-live">Sports Live</option>
+            <option value="fcc-betting-data">Betting Data</option>
+            <option value="fcc-gaming-stream">Gaming Stream</option>
+            <option value="fcc-radio-broadcast">Radio Broadcast</option>
+        </select>
+        <button class="btn btn-success" onclick="createTunnel()">Create Tunnel</button>
+        <button class="btn" onclick="upgradeAllPorts()">Upgrade All Outdated Ports</button>
+    </div>
+
+    <div class="section">
+        <h2>🌐 Content Landscapes</h2>
+        <div id="landscapesContainer"></div>
+    </div>
+
+    <div class="section">
+        <h2>📡 FCC Streaming Channels</h2>
+        <div id="fccChannelsContainer"></div>
+    </div>
+
+    <div class="section">
+        <h2>🏗️ Architecture Map</h2>
+        <div id="architectureContainer"></div>
+    </div>
+
+    <script>
+        // Register Service Worker for offline support
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('✅ Service Worker registered for offline support'))
+                    .catch(err => console.error('❌ Service Worker registration failed:', err));
+            });
+        }
+
+        // Offline status indicator
+        function updateOnlineStatus() {
+            const header = document.querySelector('.header');
+            if (!navigator.onLine) {
+                if (!document.getElementById('offline-badge')) {
+                    const badge = document.createElement('span');
+                    badge.id = 'offline-badge';
+                    badge.className = 'fcc-badge';
+                    badge.style.background = 'rgba(239, 68, 68, 0.2)';
+                    badge.style.borderColor = '#ef4444';
+                    badge.style.color = '#ef4444';
+                    badge.textContent = '📡 OFFLINE MODE';
+                    header.appendChild(badge);
+                }
+            } else {
+                const badge = document.getElementById('offline-badge');
+                if (badge) badge.remove();
+            }
+        }
+
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+
+        async function loadStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/remote-streaming-control/status`);
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('totalTunnels').textContent = data.tunnels.total;
+                    document.getElementById('activeTunnels').textContent = data.tunnels.active;
+                    document.getElementById('avgUpgradeLevel').textContent = data.tunnels.avgUpgradeLevel.toFixed(1);
+                    document.getElementById('fccChannels').textContent = data.fccChannels.total;
+                }
+            } catch (error) {
+                console.error('Error loading status:', error);
+                if (!navigator.onLine) {
+                    document.getElementById('totalTunnels').textContent = '--';
+                    document.getElementById('activeTunnels').textContent = '--';
+                    document.getElementById('avgUpgradeLevel').textContent = '--';
+                    document.getElementById('fccChannels').textContent = '--';
+                }
+            }
+        }
+
+        async function loadLandscapes() {
+            try {
+                const response = await fetch(`${API_BASE}/remote-streaming-control/landscapes`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const container = document.getElementById('landscapesContainer');
+                    container.innerHTML = data.landscapes.map(landscape => `
+                        <div class="landscape-card">
+                            <h3 style="margin-bottom: 15px;">
+                                ${landscape.name}
+                                <span class="health-${landscape.health}">● ${landscape.health.toUpperCase()}</span>
+                            </h3>
+                            <div style="margin-bottom: 15px;">
+                                Active Streams: <strong>${landscape.activeStreams}</strong> / ${landscape.totalCapacity}
+                            </div>
+                            <div class="zone-grid">
+                                ${landscape.zones.map(zone => `
+                                    <div class="zone-card">
+                                        <strong>${zone.type.toUpperCase()}</strong>
+                                        <div style="font-size: 12px; margin-top: 5px;">
+                                            Ports: ${zone.ports.join(', ')}
+                                        </div>
+                                        <div style="font-size: 12px;">
+                                            Tunnels: ${zone.tunnels.length}
+                                        </div>
+                                        <div style="font-size: 12px;">
+                                            Remote: ${zone.remoteAccess ? '✅' : '❌'}
+                                            | FCC: ${zone.fccCompliant ? '✅' : '❌'}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading landscapes:', error);
+                if (!navigator.onLine) {
+                    const container = document.getElementById('landscapesContainer');
+                    container.innerHTML = '<div style="text-align: center; padding: 40px; opacity: 0.7;">📡 Offline - Cached data unavailable</div>';
+                }
+            }
+        }
+
+        async function loadFCCChannels() {
+            try {
+                const response = await fetch(`${API_BASE}/remote-streaming-control/fcc-channels`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const container = document.getElementById('fccChannelsContainer');
+                    container.innerHTML = data.channels.map(channel => `
+                        <div class="fcc-channel">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <strong>${channel.type.toUpperCase()}</strong>
+                                <span style="color: ${channel.status === 'active' ? '#22c55e' : '#ef4444'}">
+                                    ● ${channel.status.toUpperCase()}
+                                </span>
+                            </div>
+                            <div style="font-size: 13px; margin-top: 10px;">
+                                ID: ${channel.id}<br>
+                                Bandwidth: ${(channel.bandwidth / 1000).toFixed(0)} Mbps<br>
+                                Connections: ${channel.activeConnections}<br>
+                                Priority: ${channel.priority.toUpperCase()}<br>
+                                Compliance: ${channel.compliance ? '✅ Compliant' : '❌ Non-Compliant'}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading FCC channels:', error);
+            }
+        }
+
+        async function loadArchitecture() {
+            try {
+                const response = await fetch(`${API_BASE}/remote-streaming-control/architecture`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const container = document.getElementById('architectureContainer');
+                    container.innerHTML = data.architecture.map(arch => `
+                        <div class="landscape-card">
+                            <h3>${arch.landscape.name} 
+                                <span class="health-${arch.landscape.health}">
+                                    (${arch.landscape.health})
+                                </span>
+                            </h3>
+                            ${arch.zones.map(zone => `
+                                <div style="margin-top: 15px;">
+                                    <strong>${zone.type.toUpperCase()} Zone</strong>
+                                    <div class="tunnel-list">
+                                        ${zone.tunnels.map(tunnel => `
+                                            <div class="tunnel-item">
+                                                <span class="status-${tunnel.status}">●</span>
+                                                Port ${tunnel.sourcePort} → ${tunnel.targetPort}
+                                                | Level ${tunnel.upgradeLevel}
+                                                | FCC: ${tunnel.fccChannel}
+                                            </div>
+                                        `).join('') || '<div style="opacity: 0.7; font-size: 12px;">No tunnels</div>'}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading architecture:', error);
+            }
+        }
+
+        async function createTunnel() {
+            const sourcePort = document.getElementById('sourcePort').value;
+            const targetPort = document.getElementById('targetPort').value;
+            const fccChannelId = document.getElementById('fccChannel').value;
+
+            if (!sourcePort || !targetPort || !fccChannelId) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/remote-streaming-control/tunnel/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sourcePort, targetPort, fccChannelId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Tunnel created: ${data.tunnelId}`);
+                    document.getElementById('sourcePort').value = '';
+                    document.getElementById('targetPort').value = '';
+                    loadAll();
+                } else {
+                    alert('❌ Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Failed to create tunnel');
+            }
+        }
+
+        async function upgradeAllPorts() {
+            try {
+                const response = await fetch(`${API_BASE}/remote-streaming-control/ports/upgrade-all`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Port upgrade initiated!\nTunnels: ${data.tunnelsCreated}`);
+                    loadAll();
+                } else {
+                    alert('❌ Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Failed to upgrade ports');
+            }
+        }
+
+        function loadAll() {
+            loadStatus();
+            loadLandscapes();
+            loadFCCChannels();
+            loadArchitecture();
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            updateOnlineStatus();
+            loadAll();
+            setInterval(loadAll, 15000);
+        });
+    </script>
+</body>
+</html>

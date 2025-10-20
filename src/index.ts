@@ -1,294 +1,208 @@
 import express, { Request, Response } from 'express';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { createServer } from 'http';
-import { WebSocketServer, WebSocket } from 'ws';
-import { startupDiagnostics } from './utils/startup-diagnostics.js';
-import { appCore } from './core/AppCore.js';
-import { smartCommunication } from './utils/smart-communication.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import cors from 'cors';
+import helmet from 'helmet';
 
 // Import routes
 import sportsbookRoutes from './routes/sportsbook.js';
 import streamingRoutes from './routes/streaming.js';
-import ps5Routes from './routes/ps5.js';
-import ssoPluginRoutes from './routes/sso-plugin.js';
-import backupRoutes from './routes/backup.js';
-import publicAccessRoutes from './routes/public-access.js';
-import domainRoutes from './routes/domain.js';
-import vpnRoutes from './routes/vpn.js';
-import functionalStructuresRoutes from './routes/functional-structures.js';
-import phoneControlRoutes from './routes/phone-control.js';
-import smartSystemRoutes from './routes/smart-system.js';
-import mobileRoutes from './routes/mobile.js';
-import errorRecoveryRoutes from './routes/error-recovery.js';
-import businessRelationshipsRouter from './routes/business-relationships.js';
+import sportsRadioRoutes from './routes/sports-radio.js';
 import espnTrackerRoutes from './routes/espn-tracker.js';
 import espnBettingRoutes from './routes/espn-betting.js';
+import ps5Routes from './routes/ps5.js';
+import web3Routes from './routes/web3.js';
+import ssoPluginRoutes from './routes/sso-plugin.js';
+import phoneControlRoutes from './routes/phone-control.js';
+import backupRoutes from './routes/backup.js';
 import versionRoutes from './routes/version.js';
-import awsAccountRoutes from './routes/aws-account.js';
-import accountRoutes from './routes/account.js';
-import authRoutes from './routes/auth.js';
+import parlayRoutes from './routes/parlay.js';
+import smartSystemRoutes from './routes/smart-system.js';
 import smartTroubleshootingRoutes from './routes/smart-troubleshooting.js';
-import functionalRelationshipsBridgeRoutes from './routes/functional-relationships-bridge.js';
-import debugEndpoints from './routes/debug-endpoints.js';
+import fusionTroubleshootingRoutes from './routes/fusion-troubleshooting.js';
+import wifiWeb3FusionRoutes from './routes/wifi-web3-fusion.js';
+import errorRecoveryRoutes from './routes/error-recovery.js';
 import apiTroubleshootingRoutes from './routes/api-troubleshooting.js';
-import winnerPayoutRouter from './routes/winner-payout.js';
-import wifiInfusionRouter from './routes/wifi-infusion.js';
-import systemHealthRouter from './routes/system-health.js';
-import contentRollbackRouter from './routes/content-rollback.js';
-import portManagementRoutes from './routes/port-management.js';
-import publicSportsIntelRoutes from './routes/public-sports-intel.js';
-import streamingPortalRoutes from './routes/streaming-portal.js';
-import googlePortLauncherRoutes from './routes/google-port-launcher.js';
-import fusionLaunchRoutes from './routes/fusion-launch.js';
-import portAllianceRoutes from './routes/port-alliance.js';
-import smartTunnelRoutes from './routes/smart-tunnel.js';
+import apiFusionRoutes from './routes/api-fusion.js';
+import fusionAssemblyRouter from './routes/fusion-assembly.js';
+import contractCallbacksRoutes from './routes/contract-callbacks.js';
+import jsonSyncRoutes from './routes/json-sync.js';
+import workflowLandscapeRouter from './routes/workflow-landscape.js';
+import smartCommunicationFusionRouter from './routes/smart-communication-fusion.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = parseInt(process.env.PORT || '5000');
-const HOST = '0.0.0.0'; // Bind to 0.0.0.0 for external accessibility
+const PORT: number = parseInt(process.env.PORT || '5000', 10);
 
 // Middleware
-app.disable('x-powered-by');
-app.use(cors({ origin: true, credentials: true }));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-app.use(cookieParser());
+app.use(cors({
+  origin: '*',
+  credentials: true
+}));
 
-// API routes
-app.use('/sportsbook', sportsbookRoutes);
-app.use('/streaming', streamingRoutes);
-app.use('/api/streaming', streamingRoutes); // Alternative path for frontend compatibility
-app.use('/ps5', ps5Routes);
-app.use('/sso-plugin', ssoPluginRoutes);
-app.use('/backup', backupRoutes);
-app.use('/public-access', publicAccessRoutes);
-app.use('/domain', domainRoutes);
-app.use('/vpn', vpnRoutes);
-app.use('/functional-structures', functionalStructuresRoutes);
-app.use('/phone-control', phoneControlRoutes);
-app.use('/smart-system', smartSystemRoutes);
-app.use('/mobile', mobileRoutes);
-app.use('/error-recovery', errorRecoveryRoutes);
-app.use('/business-relationships', businessRelationshipsRouter);
-app.use('/espn-tracker', espnTrackerRoutes);
-app.use('/espn-betting', espnBettingRoutes);
-app.use('/version', versionRoutes);
-app.use('/api/aws-account', awsAccountRoutes);
-app.use('/api/account', accountRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/smart-troubleshooting', smartTroubleshootingRoutes);
-app.use('/functional-relationships-bridge', functionalRelationshipsBridgeRoutes);
-app.use('/debug', debugEndpoints);
-app.use('/api-troubleshooting', apiTroubleshootingRoutes);
-app.use('/winner-payout', winnerPayoutRouter);
-app.use('/wifi-infusion', wifiInfusionRouter);
-app.use('/system-health', systemHealthRouter);
-app.use('/content-rollback', contentRollbackRouter);
-app.use('/port-management', portManagementRoutes);
-app.use('/public-sports-intel', publicSportsIntelRoutes);
-app.use('/streaming-portal', streamingPortalRoutes);
-app.use('/google-port-launcher', googlePortLauncherRoutes);
-app.use('/fusion-launch', fusionLaunchRoutes);
-app.use('/port-alliance', portAllianceRoutes);
-app.use('/smart-tunnel', smartTunnelRoutes);
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false
+}));
 
-// Serve static files from public directory
-app.use(express.static('public'));
-
-// Main Betting Sites homepage
-app.get('/betting-sites', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/betting-sites-home.html'));
+// Ensure JSON responses
+app.use((req, res, next) => {
+  res.setHeader('Content-Type', 'application/json');
+  next();
 });
 
-// Smart communication status
-app.get('/smart-communication/status', (req: Request, res: Response) => {
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Override for static files
+app.use(express.static('public', {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.html')) {
+      res.setHeader('Content-Type', 'text/html');
+    } else if (path.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (path.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    }
+  }
+}));
+
+// API Routes (must be before static files)
+try {
+  app.use('/sportsbook', sportsbookRoutes);
+  app.use('/streaming', streamingRoutes);
+  app.use('/sports-radio', sportsRadioRoutes);
+  app.use('/espn-tracker', espnTrackerRoutes);
+  app.use('/espn-betting', espnBettingRoutes);
+  app.use('/ps5', ps5Routes);
+  app.use('/web3', web3Routes);
+  app.use('/sso-plugin', ssoPluginRoutes);
+  app.use('/phone-control', phoneControlRoutes);
+  app.use('/backup', backupRoutes);
+  app.use('/version', versionRoutes);
+  app.use('/parlay', parlayRoutes);
+  app.use('/smart-system', smartSystemRoutes);
+  app.use('/smart-troubleshooting', smartTroubleshootingRoutes);
+  app.use('/fusion-troubleshooting', fusionTroubleshootingRoutes);
+  app.use('/wifi-web3-fusion', wifiWeb3FusionRoutes);
+  app.use('/error-recovery', errorRecoveryRoutes);
+  app.use('/api-troubleshooting', apiTroubleshootingRoutes);
+  app.use('/api-fusion', apiFusionRoutes);
+  app.use('/fusion-assembly', fusionAssemblyRouter);
+  app.use('/contract-callbacks', contractCallbacksRoutes);
+  app.use('/json-sync', jsonSyncRoutes);
+  console.log('✅ All API routes registered successfully');
+} catch (error) {
+  console.error('❌ Error registering routes:', error);
+}
+
+// Static files (must be after API routes)
+app.use(express.static(path.join(__dirname, '../public')));
+
+// Root route - redirect to BettingSites home
+app.get('/', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/bettingsites-home.html'));
+});
+
+// BettingSites branding endpoint
+app.get('/api/brand', (req: Request, res: Response) => {
   res.json({
-    success: true,
-    communication: smartCommunication.getStats(),
-    fccEntity: '20130314143016'
+    name: 'BettingSites™',
+    trademark: '™',
+    company: 'Young Meeat LLC',
+    fccEntity: '20130314143016',
+    fccRegistration: '0024454324',
+    poweredBy: 'Amazon Web Services (AWS)',
+    services: {
+      streaming: 'Live Sports Video & Audio',
+      radio: 'Sports Radio Broadcasting',
+      betting: 'Real-Time Sports Betting',
+      gaming: 'PlayStation 5 Integration'
+    },
+    copyright: '© 2025 Young Meeat LLC. All rights reserved.',
+    design: 'Logo & Brand Design by AWS'
   });
 });
 
-// Main route
-app.get('/', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+// SPA fallback for all HTML routes
+app.get('*', (req: Request, res: Response) => {
+  if (req.path.endsWith('.html') || !req.path.includes('.')) {
+    const filePath = path.join(__dirname, '../public', req.path.endsWith('.html') ? req.path : 'index.html');
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        res.sendFile(path.join(__dirname, '../public/bettingsites-home.html'));
+      }
+    });
+  } else {
+    res.status(404).json({ error: 'Not found', brand: 'BettingSites™' });
+  }
 });
 
-// API 404 handler - must come before SPA catch-all
+// API 404 handlers - must come before SPA catch-all
 app.use('/api/*', (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
   res.status(404).json({
-    success: false,
     error: 'API endpoint not found',
-    path: req.path
-  });
-});
-
-app.use('/streaming/*', (req: Request, res: Response) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.status(404).json({
-    success: false,
-    error: 'Streaming endpoint not found',
-    path: req.path
-  });
-});
-
-// Catch-all for SPA - only for non-API routes
-app.get('*', (req: Request, res: Response) => {
-  // Don't catch API routes
-  if (req.path.startsWith('/api/') ||
-      req.path.startsWith('/streaming/') ||
-      req.path.startsWith('/sportsbook/') ||
-      req.path.startsWith('/error-recovery/') ||
-      req.path.startsWith('/smart-troubleshooting/') ||
-      req.path.startsWith('/debug/') ||
-      req.path.startsWith('/api-troubleshooting/')) {
-    return res.status(404).json({
-      success: false,
-      error: 'Endpoint not found',
-      path: req.path
-    });
-  }
-
-  // For file requests, return 404
-  if (req.path.includes('.')) {
-    return res.status(404).send('Not found');
-  }
-
-  // Otherwise serve index.html
-  res.sendFile(path.join(__dirname, '../public/index.html'));
-});
-
-// Error handling
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('Server Error:', err.message || err);
-
-  // Always return JSON, never HTML
-  res.setHeader('Content-Type', 'application/json');
-  res.status(500).json({
-    success: false,
-    error: 'Internal server error',
-    message: err.message || 'An unexpected error occurred.',
+    brand: 'BettingSites™',
     fccEntity: '20130314143016'
   });
 });
 
-// Create HTTP server
-const httpServer = createServer(app);
-
-// WebSocket
-const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
-
-wss.on('connection', (ws: WebSocket) => {
-  console.log('WebSocket connected');
-  ws.send(JSON.stringify({ type: 'connected', timestamp: new Date().toISOString() }));
-
-  ws.on('message', (data: Buffer) => {
-    try {
-      const message = JSON.parse(data.toString());
-      ws.send(JSON.stringify({ type: 'echo', received: message }));
-    } catch (error) {
-      console.error('WebSocket error:', error);
-      ws.send(JSON.stringify({ type: 'error', message: 'Failed to process message.' }));
-    }
-  });
-
-  ws.on('error', (error) => {
-    console.error('WebSocket connection error:', error);
-  });
-});
-
-// Initialize app core
-appCore.initialize();
-
-// Initialize smart troubleshooting
-import { smartTroubleshootingCore } from './core/SmartTroubleshootingCore.js';
-console.log('🔧 Smart Troubleshooting Core: ACTIVE');
-
-// Initialize smart tunnel
-import { smartTunnelCore } from './core/SmartTunnelCore.js';
-smartTunnelCore.hostAllAspects();
-console.log('🌐 Smart Tunnel Core: ACTIVE');
-
-// Start server with diagnostics
-startupDiagnostics.runDiagnostics().then(diagnostics => {
-  if (!diagnostics.success) {
-    console.error('⚠️  Starting with errors - some features may not work');
-  }
-
-  httpServer.listen(PORT, HOST, () => {
-    console.log('═══════════════════════════════════════════════════');
-    console.log('🏈 Young Meeat LLC Sportsbook');
-    console.log('═══════════════════════════════════════════════════');
-    console.log(`🚀 Server running on: http://${HOST}:${PORT}`);
-    console.log(`📡 FCC Entity: 20130314143016`);
-    console.log(`🌐 Web URL: https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`);
-    console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`📱 Phone Control: ENABLED`);
-    console.log(`🔄 Smart Recovery: ACTIVE`);
-    console.log('═══════════════════════════════════════════════════');
-
-    // Test endpoint access
-    console.log('\n📍 Available endpoints:');
-    console.log(`  • Sportsbook: http://${HOST}:${PORT}/sportsbook/games`);
-    console.log(`  • Streaming: http://${HOST}:${PORT}/streaming/fusion/status`);
-    console.log(`  • Phone Control: http://${HOST}:${PORT}/phone-control/stats`);
-    console.log(`  • Smart System: http://${HOST}:${PORT}/smart-system/status`);
-    console.log(`  • Mobile: http://${HOST}:${PORT}/mobile/stats`);
-    console.log(`  • Version: http://${HOST}:${PORT}/version`);
-    console.log(`  • AWS Account: http://${HOST}:${PORT}/api/aws-account/status`); // Added endpoint for AWS Account
-    console.log(`  • API Troubleshooting: http://${HOST}:${PORT}/api-troubleshooting/status`);
-    console.log(`  • Smart Tunnel: http://${HOST}:${PORT}/smart-tunnel/status`);
-    console.log('\n');
-  });
-
-  httpServer.on('error', (error: any) => {
-    if (error.code === 'EADDRINUSE') {
-      console.error(`❌ Port ${PORT} is already in use. Trying alternate port...`);
-      const altPort = PORT + 1;
-      // Ensure the alternate port is also checked for availability if it's already in use
-      httpServer.listen(altPort, HOST, () => {
-        console.log(`🚀 Server started on alternate port: ${altPort}`);
-      });
-      httpServer.on('error', (altError: any) => {
-        if (altError.code === 'EADDRINUSE') {
-          console.error(`❌ Alternate port ${altPort} is also in use. Please check running processes.`);
-          process.exit(1); // Exit if the alternate port is also in use
-        } else {
-          console.error('❌ Server error on alternate port:', altError);
-          process.exit(1); // Exit on other server errors
-        }
-      });
-    } else {
-      console.error('❌ Server error:', error);
-      process.exit(1); // Exit on other server errors
-    }
-  });
-});
-
-process.on('SIGTERM', () => {
-  console.log('Shutting down...');
-  httpServer.close(() => {
-    console.log('HTTP server closed.');
-    process.exit(0);
-  });
-});
-
+// Global error handlers
 process.on('uncaughtException', (error) => {
   console.error('❌ Uncaught Exception:', error);
-  // Attempt to gracefully shut down or restart, depending on desired behavior
-  // For now, we'll log and exit to prevent further issues.
-  process.exit(1);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
-  // Log the rejection and potentially exit or take other recovery actions
-  process.exit(1);
 });
+
+// Start server
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`
+╔═══════════════════════════════════════════════════════════╗
+║                                                           ║
+║   🎯 BettingSites™ - Live Sports Streaming & Betting    ║
+║                                                           ║
+║   Powered by Amazon Web Services (AWS)                   ║
+║   Young Meeat LLC | FCC: 20130314143016                  ║
+║                                                           ║
+║   Server running on http://0.0.0.0:${PORT}                    ║
+║                                                           ║
+╚═══════════════════════════════════════════════════════════╝
+  `);
+});
+
+// Initialize core systems with error handling
+Promise.resolve().then(async () => {
+  try {
+    const { appCore } = await import('./core/AppCore.js');
+    appCore.initialize();
+    console.log('✅ AppCore initialized');
+
+    // Initialize other systems
+    const { smartTroubleshootingCore } = await import('./core/SmartTroubleshootingCore.js');
+    console.log('✅ SmartTroubleshooting ready');
+
+    const { errorRecoverySystem } = await import('./core/ErrorRecoverySystem.js');
+    console.log('✅ ErrorRecovery ready');
+
+    const { fusionAssemblyCore } = await import('./core/FusionAssemblyCore.js');
+    console.log('✅ FusionAssembly ready');
+
+    // Initialize JSON Sync Service
+    const { jsonSyncService } = await import('./services/JSONSyncService.js');
+    console.log('✅ JSONSync ready');
+  } catch (error) {
+    console.error('❌ Core system initialization error:', error);
+    // Continue running even if some systems fail to initialize
+  }
+});
+
+// Mount workflow landscape endpoint
+app.use('/workflow-landscape', workflowLandscapeRouter);
+app.use('/smart-communication-fusion', smartCommunicationFusionRouter);
+
+export default app;

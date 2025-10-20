@@ -1,0 +1,433 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal WiFi Hub | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .header h1 {
+            color: #667eea;
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+        .wifi-icon {
+            font-size: 72px;
+            margin-bottom: 20px;
+        }
+        .fcc-badge {
+            background: #667eea;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 12px;
+            display: inline-block;
+            margin: 10px 5px;
+            font-weight: 700;
+        }
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        input {
+            width: 100%;
+            padding: 14px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        .btn {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 5px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.3);
+        }
+        .btn.success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+        .network-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .network-card {
+            background: linear-gradient(135deg, #f9fafb 0%, #e5e7eb 100%);
+            border-radius: 16px;
+            padding: 24px;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .network-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+        .network-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+        .network-stats {
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 8px;
+            font-size: 13px;
+        }
+        .wifi-info {
+            background: #dcfce7;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+            border-left: 4px solid #16a34a;
+        }
+        .info-row {
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-card {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .stat-value {
+            font-size: 24px;
+            color: #667eea;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="wifi-icon">📡🌐</div>
+            <h1>Personal WiFi Hub</h1>
+            <p style="color: #6b7280; font-size: 18px; margin-top: 10px;">
+                National WiFi Network for Authorized Users
+            </p>
+            <span class="fcc-badge">FCC Entity: 20130314143016</span>
+            <span class="fcc-badge">WPA3 Secure</span>
+            <span class="fcc-badge">Nationwide Coverage</span>
+        </div>
+
+        <div class="section">
+            <h2>🔐 Connect to WiFi</h2>
+            <input type="email" id="emailInput" placeholder="Enter your email">
+            <input type="tel" id="phoneInput" placeholder="Phone Number (Optional)">
+            <select id="networkSelect" style="width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 8px; border: 2px solid #e5e7eb;">
+                <option value="national-wifi">National WiFi Network</option>
+                <option value="premium-wifi">Premium WiFi Network</option>
+            </select>
+            <button class="btn success" onclick="connectToWiFi()">📡 Connect to Network</button>
+            <button class="btn" onclick="createPersonalWiFi()">🔒 Create Personal WiFi</button>
+        </div>
+
+        <div id="wifiInfo" style="display: none;">
+            <div class="section">
+                <h2>✅ WiFi Connection Active</h2>
+                <div class="wifi-info">
+                    <strong style="color: #16a34a; font-size: 18px;">✓ Connected Successfully</strong>
+                    <div style="margin-top: 15px; color: #1f2937;">
+                        <div class="info-row">
+                            <span><strong>Network (SSID):</strong></span>
+                            <span id="ssid">-</span>
+                            <button class="copy-btn" onclick="copyText('ssid')">Copy</button>
+                        </div>
+                        <div class="info-row">
+                            <span><strong>Password:</strong></span>
+                            <span id="password">-</span>
+                            <button class="copy-btn" onclick="copyText('password')">Copy</button>
+                        </div>
+                        <div class="info-row">
+                            <span><strong>IP Address:</strong></span>
+                            <span id="ipAddress">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span><strong>Signal Strength:</strong></span>
+                            <span id="signalStrength">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span><strong>User ID:</strong></span>
+                            <span id="userId">-</span>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="disconnectWiFi()" style="margin-top: 15px; background: #ef4444;">
+                        🔌 Disconnect
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🌐 Available Networks</h2>
+            <div class="network-grid" id="networkGrid">
+                <p>Loading networks...</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Network Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Networks</div>
+                    <div class="stat-value" id="totalNetworks">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Users</div>
+                    <div class="stat-value" id="activeUsers">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Signal Quality</div>
+                    <div class="stat-value" id="signalQuality">0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">IP Pool Usage</div>
+                    <div class="stat-value" id="ipPoolUsage">0%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        const API_BASE = window.CloudConfig.getAPIBase();
+        let currentUserId = null;
+
+        async function connectToWiFi() {
+            const email = document.getElementById('emailInput').value.trim();
+            const phoneNumber = document.getElementById('phoneInput').value.trim();
+            const networkId = document.getElementById('networkSelect').value;
+
+            if (!email) {
+                alert('Please enter your email');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/personal-wifi/connect`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, phoneNumber, networkId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentUserId = data.user.userId;
+                    displayWiFiInfo(data.user);
+                    alert('✅ Connected to WiFi network!');
+                    loadNetworks();
+                    loadStats();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error connecting to WiFi:', error);
+                alert('Failed to connect to WiFi');
+            }
+        }
+
+        async function createPersonalWiFi() {
+            const email = document.getElementById('emailInput').value.trim();
+            const phoneNumber = document.getElementById('phoneInput').value.trim();
+
+            if (!email) {
+                alert('Please enter your email');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/personal-wifi/create-personal`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, phoneNumber })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentUserId = data.wifi.userId;
+                    displayWiFiInfo({
+                        userId: data.wifi.userId,
+                        ssid: data.wifi.ssid,
+                        password: data.wifi.password,
+                        ipAddress: data.wifi.ipAddress,
+                        signalStrength: 100,
+                        email
+                    });
+                    alert(`✅ Personal WiFi Created!\n\nNetwork: ${data.wifi.ssid}\nPassword: ${data.wifi.password}`);
+                    loadNetworks();
+                    loadStats();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error creating personal WiFi:', error);
+                alert('Failed to create personal WiFi');
+            }
+        }
+
+        function displayWiFiInfo(user) {
+            document.getElementById('wifiInfo').style.display = 'block';
+            document.getElementById('ssid').textContent = user.ssid;
+            document.getElementById('password').textContent = user.password;
+            document.getElementById('ipAddress').textContent = user.ipAddress;
+            document.getElementById('signalStrength').textContent = user.signalStrength + '%';
+            document.getElementById('userId').textContent = user.userId;
+        }
+
+        async function disconnectWiFi() {
+            if (!currentUserId) {
+                alert('No active connection');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/personal-wifi/disconnect/${currentUserId}`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('wifiInfo').style.display = 'none';
+                    currentUserId = null;
+                    alert('✅ Disconnected from WiFi');
+                    loadNetworks();
+                    loadStats();
+                }
+            } catch (error) {
+                console.error('Error disconnecting:', error);
+                alert('Failed to disconnect');
+            }
+        }
+
+        async function loadNetworks() {
+            try {
+                const response = await fetch(`${API_BASE}/personal-wifi/networks`);
+                const data = await response.json();
+
+                const networkHtml = data.networks.map(network => `
+                    <div class="network-card">
+                        <div class="network-name">📡 ${network.name}</div>
+                        <div style="font-size: 14px; color: #6b7280; margin-bottom: 10px;">
+                            SSID: <strong>${network.ssid}</strong>
+                        </div>
+                        <div style="font-size: 13px; color: #6b7280; margin-bottom: 5px;">
+                            Security: ${network.security} | ${network.frequency}
+                        </div>
+                        <div class="network-stats">
+                            <div>Users: <strong>${network.currentUsers} / ${network.maxUsers}</strong></div>
+                            <div>Utilization: <strong>${network.utilization}%</strong></div>
+                            <div>FCC Compliant: <strong>✓</strong></div>
+                        </div>
+                    </div>
+                `).join('');
+
+                document.getElementById('networkGrid').innerHTML = networkHtml;
+            } catch (error) {
+                console.error('Error loading networks:', error);
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/personal-wifi/status`);
+                const data = await response.json();
+
+                document.getElementById('totalNetworks').textContent = data.stats.totalNetworks;
+                document.getElementById('activeUsers').textContent = data.stats.activeUsers;
+                document.getElementById('signalQuality').textContent = data.stats.averageSignalStrength + '%';
+                document.getElementById('ipPoolUsage').textContent = data.stats.ipPoolUtilization + '%';
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        function copyText(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text);
+            alert('✅ Copied to clipboard!');
+        }
+
+        window.addEventListener('load', () => {
+            loadNetworks();
+            loadStats();
+            setInterval(() => {
+                loadNetworks();
+                loadStats();
+            }, 30000);
+        });
+    </script>
+</body>
+</html>

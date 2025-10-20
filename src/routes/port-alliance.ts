@@ -34,7 +34,10 @@ router.post('/launch', async (req: Request, res: Response) => {
     const portStatus = portManagementCore.getPortStatus(port);
     
     if (!portStatus) {
-      return res.status(400).json({ error: 'Invalid port' });
+      return res.status(400).json({ 
+        error: 'Invalid port',
+        fccEntity: '20130314143016'
+      });
     }
 
     // Use troubleshooting core to ensure port is operational
@@ -112,9 +115,9 @@ router.get('/stream/:allianceId', (req: Request, res: Response) => {
         errorPorts: portLandscape.errorPorts
       },
       troubleshooting: {
-        autoFixEnabled: troubleshootingStatus.autoFix,
-        sessionActive: troubleshootingStatus.sessionActive,
-        issuesDetected: troubleshootingStatus.issuesDetected
+        autoFixEnabled: troubleshootingStatus.autoFixEnabled,
+        activeSessions: troubleshootingStatus.activeSessions,
+        endpointHealth: troubleshootingStatus.endpointHealth
       }
     })}\n\n`);
 
