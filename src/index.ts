@@ -49,6 +49,7 @@ import dunContentPeersRoutes from './routes/dun-content-peers.js';
 import arnFinderRoutes from './routes/arn-finder.js';
 import leedsExportRoutes from './routes/leeds-export.js';
 import waveStreamAssemblyRoutes from './routes/wave-stream-assembly.js';
+import radioBroadcastDeploymentRoutes from './routes/radio-broadcast-deployment.js'; // Import the new route
 
 // Initialize core systems
 const __filename = fileURLToPath(import.meta.url);
@@ -127,6 +128,8 @@ try {
   app.use('/dun-content-peers', dunContentPeersRoutes);
   app.use('/arn-finder', arnFinderRoutes);
   app.use('/leeds-export', leedsExportRoutes);
+  app.use('/wave-stream-assembly', waveStreamAssemblyRoutes);
+  app.use('/radio-broadcast-deployment', radioBroadcastDeploymentRoutes); // Mount the new route
   console.log('✅ All API routes registered successfully');
 } catch (error) {
   console.error('❌ Error registering routes:', error);
