@@ -50,6 +50,23 @@ args = "nix"
 task = "workflow.run"
 args = "Direct contact "
 
+[[workflows.workflow]]
+name = "Direct FCC Contact"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "curl -X GET http://0.0.0.0:5000/sportsbook"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"FCC Entity: 20130314143016\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"Registration: 0024454324\""
+
 [[ports]]
 localPort = 5000
 externalPort = 5000

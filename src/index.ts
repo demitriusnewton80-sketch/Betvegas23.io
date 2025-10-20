@@ -17,6 +17,7 @@ const __dirname = path.dirname(__filename);
 import functionalStructuresRoutes from './routes/functional-structures.js';
 import smartSystemRoutes from './routes/smart-system.js';
 import aiRoutes from './routes/ai.js';
+import systemHealthRoutes from './routes/system-health.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -64,6 +65,7 @@ app.get('/health', (req: Request, res: Response) => {
 app.use('/functional-structures', functionalStructuresRoutes);
 app.use('/smart-system', smartSystemRoutes);
 app.use('/ai', aiRoutes);
+app.use('/system', systemHealthRoutes);
 
 // Static files
 app.use(express.static(path.join(__dirname, '../public'), {

@@ -320,10 +320,7 @@ export class SmartSystemService extends EventEmitter {
   }
 }
 
-export const smartSystemService = new SmartSystemService();
-  }
-
-  private analyzeTraffic() {
+private analyzeTraffic() {
     const recentTraffic = this.trafficData.slice(-100);
     const failed = recentTraffic.filter(t => t.status === 'failed');
 
@@ -364,15 +361,6 @@ export const smartSystemService = new SmartSystemService();
 
   getErrorLogs() {
     return Array.from(this.errorLogs.values()).sort((a, b) => b.timestamp - a.timestamp);
-  }
-
-  getTrafficData() {
-    return this.trafficData.slice(-100);
-  }
-
-  getContentUploads(userId?: string) {
-    const uploads = Array.from(this.contentUploads.values());
-    return userId ? uploads.filter(u => u.userId === userId) : uploads;
   }
 
   getSystemHealth() {
