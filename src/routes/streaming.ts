@@ -79,17 +79,17 @@ router.get('/contracts', async (req: Request, res: Response) => {
     const partners = streamingService.getStreamingPartners();
     const streams = streamingService.getActiveStreams();
     
-    const contracts = partners.map(partner => ({
+    const contracts = partners.map((partner: { id: string; name: string; webhookUrl: string; active: boolean; registeredAt: string; lastActive?: string }) => ({
       id: partner.id,
       name: partner.name,
       endpoint: `/streaming/partner/${partner.id}/stream`,
       webhookUrl: partner.webhookUrl,
       active: partner.active,
       contentType: 'stream',
-      streamCount: streams.filter(s => s.partnerId === partner.id).length,
+      streamCount: streams.filter((s: { id: string; name: string; sport: string; status: string; url: string }) => s.id.startsWith(partner.id)).length,
       metadata: {
         registeredAt: partner.registeredAt,
-        lastActive: partner.lastActive
+        lastActive: partner.lastActive || new Date().toISOString()
       }
     }));
     
@@ -97,7 +97,7 @@ router.get('/contracts', async (req: Request, res: Response) => {
       success: true,
       contracts,
       totalContracts: contracts.length,
-      activeContracts: contracts.filter(c => c.active).length,
+      activeContracts: contracts.filter((c: { active: boolean }) => c.active).length,
       fccEntity: '20130314143016'
     });
   } catch (error) {
@@ -116,7 +116,7 @@ router.get('/contract/:contractId/stream', async (req: Request, res: Response) =
   try {
     const { contractId } = req.params;
     const partners = streamingService.getStreamingPartners();
-    const contract = partners.find(p => p.id === contractId);
+    const contract = partners.find((p: { id: string }) => p.id === contractId);
     
     if (!contract) {
       return res.status(404).json({
@@ -133,7 +133,7 @@ router.get('/contract/:contractId/stream', async (req: Request, res: Response) =
     }
     
     const streams = streamingService.getActiveStreams();
-    const contractStreams = streams.filter(s => s.partnerId === contractId);
+    const contractStreams = streams.filter((s: { id: string }) => s.id.startsWith(contractId));
     
     res.json({
       success: true,
@@ -142,7 +142,7 @@ router.get('/contract/:contractId/stream', async (req: Request, res: Response) =
         name: contract.name,
         endpoint: `/streaming/contract/${contractId}/stream`
       },
-      streams: contractStreams.map(stream => ({
+      streams: contractStreams.map((stream: { id: string; name: string; sport: string; url: string; status: string }) => ({
         id: stream.id,
         name: stream.name,
         sport: stream.sport,
