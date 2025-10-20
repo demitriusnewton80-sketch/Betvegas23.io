@@ -26,6 +26,7 @@ import apiTroubleshootingRoutes from './routes/api-troubleshooting.js';
 import apiFusionRoutes from './routes/api-fusion.js';
 import fusionAssemblyRouter from './routes/fusion-assembly.js';
 import contractCallbacksRoutes from './routes/contract-callbacks.js';
+import jsonSyncRoutes from './routes/json-sync.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -70,6 +71,7 @@ try {
   app.use('/api-fusion', apiFusionRoutes);
   app.use('/fusion-assembly', fusionAssemblyRouter);
   app.use('/contract-callbacks', contractCallbacksRoutes);
+  app.use('/json-sync', jsonSyncRoutes);
   console.log('✅ All API routes registered successfully');
 } catch (error) {
   console.error('❌ Error registering routes:', error);
@@ -171,6 +173,11 @@ try {
   
   fusionAssemblyCore;
   console.log('✅ FusionAssembly ready');
+  
+  // Initialize JSON Sync Service
+  const { jsonSyncService } = await import('./services/JSONSyncService.js');
+  jsonSyncService;
+  console.log('✅ JSONSync ready');
 } catch (error) {
   console.error('❌ Core system initialization error:', error);
 }
