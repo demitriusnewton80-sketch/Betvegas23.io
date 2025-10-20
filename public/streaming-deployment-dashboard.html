@@ -268,18 +268,46 @@
         }
 
         async function loadDeploymentStatus() {
-            const data = await smartRecovery.fetchWithRetry(`${API_BASE}/streaming/deploy/status`);
+            try {
+                const response = await fetch(`${API_BASE}/streaming/deploy/status`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
 
-            if (data && data.success) {
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    console.error('Invalid response type:', contentType);
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data && data.success) {
                 document.getElementById('totalSportsbooks').textContent = data.deploymentStatus.totalSportsbooks || 0;
                 document.getElementById('ps5Games').textContent = data.deploymentStatus.ps5Integration?.totalGames || 0;
                 document.getElementById('pickupGames').textContent = data.deploymentStatus.pickupGames?.available || 0;
                 document.getElementById('relationships').textContent = data.deploymentStatus.relationships?.established || 0;
 
                 displayDeployments(data.deploymentStatus);
-            } else {
-                console.log('Failed to load deployment status, will retry automatically');
+                } else {
+                    console.log('Invalid response format');
+                    displayErrorState();
+                }
+            } catch (error) {
+                console.error('Error loading status:', error);
+                displayErrorState();
             }
+        }
+
+        function displayErrorState() {
+            const container = document.getElementById('deploymentsList');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <p style="color: #f59e0b;">⚠️ Unable to load deployment data</p>
+                    <p style="font-size: 12px; opacity: 0.7;">Retrying automatically...</p>
+                </div>
+            `;
         }
 
         function displayDeployments(status) {

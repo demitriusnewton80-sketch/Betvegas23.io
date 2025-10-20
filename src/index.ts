@@ -30,6 +30,9 @@ import businessRelationshipsRouter from './routes/business-relationships.js';
 import espnTrackerRoutes from './routes/espn-tracker.js';
 import espnBettingRoutes from './routes/espn-betting.js';
 import versionRoutes from './routes/version.js';
+import smartTroubleshootingRoutes from './routes/smart-troubleshooting.js';
+import functionalRelationshipsBridgeRoutes from './routes/functional-relationships-bridge.js';
+import debugEndpoints from './routes/debug-endpoints.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -61,6 +64,9 @@ app.use('/business-relationships', businessRelationshipsRouter);
 app.use('/espn-tracker', espnTrackerRoutes);
 app.use('/espn-betting', espnBettingRoutes);
 app.use('/version', versionRoutes);
+app.use('/smart-troubleshooting', smartTroubleshootingRoutes);
+app.use('/functional-relationships-bridge', functionalRelationshipsBridgeRoutes);
+app.use('/debug', debugEndpoints);
 
 // Static files
 app.use(express.static(path.join(__dirname, '../public')));
@@ -81,6 +87,16 @@ app.get('/', (req: Request, res: Response) => {
 
 // Catch-all for SPA
 app.get('*', (req: Request, res: Response) => {
+  // Return JSON for API routes
+  if (req.path.startsWith('/api/') || req.path.startsWith('/streaming/') || req.path.startsWith('/error-recovery/') || req.path.startsWith('/smart-troubleshooting/')) {
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(404).json({
+      success: false,
+      error: 'Endpoint not found',
+      path: req.path
+    });
+  }
+  
   if (req.path.includes('.')) {
     return res.status(404).send('Not found');
   }
@@ -89,9 +105,14 @@ app.get('*', (req: Request, res: Response) => {
 
 // Error handling
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('Server Error:', err);
+  console.error('Server Error:', err.message || err);
+  
+  // Always return JSON, never HTML
+  res.setHeader('Content-Type', 'application/json');
   res.status(500).json({
+    success: false,
     error: 'Internal server error',
+    message: err.message || 'An unexpected error occurred.',
     fccEntity: '20130314143016'
   });
 });
@@ -112,12 +133,21 @@ wss.on('connection', (ws: WebSocket) => {
       ws.send(JSON.stringify({ type: 'echo', received: message }));
     } catch (error) {
       console.error('WebSocket error:', error);
+      ws.send(JSON.stringify({ type: 'error', message: 'Failed to process message.' }));
     }
+  });
+
+  ws.on('error', (error) => {
+    console.error('WebSocket connection error:', error);
   });
 });
 
 // Initialize app core
 appCore.initialize();
+
+// Initialize smart troubleshooting
+import { smartTroubleshootingCore } from './core/SmartTroubleshootingCore.js';
+console.log('🔧 Smart Troubleshooting Core: ACTIVE');
 
 // Start server with diagnostics
 startupDiagnostics.runDiagnostics().then(diagnostics => {
@@ -152,9 +182,22 @@ startupDiagnostics.runDiagnostics().then(diagnostics => {
     if (error.code === 'EADDRINUSE') {
       console.error(`❌ Port ${PORT} is already in use. Trying alternate port...`);
       const altPort = PORT + 1;
-      httpServer.listen(altPort, HOST);
+      // Ensure the alternate port is also checked for availability if it's already in use
+      httpServer.listen(altPort, HOST, () => {
+        console.log(`🚀 Server started on alternate port: ${altPort}`);
+      });
+      httpServer.on('error', (altError: any) => {
+        if (altError.code === 'EADDRINUSE') {
+          console.error(`❌ Alternate port ${altPort} is also in use. Please check running processes.`);
+          process.exit(1); // Exit if the alternate port is also in use
+        } else {
+          console.error('❌ Server error on alternate port:', altError);
+          process.exit(1); // Exit on other server errors
+        }
+      });
     } else {
       console.error('❌ Server error:', error);
+      process.exit(1); // Exit on other server errors
     }
   });
 });
@@ -162,6 +205,20 @@ startupDiagnostics.runDiagnostics().then(diagnostics => {
 process.on('SIGTERM', () => {
   console.log('Shutting down...');
   httpServer.close(() => {
+    console.log('HTTP server closed.');
     process.exit(0);
   });
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught Exception:', error);
+  // Attempt to gracefully shut down or restart, depending on desired behavior
+  // For now, we'll log and exit to prevent further issues.
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+  // Log the rejection and potentially exit or take other recovery actions
+  process.exit(1);
 });

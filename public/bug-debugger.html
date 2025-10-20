@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bug Debugger | Young Meeat LLC</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0e27;
+            color: #00ff00;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a1f3a 0%, #0a0e27 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 2px solid #00ff00;
+            text-align: center;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .card {
+            background: #1a1f3a;
+            border: 2px solid #00ff00;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .card h2 {
+            color: #00ff00;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%);
+            color: #0a0e27;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            width: 100%;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 255, 0, 0.4);
+        }
+        .btn.danger {
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+            color: white;
+        }
+        .output {
+            background: #000;
+            padding: 15px;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-size: 12px;
+            border: 1px solid #00ff00;
+            white-space: pre-wrap;
+        }
+        .error-item {
+            background: rgba(255, 0, 0, 0.1);
+            border-left: 4px solid #ff0000;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .error-item.resolved {
+            background: rgba(0, 255, 0, 0.1);
+            border-left-color: #00ff00;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            border-radius: 12px;
+            font-size: 11px;
+            margin: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🐛 Bug Debugger & Troubleshooter</h1>
+        <p>Automatic Error Detection & Recovery</p>
+        <span class="badge">FCC: 20130314143016</span>
+        <span class="badge">Auto-Fix Enabled</span>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h2>🔍 Quick Diagnostics</h2>
+            <button class="btn" onclick="checkAllEndpoints()">Check All Endpoints</button>
+            <button class="btn" onclick="testStreaming()">Test Streaming</button>
+            <button class="btn" onclick="checkActiveErrors()">Check Active Errors</button>
+            <button class="btn" onclick="getTroubleshootingSessions()">Get Debug Sessions</button>
+        </div>
+
+        <div class="card">
+            <h2>🛠️ Auto-Fix Tools</h2>
+            <button class="btn" onclick="fixAllErrors()">Fix All Errors</button>
+            <button class="btn" onclick="fixDuplicates()">Fix Duplicates</button>
+            <button class="btn" onclick="fixSystemErrors()">Fix System Errors</button>
+            <button class="btn danger" onclick="clearAllErrors()">Clear All Errors</button>
+        </div>
+
+        <div class="card">
+            <h2>🧪 Test Individual Endpoints</h2>
+            <input type="text" id="testEndpoint" placeholder="/streaming/streams" 
+                   style="width: 100%; padding: 10px; margin-bottom: 10px; background: #000; color: #0f0; border: 1px solid #0f0; border-radius: 4px;">
+            <button class="btn" onclick="testEndpoint()">Test Endpoint</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>📊 Debug Output</h2>
+        <div class="output" id="output">Ready for debugging...</div>
+    </div>
+
+    <div class="card">
+        <h2>🚨 Active Errors</h2>
+        <div id="errorsList"></div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        const API_BASE = window.CloudConfig ? window.CloudConfig.getAPIBase() : '';
+        const output = document.getElementById('output');
+
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            output.textContent += `[${timestamp}] ${message}\n`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        async function checkAllEndpoints() {
+            log('🔍 Checking all endpoints...');
+            try {
+                const response = await fetch(`${API_BASE}/debug/check-endpoints`);
+                const data = await response.json();
+                
+                log(`✅ Summary: ${data.summary.passing}/${data.summary.total} passing`);
+                
+                data.results.forEach(result => {
+                    if (result.hasValidJSON && result.status === 200) {
+                        log(`✅ ${result.endpoint} - OK`);
+                    } else {
+                        log(`❌ ${result.endpoint} - ${result.error || 'Invalid JSON'}`);
+                    }
+                });
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+
+        async function testStreaming() {
+            log('📺 Testing streaming endpoint...');
+            await testEndpoint('/streaming/streams');
+        }
+
+        async function checkActiveErrors() {
+            log('🚨 Checking active errors...');
+            try {
+                const response = await fetch(`${API_BASE}/debug/active-errors`);
+                const data = await response.json();
+                
+                log(`Total active errors: ${data.count}`);
+                log(`By type: ${JSON.stringify(data.byType, null, 2)}`);
+                
+                displayErrors(data.activeErrors);
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+
+        async function getTroubleshootingSessions() {
+            log('🔧 Getting troubleshooting sessions...');
+            try {
+                const response = await fetch(`${API_BASE}/debug/troubleshooting-sessions`);
+                const data = await response.json();
+                
+                log(`Total sessions: ${data.count}`);
+                log(`By status: ${JSON.stringify(data.byStatus, null, 2)}`);
+                
+                data.sessions.forEach(session => {
+                    log(`Session ${session.id}: ${session.type} - ${session.status}`);
+                    if (session.fixes.length > 0) {
+                        log(`  Fixes applied: ${session.fixes.join(', ')}`);
+                    }
+                });
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+
+        async function testEndpoint(endpoint) {
+            const testPath = endpoint || document.getElementById('testEndpoint').value;
+            if (!testPath) {
+                log('❌ Please enter an endpoint to test');
+                return;
+            }
+
+            log(`🧪 Testing endpoint: ${testPath}`);
+            try {
+                const response = await fetch(`${API_BASE}/debug/test-endpoint`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ endpoint: testPath })
+                });
+                const data = await response.json();
+                
+                log(`Status: ${data.status}`);
+                log(`Content-Type: ${data.contentType}`);
+                log(`Valid JSON: ${data.isValidJSON}`);
+                log(`Response preview: ${data.responsePreview}`);
+                
+                if (data.parsedData) {
+                    log(`Parsed data: ${JSON.stringify(data.parsedData, null, 2)}`);
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+
+        async function fixAllErrors() {
+            log('🛠️ Fixing all errors...');
+            const types = ['duplicate', 'bug', 'upload', 'system'];
+            
+            for (const type of types) {
+                try {
+                    const response = await fetch(`${API_BASE}/debug/fix-error-type`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ errorType: type })
+                    });
+                    const data = await response.json();
+                    log(`✅ Fixed ${data.fixedCount} ${type} errors`);
+                } catch (error) {
+                    log(`❌ Error fixing ${type}: ${error.message}`);
+                }
+            }
+        }
+
+        async function fixDuplicates() {
+            log('🛠️ Fixing duplicate errors...');
+            await fixErrorType('duplicate');
+        }
+
+        async function fixSystemErrors() {
+            log('🛠️ Fixing system errors...');
+            await fixErrorType('system');
+        }
+
+        async function fixErrorType(type) {
+            try {
+                const response = await fetch(`${API_BASE}/debug/fix-error-type`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ errorType: type })
+                });
+                const data = await response.json();
+                log(`✅ Fixed ${data.fixedCount} ${type} errors`);
+                await checkActiveErrors();
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+
+        async function clearAllErrors() {
+            log('🗑️ Clearing all errors...');
+            try {
+                await fetch(`${API_BASE}/error-recovery/auto-recovery`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ enabled: true })
+                });
+                log('✅ Error recovery system reset');
+                await checkActiveErrors();
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+
+        function displayErrors(errors) {
+            const errorsList = document.getElementById('errorsList');
+            
+            if (errors.length === 0) {
+                errorsList.innerHTML = '<div style="color: #0f0;">✅ No active errors</div>';
+                return;
+            }
+
+            errorsList.innerHTML = errors.map(error => `
+                <div class="error-item ${error.resolved ? 'resolved' : ''}">
+                    <strong>${error.type.toUpperCase()}</strong> - ${error.severity}
+                    <div style="margin-top: 5px; font-size: 11px;">
+                        ${error.message}
+                    </div>
+                    <div style="margin-top: 5px; font-size: 10px; opacity: 0.7;">
+                        Source: ${error.source} | Attempts: ${error.attempts}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            checkActiveErrors();
+        }, 30000);
+
+        // Initial load
+        window.addEventListener('load', () => {
+            log('🚀 Bug Debugger loaded');
+            checkActiveErrors();
+        });
+    </script>
+</body>
+</html>
