@@ -1,0 +1,384 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Streaming Contracts - Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        
+        .contracts-grid {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .contract-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .contract-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.3);
+        }
+        
+        .contract-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .contract-name {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .status-active {
+            background: rgba(76,175,80,0.2);
+            color: #4caf50;
+        }
+        
+        .status-inactive {
+            background: rgba(244,67,54,0.2);
+            color: #f44336;
+        }
+        
+        .contract-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .detail-label {
+            font-size: 0.9em;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .endpoint-url {
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.9em;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📡 Content Streaming Contracts</h1>
+        <p>FCC Entity: 20130314143016</p>
+    </div>
+    
+    <div class="stats">
+        <div class="stat-card">
+            <div class="detail-label">Total Contracts</div>
+            <div class="stat-value" id="totalContracts">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="detail-label">Active Contracts</div>
+            <div class="stat-value" id="activeContracts">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="detail-label">Total Streams</div>
+            <div class="stat-value" id="totalStreams">0</div>
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-bottom: 30px;">
+        <button class="btn btn-success" onclick="createNewContract()">➕ Create New Contract</button>
+        <button class="btn btn-primary" onclick="loadContracts()">🔄 Refresh Contracts</button>
+    </div>
+    
+    <div id="contractsList" class="contracts-grid">
+        <div class="loading">Loading contracts...</div>
+    </div>
+    
+    <script src="/js/api-config.js"></script>
+    <script>
+        let contracts = [];
+        
+        async function loadContracts() {
+            try {
+                const response = await fetch(`${API_BASE}/streaming/contracts`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    contracts = data.contracts;
+                    displayContracts();
+                    updateStats(data);
+                }
+            } catch (error) {
+                console.error('Error loading contracts:', error);
+                document.getElementById('contractsList').innerHTML = 
+                    '<div class="loading">❌ Failed to load contracts</div>';
+            }
+        }
+        
+        function displayContracts() {
+            const container = document.getElementById('contractsList');
+            
+            if (contracts.length === 0) {
+                container.innerHTML = '<div class="loading">No contracts found</div>';
+                return;
+            }
+            
+            container.innerHTML = contracts.map(contract => `
+                <div class="contract-card">
+                    <div class="contract-header">
+                        <div class="contract-name">${contract.name}</div>
+                        <div class="status-badge ${contract.active ? 'status-active' : 'status-inactive'}">
+                            ${contract.active ? '🟢 Active' : '🔴 Inactive'}
+                        </div>
+                    </div>
+                    
+                    <div class="contract-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Contract ID</div>
+                            <div class="detail-value">${contract.id}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Content Type</div>
+                            <div class="detail-value">${contract.contentType || 'stream'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Stream Count</div>
+                            <div class="detail-value">${contract.streamCount || 0}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Registered</div>
+                            <div class="detail-value">${new Date(contract.metadata?.registeredAt || Date.now()).toLocaleDateString()}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-label">Stream Endpoint:</div>
+                    <div class="endpoint-url">${contract.endpoint}</div>
+                    
+                    <div class="detail-label">Webhook URL:</div>
+                    <div class="endpoint-url">${contract.webhookUrl || 'Not configured'}</div>
+                    
+                    <div class="actions">
+                        <button class="btn btn-primary" onclick="streamContract('${contract.id}')">
+                            📺 View Streams
+                        </button>
+                        <button class="btn ${contract.active ? 'btn-danger' : 'btn-success'}" 
+                                onclick="toggleContract('${contract.id}', ${!contract.active})">
+                            ${contract.active ? '⏸️ Disable' : '▶️ Enable'}
+                        </button>
+                        <button class="btn btn-primary" onclick="copyEndpoint('${contract.endpoint}')">
+                            📋 Copy Endpoint
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function updateStats(data) {
+            document.getElementById('totalContracts').textContent = data.totalContracts;
+            document.getElementById('activeContracts').textContent = data.activeContracts;
+            document.getElementById('totalStreams').textContent = 
+                contracts.reduce((sum, c) => sum + (c.streamCount || 0), 0);
+        }
+        
+        async function streamContract(contractId) {
+            try {
+                const response = await fetch(`${API_BASE}/streaming/contract/${contractId}/stream`);
+                const data = await response.json();
+                
+                if (data.success && data.streams.length > 0) {
+                    alert(`📺 Streams Available:\n\n${data.streams.map(s => 
+                        `• ${s.name} (${s.sport})\n  Status: ${s.status}`
+                    ).join('\n\n')}`);
+                } else {
+                    alert('No active streams for this contract');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to fetch streams');
+            }
+        }
+        
+        async function toggleContract(contractId, active) {
+            try {
+                const response = await fetch(`${API_BASE}/streaming/contracts/${contractId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ active })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    await loadContracts();
+                    alert(`Contract ${active ? 'enabled' : 'disabled'} successfully`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to update contract');
+            }
+        }
+        
+        function copyEndpoint(endpoint) {
+            const fullUrl = `${API_BASE}${endpoint}`;
+            navigator.clipboard.writeText(fullUrl).then(() => {
+                alert(`✅ Endpoint copied to clipboard:\n${fullUrl}`);
+            }).catch(() => {
+                alert(`Endpoint: ${fullUrl}`);
+            });
+        }
+        
+        async function createNewContract() {
+            const name = prompt('Enter contract name:');
+            if (!name) return;
+            
+            const webhookUrl = prompt('Enter webhook URL (optional):');
+            
+            try {
+                const response = await fetch(`${API_BASE}/streaming/contracts/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        name, 
+                        webhookUrl: webhookUrl || `https://webhook.example.com/${name}`,
+                        contentType: 'stream'
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    alert(`✅ Contract created successfully!\n\nEndpoint: ${data.contract.endpoint}`);
+                    await loadContracts();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to create contract');
+            }
+        }
+        
+        // Load contracts on page load
+        loadContracts();
+        
+        // Auto-refresh every 30 seconds
+        setInterval(loadContracts, 30000);
+    </script>
+</body>
+</html>

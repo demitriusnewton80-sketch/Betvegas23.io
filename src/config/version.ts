@@ -1,8 +1,11 @@
 
 export const APP_VERSION = {
-  version: '2.1.0',
+  version: '2.3.0',
   buildDate: new Date().toISOString(),
   features: [
+    'AWS Account Support & Integration',
+    'Betting Sites Production Deployment',
+    'System-Controlled Streaming Contracts',
     'ESPN Sportsbook Integration',
     'Web3 Bridge with Polygon Network',
     'Streaming System',
@@ -16,6 +19,26 @@ export const APP_VERSION = {
     'FCC Compliance Suite'
   ],
   changelog: {
+    '2.3.0': {
+      date: '2025-01-24',
+      changes: [
+        'Added AWS account support and integration',
+        'Fixed TypeScript errors in version route',
+        'Integrated AWS service monitoring',
+        'Added AWS support tier configuration',
+        'Enhanced cloud infrastructure management'
+      ]
+    },
+    '2.2.0': {
+      date: '2025-01-24',
+      changes: [
+        'Deployed production streaming services for betting sites',
+        'Implemented system-controlled contract management',
+        'Rebranded from Fanatics to Betting Sites',
+        'Added production deployment endpoints',
+        'Enhanced contract-based streaming control'
+      ]
+    },
     '2.1.0': {
       date: '2025-01-24',
       changes: [

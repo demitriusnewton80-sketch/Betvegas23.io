@@ -30,9 +30,19 @@ import businessRelationshipsRouter from './routes/business-relationships.js';
 import espnTrackerRoutes from './routes/espn-tracker.js';
 import espnBettingRoutes from './routes/espn-betting.js';
 import versionRoutes from './routes/version.js';
+import awsAccountRoutes from './routes/aws-account.js';
+import accountRoutes from './routes/account.js';
+import authRoutes from './routes/auth.js';
 import smartTroubleshootingRoutes from './routes/smart-troubleshooting.js';
 import functionalRelationshipsBridgeRoutes from './routes/functional-relationships-bridge.js';
 import debugEndpoints from './routes/debug-endpoints.js';
+import apiTroubleshootingRoutes from './routes/api-troubleshooting.js';
+import winnerPayoutRouter from './routes/winner-payout.js';
+import wifiInfusionRouter from './routes/wifi-infusion.js';
+import systemHealthRouter from './routes/system-health.js';
+import contentRollbackRouter from './routes/content-rollback.js';
+import portManagementRoutes from './routes/port-management.js';
+import publicSportsIntelRoutes from './routes/public-sports-intel.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -64,9 +74,19 @@ app.use('/business-relationships', businessRelationshipsRouter);
 app.use('/espn-tracker', espnTrackerRoutes);
 app.use('/espn-betting', espnBettingRoutes);
 app.use('/version', versionRoutes);
+app.use('/api/aws-account', awsAccountRoutes);
+app.use('/api/account', accountRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/smart-troubleshooting', smartTroubleshootingRoutes);
 app.use('/functional-relationships-bridge', functionalRelationshipsBridgeRoutes);
 app.use('/debug', debugEndpoints);
+app.use('/api-troubleshooting', apiTroubleshootingRoutes);
+app.use('/winner-payout', winnerPayoutRouter);
+app.use('/wifi-infusion', wifiInfusionRouter);
+app.use('/system-health', systemHealthRouter);
+app.use('/content-rollback', contentRollbackRouter);
+app.use('/port-management', portManagementRoutes);
+app.use('/public-sports-intel', publicSportsIntelRoutes);
 
 // Static files
 app.use(express.static(path.join(__dirname, '../public')));
@@ -107,24 +127,25 @@ app.use('/streaming/*', (req: Request, res: Response) => {
 // Catch-all for SPA - only for non-API routes
 app.get('*', (req: Request, res: Response) => {
   // Don't catch API routes
-  if (req.path.startsWith('/api/') || 
+  if (req.path.startsWith('/api/') ||
       req.path.startsWith('/streaming/') ||
       req.path.startsWith('/sportsbook/') ||
       req.path.startsWith('/error-recovery/') ||
       req.path.startsWith('/smart-troubleshooting/') ||
-      req.path.startsWith('/debug/')) {
+      req.path.startsWith('/debug/') ||
+      req.path.startsWith('/api-troubleshooting/')) {
     return res.status(404).json({
       success: false,
       error: 'Endpoint not found',
       path: req.path
     });
   }
-  
+
   // For file requests, return 404
   if (req.path.includes('.')) {
     return res.status(404).send('Not found');
   }
-  
+
   // Otherwise serve index.html
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
@@ -132,7 +153,7 @@ app.get('*', (req: Request, res: Response) => {
 // Error handling
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Server Error:', err.message || err);
-  
+
   // Always return JSON, never HTML
   res.setHeader('Content-Type', 'application/json');
   res.status(500).json({
@@ -201,6 +222,8 @@ startupDiagnostics.runDiagnostics().then(diagnostics => {
     console.log(`  • Smart System: http://${HOST}:${PORT}/smart-system/status`);
     console.log(`  • Mobile: http://${HOST}:${PORT}/mobile/stats`);
     console.log(`  • Version: http://${HOST}:${PORT}/version`);
+    console.log(`  • AWS Account: http://${HOST}:${PORT}/api/aws-account/status`); // Added endpoint for AWS Account
+    console.log(`  • API Troubleshooting: http://${HOST}:${PORT}/api-troubleshooting/status`);
     console.log('\n');
   });
 

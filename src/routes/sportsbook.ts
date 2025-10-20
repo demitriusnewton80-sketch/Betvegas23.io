@@ -6,7 +6,7 @@ const router = express.Router();
 router.get('/', (req: Request, res: Response) => {
   res.json({
     success: true,
-    sportsbook: 'Young Meeat LLC',
+    sportsbook: 'Betting Sites Network',
     fccEntity: '20130314143016',
     endpoints: {
       games: '/sportsbook/games',
