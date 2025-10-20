@@ -1,0 +1,361 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Organization & Rollback - Fanatics Sportsbook</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .fcc-badge {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid #22c55e;
+            color: #22c55e;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .section {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            color: #3b82f6;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .stat-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 8px;
+        }
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.7;
+            text-transform: uppercase;
+        }
+        .backup-list {
+            margin-top: 15px;
+        }
+        .backup-item {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .backup-info {
+            flex: 1;
+        }
+        .backup-date {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .success-msg {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid #22c55e;
+            color: #22c55e;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+        }
+        .category-list {
+            margin-top: 15px;
+        }
+        .category-item {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗂️ Content Organization & Rollback</h1>
+            <p style="margin-top: 10px;">Manage and organize all content across Fanatics Sportsbook</p>
+            <span class="fcc-badge">FCC Entity: 20130314143016</span>
+        </div>
+
+        <div class="section">
+            <h2>📊 Content Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalContent">0</div>
+                    <div class="stat-label">Total Content</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalBackups">0</div>
+                    <div class="stat-label">Backups Available</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="categoriesCount">0</div>
+                    <div class="stat-label">Categories</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="organizedCount">0</div>
+                    <div class="stat-label">Organized Items</div>
+                </div>
+            </div>
+
+            <div class="category-list" id="categoryList"></div>
+        </div>
+
+        <div class="section">
+            <h2>💾 Create Backup</h2>
+            <input type="text" id="backupDescription" placeholder="Backup description (optional)">
+            <button class="btn btn-success" onclick="createBackup()">Create Backup</button>
+            <div class="success-msg" id="backupSuccess">✅ Backup created successfully!</div>
+        </div>
+
+        <div class="section">
+            <h2>🔄 Available Backups</h2>
+            <div class="backup-list" id="backupList">
+                <p style="opacity: 0.7;">No backups available</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🗂️ Quick Actions</h2>
+            <button class="btn" onclick="organizeContent()">Organize All Content</button>
+            <button class="btn btn-warning" onclick="loadStatus()">Refresh Status</button>
+        </div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        async function loadStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/content-rollback/status`);
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('totalContent').textContent = data.content.total;
+                    document.getElementById('totalBackups').textContent = data.backups.count;
+                    
+                    const categories = Object.keys(data.content.byType || {});
+                    document.getElementById('categoriesCount').textContent = categories.length;
+
+                    displayCategories(data.content.byType);
+                }
+
+                loadBackups();
+            } catch (error) {
+                console.error('Error loading status:', error);
+            }
+        }
+
+        function displayCategories(byType) {
+            const container = document.getElementById('categoryList');
+            
+            if (!byType || Object.keys(byType).length === 0) {
+                container.innerHTML = '<p style="opacity: 0.7; margin-top: 15px;">No categories found</p>';
+                return;
+            }
+
+            container.innerHTML = Object.entries(byType)
+                .map(([type, count]) => `
+                    <div class="category-item">
+                        <span><strong>${type}</strong></span>
+                        <span>${count} items</span>
+                    </div>
+                `).join('');
+        }
+
+        async function createBackup() {
+            const description = document.getElementById('backupDescription').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/content-rollback/backup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ description })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('backupSuccess').style.display = 'block';
+                    document.getElementById('backupDescription').value = '';
+                    
+                    setTimeout(() => {
+                        document.getElementById('backupSuccess').style.display = 'none';
+                    }, 3000);
+
+                    loadBackups();
+                    loadStatus();
+                }
+            } catch (error) {
+                console.error('Error creating backup:', error);
+                alert('Failed to create backup');
+            }
+        }
+
+        async function loadBackups() {
+            try {
+                const response = await fetch(`${API_BASE}/content-rollback/backups`);
+                const data = await response.json();
+
+                if (data.success && data.backups.length > 0) {
+                    displayBackups(data.backups);
+                } else {
+                    document.getElementById('backupList').innerHTML = 
+                        '<p style="opacity: 0.7;">No backups available</p>';
+                }
+            } catch (error) {
+                console.error('Error loading backups:', error);
+            }
+        }
+
+        function displayBackups(backups) {
+            const container = document.getElementById('backupList');
+
+            container.innerHTML = backups.map(backup => `
+                <div class="backup-item">
+                    <div class="backup-info">
+                        <div><strong>${backup.description}</strong></div>
+                        <div class="backup-date">${new Date(backup.timestamp).toLocaleString()}</div>
+                    </div>
+                    <button class="btn btn-warning" onclick="rollbackToBackup('${backup.id}')">
+                        🔄 Rollback
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        async function rollbackToBackup(backupId) {
+            if (!confirm('Are you sure you want to rollback to this backup? This will replace current content.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/content-rollback/rollback/${backupId}`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ Content rolled back successfully!');
+                    loadStatus();
+                } else {
+                    alert('❌ Rollback failed: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error rolling back:', error);
+                alert('Failed to rollback content');
+            }
+        }
+
+        async function organizeContent() {
+            try {
+                const response = await fetch(`${API_BASE}/content-rollback/organize`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Organized ${data.organized} content items!\n\nCategories: ${JSON.stringify(data.categories, null, 2)}`);
+                    document.getElementById('organizedCount').textContent = data.organized;
+                    loadStatus();
+                }
+            } catch (error) {
+                console.error('Error organizing content:', error);
+                alert('Failed to organize content');
+            }
+        }
+
+        window.addEventListener('load', () => {
+            loadStatus();
+            setInterval(loadStatus, 30000);
+        });
+    </script>
+</body>
+</html>

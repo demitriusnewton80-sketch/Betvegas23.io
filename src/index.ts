@@ -34,6 +34,10 @@ import smartTroubleshootingRoutes from './routes/smart-troubleshooting.js';
 import functionalRelationshipsBridgeRoutes from './routes/functional-relationships-bridge.js';
 import debugEndpoints from './routes/debug-endpoints.js';
 import apiTroubleshootingRoutes from './routes/api-troubleshooting.js';
+import winnerPayoutRouter from './routes/winner-payout.js';
+import wifiInfusionRouter from './routes/wifi-infusion.js';
+import systemHealthRouter from './routes/system-health.js';
+import contentRollbackRouter from './routes/content-rollback.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -69,6 +73,10 @@ app.use('/smart-troubleshooting', smartTroubleshootingRoutes);
 app.use('/functional-relationships-bridge', functionalRelationshipsBridgeRoutes);
 app.use('/debug', debugEndpoints);
 app.use('/api-troubleshooting', apiTroubleshootingRoutes);
+app.use('/winner-payout', winnerPayoutRouter);
+app.use('/wifi-infusion', wifiInfusionRouter);
+app.use('/system-health', systemHealthRouter);
+app.use('/content-rollback', contentRollbackRouter);
 
 // Static files
 app.use(express.static(path.join(__dirname, '../public')));
