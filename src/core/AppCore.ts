@@ -1,5 +1,4 @@
 import { EventEmitter } from 'events';
-import { ServiceContainer } from './ServiceContainer.js';
 
 interface CoreConfig {
   port: number;

@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { randomBytes } from 'crypto';
+import crypto from 'crypto';
 import { ssoService } from './SSOService.js';
 
 export interface SSOUser {
@@ -7,9 +7,8 @@ export interface SSOUser {
   email: string;
   name: string;
   provider: string;
-  accessToken: string;
-  refreshToken?: string;
-  expiresAt: number;
+  avatar?: string;
+  metadata?: Record<string, any>;
 }
 
 export interface SSOPlugin {
@@ -406,7 +405,19 @@ class SSOPluginService extends EventEmitter {
 
   // Generate random state
   private generateState(): string {
-    return randomBytes(32).toString('hex');
+    // Use Node.js crypto.randomBytes in a Node.js environment
+    if (typeof crypto !== 'undefined' && typeof crypto.randomBytes === 'function') {
+      return crypto.randomBytes(32).toString('hex');
+    }
+    // Fallback for environments where crypto might not be available or different (e.g., browser)
+    // This is a less secure fallback and should be replaced with a proper polyfill if needed
+    console.warn('Using fallback for state generation. Consider a more secure method for your environment.');
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < 32; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
   }
 
   // Get plugin statistics

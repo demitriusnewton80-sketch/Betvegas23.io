@@ -6,6 +6,14 @@ import { ps5SportsService } from './PS5SportsService.js';
 import { streamingService } from './StreamingService.js';
 import { quickNodeService } from './QuickNodeService.js';
 
+interface Game {
+  id: string;
+  sport: string;
+  status: string;
+  homeTeam: string;
+  awayTeam: string;
+}
+
 interface CloudNode {
   id: string;
   type: 'aws' | 'azure' | 'gcp' | 'replit';

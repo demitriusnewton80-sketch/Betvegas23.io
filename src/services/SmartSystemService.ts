@@ -144,10 +144,13 @@ export class SmartSystemService extends EventEmitter {
     try {
       const cloudKey = `betting-content/${uploadId}.json`;
 
-      await awsBackupService.storeBackup(`content-upload-${uploadId}`, {
-        type: 'content-upload',
-        data,
-        metadata: { uploadId, timestamp: Date.now() }
+      await awsBackupService.backup({
+        key: `content-upload-${uploadId}`,
+        data: {
+          type: 'content-upload',
+          data,
+          metadata: { uploadId, timestamp: Date.now() }
+        }
       });
 
       const cloudUrl = `https://s3.amazonaws.com/young-meeat-llc/${cloudKey}`;
