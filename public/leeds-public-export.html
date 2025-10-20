@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leeds Public Domain Export - DUNS Content Peers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #4CAF50;
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin: 10px 5px;
+            font-weight: bold;
+        }
+
+        .control-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin: 10px;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .export-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border-left: 5px solid #4CAF50;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .metric {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            opacity: 0.9;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .status-active { background: #4CAF50; }
+        .status-pending { background: #FF9800; }
+
+        .format-selector {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .format-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .format-btn:hover {
+            border-color: #4CAF50;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .format-btn.selected {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 Leeds Public Domain Export</h1>
+            <p>Export DUNS Content Peers to Public Domain</p>
+            <span class="badge">DUNS: 147036693</span>
+            <span class="badge">FCC: 20130314143016</span>
+            <span class="badge">Park Towne Place Associates LP</span>
+        </div>
+
+        <div class="control-panel">
+            <h2 style="margin-bottom: 20px;">📤 Export Controls</h2>
+            
+            <div class="format-selector">
+                <div class="format-btn selected" data-format="json" onclick="selectFormat('json')">
+                    <strong>JSON</strong>
+                    <div style="font-size: 0.9em; opacity: 0.8;">Standard format</div>
+                </div>
+                <div class="format-btn" data-format="xml" onclick="selectFormat('xml')">
+                    <strong>XML</strong>
+                    <div style="font-size: 0.9em; opacity: 0.8;">Enterprise format</div>
+                </div>
+                <div class="format-btn" data-format="csv" onclick="selectFormat('csv')">
+                    <strong>CSV</strong>
+                    <div style="font-size: 0.9em; opacity: 0.8;">Spreadsheet format</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn" onclick="exportToPublicDomain()">🚀 Export to Public Domain</button>
+                <button class="btn btn-secondary" onclick="downloadExport()">💾 Download Export</button>
+                <button class="btn btn-danger" onclick="viewHistory()">📜 View History</button>
+            </div>
+        </div>
+
+        <div id="exportStatus" style="display: none;" class="export-card">
+            <h3>✅ Export Successful</h3>
+            <div class="metric-grid" id="exportMetrics"></div>
+            <div>
+                <h4 style="margin-top: 20px;">Public URL:</h4>
+                <div class="code-block" id="publicURL"></div>
+            </div>
+        </div>
+
+        <div class="export-card">
+            <h2 style="margin-bottom: 15px;">📊 Current Configuration</h2>
+            <div id="configDisplay"></div>
+        </div>
+
+        <div id="historySection" style="display: none;" class="export-card">
+            <h2 style="margin-bottom: 15px;">📜 Export History</h2>
+            <div id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let selectedFormat = 'json';
+        let currentExport = null;
+
+        function selectFormat(format) {
+            selectedFormat = format;
+            document.querySelectorAll('.format-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            document.querySelector(`[data-format="${format}"]`).classList.add('selected');
+        }
+
+        async function exportToPublicDomain() {
+            try {
+                const response = await fetch(`${API_BASE}/leeds-export/export`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentExport = data.export;
+                    displayExportSuccess(data);
+                    await loadConfiguration();
+                }
+            } catch (error) {
+                alert('Export failed: ' + error.message);
+            }
+        }
+
+        function displayExportSuccess(data) {
+            const statusDiv = document.getElementById('exportStatus');
+            statusDiv.style.display = 'block';
+
+            const metricsHtml = `
+                <div class="metric">
+                    <div class="metric-value">${data.export.network.totalPeers}</div>
+                    <div class="metric-label">Total Peers</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">${data.export.network.activePeers}</div>
+                    <div class="metric-label">Active Peers</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">${data.export.peers.length}</div>
+                    <div class="metric-label">Exported</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">${data.export.network.totalContent}</div>
+                    <div class="metric-label">Content Items</div>
+                </div>
+            `;
+            
+            document.getElementById('exportMetrics').innerHTML = metricsHtml;
+            document.getElementById('publicURL').textContent = data.publicURL;
+        }
+
+        async function downloadExport() {
+            if (!currentExport) {
+                await exportToPublicDomain();
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/leeds-export/export/format/${selectedFormat}`);
+                const blob = await response.blob();
+                
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `leeds_export_${Date.now()}.${selectedFormat}`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } catch (error) {
+                alert('Download failed: ' + error.message);
+            }
+        }
+
+        async function viewHistory() {
+            try {
+                const response = await fetch(`${API_BASE}/leeds-export/history`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const historySection = document.getElementById('historySection');
+                    historySection.style.display = 'block';
+
+                    const historyHtml = data.exports.map(exp => `
+                        <div class="code-block">
+                            <strong>Export ID:</strong> ${exp.exportId}<br>
+                            <strong>Timestamp:</strong> ${new Date(exp.exportTimestamp).toLocaleString()}<br>
+                            <strong>Peers Exported:</strong> ${exp.peers.length}<br>
+                            <strong>Format:</strong> ${exp.metadata.exportFormat}
+                        </div>
+                    `).join('');
+
+                    document.getElementById('historyList').innerHTML = historyHtml || '<p>No exports yet</p>';
+                }
+            } catch (error) {
+                alert('Failed to load history: ' + error.message);
+            }
+        }
+
+        async function loadConfiguration() {
+            try {
+                const response = await fetch(`${API_BASE}/leeds-export/config`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const configHtml = `
+                        <div class="code-block">
+                            <strong>Public Domain:</strong> ${data.config.publicDomain}<br>
+                            <strong>Export Format:</strong> ${data.config.exportFormat}<br>
+                            <strong>Include Metrics:</strong> ${data.config.includeMetrics ? '✅' : '❌'}<br>
+                            <strong>Anonymize Data:</strong> ${data.config.anonymizeData ? '✅' : '❌'}
+                        </div>
+                    `;
+                    document.getElementById('configDisplay').innerHTML = configHtml;
+                }
+            } catch (error) {
+                console.error('Failed to load configuration:', error);
+            }
+        }
+
+        // Initialize
+        loadConfiguration();
+    </script>
+</body>
+</html>

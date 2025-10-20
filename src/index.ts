@@ -47,6 +47,7 @@ import liveChatRoutes from './routes/live-chat.js';
 import advancedAnalyticsRoutes from './routes/advanced-analytics.js';
 import dunContentPeersRoutes from './routes/dun-content-peers.js';
 import arnFinderRoutes from './routes/arn-finder.js';
+import leedsExportRoutes from './routes/leeds-export.js';
 
 // Initialize core systems
 const __filename = fileURLToPath(import.meta.url);
@@ -124,6 +125,7 @@ try {
   app.use('/advanced-analytics', advancedAnalyticsRoutes);
   app.use('/dun-content-peers', dunContentPeersRoutes);
   app.use('/arn-finder', arnFinderRoutes);
+  app.use('/leeds-export', leedsExportRoutes);
   console.log('✅ All API routes registered successfully');
 } catch (error) {
   console.error('❌ Error registering routes:', error);
