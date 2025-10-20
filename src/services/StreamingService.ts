@@ -204,7 +204,7 @@ class StreamingService extends EventEmitter {
         //     'X-API-Key': sportsbook.apiKey
         //   },
         //   body: JSON.stringify({
-        //     source: 'Young Meat LLC',
+        //     source: 'Young Meeat LLC',
         //     gameUpdate: update,
         //     timestamp: new Date().toISOString()
         //   })
