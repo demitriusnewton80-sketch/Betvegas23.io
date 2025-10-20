@@ -29,7 +29,6 @@ export class StartupDiagnostics {
     console.log('✓ Checking core services...');
     // All services are imported - just verify
     return true;
-  }e;
   }
 
   async runDiagnostics(): Promise<{ success: boolean; errors: string[]; warnings: string[] }> {
@@ -68,4 +67,6 @@ export class StartupDiagnostics {
   }
 }
 
-export const startupDiagnostics = new StartupDiagnostics();tartupDiagnostics();
+export const startupDiagnostics = new StartupDiagnostics();
+
+export const startupDiagnostics = new StartupDiagnostics();

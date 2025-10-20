@@ -1,0 +1,426 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Falcon Broadcast Engine | BettingSites™</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e5e7eb;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid #3b82f6;
+            border-radius: 20px;
+            font-size: 14px;
+            margin: 5px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #3b82f6;
+        }
+
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat:last-child {
+            border-bottom: none;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #22c55e;
+            font-size: 18px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+        }
+
+        .broadcast-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-broadcasting {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        .status-completed {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .status-failed {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .pulse-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #22c55e;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #e5e7eb;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Falcon Broadcast Engine</h1>
+            <p>Build & Broadcast Reports to Core Systems</p>
+            <div>
+                <span class="badge">FCC Entity: 20130314143016</span>
+                <span class="badge">Falcon Reports Integration</span>
+                <span class="badge"><span class="pulse-dot"></span>Broadcasting Live</span>
+            </div>
+            <p style="margin-top: 15px; opacity: 0.8;">
+                Source: https://reports.falcon.ag/Report/Welcome.aspx?login=1
+            </p>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>📊 Engine Status</h2>
+                <div id="engineStatus">Loading...</div>
+            </div>
+
+            <div class="card">
+                <h2>📡 Broadcast Stats</h2>
+                <div id="broadcastStats">Loading...</div>
+            </div>
+
+            <div class="card">
+                <h2>🎯 Build Report</h2>
+                <div class="form-group">
+                    <label>Report Type:</label>
+                    <input type="text" id="reportType" placeholder="e.g., sports_data, betting_analysis">
+                </div>
+                <div class="form-group">
+                    <label>Report Data (JSON):</label>
+                    <textarea id="reportData" placeholder='{"key": "value"}'></textarea>
+                </div>
+                <button class="btn btn-success" onclick="buildReport()">🚀 Build & Broadcast</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📡 Active Broadcasts</h2>
+            <div id="broadcastList">Loading...</div>
+        </div>
+
+        <div class="card">
+            <h2>📄 Recent Reports</h2>
+            <div id="reportList">Loading...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let eventSource = null;
+
+        async function loadStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/falcon-broadcast/status`);
+                const data = await response.json();
+
+                if (data.success) {
+                    displayEngineStatus(data.engine);
+                    displayBroadcastStats(data.engine);
+                }
+            } catch (error) {
+                console.error('Error loading status:', error);
+            }
+        }
+
+        function displayEngineStatus(engine) {
+            document.getElementById('engineStatus').innerHTML = `
+                <div class="stat">
+                    <span>Total Reports:</span>
+                    <span class="stat-value">${engine.totalReports}</span>
+                </div>
+                <div class="stat">
+                    <span>Total Broadcasts:</span>
+                    <span class="stat-value">${engine.totalBroadcasts}</span>
+                </div>
+                <div class="stat">
+                    <span>Falcon Source:</span>
+                    <span style="font-size: 12px;">Connected</span>
+                </div>
+            `;
+        }
+
+        function displayBroadcastStats(engine) {
+            document.getElementById('broadcastStats').innerHTML = `
+                <div class="stat">
+                    <span>Broadcasting Now:</span>
+                    <span class="stat-value">${engine.broadcastingNow}</span>
+                </div>
+                <div class="stat">
+                    <span>Completed:</span>
+                    <span class="stat-value" style="color: #22c55e;">${engine.completedBroadcasts}</span>
+                </div>
+                <div class="stat">
+                    <span>Failed:</span>
+                    <span class="stat-value" style="color: #ef4444;">${engine.failedBroadcasts}</span>
+                </div>
+            `;
+        }
+
+        async function loadBroadcasts() {
+            try {
+                const response = await fetch(`${API_BASE}/falcon-broadcast/broadcasts`);
+                const data = await response.json();
+
+                if (data.success) {
+                    displayBroadcasts(data.broadcasts);
+                }
+            } catch (error) {
+                console.error('Error loading broadcasts:', error);
+            }
+        }
+
+        function displayBroadcasts(broadcasts) {
+            if (broadcasts.length === 0) {
+                document.getElementById('broadcastList').innerHTML = '<p style="opacity: 0.6;">No broadcasts yet</p>';
+                return;
+            }
+
+            document.getElementById('broadcastList').innerHTML = broadcasts.slice(-10).reverse().map(b => `
+                <div class="broadcast-item">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>Broadcast ${b.id.substring(0, 20)}...</strong>
+                            <div style="font-size: 12px; opacity: 0.8; margin-top: 4px;">
+                                Report: ${b.reportId.substring(0, 30)}...
+                            </div>
+                        </div>
+                        <span class="status-badge status-${b.status}">${b.status.toUpperCase()}</span>
+                    </div>
+                    <div style="font-size: 12px; margin-top: 8px; opacity: 0.6;">
+                        Destination: ${b.destination} | Started: ${new Date(b.startTime).toLocaleString()}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function loadReports() {
+            try {
+                const response = await fetch(`${API_BASE}/falcon-broadcast/reports`);
+                const data = await response.json();
+
+                if (data.success) {
+                    displayReports(data.reports);
+                }
+            } catch (error) {
+                console.error('Error loading reports:', error);
+            }
+        }
+
+        function displayReports(reports) {
+            if (reports.length === 0) {
+                document.getElementById('reportList').innerHTML = '<p style="opacity: 0.6;">No reports yet</p>';
+                return;
+            }
+
+            document.getElementById('reportList').innerHTML = reports.slice(-10).reverse().map(r => `
+                <div class="broadcast-item">
+                    <div>
+                        <strong>${r.type}</strong>
+                        <div style="font-size: 12px; opacity: 0.8; margin-top: 4px;">
+                            ID: ${r.id}
+                        </div>
+                        <div style="font-size: 12px; opacity: 0.6; margin-top: 4px;">
+                            ${new Date(r.timestamp).toLocaleString()}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function buildReport() {
+            const type = document.getElementById('reportType').value;
+            const dataStr = document.getElementById('reportData').value;
+
+            if (!type || !dataStr) {
+                alert('Please enter both report type and data');
+                return;
+            }
+
+            try {
+                const data = JSON.parse(dataStr);
+
+                const response = await fetch(`${API_BASE}/falcon-broadcast/build`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ reportType: type, data })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(`Report built successfully! ID: ${result.reportId}`);
+                    document.getElementById('reportType').value = '';
+                    document.getElementById('reportData').value = '';
+                    loadStatus();
+                    loadBroadcasts();
+                    loadReports();
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error building report: ' + error.message);
+            }
+        }
+
+        function startLiveStream() {
+            if (eventSource) return;
+
+            eventSource = new EventSource(`${API_BASE}/falcon-broadcast/stream`);
+
+            eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                
+                if (data.type === 'status_update') {
+                    displayEngineStatus(data.status);
+                    displayBroadcastStats(data.status);
+                } else if (data.type === 'broadcast_completed') {
+                    loadBroadcasts();
+                }
+            };
+        }
+
+        // Initialize
+        loadStatus();
+        loadBroadcasts();
+        loadReports();
+        startLiveStream();
+
+        setInterval(() => {
+            loadStatus();
+            loadBroadcasts();
+            loadReports();
+        }, 10000);
+    </script>
+</body>
+</html>

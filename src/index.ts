@@ -25,10 +25,19 @@ import errorRecoveryRoutes from './routes/error-recovery.js';
 import apiTroubleshootingRoutes from './routes/api-troubleshooting.js';
 import apiFusionRoutes from './routes/api-fusion.js';
 import fusionAssemblyRouter from './routes/fusion-assembly.js';
-import contractCallbacksRoutes from './routes/contract-callbacks.js';
+import contractCallbackRouter from './routes/contract-callbacks.js';
+import portManagementRouter from './routes/port-management.js';
+import portStreamingRouter from './routes/port-streaming.js';
+import remoteStreamingControlRouter from './routes/remote-streaming-control.js';
+import functionalStructuresRouter from './routes/functional-structures.js';
+import contentIntegrityRouter from './routes/content-integrity.js';
+import { contentIntegrityService } from './services/ContentIntegrityService.js';
 import jsonSyncRoutes from './routes/json-sync.js';
 import workflowLandscapeRouter from './routes/workflow-landscape.js';
 import smartCommunicationFusionRouter from './routes/smart-communication-fusion.js';
+import applePartnershipRouter from './routes/apple-partnership.js';
+import falconBroadcastRouter from './routes/falcon-broadcast.js';
+import partnershipEnrollmentRouter from './routes/partnership-enrollment.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -91,8 +100,12 @@ try {
   app.use('/api-troubleshooting', apiTroubleshootingRoutes);
   app.use('/api-fusion', apiFusionRoutes);
   app.use('/fusion-assembly', fusionAssemblyRouter);
-  app.use('/contract-callbacks', contractCallbacksRoutes);
-  app.use('/json-sync', jsonSyncRoutes);
+  app.use('/contract-callbacks', contractCallbackRouter);
+  app.use('/port-management', portManagementRouter);
+  app.use('/port-streaming', portStreamingRouter);
+  app.use('/remote-streaming-control', remoteStreamingControlRouter);
+  app.use('/functional-structures', functionalStructuresRouter);
+  app.use('/content-integrity', contentIntegrityRouter);
   console.log('✅ All API routes registered successfully');
 } catch (error) {
   console.error('❌ Error registering routes:', error);
@@ -195,6 +208,11 @@ Promise.resolve().then(async () => {
     // Initialize JSON Sync Service
     const { jsonSyncService } = await import('./services/JSONSyncService.js');
     console.log('✅ JSONSync ready');
+
+    // Initialize Content Integrity Service
+    contentIntegrityService.initialize();
+    console.log('✅ ContentIntegrityService ready');
+
   } catch (error) {
     console.error('❌ Core system initialization error:', error);
     // Continue running even if some systems fail to initialize
@@ -204,5 +222,8 @@ Promise.resolve().then(async () => {
 // Mount workflow landscape endpoint
 app.use('/workflow-landscape', workflowLandscapeRouter);
 app.use('/smart-communication-fusion', smartCommunicationFusionRouter);
+app.use('/apple-partnership', applePartnershipRouter);
+app.use('/falcon-broadcast', falconBroadcastRouter);
+app.use('/partnership-enrollment', partnershipEnrollmentRouter);
 
 export default app;
