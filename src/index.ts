@@ -24,6 +24,7 @@ import wifiWeb3FusionRoutes from './routes/wifi-web3-fusion.js';
 import errorRecoveryRoutes from './routes/error-recovery.js';
 import apiTroubleshootingRoutes from './routes/api-troubleshooting.js';
 import apiFusionRoutes from './routes/api-fusion.js';
+import fusionAssemblyRouter from './routes/fusion-assembly.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -65,6 +66,7 @@ app.use('/wifi-web3-fusion', wifiWeb3FusionRoutes);
 app.use('/error-recovery', errorRecoveryRoutes);
 app.use('/api-troubleshooting', apiTroubleshootingRoutes);
 app.use('/api-fusion', apiFusionRoutes);
+app.use('/fusion-assembly', fusionAssemblyRouter);
 
 // Static files (must be after API routes)
 app.use(express.static(path.join(__dirname, '../public')));
@@ -133,5 +135,17 @@ app.listen(PORT, '0.0.0.0', () => {
 ╚═══════════════════════════════════════════════════════════╝
   `);
 });
+
+// Initialize core systems
+import { appCore } from './core/AppCore.js';
+import { smartTroubleshootingCore } from './core/SmartTroubleshootingCore.js';
+import { errorRecoverySystem } from './core/ErrorRecoverySystem.js';
+appCore.initialize();
+smartTroubleshootingCore;
+errorRecoverySystem;
+
+// Initialize fusion assembly
+import { fusionAssemblyCore } from './core/FusionAssemblyCore.js';
+fusionAssemblyCore;
 
 export default app;
