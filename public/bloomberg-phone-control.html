@@ -1,0 +1,348 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloomberg Phone Bridge | Think or Swim Integration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            background: linear-gradient(135deg, #f7931a 0%, #ff6b35 100%);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(247, 147, 26, 0.3);
+        }
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        .badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin: 5px;
+            font-weight: 700;
+        }
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            color: #f7931a;
+            margin-bottom: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .btn {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #f7931a 0%, #ff6b35 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 5px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(247, 147, 26, 0.4);
+        }
+        .info-card {
+            background: rgba(34, 197, 94, 0.1);
+            border: 2px solid #22c55e;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .info-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            color: #f7931a;
+            font-weight: 700;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="icon">📱💼</div>
+            <h1>Bloomberg Phone Bridge</h1>
+            <p style="opacity: 0.9; margin-top: 10px;">SIM Port + Think or Swim Core Integration</p>
+            <div style="margin-top: 15px;">
+                <span class="badge">FCC: 20130314143016</span>
+                <span class="badge">Bloomberg Terminal</span>
+                <span class="badge">Think or Swim</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📱 Setup Bloomberg Access</h2>
+            <input type="tel" id="phoneInput" placeholder="Phone Number (e.g., 4459429173)">
+            <input type="text" id="simPortInput" placeholder="SIM Port (e.g., SIM1)">
+            <input type="email" id="emailInput" placeholder="Email (Optional)">
+            <button class="btn" onclick="createBloombergSession()">🚀 Create Bloomberg Session</button>
+        </div>
+
+        <div id="sessionInfo" style="display: none;">
+            <div class="section">
+                <h2>✅ Bloomberg Terminal Active</h2>
+                <div class="info-card">
+                    <div class="info-item">
+                        <strong>Terminal ID:</strong> <span id="terminalId">-</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Access URL:</strong> <span id="accessUrl">-</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>SIM Port:</strong> <span id="simPort">-</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Think or Swim:</strong> <span id="tosStatus">-</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Session ID:</strong> <span id="sessionId">-</span>
+                    </div>
+                </div>
+                <button class="btn" onclick="enableThinkOrSwim()" style="margin-top: 15px;">
+                    🎯 Enable Think or Swim Core
+                </button>
+                <button class="btn" onclick="connectVPN()" style="margin-top: 15px;">
+                    🔒 Connect Bloomberg VPN
+                </button>
+                <button class="btn" onclick="streamData()" style="margin-top: 15px;">
+                    📊 Stream Market Data
+                </button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Bloomberg Stats</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalSessions">0</div>
+                    <div class="stat-label">Total Sessions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="activeSessions">0</div>
+                    <div class="stat-label">Active Sessions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="tosEnabled">0</div>
+                    <div class="stat-label">Think or Swim Enabled</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="dataFeeds">0</div>
+                    <div class="stat-label">Data Feeds Active</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let currentSessionId = null;
+
+        async function createBloombergSession() {
+            const phoneNumber = document.getElementById('phoneInput').value.trim();
+            const simPort = document.getElementById('simPortInput').value.trim();
+            const email = document.getElementById('emailInput').value.trim();
+
+            if (!phoneNumber || !simPort) {
+                alert('Please enter Phone Number and SIM Port');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/bloomberg-phone-bridge/session/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phoneNumber, simPort, email })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentSessionId = data.session.id;
+                    document.getElementById('sessionInfo').style.display = 'block';
+                    document.getElementById('terminalId').textContent = data.session.bloombergTerminalId;
+                    document.getElementById('accessUrl').textContent = `https://bloomberg.com/terminal/${data.session.bloombergTerminalId}`;
+                    document.getElementById('simPort').textContent = data.session.simPort;
+                    document.getElementById('tosStatus').textContent = data.session.thinkOrSwimCore ? 'Enabled ✓' : 'Disabled';
+                    document.getElementById('sessionId').textContent = data.session.id;
+
+                    alert(`✅ Bloomberg Session Created!\n\nTerminal ID: ${data.session.bloombergTerminalId}`);
+                    loadStats();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to create Bloomberg session');
+            }
+        }
+
+        async function enableThinkOrSwim() {
+            if (!currentSessionId) {
+                alert('Please create a session first');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/bloomberg-phone-bridge/session/${currentSessionId}/enable-thinkorswim`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('tosStatus').textContent = 'Enabled ✓';
+                    alert('✅ Think or Swim Core Enabled!');
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to enable Think or Swim');
+            }
+        }
+
+        async function connectVPN() {
+            if (!currentSessionId) {
+                alert('Please create a session first');
+                return;
+            }
+
+            const userId = prompt('Enter User ID:');
+            if (!userId) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/bloomberg-phone-bridge/session/${currentSessionId}/vpn/connect`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Connected to Bloomberg VPN!\n\nVPN IP: ${data.vpnConnection.vpnIP}`);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('VPN connection failed');
+            }
+        }
+
+        async function streamData() {
+            if (!currentSessionId) {
+                alert('Please create a session first');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/bloomberg-phone-bridge/session/${currentSessionId}/stream`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ dataType: 'market-data' })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Bloomberg Data Streaming Started!\n\nStream URL: ${data.streamConfig.streamUrl}`);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to start stream');
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/bloomberg-phone-bridge/stats`);
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('totalSessions').textContent = data.stats.totalSessions;
+                    document.getElementById('activeSessions').textContent = data.stats.activeSessions;
+                    document.getElementById('tosEnabled').textContent = data.stats.thinkOrSwimEnabled;
+                    document.getElementById('dataFeeds').textContent = data.stats.dataFeedsActive;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            loadStats();
+            setInterval(loadStats, 30000);
+        });
+    </script>
+</body>
+</html>
