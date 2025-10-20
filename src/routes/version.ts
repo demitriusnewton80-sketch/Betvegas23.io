@@ -1,4 +1,3 @@
-
 import express, { Request, Response } from 'express';
 import { APP_VERSION } from '../config/version.js';
 
@@ -18,11 +17,11 @@ router.get('/', (req: Request, res: Response) => {
 router.get('/changelog', (req: Request, res: Response) => {
   const changelog = APP_VERSION.changelog as Record<string, { date: string; changes: string[] }>;
   const currentVersion = APP_VERSION.version as keyof typeof APP_VERSION.changelog;
-  const latestChangelog = changelog[currentVersion] || { 
-    date: new Date().toISOString(), 
-    changes: ['Current version'] 
+  const latestChangelog = changelog[currentVersion] || {
+    date: new Date().toISOString(),
+    changes: ['Current version']
   };
-  
+
   res.json({
     version: currentVersion,
     latest: latestChangelog

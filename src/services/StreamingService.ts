@@ -265,12 +265,12 @@ class StreamingService extends EventEmitter {
       contractType: 'system-controlled'
     }));
   }
-  
+
   // Deploy streaming to betting sites with system contract control
   deployToBettingSites(): { deployed: number; contracts: string[] } {
     const activeSites = Array.from(this.externalSportsbooks.values())
       .filter(sb => sb.active);
-    
+
     return {
       deployed: activeSites.length,
       contracts: activeSites.map(sb => `contract_${sb.id}_${Date.now()}`)
@@ -280,7 +280,7 @@ class StreamingService extends EventEmitter {
   // Get active streams for API responses
   getActiveStreams(): Array<{id: string, name: string, sport: string, status: string, url: string}> {
     const streams: Array<{id: string, name: string, sport: string, status: string, url: string}> = [];
-    
+
     this.activeStreams.forEach((_, gameId) => {
       streams.push({
         id: gameId,
