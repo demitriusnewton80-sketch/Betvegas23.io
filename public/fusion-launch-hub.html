@@ -1,0 +1,369 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fusion Launch Hub | Young Meeat LLC</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        .header h1 { font-size: 42px; margin-bottom: 10px; }
+        .badge {
+            background: rgba(34, 197, 94, 0.3);
+            border: 2px solid #22c55e;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin: 5px;
+            font-weight: 700;
+        }
+        .section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 14px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #22c55e;
+            margin-bottom: 8px;
+        }
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+            text-transform: uppercase;
+        }
+        .devices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .device-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #22c55e;
+        }
+        .device-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .stream-viewer {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .stream-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Fusion Launch Hub</h1>
+            <p style="font-size: 18px; margin: 10px 0;">Connect Devices, Stream Content, Manage Data</p>
+            <div>
+                <span class="badge">FCC: 20130314143016</span>
+                <span class="badge" id="envPortBadge">Port: Loading...</span>
+                <span class="badge">Live Streaming</span>
+            </div>
+        </div>
+
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <div class="section">
+            <h2 style="margin-bottom: 20px;">📱 Connect Device</h2>
+            <div class="input-group">
+                <label>Account Email</label>
+                <select id="accountEmail">
+                    <option value="">-- Select Email --</option>
+                    <option value="gbemeaat@gmail.com">gbemeaat@gmail.com</option>
+                    <option value="meeatupt215@gmail.com">meeatupt215@gmail.com</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Device Name</label>
+                <input type="text" id="deviceName" placeholder="My Phone / My Tablet">
+            </div>
+            <div class="input-group">
+                <label>Device Type</label>
+                <select id="deviceType">
+                    <option value="mobile">Mobile</option>
+                    <option value="tablet">Tablet</option>
+                    <option value="desktop">Desktop</option>
+                    <option value="smart-tv">Smart TV</option>
+                </select>
+            </div>
+            <button class="btn" onclick="connectDevice()">🔗 Connect Device</button>
+            <button class="btn" onclick="loadDevices()">🔄 Refresh</button>
+        </div>
+
+        <div class="section">
+            <h2 style="margin-bottom: 15px;">🌐 Connected Devices</h2>
+            <div class="devices-grid" id="devicesGrid"></div>
+        </div>
+
+        <div class="section">
+            <h2 style="margin-bottom: 15px;">📡 Live Stream Monitor</h2>
+            <button class="btn" onclick="startStreaming()">▶️ Start Streaming</button>
+            <button class="btn" onclick="downloadContent()">⬇️ Download Content</button>
+            <div class="stream-viewer" id="streamViewer">
+                <p style="opacity: 0.7;">No active streams</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        const API_BASE = window.location.origin;
+        let streamSource = null;
+        let currentDeviceId = null;
+
+        async function loadStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/fusion-launch/status`);
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('envPortBadge').textContent = `Port: ${data.fusion.envPort}`;
+                    
+                    displayStats(data.fusion);
+                }
+            } catch (error) {
+                console.error('Error loading status:', error);
+            }
+        }
+
+        function displayStats(fusion) {
+            const stats = [
+                { label: 'Active Sessions', value: fusion.activeSessions },
+                { label: 'Connected Devices', value: fusion.connectedDevices },
+                { label: 'Active Ports', value: fusion.activePorts },
+                { label: 'Live Streams', value: fusion.activeStreams }
+            ];
+
+            document.getElementById('statsGrid').innerHTML = stats.map(stat => `
+                <div class="stat-card">
+                    <div class="stat-value">${stat.value}</div>
+                    <div class="stat-label">${stat.label}</div>
+                </div>
+            `).join('');
+        }
+
+        async function connectDevice() {
+            const accountEmail = document.getElementById('accountEmail').value;
+            const deviceName = document.getElementById('deviceName').value;
+            const deviceType = document.getElementById('deviceType').value;
+
+            if (!accountEmail || !deviceName) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/fusion-launch/connect-device`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ accountEmail, deviceName, deviceType })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentDeviceId = data.device.id;
+                    alert(`✅ Device connected!\nPort: ${data.device.port}\nURL: ${data.connectionUrl}`);
+                    loadDevices();
+                    loadStatus();
+                }
+            } catch (error) {
+                console.error('Error connecting device:', error);
+                alert('Failed to connect device');
+            }
+        }
+
+        async function loadDevices() {
+            try {
+                const response = await fetch(`${API_BASE}/fusion-launch/devices`);
+                const data = await response.json();
+
+                if (data.success) {
+                    displayDevices(data.devices);
+                }
+            } catch (error) {
+                console.error('Error loading devices:', error);
+            }
+        }
+
+        function displayDevices(devices) {
+            const grid = document.getElementById('devicesGrid');
+            
+            if (devices.length === 0) {
+                grid.innerHTML = '<p style="opacity: 0.7;">No devices connected</p>';
+                return;
+            }
+
+            grid.innerHTML = devices.map(device => `
+                <div class="device-card">
+                    <div class="device-name">📱 ${device.name}</div>
+                    <div style="font-size: 13px; opacity: 0.9; margin-bottom: 5px;">
+                        Type: ${device.type}
+                    </div>
+                    <div style="font-size: 13px; opacity: 0.9; margin-bottom: 5px;">
+                        Port: ${device.port}
+                    </div>
+                    <div style="font-size: 13px; opacity: 0.9; margin-bottom: 5px;">
+                        Account: ${device.accountEmail}
+                    </div>
+                    <div style="font-size: 13px; opacity: 0.9;">
+                        Status: ${device.connected ? '✅ Connected' : '❌ Disconnected'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function startStreaming() {
+            if (!currentDeviceId) {
+                alert('Please connect a device first');
+                return;
+            }
+
+            if (streamSource) {
+                streamSource.close();
+            }
+
+            streamSource = new EventSource(`${API_BASE}/fusion-launch/stream/${currentDeviceId}`);
+            
+            streamSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                updateStreamViewer(data);
+            };
+
+            streamSource.onerror = () => {
+                console.log('Stream connection error, reconnecting...');
+            };
+        }
+
+        function updateStreamViewer(data) {
+            const viewer = document.getElementById('streamViewer');
+            
+            const streamHtml = data.liveContent.map(stream => `
+                <div class="stream-item">
+                    <strong>${stream.name}</strong> - ${stream.status}<br>
+                    <small>${stream.url}</small>
+                </div>
+            `).join('');
+
+            viewer.innerHTML = streamHtml || '<p style="opacity: 0.7;">No active streams</p>';
+        }
+
+        async function downloadContent() {
+            if (!currentDeviceId) {
+                alert('Please connect a device first');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/fusion-launch/download`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        streamId: 'stream_1',
+                        deviceId: currentDeviceId,
+                        format: 'mp4'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Download ready!\nID: ${data.download.id}\nFormat: ${data.download.format}`);
+                }
+            } catch (error) {
+                console.error('Error downloading:', error);
+                alert('Download failed');
+            }
+        }
+
+        window.addEventListener('load', () => {
+            loadStatus();
+            loadDevices();
+            setInterval(loadStatus, 10000);
+        });
+    </script>
+</body>
+</html>

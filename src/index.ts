@@ -45,6 +45,7 @@ import portManagementRoutes from './routes/port-management.js';
 import publicSportsIntelRoutes from './routes/public-sports-intel.js';
 import streamingPortalRoutes from './routes/streaming-portal.js';
 import googlePortLauncherRoutes from './routes/google-port-launcher.js';
+import fusionLaunchRoutes from './routes/fusion-launch.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -91,6 +92,7 @@ app.use('/port-management', portManagementRoutes);
 app.use('/public-sports-intel', publicSportsIntelRoutes);
 app.use('/streaming-portal', streamingPortalRoutes);
 app.use('/google-port-launcher', googlePortLauncherRoutes);
+app.use('/fusion-launch', fusionLaunchRoutes);
 
 // Static files
 app.use(express.static(path.join(__dirname, '../public')));
