@@ -50,6 +50,7 @@ import fusionLaunchRoutes from './routes/fusion-launch.js';
 import portAllianceRoutes from './routes/port-alliance.js';
 import smartTunnelRoutes from './routes/smart-tunnel.js';
 import wifiWeb3FusionRoutes from './routes/wifi-web3-fusion.js';
+import fusionTroubleshootingRoutes from './routes/fusion-troubleshooting.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -101,6 +102,7 @@ app.use('/fusion-launch', fusionLaunchRoutes);
 app.use('/port-alliance', portAllianceRoutes);
 app.use('/smart-tunnel', smartTunnelRoutes);
 app.use('/wifi-web3-fusion', wifiWeb3FusionRoutes);
+app.use('/fusion-troubleshooting', fusionTroubleshootingRoutes);
 
 // Remote Streaming Control Routes
 import remoteStreamingControlRoutes from './routes/remote-streaming-control.js';
@@ -253,6 +255,7 @@ startupDiagnostics.runDiagnostics().then(diagnostics => {
     console.log(`  • AWS Account: http://${HOST}:${PORT}/api/aws-account/status`); // Added endpoint for AWS Account
     console.log(`  • API Troubleshooting: http://${HOST}:${PORT}/api-troubleshooting/status`);
     console.log(`  • Smart Tunnel: http://${HOST}:${PORT}/smart-tunnel/status`);
+    console.log(`  • Fusion Troubleshooting: http://${HOST}:${PORT}/fusion-troubleshooting/status`);
     console.log('\n');
   });
 

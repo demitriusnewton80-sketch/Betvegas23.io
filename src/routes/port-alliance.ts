@@ -112,9 +112,9 @@ router.get('/stream/:allianceId', (req: Request, res: Response) => {
         errorPorts: portLandscape.errorPorts
       },
       troubleshooting: {
-        autoFixEnabled: troubleshootingStatus.autoFix,
-        sessionActive: troubleshootingStatus.sessionActive,
-        issuesDetected: troubleshootingStatus.issuesDetected
+        autoFixEnabled: troubleshootingStatus.autoFixEnabled,
+        activeSessions: troubleshootingStatus.activeSessions,
+        endpointHealth: troubleshootingStatus.endpointHealth
       }
     })}\n\n`);
 

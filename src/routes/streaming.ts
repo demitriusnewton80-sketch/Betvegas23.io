@@ -76,10 +76,10 @@ router.get('/partners', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
   try {
     const partners = await streamingService.getStreamingPartners();
-    const contracts = partners.map((partner: { id: string; name: string; status: string }) => ({
+    const contracts = partners.map((partner) => ({
       id: partner.id,
       name: partner.name,
-      status: partner.status,
+      status: partner.active ? 'active' : 'inactive',
       endpoint: `/streaming/partner/${partner.id}/stream`,
       streamCount: streamingService.getActiveStreams().filter(s => s.id.startsWith(partner.id)).length
     }));
