@@ -669,9 +669,34 @@
                                 style="margin-top: 8px; background: linear-gradient(135deg, #c8102e 0%, #13274f 100%);">
                             🔗 Add to Parlay
                         </button>
+                        
+                        <button class="btn-place-bet" onclick="openESPNRadio('${game.gameId}')" 
+                                style="margin-top: 8px; background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);">
+                            📻 Listen Live Radio
+                        </button>
                     </div>
                 `;
             }).join('');
+        }
+
+        async function openESPNRadio(gameId) {
+            try {
+                const response = await fetch(\`\${API_BASE}/espn-tracker/radio-stream/\${gameId}\`);
+                const data = await response.json();
+                
+                if (data.success && data.radioStream) {
+                    const confirmMsg = \`🎧 ESPN Radio Stream\\n\\nGame: \${data.game.matchup}\\nListeners: \${data.radioStream.listeners.toLocaleString()}\\nQuality: \${data.radioStream.quality.toUpperCase()}\\n\\nOpen stream?\`;
+                    
+                    if (confirm(confirmMsg)) {
+                        window.open(data.radioStream.streamUrl, '_blank');
+                    }
+                } else {
+                    alert('❌ No radio stream available for this game');
+                }
+            } catch (error) {
+                console.error('Radio stream error:', error);
+                alert('❌ Failed to load radio stream');
+            }
         }
 
         function selectOdds(gameId, gameIdx, team, odds, teamName) {

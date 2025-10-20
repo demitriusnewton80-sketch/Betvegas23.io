@@ -16,9 +16,12 @@ const liveSessions = new Map();
 
 // Get all streams
 router.get('/streams', (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'application/json');
+  
   try {
     const streams = streamingService.getActiveStreams();
-    res.json({
+    
+    return res.json({
       success: true,
       streams: streams.map(stream => ({
         id: stream.id,
@@ -31,11 +34,13 @@ router.get('/streams', (req: Request, res: Response) => {
       fccEntity: '20130314143016'
     });
   } catch (error) {
-    res.status(500).json({
+    console.error('Streaming error:', error);
+    return res.status(500).json({
       success: false,
       error: 'Failed to fetch streams',
       streams: [],
-      count: 0
+      count: 0,
+      fccEntity: '20130314143016'
     });
   }
 });
@@ -68,29 +73,42 @@ router.post('/upload', async (req: Request, res: Response) => {
 
 // Get streaming events (SSE)
 router.get('/events', (req: Request, res: Response) => {
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('X-Accel-Buffering', 'no');
-  res.flushHeaders();
+  try {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders();
 
-  const sendEvent = () => {
-    const streams = streamingService.getActiveStreams();
-    res.write(`data: ${JSON.stringify({
-      timestamp: Date.now(),
-      streams: streams.length,
-      status: 'active'
-    })}\n\n`);
-  };
+    const sendEvent = () => {
+      try {
+        const streams = streamingService.getActiveStreams();
+        res.write(`data: ${JSON.stringify({
+          timestamp: Date.now(),
+          streams: streams.length,
+          status: 'active',
+          fccEntity: '20130314143016'
+        })}\n\n`);
+      } catch (error) {
+        console.error('SSE send error:', error);
+      }
+    };
 
-  sendEvent();
-  const interval = setInterval(sendEvent, 3000);
+    sendEvent();
+    const interval = setInterval(sendEvent, 5000);
 
-  req.on('close', () => {
-    clearInterval(interval);
-    res.end();
-  });
+    req.on('close', () => {
+      clearInterval(interval);
+      res.end();
+    });
+  } catch (error) {
+    console.error('SSE connection error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'SSE connection failed'
+    });
+  }
 });
 
 
