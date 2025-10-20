@@ -30,6 +30,7 @@ import businessRelationshipsRouter from './routes/business-relationships.js';
 import espnTrackerRoutes from './routes/espn-tracker.js';
 import espnBettingRoutes from './routes/espn-betting.js';
 import versionRoutes from './routes/version.js';
+import smartTroubleshootingRoutes from './routes/smart-troubleshooting.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -61,6 +62,7 @@ app.use('/business-relationships', businessRelationshipsRouter);
 app.use('/espn-tracker', espnTrackerRoutes);
 app.use('/espn-betting', espnBettingRoutes);
 app.use('/version', versionRoutes);
+app.use('/smart-troubleshooting', smartTroubleshootingRoutes);
 
 // Static files
 app.use(express.static(path.join(__dirname, '../public')));
@@ -118,6 +120,10 @@ wss.on('connection', (ws: WebSocket) => {
 
 // Initialize app core
 appCore.initialize();
+
+// Initialize smart troubleshooting
+import { smartTroubleshootingCore } from './core/SmartTroubleshootingCore.js';
+console.log('🔧 Smart Troubleshooting Core: ACTIVE');
 
 // Start server with diagnostics
 startupDiagnostics.runDiagnostics().then(diagnostics => {
