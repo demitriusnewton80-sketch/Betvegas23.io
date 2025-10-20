@@ -38,7 +38,7 @@ router.post('/launch', async (req: Request, res: Response) => {
     }
 
     // Use troubleshooting core to ensure port is operational
-    if (portStatus.status !== 'active') {
+    if (portStatus && portStatus.status !== 'active') {
       console.log(`🔧 Port ${port} not active, using troubleshooting core to recover...`);
       smartTroubleshootingCore.setAutoFix(true);
       

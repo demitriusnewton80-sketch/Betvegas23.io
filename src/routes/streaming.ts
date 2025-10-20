@@ -571,11 +571,11 @@ router.get('/streaming-endpoints', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
   try {
     const partners = await streamingService.getStreamingPartners();
-    const endpoints = partners.map((p: { id: string; name: string; endpoint: string; status: string }) => ({
+    const endpoints = partners.map(p => ({
       id: p.id,
       name: p.name,
-      endpoint: `/streaming/partner/${p.id}/stream`, // Dynamically create endpoint
-      status: p.status || 'unknown' // Ensure status is always present
+      endpoint: `/streaming/partner/${p.id}/stream`,
+      status: p.active ? 'active' : 'inactive'
     }));
 
     res.json({
@@ -598,10 +598,10 @@ router.get('/contracts/:contractId', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
   try {
     const { contractId } = req.params;
-    const contracts = await streamingService.getStreamContent(); // Assuming this returns all contracts/content
+    const contracts = await streamingService.getStreamContent();
     const partners = await streamingService.getStreamingPartners();
 
-    const contract = contracts.find((c: { id: string }) => c.id === contractId);
+    const contract = contracts.find(c => c.id === contractId);
 
     if (!contract) {
       return res.status(404).json({
@@ -610,7 +610,7 @@ router.get('/contracts/:contractId', async (req: Request, res: Response) => {
       });
     }
 
-    const partner = partners.find((p: { id: string }) => p.id === contract.partnerId);
+    const partner = contract.partnerId ? partners.find(p => p.id === contract.partnerId) : null;
 
     res.json({
       success: true,
@@ -623,7 +623,7 @@ router.get('/contracts/:contractId', async (req: Request, res: Response) => {
         partner: partner ? {
           id: partner.id,
           name: partner.name,
-          status: partner.status
+          status: partner.active ? 'active' : 'inactive'
         } : null
       },
       fccEntity: '20130314143016'

@@ -385,6 +385,52 @@ class StreamingService extends EventEmitter {
   getUserStreamAccess(userId: string): StreamAccess[] {
     return this.streamAccess.get(userId) || [];
   }
+
+  // Get stream content for contracts
+  async getStreamContent(): Promise<Array<{
+    id: string;
+    name: string;
+    sport: string;
+    status: string;
+    url: string;
+    partnerId?: string;
+  }>> {
+    const content: Array<{
+      id: string;
+      name: string;
+      sport: string;
+      status: string;
+      url: string;
+      partnerId?: string;
+    }> = [];
+
+    // Add active game streams
+    this.activeStreams.forEach((_, gameId) => {
+      content.push({
+        id: gameId,
+        name: `Game ${gameId}`,
+        sport: 'NBA',
+        status: 'live',
+        url: `/streaming/game/${gameId}`
+      });
+    });
+
+    // Add external sportsbook content
+    this.externalSportsbooks.forEach(sb => {
+      if (sb.active) {
+        content.push({
+          id: `content_${sb.id}`,
+          partnerId: sb.id,
+          name: `${sb.name} Stream`,
+          sport: 'Multi-Sport',
+          status: 'active',
+          url: sb.webhookUrl
+        });
+      }
+    });
+
+    return content;
+  }
 }
 
 export const streamingService = new StreamingService();
