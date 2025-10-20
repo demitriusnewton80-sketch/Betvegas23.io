@@ -1,5 +1,6 @@
 
 import { EventEmitter } from 'events';
+import type { } from 'events';
 import { appCore } from './AppCore.js';
 import { smartTroubleshootingCore } from './SmartTroubleshootingCore.js';
 import { errorRecoverySystem } from './ErrorRecoverySystem.js';

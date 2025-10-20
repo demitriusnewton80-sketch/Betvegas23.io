@@ -568,7 +568,7 @@ router.get('/deploy/status', async (req: Request, res: Response) => {
 });
 
 // Get all streaming data
-router.get('/streams', (req: Request, res: Response) => {
+router.get('/streams', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
   try {
     const partners = streamingService.getStreamingPartners();
