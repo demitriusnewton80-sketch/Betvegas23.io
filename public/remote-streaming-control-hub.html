@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Remote Streaming Control Hub | Young Meeat LLC</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#6366f1">
     <script src="/js/api-config.js"></script>
     <style>
         * {
@@ -206,6 +208,38 @@
     </div>
 
     <script>
+        // Register Service Worker for offline support
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('✅ Service Worker registered for offline support'))
+                    .catch(err => console.error('❌ Service Worker registration failed:', err));
+            });
+        }
+
+        // Offline status indicator
+        function updateOnlineStatus() {
+            const header = document.querySelector('.header');
+            if (!navigator.onLine) {
+                if (!document.getElementById('offline-badge')) {
+                    const badge = document.createElement('span');
+                    badge.id = 'offline-badge';
+                    badge.className = 'fcc-badge';
+                    badge.style.background = 'rgba(239, 68, 68, 0.2)';
+                    badge.style.borderColor = '#ef4444';
+                    badge.style.color = '#ef4444';
+                    badge.textContent = '📡 OFFLINE MODE';
+                    header.appendChild(badge);
+                }
+            } else {
+                const badge = document.getElementById('offline-badge');
+                if (badge) badge.remove();
+            }
+        }
+
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+
         async function loadStatus() {
             try {
                 const response = await fetch(`${API_BASE}/remote-streaming-control/status`);
@@ -219,6 +253,12 @@
                 }
             } catch (error) {
                 console.error('Error loading status:', error);
+                if (!navigator.onLine) {
+                    document.getElementById('totalTunnels').textContent = '--';
+                    document.getElementById('activeTunnels').textContent = '--';
+                    document.getElementById('avgUpgradeLevel').textContent = '--';
+                    document.getElementById('fccChannels').textContent = '--';
+                }
             }
         }
 
@@ -260,6 +300,10 @@
                 }
             } catch (error) {
                 console.error('Error loading landscapes:', error);
+                if (!navigator.onLine) {
+                    const container = document.getElementById('landscapesContainer');
+                    container.innerHTML = '<div style="text-align: center; padding: 40px; opacity: 0.7;">📡 Offline - Cached data unavailable</div>';
+                }
             }
         }
 
@@ -390,6 +434,7 @@
 
         // Initialize
         window.addEventListener('load', () => {
+            updateOnlineStatus();
             loadAll();
             setInterval(loadAll, 15000);
         });
