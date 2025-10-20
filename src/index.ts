@@ -49,6 +49,7 @@ import googlePortLauncherRoutes from './routes/google-port-launcher.js';
 import fusionLaunchRoutes from './routes/fusion-launch.js';
 import portAllianceRoutes from './routes/port-alliance.js';
 import smartTunnelRoutes from './routes/smart-tunnel.js';
+import wifiWeb3FusionRoutes from './routes/wifi-web3-fusion.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -99,6 +100,7 @@ app.use('/google-port-launcher', googlePortLauncherRoutes);
 app.use('/fusion-launch', fusionLaunchRoutes);
 app.use('/port-alliance', portAllianceRoutes);
 app.use('/smart-tunnel', smartTunnelRoutes);
+app.use('/wifi-web3-fusion', wifiWeb3FusionRoutes);
 
 // Remote Streaming Control Routes
 import remoteStreamingControlRoutes from './routes/remote-streaming-control.js';
