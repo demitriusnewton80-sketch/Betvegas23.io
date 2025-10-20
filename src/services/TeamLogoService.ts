@@ -1,5 +1,3 @@
-import { createCanvas } from 'canvas';
-
 interface TeamColors {
   primary: string;
   secondary: string;

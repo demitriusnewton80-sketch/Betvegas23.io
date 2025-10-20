@@ -3,6 +3,19 @@ import { bettingService } from '../services/BettingService.js';
 import { streamingService } from '../services/StreamingService.js';
 import { ps5SportsService } from '../services/PS5SportsService.js';
 
+interface Game {
+  id: string;
+  sport: string;
+  homeTeam: string;
+  awayTeam: string;
+  startTime: string;
+  status: string;
+  odds: {
+    home: number;
+    away: number;
+  };
+}
+
 const router = express.Router();
 
 // Mobile-optimized games endpoint

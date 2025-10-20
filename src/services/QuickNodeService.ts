@@ -47,7 +47,7 @@ class QuickNodeService {
         })
       });
 
-      const data = await response.json();
+      const data = await response.json() as any;
 
       if (data.error) {
         return { success: false, error: data.error.message };

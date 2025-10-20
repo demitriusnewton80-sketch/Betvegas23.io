@@ -9,6 +9,20 @@ import { Bet, User, Transaction } from '../models/User.js';
 import { accountService } from './AccountService.js';
 import { streamingService } from './StreamingService.js';
 
+interface Game {
+  id: string;
+  sport: string;
+  homeTeam: string;
+  awayTeam: string;
+  startTime: string;
+  status: string;
+  odds: {
+    home: number;
+    away: number;
+  };
+  radioLink?: string;
+}
+
 class BettingService {
   private users: Map<string, User> = new Map();
   private bets: Map<string, Bet> = new Map();

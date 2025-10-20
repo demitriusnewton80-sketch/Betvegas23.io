@@ -316,7 +316,7 @@ class HybridControlService extends EventEmitter {
     };
 
     // Store in cloud
-    await awsBackupService.backupData({
+    await awsBackupService.storeBackup(`game-distribution-${gameId}`, {
       type: 'game-distribution',
       data: distribution,
       metadata: { gameId, fccEntity: '20130314143016' }

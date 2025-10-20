@@ -1,5 +1,16 @@
 import { EventEmitter } from 'events';
+import { randomBytes } from 'crypto';
 import { ssoService } from './SSOService.js';
+
+export interface SSOUser {
+  id: string;
+  email: string;
+  name: string;
+  provider: string;
+  accessToken: string;
+  refreshToken?: string;
+  expiresAt: number;
+}
 
 export interface SSOPlugin {
   id: string;
@@ -395,7 +406,7 @@ class SSOPluginService extends EventEmitter {
 
   // Generate random state
   private generateState(): string {
-    return crypto.randomBytes(32).toString('hex');
+    return randomBytes(32).toString('hex');
   }
 
   // Get plugin statistics

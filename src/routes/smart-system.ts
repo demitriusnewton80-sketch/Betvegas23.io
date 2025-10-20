@@ -1,6 +1,15 @@
 import express, { Request, Response } from 'express';
 import { smartSystemService } from '../services/SmartSystemService.js';
 
+interface ErrorLog {
+  id: string;
+  type: string;
+  message: string;
+  source: string;
+  timestamp: number;
+  resolved: boolean;
+}
+
 const router = express.Router();
 
 // Upload content via phone plugin
