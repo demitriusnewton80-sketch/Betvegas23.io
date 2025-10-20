@@ -87,7 +87,7 @@ args = "node dist/index.js"
 [[workflows.workflow]]
 name = "Development Server"
 author = 48739577
-mode = "sequential"
+mode = "parallel"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -117,7 +117,7 @@ args = "node dist/index.js"
 [[workflows.workflow]]
 name = "Production Build"
 author = 48739577
-mode = "sequential"
+mode = "parallel"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
