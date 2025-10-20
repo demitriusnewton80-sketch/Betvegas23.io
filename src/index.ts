@@ -49,6 +49,7 @@ import liveChatRoutes from './routes/live-chat.js';
 import advancedAnalyticsRoutes from './routes/advanced-analytics.js';
 import dunContentPeersRoutes from './routes/dun-content-peers.js';
 import arnFinderRoutes from './routes/arn-finder.js';
+import awsCoreBuilderRoutes from './routes/aws-core-builder.js';
 import leedsExportRoutes from './routes/leeds-export.js';
 import waveStreamAssemblyRoutes from './routes/wave-stream-assembly.js';
 import radioBroadcastDeploymentRoutes from './routes/radio-broadcast-deployment.js'; // Import the new route
@@ -132,6 +133,7 @@ try {
   app.use('/advanced-analytics', advancedAnalyticsRoutes);
   app.use('/dun-content-peers', dunContentPeersRoutes);
   app.use('/arn-finder', arnFinderRoutes);
+  app.use('/aws-core-builder', awsCoreBuilderRoutes);
   app.use('/leeds-export', leedsExportRoutes);
   app.use('/wave-stream-assembly', waveStreamAssemblyRoutes);
   app.use('/radio-broadcast-deployment', radioBroadcastDeploymentRoutes); // Mount the new route
