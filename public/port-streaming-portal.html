@@ -1,0 +1,397 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Port Streaming Portal | Young Meeat LLC</title>
+    <script src="/js/api-config.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1800px; margin: 0 auto; }
+        .header {
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .header h1 { font-size: 42px; margin-bottom: 10px; }
+        .badge {
+            background: rgba(59, 130, 246, 0.2);
+            border: 2px solid #3b82f6;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 5px;
+            font-size: 12px;
+        }
+        .stream-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stream-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+        .stream-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.2);
+        }
+        .stream-card.active { border-color: #22c55e; }
+        .stream-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .port-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+        .status-indicator {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .status-streaming { background: #22c55e; color: #000; }
+        .status-idle { background: #fbbf24; color: #000; }
+        .status-error { background: #ef4444; color: #fff; }
+        .mapping-info {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+        .mapping-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 13px;
+        }
+        .stream-data {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid #3b82f6;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .core-map-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .map-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .map-node {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 4px solid #22c55e;
+        }
+        .btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        .btn:hover { background: #2563eb; transform: translateY(-2px); }
+        .btn.success { background: #22c55e; }
+        .btn.success:hover { background: #16a34a; }
+        .live-stream-viewer {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #3b82f6;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+            min-height: 200px;
+        }
+        .stream-log {
+            font-family: monospace;
+            font-size: 12px;
+            color: #22c55e;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+        }
+        .pulse-dot {
+            width: 12px;
+            height: 12px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 Port Streaming Portal</h1>
+            <p style="font-size: 18px; margin: 10px 0;">Live Port Mapping & Stream Integration</p>
+            <div>
+                <span class="badge">FCC Entity: 20130314143016</span>
+                <span class="badge">Core Mapping Active</span>
+                <span class="badge">Real-time Streaming</span>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <button class="btn success" onclick="startPortStreaming()">🚀 Start Streaming</button>
+            <button class="btn" onclick="refreshPortMap()">🔄 Refresh Map</button>
+            <button class="btn" onclick="viewCoreMappings()">🗺️ View Core Mappings</button>
+        </div>
+
+        <div class="core-map-section">
+            <h2 style="margin-bottom: 15px;">🗺️ Core Mapping Structure</h2>
+            <p style="opacity: 0.8; margin-bottom: 15px;">Application ports mapped to functional structures</p>
+            <div class="map-grid" id="coreMappingGrid"></div>
+        </div>
+
+        <h2 style="margin-bottom: 20px;">📡 Active Port Streams</h2>
+        <div class="stream-grid" id="portStreamGrid"></div>
+
+        <div class="live-stream-viewer">
+            <h3 style="margin-bottom: 15px;">
+                <span class="pulse-dot"></span>
+                Live Stream Data
+            </h3>
+            <div class="stream-log" id="streamLog"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let streamInterval = null;
+        let logEntries = [];
+
+        async function loadPortStreams() {
+            try {
+                const response = await fetch(`${API_BASE}/port-management/landscape`);
+                const data = await response.json();
+
+                if (data.success) {
+                    displayPortStreams(data.ports);
+                    displayCoreMappings(data.ports);
+                    addLogEntry('✅ Port landscape loaded successfully');
+                }
+            } catch (error) {
+                console.error('Error loading port streams:', error);
+                addLogEntry('❌ Error loading port streams');
+            }
+        }
+
+        async function loadStreamingData() {
+            try {
+                const response = await fetch(`${API_BASE}/streaming/streams`);
+                const data = await response.json();
+
+                if (data.success) {
+                    addLogEntry(`📺 ${data.count} active streams detected`);
+                    return data.streams;
+                }
+            } catch (error) {
+                console.error('Error loading streaming data:', error);
+            }
+            return [];
+        }
+
+        function displayPortStreams(ports) {
+            const grid = document.getElementById('portStreamGrid');
+            
+            grid.innerHTML = ports.map(port => {
+                const statusClass = port.status === 'active' ? 'active' : '';
+                const statusText = port.status === 'active' ? 'streaming' : 
+                                  port.status === 'error' ? 'error' : 'idle';
+                
+                return `
+                    <div class="stream-card ${statusClass}">
+                        <div class="stream-header">
+                            <div class="port-number">:${port.port}</div>
+                            <div class="status-indicator status-${statusText}">
+                                ${statusText.toUpperCase()}
+                            </div>
+                        </div>
+                        
+                        <div class="mapping-info">
+                            <div class="mapping-row">
+                                <span style="opacity: 0.7;">Structure:</span>
+                                <strong>${port.boundStructure || 'Unbound'}</strong>
+                            </div>
+                            <div class="mapping-row">
+                                <span style="opacity: 0.7;">Response Time:</span>
+                                <strong>${port.responseTime}ms</strong>
+                            </div>
+                            <div class="mapping-row">
+                                <span style="opacity: 0.7;">Error Count:</span>
+                                <strong>${port.errorCount}</strong>
+                            </div>
+                        </div>
+
+                        <div class="stream-data">
+                            <div>🔗 Port: ${port.port}</div>
+                            <div>📊 Status: ${port.status}</div>
+                            <div>⚡ Active: ${port.status === 'active' ? 'Yes' : 'No'}</div>
+                        </div>
+
+                        <button class="btn ${port.status === 'active' ? 'success' : ''}" 
+                                onclick="streamPortData(${port.port})"
+                                style="width: 100%; margin-top: 15px;">
+                            📡 Stream Data
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function displayCoreMappings(ports) {
+            const grid = document.getElementById('coreMappingGrid');
+            
+            const mappings = ports.filter(p => p.boundStructure).map(port => ({
+                port: port.port,
+                structure: port.boundStructure,
+                status: port.status
+            }));
+
+            if (mappings.length === 0) {
+                grid.innerHTML = '<p style="opacity: 0.7;">No core mappings available</p>';
+                return;
+            }
+
+            grid.innerHTML = mappings.map(mapping => `
+                <div class="map-node">
+                    <div style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">
+                        :${mapping.port}
+                    </div>
+                    <div style="font-size: 13px; opacity: 0.9;">
+                        📦 ${mapping.structure}
+                    </div>
+                    <div style="font-size: 11px; opacity: 0.7; margin-top: 8px;">
+                        Status: ${mapping.status}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function streamPortData(port) {
+            addLogEntry(`🔄 Starting stream for port :${port}`);
+            
+            try {
+                const response = await fetch(`${API_BASE}/port-management/port/${port}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    addLogEntry(`✅ Port :${port} - ${JSON.stringify(data.port)}`);
+                } else {
+                    addLogEntry(`❌ Failed to stream port :${port}`);
+                }
+            } catch (error) {
+                addLogEntry(`❌ Error streaming port :${port}`);
+            }
+        }
+
+        async function startPortStreaming() {
+            if (streamInterval) {
+                clearInterval(streamInterval);
+                streamInterval = null;
+                addLogEntry('⏸️ Streaming paused');
+                return;
+            }
+
+            addLogEntry('🚀 Starting continuous port streaming...');
+            
+            streamInterval = setInterval(async () => {
+                await loadPortStreams();
+                const streams = await loadStreamingData();
+                
+                if (streams.length > 0) {
+                    streams.forEach(stream => {
+                        addLogEntry(`📺 Stream: ${stream.name} (${stream.sport}) - ${stream.status}`);
+                    });
+                }
+            }, 5000);
+        }
+
+        async function refreshPortMap() {
+            addLogEntry('🔄 Refreshing port map...');
+            await loadPortStreams();
+        }
+
+        async function viewCoreMappings() {
+            addLogEntry('🗺️ Loading core mappings...');
+            
+            try {
+                const response = await fetch(`${API_BASE}/functional-structures/status`);
+                const data = await response.json();
+
+                if (data.success) {
+                    addLogEntry(`📊 Core Structures: ${data.totalStructures}`);
+                    addLogEntry(`⚡ Operational: ${data.operational}`);
+                    addLogEntry(`🔋 Avg Power: ${data.averagePowerLevel}%`);
+                }
+            } catch (error) {
+                addLogEntry('❌ Error loading core mappings');
+            }
+        }
+
+        function addLogEntry(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            logEntries.unshift(`[${timestamp}] ${message}`);
+            
+            if (logEntries.length > 100) {
+                logEntries = logEntries.slice(0, 100);
+            }
+            
+            document.getElementById('streamLog').innerHTML = logEntries.join('\n');
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            addLogEntry('🌐 Port Streaming Portal initialized');
+            addLogEntry('📡 FCC Entity: 20130314143016');
+            loadPortStreams();
+            
+            // Auto-refresh every 15 seconds
+            setInterval(loadPortStreams, 15000);
+        });
+    </script>
+</body>
+</html>
