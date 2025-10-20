@@ -804,6 +804,55 @@ router.get('/radio/ip-lookup', async (req: Request, res: Response) => {
   }
 });
 
+// Get loading errors from Smart System
+router.get('/diagnostics/loading-errors', async (req: Request, res: Response) => {
+  try {
+    const { smartSystemService } = await import('../services/SmartSystemService.js');
+    const errors = smartSystemService.getErrors();
+    
+    // Filter for loading errors only
+    const loadingErrors = Array.from(errors.values()).filter(error => error.type === 'loading');
+    
+    // Group by resolved status
+    const unresolvedErrors = loadingErrors.filter(e => !e.resolved);
+    const resolvedErrors = loadingErrors.filter(e => e.resolved);
+    
+    res.json({
+      success: true,
+      summary: {
+        total: loadingErrors.length,
+        unresolved: unresolvedErrors.length,
+        resolved: resolvedErrors.length,
+        autoFixed: loadingErrors.filter(e => e.autoFixed).length
+      },
+      unresolvedErrors: unresolvedErrors.map(e => ({
+        id: e.id,
+        message: e.message,
+        source: e.source,
+        severity: e.severity,
+        timestamp: new Date(e.timestamp).toISOString(),
+        details: e.details
+      })),
+      resolvedErrors: resolvedErrors.map(e => ({
+        id: e.id,
+        message: e.message,
+        source: e.source,
+        severity: e.severity,
+        autoFixed: e.autoFixed,
+        timestamp: new Date(e.timestamp).toISOString()
+      })),
+      fccEntity: '20130314143016',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to retrieve loading errors',
+      fccEntity: '20130314143016'
+    });
+  }
+});
+
 export default router;
 
 
