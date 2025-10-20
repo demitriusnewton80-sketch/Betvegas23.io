@@ -42,6 +42,9 @@ import phoneStreamRoutes from './routes/phone-stream.js';
 import bloombergPhoneBridgeRoutes from './routes/bloomberg-phone-bridge.js';
 import terminalBridgeRoutes from './routes/terminal-bridge.js';
 import bridgePortFusionRoutes from './routes/bridge-port-fusion.js';
+import oddsAggregatorRoutes from './routes/odds-aggregator.js';
+import liveChatRoutes from './routes/live-chat.js';
+import advancedAnalyticsRoutes from './routes/advanced-analytics.js';
 
 // Initialize core systems
 const __filename = fileURLToPath(import.meta.url);
@@ -114,6 +117,9 @@ try {
   app.use('/phone-stream', phoneStreamRoutes);
   app.use('/bloomberg-phone-bridge', bloombergPhoneBridgeRoutes);
   app.use('/bridge-port-fusion', bridgePortFusionRoutes);
+  app.use('/odds-aggregator', oddsAggregatorRoutes);
+  app.use('/live-chat', liveChatRoutes);
+  app.use('/advanced-analytics', advancedAnalyticsRoutes);
   console.log('✅ All API routes registered successfully');
 } catch (error) {
   console.error('❌ Error registering routes:', error);
