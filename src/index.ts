@@ -31,6 +31,7 @@ import espnTrackerRoutes from './routes/espn-tracker.js';
 import espnBettingRoutes from './routes/espn-betting.js';
 import versionRoutes from './routes/version.js';
 import smartTroubleshootingRoutes from './routes/smart-troubleshooting.js';
+import functionalRelationshipsBridgeRoutes from './routes/functional-relationships-bridge.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -63,6 +64,7 @@ app.use('/espn-tracker', espnTrackerRoutes);
 app.use('/espn-betting', espnBettingRoutes);
 app.use('/version', versionRoutes);
 app.use('/smart-troubleshooting', smartTroubleshootingRoutes);
+app.use('/functional-relationships-bridge', functionalRelationshipsBridgeRoutes);
 
 // Static files
 app.use(express.static(path.join(__dirname, '../public')));
