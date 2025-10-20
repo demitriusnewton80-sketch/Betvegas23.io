@@ -41,6 +41,7 @@ import partnershipEnrollmentRouter from './routes/partnership-enrollment.js';
 import phoneStreamRoutes from './routes/phone-stream.js';
 import bloombergPhoneBridgeRoutes from './routes/bloomberg-phone-bridge.js';
 import terminalBridgeRoutes from './routes/terminal-bridge.js';
+import bridgePortFusionRoutes from './routes/bridge-port-fusion.js';
 
 // Initialize core systems
 const __filename = fileURLToPath(import.meta.url);
@@ -112,6 +113,7 @@ try {
   app.use('/content-integrity', contentIntegrityRouter);
   app.use('/phone-stream', phoneStreamRoutes);
   app.use('/bloomberg-phone-bridge', bloombergPhoneBridgeRoutes);
+  app.use('/bridge-port-fusion', bridgePortFusionRoutes);
   console.log('✅ All API routes registered successfully');
 } catch (error) {
   console.error('❌ Error registering routes:', error);
@@ -218,6 +220,10 @@ Promise.resolve().then(async () => {
     // Initialize Content Integrity Service
     contentIntegrityService.initialize();
     console.log('✅ ContentIntegrityService ready');
+
+    // Initialize Bridge-Port Fusion Core
+    const { bridgePortFusionCore } = await import('./core/BridgePortFusionCore.js');
+    console.log('✅ BridgePortFusion ready');
 
   } catch (error) {
     console.error('❌ Core system initialization error:', error);
