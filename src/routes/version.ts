@@ -17,7 +17,7 @@ router.get('/', (req: Request, res: Response) => {
 // Get latest changelog
 router.get('/changelog', (req: Request, res: Response) => {
   const changelog = APP_VERSION.changelog as Record<string, { date: string; changes: string[] }>;
-  const currentVersion = APP_VERSION.version;
+  const currentVersion = APP_VERSION.version as keyof typeof APP_VERSION.changelog;
   const latestChangelog = changelog[currentVersion] || { 
     date: new Date().toISOString(), 
     changes: ['Current version'] 

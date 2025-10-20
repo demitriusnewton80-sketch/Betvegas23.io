@@ -17,10 +17,10 @@ const liveSessions = new Map();
 // Get all streams
 router.get('/streams', (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
-  
+
   try {
     const streams = streamingService.getActiveStreams();
-    
+
     return res.json({
       success: true,
       streams: streams.map(stream => ({
@@ -48,12 +48,12 @@ router.get('/streams', (req: Request, res: Response) => {
 // Upload content for streaming
 router.post('/upload', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
-  
+
   try {
     const { fileName, fileType, fileSize } = req.body;
-    
+
     const uploadId = crypto.randomBytes(16).toString('hex');
-    
+
     res.json({
       success: true,
       uploadId,
@@ -74,11 +74,11 @@ router.post('/upload', async (req: Request, res: Response) => {
 // Get streaming contracts with content
 router.get('/contracts', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
-  
+
   try {
     const partners = streamingService.getStreamingPartners();
     const streams = streamingService.getActiveStreams();
-    
+
     const contracts = partners.map((partner: { id: string; name: string; webhookUrl: string; active: boolean; registeredAt: string; lastActive?: string }) => ({
       id: partner.id,
       name: partner.name,
@@ -92,7 +92,7 @@ router.get('/contracts', async (req: Request, res: Response) => {
         lastActive: partner.lastActive || new Date().toISOString()
       }
     }));
-    
+
     res.json({
       success: true,
       contracts,
@@ -112,29 +112,29 @@ router.get('/contracts', async (req: Request, res: Response) => {
 // Stream content via contract endpoint
 router.get('/contract/:contractId/stream', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
-  
+
   try {
     const { contractId } = req.params;
     const partners = streamingService.getStreamingPartners();
     const contract = partners.find((p: { id: string }) => p.id === contractId);
-    
+
     if (!contract) {
       return res.status(404).json({
         success: false,
         error: 'Contract not found'
       });
     }
-    
+
     if (!contract.active) {
       return res.status(403).json({
         success: false,
         error: 'Contract is not active'
       });
     }
-    
+
     const streams = streamingService.getActiveStreams();
     const contractStreams = streams.filter((s: { id: string }) => s.id.startsWith(contractId));
-    
+
     res.json({
       success: true,
       contract: {
@@ -164,19 +164,19 @@ router.get('/contract/:contractId/stream', async (req: Request, res: Response) =
 // Create new streaming contract
 router.post('/contracts/create', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
-  
+
   try {
     const { name, webhookUrl, contentType } = req.body;
-    
+
     if (!name || !webhookUrl) {
       return res.status(400).json({
         success: false,
         error: 'name and webhookUrl required'
       });
     }
-    
+
     const contractId = `contract_${Date.now()}_${crypto.randomBytes(8).toString('hex')}`;
-    
+
     const contract = {
       id: contractId,
       name,
@@ -186,7 +186,7 @@ router.post('/contracts/create', async (req: Request, res: Response) => {
       endpoint: `/streaming/contract/${contractId}/stream`,
       registeredAt: new Date().toISOString()
     };
-    
+
     res.json({
       success: true,
       contract,
@@ -205,11 +205,11 @@ router.post('/contracts/create', async (req: Request, res: Response) => {
 // Update streaming contract
 router.put('/contracts/:contractId', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
-  
+
   try {
     const { contractId } = req.params;
     const { active, webhookUrl } = req.body;
-    
+
     res.json({
       success: true,
       contractId,
@@ -466,13 +466,13 @@ router.get('/cloud/status', async (req: Request, res: Response) => {
 // Production deployment for all betting sites
 router.post('/deploy/all-sportsbooks', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
-  
+
   try {
     const { includePS5, includePickupGames, deploymentMode } = req.body;
-    
+
     const partners = streamingService.getStreamingPartners();
     const streams = streamingService.getActiveStreams();
-    
+
     const deployment = {
       id: `deploy_${Date.now()}`,
       timestamp: new Date().toISOString(),
@@ -499,7 +499,7 @@ router.post('/deploy/all-sportsbooks', async (req: Request, res: Response) => {
         contracts: true
       }
     };
-    
+
     res.json({
       success: true,
       deployment,
@@ -517,11 +517,11 @@ router.post('/deploy/all-sportsbooks', async (req: Request, res: Response) => {
 // Get deployment status
 router.get('/deploy/status', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
-  
+
   try {
     const partners = streamingService.getStreamingPartners();
     const streams = streamingService.getActiveStreams();
-    
+
     res.json({
       success: true,
       deploymentStatus: {

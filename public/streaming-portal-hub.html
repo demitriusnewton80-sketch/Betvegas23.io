@@ -1,0 +1,369 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streaming Portal Hub | Port & Core Mapping</title>
+    <script src="/js/api-config.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1800px; margin: 0 auto; }
+        .header {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+        }
+        .header h1 { font-size: 42px; margin-bottom: 10px; }
+        .badge {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid #22c55e;
+            color: #22c55e;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 12px;
+            display: inline-block;
+            margin: 5px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 8px;
+        }
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.7;
+            text-transform: uppercase;
+        }
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 30px 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        .card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .status-active { background: #22c55e; color: #000; }
+        .status-bypassed { background: #f59e0b; color: #000; }
+        .status-error { background: #ef4444; color: #fff; }
+        .status-inactive { background: #6b7280; color: #fff; }
+        .btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        .btn:hover { background: #2563eb; transform: scale(1.05); }
+        .btn-success { background: #22c55e; }
+        .btn-success:hover { background: #16a34a; }
+        .mapping-form {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            background: rgba(15, 23, 42, 0.8);
+            color: white;
+            font-size: 14px;
+        }
+        .stream-link {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid #22c55e;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            word-break: break-all;
+            font-size: 12px;
+        }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 Streaming Portal Hub</h1>
+            <p style="font-size: 18px; margin: 10px 0;">Port Management & Core Mapping System</p>
+            <div>
+                <span class="badge">FCC: 20130314143016</span>
+                <span class="badge">LIVE STREAMING</span>
+                <span class="badge pulse">PORT 5000</span>
+            </div>
+        </div>
+
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <div class="section-title">🔧 Apply Port Mapping</div>
+        <div class="mapping-form">
+            <div class="form-group">
+                <label>Select Structure</label>
+                <select id="structureSelect"></select>
+            </div>
+            <div class="form-group">
+                <label>Select Port</label>
+                <select id="portSelect"></select>
+            </div>
+            <button class="btn btn-success" onclick="applyMapping()">Apply Mapping</button>
+        </div>
+
+        <div class="section-title">🔌 Active Port Streams</div>
+        <div class="grid" id="portsGrid"></div>
+
+        <div class="section-title">🏗️ Core Structure Mappings</div>
+        <div class="grid" id="coreMapGrid"></div>
+
+        <div class="section-title">🏈 Live Sports Streams</div>
+        <div class="grid" id="sportsGrid"></div>
+    </div>
+
+    <script>
+        let portalData = null;
+
+        async function loadPortalData() {
+            try {
+                const response = await fetch(`${API_BASE}/streaming-portal/dashboard`);
+                const data = await response.json();
+
+                if (data.success) {
+                    portalData = data.portal;
+                    displayStats();
+                    displayPorts();
+                    displayCoreMap();
+                    displaySports();
+                    populateSelects();
+                }
+            } catch (error) {
+                console.error('Error loading portal data:', error);
+            }
+        }
+
+        function displayStats() {
+            const stats = [
+                { label: 'Total Ports', value: portalData.systemStats.totalPorts },
+                { label: 'Active Ports', value: portalData.systemStats.activePorts },
+                { label: 'Core Structures', value: portalData.systemStats.totalStructures },
+                { label: 'System Power', value: `${portalData.systemStats.averagePower}%` }
+            ];
+
+            document.getElementById('statsGrid').innerHTML = stats.map(stat => `
+                <div class="stat-card">
+                    <div class="stat-value">${stat.value}</div>
+                    <div class="stat-label">${stat.label}</div>
+                </div>
+            `).join('');
+        }
+
+        function displayPorts() {
+            document.getElementById('portsGrid').innerHTML = portalData.ports.map(port => `
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Port ${port.port}</div>
+                        <div class="status-badge status-${port.status}">
+                            ${port.status.toUpperCase()}
+                        </div>
+                    </div>
+                    <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">
+                        ${port.structure ? `📦 ${port.structure}` : '⚪ Unbound'}
+                    </div>
+                    <div style="font-size: 12px; opacity: 0.8; margin-bottom: 10px;">
+                        Response: ${port.responseTime}ms
+                    </div>
+                    <div class="stream-link">
+                        🔗 ${port.externalUrl}
+                    </div>
+                    <button class="btn" onclick="openStream('${port.externalUrl}')">
+                        Stream Portal →
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function displayCoreMap() {
+            loadCoreMap();
+        }
+
+        async function loadCoreMap() {
+            try {
+                const response = await fetch(`${API_BASE}/streaming-portal/core-map`);
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('coreMapGrid').innerHTML = data.coreMap.map(structure => `
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">${structure.structureName}</div>
+                                <div style="font-size: 14px; color: #22c55e;">
+                                    ${structure.powerLevel}%
+                                </div>
+                            </div>
+                            <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">
+                                ${structure.operational ? '✅ Operational' : '❌ Offline'}
+                            </div>
+                            <div style="font-size: 12px; opacity: 0.8; margin-bottom: 10px;">
+                                Modules: ${structure.modules.length}
+                            </div>
+                            <div style="font-size: 12px; opacity: 0.8;">
+                                Bound Ports: ${structure.boundPorts.length > 0 
+                                    ? structure.boundPorts.map(p => p.port).join(', ') 
+                                    : 'None'}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading core map:', error);
+            }
+        }
+
+        function displaySports() {
+            document.getElementById('sportsGrid').innerHTML = portalData.liveStreams.map(game => `
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">${game.league}</div>
+                        <div class="status-badge status-active">${game.status}</div>
+                    </div>
+                    <div style="font-size: 15px; font-weight: 600; margin-bottom: 10px;">
+                        ${game.matchup}
+                    </div>
+                    <div style="font-size: 13px; opacity: 0.9; margin-bottom: 10px;">
+                        📍 ${game.venue}
+                    </div>
+                    ${game.score ? `
+                        <div style="font-size: 20px; font-weight: 700; color: #22c55e;">
+                            ${game.score.away} - ${game.score.home}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function populateSelects() {
+            const structureSelect = document.getElementById('structureSelect');
+            const portSelect = document.getElementById('portSelect');
+
+            structureSelect.innerHTML = portalData.coreMappings.map(s => 
+                `<option value="${s.id}">${s.name} (${s.powerLevel}%)</option>`
+            ).join('');
+
+            portSelect.innerHTML = portalData.ports.map(p => 
+                `<option value="${p.port}">Port ${p.port} (${p.status})</option>`
+            ).join('');
+        }
+
+        async function applyMapping() {
+            const structureId = document.getElementById('structureSelect').value;
+            const port = document.getElementById('portSelect').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/streaming-portal/apply-mapping`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ structureId, port: parseInt(port) })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Successfully mapped ${data.structure} to port ${data.port}`);
+                    loadPortalData();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error applying mapping:', error);
+                alert('Failed to apply mapping');
+            }
+        }
+
+        function openStream(url) {
+            window.open(url, '_blank');
+        }
+
+        // Auto-refresh every 15 seconds
+        window.addEventListener('load', () => {
+            loadPortalData();
+            setInterval(loadPortalData, 15000);
+        });
+    </script>
+</body>
+</html>
