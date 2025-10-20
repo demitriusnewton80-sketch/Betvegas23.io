@@ -102,7 +102,7 @@ router.get('/stream/:gameId', (req: Request, res: Response) => {
   const updateHandler = (update: any) => {
     if (update.gameId === gameId) {
       res.write(`data: ${JSON.stringify(update)}\n\n`);
-      
+
       // Also broadcast to WebSocket clients
       if ((global as any).wsBroadcast) {
         (global as any).wsBroadcast({
@@ -178,13 +178,21 @@ router.post('/stream/:gameId/report-failure', (req: Request, res: Response) => {
 });
 
 // Get all external sportsbooks
-router.get('/partners', (req: Request, res: Response) => {
-  const sportsbooks = streamingService.getExternalSportsbooks();
-
-  res.json({
-    partners: sportsbooks,
-    count: sportsbooks.length
-  });
+router.get('/partners', async (req: Request, res: Response) => {
+  try {
+    const partners = await streamingService.getAllPartners();
+    res.json({
+      success: true,
+      partners,
+      count: partners.length,
+      fccEntity: '20130314143016'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch partners'
+    });
+  }
 });
 
 // Microsoft radio station integration
@@ -192,7 +200,7 @@ router.get('/microsoft/radio-integration', async (req: Request, res: Response) =
   const { sportsRadioService } = await import('../services/SportsRadioService.js');
   const health = sportsRadioService.getMicrosoftHealthStatus();
   const streams = sportsRadioService.getLiveRadioStreams();
-  
+
   res.json({
     success: true,
     integration: 'Microsoft Enterprise Pattern',
@@ -220,7 +228,7 @@ router.get('/microsoft/radio-integration', async (req: Request, res: Response) =
 // Mobile contract management - Get contract status
 router.get('/contracts/mobile/status', (req: Request, res: Response) => {
   const sportsbooks = streamingService.getExternalSportsbooks();
-  
+
   res.json({
     success: true,
     contracts: sportsbooks.map(sb => ({
@@ -426,7 +434,7 @@ router.get('/fcc/status/:email', async (req: Request, res: Response) => {
 // Get WiFi connection hub status with enhanced control
 router.get('/wifi-hub/status', (req: Request, res: Response) => {
   const clientIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '0.0.0.0';
-  
+
   res.json({
     success: true,
     hubName: 'WiFi Connection Infusion Hub',
@@ -617,7 +625,7 @@ router.get('/radio/:gameId', async (req: Request, res: Response) => {
 // Comprehensive workflow status endpoint
 router.get('/workflows/all', (req: Request, res: Response) => {
   const clientIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '0.0.0.0';
-  
+
   res.json({
     success: true,
     fccEntity: '20130314143016',
@@ -779,7 +787,7 @@ router.get('/radio/ip-lookup', async (req: Request, res: Response) => {
     const { promisify } = await import('util');
     const lookup = promisify(dns.lookup);
 
-    const timeoutPromise = new Promise((_, reject) => 
+    const timeoutPromise = new Promise((_, reject) =>
       setTimeout(() => reject(new Error('DNS lookup timeout')), 5000)
     );
 
@@ -809,22 +817,22 @@ router.get('/diagnostics/ai-troubleshoot', async (req: Request, res: Response) =
   try {
     const { coreAIService } = await import('../services/CoreAIService.js');
     const { smartSystemService } = await import('../services/SmartSystemService.js');
-    
+
     // Run AI diagnostics
     const aiDiagnostics = await coreAIService.processRequest(
       'system',
       'Analyze current system health and identify issues',
       'risk-classifier-v1'
     );
-    
+
     // Get system errors
     const errors = smartSystemService.getErrors();
     const loadingErrors = Array.from(errors.values()).filter(error => error.type === 'loading');
-    
+
     // Cloud production offline status
     const isProduction = process.env.REPLIT_DEPLOYMENT === '1';
     const offlineMode = !isProduction;
-    
+
     res.json({
       success: true,
       aiDiagnostics: aiDiagnostics.success ? {
@@ -840,7 +848,7 @@ router.get('/diagnostics/ai-troubleshoot', async (req: Request, res: Response) =
       cloudProduction: {
         mode: isProduction ? 'production' : 'offline',
         offlineCapable: true,
-        port: parseInt(proseInt(process.env.PORT || '5000'),
+        port: parseInt(process.env.PORT || '5000'),
         host: '0.0.0.0',
         httpsEnabled: isProduction,
         cacheEnabled: offlineMode
@@ -862,25 +870,25 @@ router.post('/diagnostics/ai-autofix', async (req: Request, res: Response) => {
   try {
     const { coreAIService } = await import('../services/CoreAIService.js');
     const { smartSystemService } = await import('../services/SmartSystemService.js');
-    
+
     // Get AI recommendations
     const aiResult = await coreAIService.processRequest(
       'system',
       'Identify and fix critical system issues',
       'risk-classifier-v1'
     );
-    
+
     // Auto-fix common issues
     const fixes: string[] = [];
     const errors = smartSystemService.getErrors();
-    
+
     errors.forEach((error, id) => {
       if (!error.resolved && error.severity === 'high') {
         smartSystemService.resolveError(id);
         fixes.push(`Fixed: ${error.message}`);
       }
     });
-    
+
     res.json({
       success: true,
       fixesApplied: fixes.length,
@@ -892,7 +900,7 @@ router.post('/diagnostics/ai-autofix', async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Auto-fix failed' failed' failed',
+      error: error instanceof Error ? error.message : 'Auto-fix failed',
       fccEntity: '20130314143016'
     });
   }
@@ -904,14 +912,14 @@ router.get('/diagnostics/loading-errors', async (req: Request, res: Response) =>
     const { smartSystemService } = await import('../services/SmartSystemService.js');
     const { coreAIService } = await import('../services/CoreAIService.js');
     const errors = smartSystemService.getErrors();
-    
+
     // Filter for loading errors only
     const loadingErrors = Array.from(errors.values()).filter(error => error.type === 'loading');
-    
+
     // Group by resolved status
     const unresolvedErrors = loadingErrors.filter(e => !e.resolved);
     const resolvedErrors = loadingErrors.filter(e => e.resolved);
-    
+
     // Use AI to analyze patterns
     let aiAnalysis = null;
     if (unresolvedErrors.length > 0) {
@@ -921,7 +929,7 @@ router.get('/diagnostics/loading-errors', async (req: Request, res: Response) =>
         aiAnalysis = aiResult.request?.response;
       }
     }
-    
+
     res.json({
       success: true,
       summary: {
@@ -959,53 +967,12 @@ router.get('/diagnostics/loading-errors', async (req: Request, res: Response) =>
   }
 });
 
-// Auto-fix issues using AI recommendations
-router.post('/diagnostics/ai-autofix', async (req: Request, res: Response) => {
-  try {
-    const { coreAIService } = await import('../services/CoreAIService.js');
-    const { smartSystemService } = await import('../services/SmartSystemService.js');
-    
-    // Get AI recommendations
-    const aiResult = await coreAIService.processRequest(
-      'system',
-      'Identify and fix critical system issues',
-      'risk-classifier-v1'
-    );
-    
-    // Auto-fix common issues
-    const fixes: string[] = [];
-    const errors = smartSystemService.getErrors();
-    
-    errors.forEach((error, id) => {
-      if (!error.resolved && error.severity === 'high') {
-        smartSystemService.resolveError(id);
-        fixes.push(`Fixed: ${error.message}`);
-      }
-    });
-    
-    res.json({
-      success: true,
-      fixesApplied: fixes.length,
-      fixes: fixes,
-      aiRecommendations: aiResult.success ? aiResult.request?.response : null,
-      fccEntity: '20130314143016',
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Auto-fix failed' failed',
-      fccEntity: '20130314143016'
-    });
-  }
-});
-
 // Cloud production health with offline capability
 router.get('/diagnostics/cloud-health', async (req: Request, res: Response) => {
   try {
     const isProduction = process.env.REPLIT_DEPLOYMENT === '1';
     const uptime = process.uptime();
-    
+
     res.json({
       success: true,
       cloud: {
@@ -1037,9 +1004,6 @@ router.get('/diagnostics/cloud-health', async (req: Request, res: Response) => {
   }
 });
 
-export default router;
-
-
 // WebSocket connection status
 router.get('/websocket/status', (req: Request, res: Response) => {
   res.json({
@@ -1047,8 +1011,8 @@ router.get('/websocket/status', (req: Request, res: Response) => {
     websocket: {
       enabled: true,
       endpoint: 'ws://0.0.0.0:5000/ws',
-      productionEndpoint: process.env.REPLIT_DEPLOYMENT === '1' 
-        ? `wss://${req.headers.host}/ws` 
+      productionEndpoint: process.env.REPLIT_DEPLOYMENT === '1'
+        ? `wss://${req.headers.host}/ws`
         : 'ws://0.0.0.0:5000/ws',
       protocol: 'WebSocket (ws/wss)',
       features: [
@@ -1063,3 +1027,5 @@ router.get('/websocket/status', (req: Request, res: Response) => {
     timestamp: new Date().toISOString()
   });
 });
+
+export default router;
