@@ -120,6 +120,15 @@ app.use('/api/*', (req: Request, res: Response) => {
   });
 });
 
+// Global error handlers
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught Exception:', error);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 // Start server
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`
@@ -136,16 +145,27 @@ app.listen(PORT, '0.0.0.0', () => {
   `);
 });
 
-// Initialize core systems
+// Initialize core systems with error handling
 import { appCore } from './core/AppCore.js';
 import { smartTroubleshootingCore } from './core/SmartTroubleshootingCore.js';
 import { errorRecoverySystem } from './core/ErrorRecoverySystem.js';
-appCore.initialize();
-smartTroubleshootingCore;
-errorRecoverySystem;
-
-// Initialize fusion assembly
 import { fusionAssemblyCore } from './core/FusionAssemblyCore.js';
-fusionAssemblyCore;
+
+try {
+  appCore.initialize();
+  console.log('✅ AppCore initialized');
+  
+  // Initialize other systems
+  smartTroubleshootingCore;
+  console.log('✅ SmartTroubleshooting ready');
+  
+  errorRecoverySystem;
+  console.log('✅ ErrorRecovery ready');
+  
+  fusionAssemblyCore;
+  console.log('✅ FusionAssembly ready');
+} catch (error) {
+  console.error('❌ Core system initialization error:', error);
+}
 
 export default app;

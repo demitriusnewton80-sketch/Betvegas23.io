@@ -16,8 +16,6 @@ const liveSessions = new Map();
 
 // Get all streams
 router.get('/streams', (req: Request, res: Response) => {
-  res.setHeader('Content-Type', 'application/json');
-
   try {
     const streams = streamingService.getActiveStreams();
 

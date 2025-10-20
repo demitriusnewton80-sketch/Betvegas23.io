@@ -52,19 +52,31 @@ export class FusionAssemblyCore extends EventEmitter {
   private initializeFusion() {
     console.log('🔗 Initializing Fusion Assembly Core...');
 
-    // Process pipeline every 2 seconds
-    this.processingInterval = setInterval(() => {
-      this.processSync();
-      this.processSignals();
-      this.processAssembly();
-    }, 2000);
+    try {
+      // Process pipeline every 2 seconds
+      this.processingInterval = setInterval(() => {
+        try {
+          this.processSync();
+          this.processSignals();
+          this.processAssembly();
+        } catch (error) {
+          console.error('❌ Pipeline processing error:', error);
+        }
+      }, 2000);
 
-    // Listen to app core events
-    appCore.on('broadcast:fusion:sync', (data) => {
-      this.handleIncomingSync(data);
-    });
+      // Listen to app core events
+      appCore.on('broadcast:fusion:sync', (data) => {
+        try {
+          this.handleIncomingSync(data);
+        } catch (error) {
+          console.error('❌ Broadcast sync error:', error);
+        }
+      });
 
-    console.log('✅ Fusion Assembly Core initialized');
+      console.log('✅ Fusion Assembly Core initialized');
+    } catch (error) {
+      console.error('❌ Fusion initialization error:', error);
+    }
   }
 
   // Step 1: Sync - Accept and validate incoming data

@@ -1,4 +1,3 @@
-
 // Smart Error Recovery System - Client Side
 // Auto-fixes API connection issues and retries failed requests
 
@@ -12,66 +11,50 @@ class SmartErrorRecovery {
     this.troubleshootingEnabled = true;
   }
 
+  // Helper delay function
+  async delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   // Smart fetch with automatic retry and error recovery
-  async fetchWithRetry(url, options = {}, retryCount = 0) {
+  async fetchWithRetry(url, options = {}, retries = 0) {
     try {
       const response = await fetch(url, {
         ...options,
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
           ...options.headers
         }
       });
 
-      // Check if response is actually JSON
+      if (!response.ok && retries < this.maxRetries) {
+        console.log(`Retry ${retries + 1}/${this.maxRetries} for ${url}`);
+        await this.delay(1000 * (retries + 1));
+        return this.fetchWithRetry(url, options, retries + 1);
+      }
+
+      // Check if response is JSON before parsing
       const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        // Try troubleshooting mode
-        if (this.troubleshootingEnabled) {
-          console.log(`⚠️ Expected JSON but got ${contentType}, attempting troubleshooting...`);
-          return await this.troubleshootConnection(url, options, retryCount);
-        }
-        throw new Error(`Expected JSON but got ${contentType}`);
+      if (contentType && contentType.includes('application/json')) {
+        return response;
+      } else {
+        console.warn(`Non-JSON response from ${url}, content-type: ${contentType}`);
+        return response;
       }
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      
-      // Validate JSON structure
-      if (!this.validateJSON(data)) {
-        console.warn('Invalid JSON structure, attempting recovery...');
-        return await this.troubleshootConnection(url, options, retryCount);
-      }
-
-      return data;
     } catch (error) {
-      console.error(`Fetch error (attempt ${retryCount + 1}/${this.maxRetries}):`, error);
-
-      if (retryCount < this.maxRetries) {
-        const delay = this.retryDelay * Math.pow(this.backoffMultiplier, retryCount);
-        console.log(`🔄 Retrying in ${delay}ms...`);
-        
-        await new Promise(resolve => setTimeout(resolve, delay));
-        return this.fetchWithRetry(url, options, retryCount + 1);
+      if (retries < this.maxRetries) {
+        console.log(`Network error, retry ${retries + 1}/${this.maxRetries}`, error);
+        await this.delay(1000 * (retries + 1));
+        return this.fetchWithRetry(url, options, retries + 1);
       }
-
-      // Max retries reached, return error object
-      return {
-        success: false,
-        error: error.message,
-        recovered: false
-      };
+      throw error;
     }
   }
 
   // Troubleshoot connection and fix JSON issues
   async troubleshootConnection(url, options = {}, retryCount = 0) {
     console.log('🔧 Starting smart troubleshooting...');
-    
+
     try {
       // Step 1: Check if endpoint exists
       const healthCheck = await this.checkEndpointHealth(url);
@@ -101,10 +84,10 @@ class SmartErrorRecovery {
         return data;
       } catch (parseError) {
         console.error('❌ Could not parse response as JSON:', text.substring(0, 100));
-        
+
         // Step 4: Report to troubleshooting API
         await this.reportIssue(url, text);
-        
+
         return {
           success: false,
           error: 'Invalid JSON response',
@@ -127,7 +110,7 @@ class SmartErrorRecovery {
     try {
       const apiBase = window.CloudConfig ? window.CloudConfig.getAPIBase() : '';
       const checkUrl = `${apiBase}/api-troubleshooting/endpoints`;
-      
+
       const response = await fetch(checkUrl);
       if (response.ok) {
         const data = await response.json();
@@ -148,13 +131,13 @@ class SmartErrorRecovery {
     try {
       const apiBase = window.CloudConfig ? window.CloudConfig.getAPIBase() : '';
       const fixUrl = `${apiBase}/api-troubleshooting/auto-fix`;
-      
+
       await fetch(fixUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ endpoint: url })
       });
-      
+
       console.log('✅ Auto-fix triggered for endpoint');
       // Wait for fix to apply
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -197,7 +180,7 @@ class SmartErrorRecovery {
   // Smart EventSource with automatic reconnection
   createSmartEventSource(url, onMessage, onError) {
     const eventSourceId = url;
-    
+
     // Close existing EventSource if any
     if (this.activeEventSources.has(eventSourceId)) {
       this.activeEventSources.get(eventSourceId).close();
@@ -206,7 +189,7 @@ class SmartErrorRecovery {
     const connectEventSource = () => {
       try {
         const eventSource = new EventSource(url);
-        
+
         eventSource.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
@@ -227,9 +210,9 @@ class SmartErrorRecovery {
         eventSource.onerror = (error) => {
           console.error('EventSource error, will reconnect...');
           if (onError) onError(error);
-          
+
           eventSource.close();
-          
+
           // Auto-reconnect after delay
           setTimeout(() => {
             if (document.visibilityState === 'visible') {
@@ -243,7 +226,7 @@ class SmartErrorRecovery {
         return eventSource;
       } catch (error) {
         console.error('EventSource creation error:', error);
-        
+
         // Retry connection
         setTimeout(() => {
           if (document.visibilityState === 'visible') {
@@ -298,7 +281,22 @@ window.SmartErrorRecovery.setupVisibilityHandler();
 
 // Helper function for HTML pages
 window.smartFetch = async function(url, options) {
-  return await window.SmartErrorRecovery.fetchWithRetry(url, options);
+  // First, use the improved fetchWithRetry to get the response
+  const response = await window.SmartErrorRecovery.fetchWithRetry(url, options);
+
+  // Check if the response is ok and if it's JSON
+  const contentType = response.headers.get('content-type');
+  if (response.ok && contentType && contentType.includes('application/json')) {
+    return await response.json();
+  } else if (!response.ok) {
+    // If response is not ok, throw an error that can be caught
+    const errorText = await response.text();
+    throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
+  } else {
+    // If it's not JSON, return the raw text or handle as needed
+    console.warn(`Received non-JSON response for ${url}`);
+    return await response.text(); // Or handle differently if needed
+  }
 };
 
 console.log('✅ Smart Error Recovery System loaded with troubleshooting');
