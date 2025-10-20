@@ -346,6 +346,45 @@
         return null;
       }
     }
+
+    // Get plug system status
+    async getPlugSystemStatus() {
+      try {
+        const response = await fetch(`${getAPIBase()}/web3/plug-system/status`);
+        const data = await response.json();
+        
+        if (data.success) {
+          return data;
+        }
+        return null;
+      } catch (error) {
+        console.error('Plug system fetch error:', error);
+        return null;
+      }
+    }
+
+    // Fuse with CoinStats
+    async fuseWithCoinStats() {
+      try {
+        const response = await fetch(`${getAPIBase()}/web3/fuse-coinstats`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+          this.emit('coinstats:fused', data);
+          return data;
+        }
+        throw new Error(data.error || 'Fusion failed');
+      } catch (error) {
+        console.error('Fusion error:', error);
+        throw error;
+      }
+    }
   }
 
   // Export to window
