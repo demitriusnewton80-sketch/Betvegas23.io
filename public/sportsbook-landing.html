@@ -218,8 +218,8 @@
                 <div class="stat-label">Live Games</div>
             </div>
             <div class="stat-box">
-                <div class="stat-value">100%</div>
-                <div class="stat-label">System Uptime</div>
+                <div class="stat-value" id="quickNodeStatus">⚡</div>
+                <div class="stat-label">QuickNode</div>
             </div>
             <div class="stat-box">
                 <div class="stat-value">HTTPS</div>
@@ -426,9 +426,19 @@
                 if (data.success && data.games) {
                     const liveGames = data.games.filter(g => g.status === 'live').length;
                     document.getElementById('liveGames').textContent = liveGames || data.games.length;
+                    
+                    // Update QuickNode status
+                    if (data.quickNode && data.quickNode.connected) {
+                        document.getElementById('quickNodeStatus').textContent = '✅';
+                        document.getElementById('quickNodeStatus').parentElement.title = 
+                            `Polygon Block: ${data.quickNode.blockNumber}`;
+                    } else {
+                        document.getElementById('quickNodeStatus').textContent = '⚠️';
+                    }
                 }
             } catch (error) {
                 console.error('Error loading stats:', error);
+                document.getElementById('quickNodeStatus').textContent = '❌';
             }
         }
 

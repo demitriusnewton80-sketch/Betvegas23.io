@@ -52,17 +52,18 @@ router.get('/', (req: Request, res: Response) => {
 });
 
 // Get all games with filtering
-router.get('/games', (req: Request, res: Response) => {
+router.get('/games', async (req: Request, res: Response) => {
   try {
     const { sport, status, source } = req.query;
     
+    // Get local events
     let events = sport ? sportsDataService.getEventsBySport(sport as string) : sportsDataService.getAllEvents();
     
     if (status) {
       events = events.filter(event => event.status === status);
     }
     
-    const games: Game[] = events.map(event => ({
+    let games: Game[] = events.map(event => ({
       id: event.id,
       sport: event.sport,
       homeTeam: event.homeTeam,
@@ -72,25 +73,67 @@ router.get('/games', (req: Request, res: Response) => {
       status: event.status,
       radioLink: event.radioLink
     }));
-  
-  const response: any = {
-    success: true,
-    games,
-    count: games.length,
-    fccEntity: '20130314143016'
-  };
 
-  // Add PlayStation Network specific info
-  if (source === 'psn') {
-    response.psnGaming = {
-      maddenNFL: games.filter(g => g.sport === 'NFL').length,
-      nba2k: games.filter(g => g.sport === 'NBA').length,
-      undisputedBoxing: games.filter(g => g.sport === 'Boxing').length,
-      message: 'Bet on your favorite PlayStation 5 gaming content'
-    };
-  }
-  
-  res.json(response);
+    // Integrate QuickNode blockchain data
+    try {
+      const blockchainGames = await quickNodeService.getBlockchainSportsData();
+      const networkStatus = await quickNodeService.getNetworkStatus();
+      
+      if (blockchainGames.length > 0) {
+        const enhancedBlockchainGames = blockchainGames.map(bg => ({
+          id: bg.id,
+          sport: bg.sport,
+          homeTeam: bg.homeTeam,
+          awayTeam: bg.awayTeam,
+          startTime: bg.startTime,
+          odds: bg.odds,
+          status: bg.status as 'upcoming' | 'live' | 'completed',
+          radioLink: `https://www.espn.com/radio`,
+          blockchain: bg.blockchain
+        }));
+        
+        games = [...games, ...enhancedBlockchainGames];
+      }
+
+      const response: any = {
+        success: true,
+        games,
+        count: games.length,
+        fccEntity: '20130314143016',
+        quickNode: {
+          connected: networkStatus.success,
+          network: networkStatus.network,
+          chainId: networkStatus.chainId,
+          blockNumber: networkStatus.blockNumber,
+          gamesFromBlockchain: blockchainGames.length
+        }
+      };
+
+      // Add PlayStation Network specific info
+      if (source === 'psn') {
+        response.psnGaming = {
+          maddenNFL: games.filter(g => g.sport === 'NFL').length,
+          nba2k: games.filter(g => g.sport === 'NBA').length,
+          undisputedBoxing: games.filter(g => g.sport === 'Boxing').length,
+          message: 'Bet on your favorite PlayStation 5 gaming content'
+        };
+      }
+      
+      res.json(response);
+    } catch (qnError) {
+      console.error('QuickNode error:', qnError);
+      // Fallback to local data if QuickNode fails
+      res.json({
+        success: true,
+        games,
+        count: games.length,
+        fccEntity: '20130314143016',
+        quickNode: {
+          connected: false,
+          error: 'QuickNode unavailable, showing local data'
+        }
+      });
+    }
   } catch (error) {
     console.error('Error loading games:', error);
     res.status(500).json({
@@ -331,18 +374,41 @@ router.get('/external-data', async (req: Request, res: Response) => {
 router.get('/blockchain-data', async (req: Request, res: Response) => {
   try {
     const blockchainData = await quickNodeService.getBlockchainSportsData();
+    const networkStatus = await quickNodeService.getNetworkStatus();
     
     res.json({
       success: true,
       quicknode: 'connected',
-      endpoint: 'Polygon Network',
-      data: blockchainData,
+      network: networkStatus,
+      games: blockchainData,
+      totalGames: blockchainData.length,
+      fccEntity: '20130314143016',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to fetch blockchain data',
+      fccEntity: '20130314143016'
+    });
+  }
+});
+
+// Get QuickNode network status
+router.get('/quicknode/status', async (req: Request, res: Response) => {
+  try {
+    const networkStatus = await quickNodeService.getNetworkStatus();
+    
+    res.json({
+      success: networkStatus.success,
+      ...networkStatus,
       fccEntity: '20130314143016'
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to fetch blockchain data'
+      error: error instanceof Error ? error.message : 'Failed to get network status',
+      fccEntity: '20130314143016'
     });
   }
 });
