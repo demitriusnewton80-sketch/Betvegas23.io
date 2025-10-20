@@ -595,7 +595,7 @@ router.get('/streams', async (req: Request, res: Response) => {
 router.get('/streaming-endpoints', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
   try {
-    const partners = await streamingService.getStreamingPartners();
+    const partners = streamingService.getStreamingPartners();
     const endpoints = partners.map(p => ({
       id: p.id,
       name: p.name,
@@ -624,7 +624,7 @@ router.get('/contracts/:contractId', async (req: Request, res: Response) => {
   try {
     const { contractId } = req.params;
     const streams = streamingService.getActiveStreams();
-    const partners = await streamingService.getStreamingPartners();
+    const partners = streamingService.getStreamingPartners();
 
     const contract = streams.find(s => s.id === contractId);
 
