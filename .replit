@@ -5,7 +5,7 @@ expertMode = true
 channel = "stable-25_05"
 
 [workflows]
-runButton = "Run"
+runButton = "Development Server"
 
 [[workflows.workflow]]
 name = "Runa"
@@ -84,10 +84,57 @@ args = "npm run build"
 task = "shell.exec"
 args = "node dist/index.js"
 
+[[workflows.workflow]]
+name = "Development Server"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install --legacy-peer-deps"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run build"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node dist/index.js"
+
+[[workflows.workflow]]
+name = "Quick Start"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run build"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node dist/index.js"
+
+[[workflows.workflow]]
+name = "Production Build"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install --legacy-peer-deps"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run build"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "NODE_ENV=production node dist/index.js"
+
 [[ports]]
 localPort = 5000
 externalPort = 5000
 
 [deployment]
 run = ["sh", "-c", "NODE_ENV=production node dist/index.js"]
-build = ["sh", "-c", "npm run build"]
+build = ["sh", "-c", "npm install --legacy-peer-deps && npm run build"]

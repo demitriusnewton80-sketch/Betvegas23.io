@@ -133,7 +133,7 @@ router.get('/ps5/games', (req: Request, res: Response) => {
       status: game.status,
       maxPlayers: game.maxPlayers,
       currentPlayers: game.currentPlayers,
-      entryFee: game.entryFee
+      entryFee: game.entryFee || 0
     }));
 
     res.json({
