@@ -1,6 +1,7 @@
 
 import express, { Request, Response } from 'express';
 import { espnTrackerService } from '../services/ESPNSportsTrackerService.js';
+import { sportsRadioService } from '../services/SportsRadioService.js';
 
 const router = express.Router();
 
@@ -107,7 +108,94 @@ router.get('/stream', (req: Request, res: Response) => {
 
   espnTrackerService.on('scoreUpdate', updateHandler);
 
-  // Send initial data
+  // ESPN Radio Streaming Integration
+router.get('/radio-streams', (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'application/json');
+  
+  const liveGames = espnTrackerService.getCurrentLiveGames();
+  const radioStreams = sportsRadioService.getLiveRadioStreams();
+  
+  // Map ESPN games to radio streams
+  const espnRadioData = liveGames.map(game => {
+    const matchingRadio = radioStreams.find(r => 
+      r.league === game.league && 
+      (r.homeTeam === game.homeTeam || r.awayTeam === game.awayTeam)
+    );
+    
+    return {
+      gameId: game.gameId,
+      league: game.league,
+      matchup: `${game.awayTeam} @ ${game.homeTeam}`,
+      status: game.status,
+      score: game.score,
+      radioStream: matchingRadio ? {
+        streamUrl: matchingRadio.streamUrl,
+        fallbackUrls: matchingRadio.fallbackUrls,
+        listeners: matchingRadio.listeners,
+        quality: matchingRadio.quality
+      } : null
+    };
+  });
+  
+  res.json({
+    success: true,
+    espnRadioStreams: espnRadioData,
+    totalGames: liveGames.length,
+    gamesWithRadio: espnRadioData.filter(g => g.radioStream).length,
+    fccEntity: '20130314143016',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Get ESPN radio stream for specific game
+router.get('/radio-stream/:gameId', (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'application/json');
+  
+  const { gameId } = req.params;
+  const game = espnTrackerService.getGame(gameId);
+  
+  if (!game) {
+    return res.status(404).json({
+      success: false,
+      error: 'Game not found'
+    });
+  }
+  
+  const radioStreams = sportsRadioService.getRadioStreamsByLeague(game.league);
+  const matchingRadio = radioStreams.find(r => 
+    r.homeTeam === game.homeTeam || r.awayTeam === game.awayTeam
+  );
+  
+  if (!matchingRadio) {
+    return res.status(404).json({
+      success: false,
+      error: 'No radio stream available for this game'
+    });
+  }
+  
+  res.json({
+    success: true,
+    game: {
+      gameId: game.gameId,
+      league: game.league,
+      matchup: `${game.awayTeam} @ ${game.homeTeam}`,
+      status: game.status,
+      score: game.score
+    },
+    radioStream: {
+      streamUrl: matchingRadio.streamUrl,
+      fallbackUrls: matchingRadio.fallbackUrls,
+      listeners: matchingRadio.listeners,
+      quality: matchingRadio.quality,
+      homeTeamLogo: matchingRadio.homeTeamLogo,
+      awayTeamLogo: matchingRadio.awayTeamLogo
+    },
+    fccEntity: '20130314143016',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Send initial data
   res.write(`data: ${JSON.stringify({
     type: 'connected',
     liveGames: espnTrackerService.getCurrentLiveGames(),
