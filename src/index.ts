@@ -19,7 +19,7 @@ import publicAccessRoutes from './routes/public-access.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
-const HOST = '0.0.0.0';
+const HOST = '0.0.0.0'; // Bind to 0.0.0.0 for external accessibility
 
 // Middleware
 app.disable('x-powered-by');
@@ -97,6 +97,7 @@ httpServer.listen(PORT, HOST, () => {
   console.log('═══════════════════════════════════════════════════');
   console.log(`🚀 Server: http://${HOST}:${PORT}`);
   console.log(`📡 FCC Entity: 20130314143016`);
+  console.log(`🌐 Accessible externally on port ${PORT}`);
   console.log('═══════════════════════════════════════════════════');
 });
 

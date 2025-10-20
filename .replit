@@ -8,9 +8,9 @@ channel = "stable-25_05"
 runButton = "Run"
 
 [[workflows.workflow]]
-name = "Run"
+name = "Runa"
 author = 48739577
-mode = "sequential"
+mode = "parallel"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -18,14 +18,10 @@ args = "npm install"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run build"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm start"
+args = "npm run dev"
 
 [[workflows.workflow]]
-name = "Run"
+name = "Runyyyges"
 author = 48739577
 mode = "sequential"
 
