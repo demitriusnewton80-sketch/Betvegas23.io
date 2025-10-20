@@ -141,8 +141,13 @@ try {
 // Static files (must be after API routes)
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Root route - serve production sportsbook
+// Root route - serve functional structures sportsbook
 app.get('/', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/functional-sportsbook-structures.html'));
+});
+
+// Alternative production sportsbook route
+app.get('/production', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../public/my-public-sportsbook.html'));
 });
 
