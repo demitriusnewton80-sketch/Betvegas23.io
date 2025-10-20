@@ -157,32 +157,30 @@ app.listen(PORT, '0.0.0.0', () => {
 });
 
 // Initialize core systems with error handling
-import { appCore } from './core/AppCore.js';
-import { smartTroubleshootingCore } from './core/SmartTroubleshootingCore.js';
-import { errorRecoverySystem } from './core/ErrorRecoverySystem.js';
-import { fusionAssemblyCore } from './core/FusionAssemblyCore.js';
+Promise.resolve().then(async () => {
+  try {
+    const { appCore } = await import('./core/AppCore.js');
+    appCore.initialize();
+    console.log('✅ AppCore initialized');
 
-try {
-  appCore.initialize();
-  console.log('✅ AppCore initialized');
+    // Initialize other systems
+    const { smartTroubleshootingCore } = await import('./core/SmartTroubleshootingCore.js');
+    console.log('✅ SmartTroubleshooting ready');
 
-  // Initialize other systems
-  smartTroubleshootingCore;
-  console.log('✅ SmartTroubleshooting ready');
+    const { errorRecoverySystem } = await import('./core/ErrorRecoverySystem.js');
+    console.log('✅ ErrorRecovery ready');
 
-  errorRecoverySystem;
-  console.log('✅ ErrorRecovery ready');
+    const { fusionAssemblyCore } = await import('./core/FusionAssemblyCore.js');
+    console.log('✅ FusionAssembly ready');
 
-  fusionAssemblyCore;
-  console.log('✅ FusionAssembly ready');
-
-  // Initialize JSON Sync Service
-  const { jsonSyncService } = await import('./services/JSONSyncService.js');
-  jsonSyncService;
-  console.log('✅ JSONSync ready');
-} catch (error) {
-  console.error('❌ Core system initialization error:', error);
-}
+    // Initialize JSON Sync Service
+    const { jsonSyncService } = await import('./services/JSONSyncService.js');
+    console.log('✅ JSONSync ready');
+  } catch (error) {
+    console.error('❌ Core system initialization error:', error);
+    // Continue running even if some systems fail to initialize
+  }
+});
 
 // Mount workflow landscape endpoint
 app.use('/workflow-landscape', workflowLandscapeRouter);
