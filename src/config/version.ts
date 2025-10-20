@@ -1,20 +1,31 @@
 
 export const APP_VERSION = {
-  version: '2.0.0',
+  version: '2.1.0',
   buildDate: new Date().toISOString(),
   features: [
     'ESPN Sportsbook Integration',
     'Web3 Bridge with Polygon Network',
-    'Streaming Deployment System',
+    'Streaming System',
     'PS5 Sports Betting',
     'Business Relationships Module',
     'Smart System Control',
     'Multi-Platform SSO',
-    'Parlay Builder with AI',
+    'Parlay Builder',
     'Sports Radio Hub',
-    'Live Score Updates'
+    'Live Score Updates',
+    'FCC Compliance Suite'
   ],
   changelog: {
+    '2.1.0': {
+      date: '2025-01-24',
+      changes: [
+        'Stabilized streaming endpoints',
+        'Fixed API response formatting',
+        'Improved error handling',
+        'Enhanced SSE connection management',
+        'Optimized build process'
+      ]
+    },
     '2.0.0': {
       date: '2025-01-24',
       changes: [
