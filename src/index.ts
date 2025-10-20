@@ -7,6 +7,7 @@ import { createServer } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
 import { startupDiagnostics } from './utils/startup-diagnostics.js';
 import { appCore } from './core/AppCore.js';
+import { smartCommunication } from './utils/smart-communication.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,6 +64,15 @@ app.use('/version', versionRoutes);
 
 // Static files
 app.use(express.static(path.join(__dirname, '../public')));
+
+// Smart communication status
+app.get('/smart-communication/status', (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    communication: smartCommunication.getStats(),
+    fccEntity: '20130314143016'
+  });
+});
 
 // Main route
 app.get('/', (req: Request, res: Response) => {

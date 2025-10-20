@@ -230,7 +230,9 @@
     </div>
 
     <script src="/js/api-config.js"></script>
+    <script src="/js/smart-error-recovery.js"></script>
     <script>
+        const smartRecovery = window.SmartErrorRecovery;
         let eventSource = null;
 
         async function deployToAllSportsbooks() {
@@ -266,24 +268,17 @@
         }
 
         async function loadDeploymentStatus() {
-            try {
-                const response = await fetch(`${API_BASE}/streaming/deploy/status`);
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                const data = await response.json();
+            const data = await smartRecovery.fetchWithRetry(`${API_BASE}/streaming/deploy/status`);
 
-                if (data.success) {
-                    document.getElementById('totalSportsbooks').textContent = data.deploymentStatus.totalSportsbooks;
-                    document.getElementById('ps5Games').textContent = data.deploymentStatus.ps5Integration.totalGames;
-                    document.getElementById('pickupGames').textContent = data.deploymentStatus.pickupGames.available;
-                    document.getElementById('relationships').textContent = data.deploymentStatus.relationships.established;
+            if (data && data.success) {
+                document.getElementById('totalSportsbooks').textContent = data.deploymentStatus.totalSportsbooks || 0;
+                document.getElementById('ps5Games').textContent = data.deploymentStatus.ps5Integration?.totalGames || 0;
+                document.getElementById('pickupGames').textContent = data.deploymentStatus.pickupGames?.available || 0;
+                document.getElementById('relationships').textContent = data.deploymentStatus.relationships?.established || 0;
 
-                    displayDeployments(data.deploymentStatus);
-                }
-            } catch (error) {
-                console.error('Error loading status:', error);
-                // Optionally display an error message to the user
+                displayDeployments(data.deploymentStatus);
+            } else {
+                console.log('Failed to load deployment status, will retry automatically');
             }
         }
 
@@ -327,29 +322,18 @@
         }
 
         function connectEventSource() {
-            if (eventSource) {
-                eventSource.close();
-            }
-            eventSource = new EventSource(`${API_BASE}/streaming/events`);
-
-            eventSource.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                // Update UI with new data
-                console.log('Received event data:', data);
-                // Example: Update deployment status if the event contains it
-                if (data.deploymentStatus) {
-                    loadDeploymentStatus(); // Reload to reflect live updates
+            eventSource = smartRecovery.createSmartEventSource(
+                `${API_BASE}/streaming/events`,
+                (data) => {
+                    console.log('Received event data:', data);
+                    if (data.type === 'update' && data.deploymentStatus) {
+                        loadDeploymentStatus();
+                    }
+                },
+                (error) => {
+                    console.log('Stream connection issue, auto-recovering...');
                 }
-            };
-
-            eventSource.onerror = (error) => {
-                console.error('EventSource error:', error);
-                eventSource.close();
-                // Only reconnect if we're still on the page
-                if (document.visibilityState === 'visible') {
-                    setTimeout(connectEventSource, 10000); // Wait 10 seconds before retry
-                }
-            };
+            );
         }
 
         window.addEventListener('load', () => {
@@ -358,19 +342,7 @@
             connectEventSource(); // Connect to EventSource on page load
         });
 
-        window.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                // Page is hidden, close EventSource to prevent reconnect attempts
-                if (eventSource) {
-                    eventSource.close();
-                }
-            } else {
-                // Page is visible again, attempt to reconnect if it was closed
-                if (!eventSource || eventSource.readyState === EventSource.CLOSED) {
-                    connectEventSource();
-                }
-            }
-        });
+        // Visibility handling is now managed by SmartErrorRecovery
     </script>
 </body>
 </html>

@@ -8,45 +8,81 @@ const router = express.Router();
 // Live streaming sessions
 const liveSessions = new Map();
 
-// Get all streams endpoint
+// Get all streams endpoint with smart error recovery
 router.get('/streams', (req: Request, res: Response) => {
   try {
     const streams = streamingService.getAllStreams();
+    
+    // Ensure we always return valid JSON
+    res.setHeader('Content-Type', 'application/json');
     res.json({
       success: true,
-      streams,
-      count: streams.length,
-      timestamp: new Date().toISOString()
+      streams: streams || [],
+      count: streams ? streams.length : 0,
+      timestamp: new Date().toISOString(),
+      fccEntity: '20130314143016'
     });
   } catch (error) {
+    console.error('Streams endpoint error:', error);
+    res.setHeader('Content-Type', 'application/json');
     res.status(500).json({
       success: false,
       error: 'Failed to fetch streams',
-      streams: []
+      streams: [],
+      fccEntity: '20130314143016'
     });
   }
 });
 
-// Server-Sent Events endpoint for live updates
+// Server-Sent Events endpoint for live updates with smart recovery
 router.get('/events', (req: Request, res: Response) => {
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  try {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('X-Accel-Buffering', 'no');
 
-  // Send initial connection message
-  res.write(`data: ${JSON.stringify({ type: 'connected', timestamp: Date.now() })}\n\n`);
+    // Send initial connection message
+    const initialMsg = { type: 'connected', timestamp: Date.now(), fccEntity: '20130314143016' };
+    res.write(`data: ${JSON.stringify(initialMsg)}\n\n`);
 
-  // Send updates every 5 seconds
-  const interval = setInterval(() => {
-    const streams = streamingService.getAllStreams();
-    res.write(`data: ${JSON.stringify({ type: 'update', streams })}\n\n`);
-  }, 5000);
+    // Send updates every 5 seconds with error recovery
+    const interval = setInterval(() => {
+      try {
+        const streams = streamingService.getAllStreams() || [];
+        const updateMsg = { 
+          type: 'update', 
+          streams,
+          timestamp: Date.now(),
+          fccEntity: '20130314143016'
+        };
+        res.write(`data: ${JSON.stringify(updateMsg)}\n\n`);
+      } catch (error) {
+        console.error('EventSource update error:', error);
+        // Send error notification to client
+        res.write(`data: ${JSON.stringify({ 
+          type: 'error', 
+          message: 'Stream update failed',
+          timestamp: Date.now() 
+        })}\n\n`);
+      }
+    }, 5000);
 
-  // Cleanup on connection close
-  req.on('close', () => {
-    clearInterval(interval);
-  });
+    // Cleanup on connection close
+    req.on('close', () => {
+      clearInterval(interval);
+    });
+
+    // Handle errors
+    req.on('error', (error) => {
+      console.error('EventSource connection error:', error);
+      clearInterval(interval);
+    });
+  } catch (error) {
+    console.error('EventSource initialization error:', error);
+    res.end();
+  }
 });
 
 // Unified Sportsbook Fusion Stream - All sportsbooks in one cloud stream
