@@ -1,0 +1,61 @@
+
+name: Build and Deploy to Replit
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+env:
+  FCC_ENTITY: "20130314143016"
+  FCC_REGISTRATION: "0024454324"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm install
+      
+    - name: TypeScript compilation check
+      run: npx tsc --noEmit
+      
+    - name: Build project
+      run: npm run build
+      
+    - name: Run tests (if available)
+      run: npm test --if-present
+      
+    - name: Security audit
+      run: npm audit --audit-level=moderate
+      continue-on-error: true
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Deploy to Replit
+      run: |
+        echo "Deployment triggered for FCC Entity: $FCC_ENTITY"
+        echo "Changes will be automatically deployed to Replit"
+        echo "Replit will detect the commit and rebuild the application"

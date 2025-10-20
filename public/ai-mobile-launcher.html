@@ -1,0 +1,604 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>AI Mobile Sports Launcher | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .landscape-container {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 60px 20px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-section h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-section p {
+            font-size: 18px;
+            opacity: 0.95;
+            margin-bottom: 10px;
+        }
+
+        .fcc-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 12px;
+            display: inline-block;
+            margin: 5px;
+            font-weight: 700;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            padding: 40px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #6366f1;
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h2 {
+            color: #60a5fa;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .feature-card p {
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .upload-zone {
+            border: 3px dashed rgba(99, 102, 241, 0.5);
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(15, 23, 42, 0.5);
+            margin-top: 20px;
+        }
+
+        .upload-zone:hover {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .upload-zone.active {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+
+        .btn.danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .ai-output {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #00ff88;
+        }
+
+        .mobile-sports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .sport-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .sport-card:hover {
+            border-color: #3b82f6;
+            transform: scale(1.02);
+        }
+
+        .sport-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse 2s infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .downloaded-pages {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .downloaded-pages li {
+            background: rgba(15, 23, 42, 0.6);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 32px;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="landscape-container">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="feature-icon">🤖🏈</div>
+            <h1>AI Mobile Sports Launcher</h1>
+            <p>Upload & Download Web Pages with AI Core Intelligence</p>
+            <p style="font-size: 14px; margin-top: 8px;">Powered by Core AI • Mobile Optimized • Cloud Connected</p>
+            <div style="margin-top: 15px;">
+                <span class="fcc-badge">FCC: 20130314143016</span>
+                <span class="fcc-badge">AI Core Active</span>
+                <span class="fcc-badge">Mobile Sports</span>
+            </div>
+        </div>
+
+        <!-- Main Features Grid -->
+        <div class="main-grid">
+            <!-- Upload Section -->
+            <div class="feature-card">
+                <div class="feature-icon">📤</div>
+                <h2>AI Web Page Upload</h2>
+                <p>Upload web pages and let AI Core analyze and optimize them for mobile sports viewing</p>
+                
+                <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                    <div style="font-size: 48px; margin-bottom: 10px;">📄</div>
+                    <p style="font-size: 16px; font-weight: 700;">Click to Upload Web Page</p>
+                    <p style="font-size: 12px; opacity: 0.7; margin-top: 5px;">HTML, CSS, JS files supported</p>
+                </div>
+                <input type="file" id="fileInput" style="display: none;" accept=".html,.htm,.css,.js" multiple>
+
+                <div id="uploadProgress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="uploadProgressBar"></div>
+                    </div>
+                    <p style="margin-top: 10px; text-align: center; font-size: 14px;" id="uploadStatus"></p>
+                </div>
+
+                <button class="btn success" onclick="processUpload()">
+                    🤖 Process with AI Core
+                </button>
+            </div>
+
+            <!-- Download Section -->
+            <div class="feature-card">
+                <div class="feature-icon">📥</div>
+                <h2>Mobile Sports Download</h2>
+                <p>Download optimized mobile sports pages directly to your device</p>
+                
+                <input type="text" class="input-field" id="downloadUrl" placeholder="Enter page URL or select from library">
+                
+                <select class="input-field" id="pageSelector">
+                    <option value="">-- Select Mobile Sports Page --</option>
+                    <option value="/mobile-sportsbook-hub.html">Mobile Sportsbook Hub</option>
+                    <option value="/mobile-sportsbook-app.html">Mobile Sportsbook App</option>
+                    <option value="/ps5-betting.html">PS5 Sports Betting</option>
+                    <option value="/betting-zone.html">Unified Betting Zone</option>
+                    <option value="/sports-radio-hub.html">Sports Radio Hub</option>
+                    <option value="/enhanced-sportsbook.html">Enhanced Sportsbook</option>
+                </select>
+
+                <button class="btn" onclick="downloadPage()">
+                    📥 Download Page
+                </button>
+
+                <div id="downloadOutput" class="ai-output" style="display: none;"></div>
+
+                <ul class="downloaded-pages" id="downloadedList"></ul>
+            </div>
+
+            <!-- AI Core Status -->
+            <div class="feature-card">
+                <div class="feature-icon">🧠</div>
+                <h2>AI Core Intelligence</h2>
+                <p>Real-time AI processing for mobile sports optimization</p>
+                
+                <div style="background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: 12px; margin-top: 15px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                        <span class="status-indicator"></span>
+                        <span id="aiStatus">AI Core Online</span>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <div style="font-size: 12px; opacity: 0.7; margin-bottom: 5px;">Models Available</div>
+                        <div style="font-size: 24px; font-weight: 700; color: #22c55e;" id="modelCount">0</div>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <div style="font-size: 12px; opacity: 0.7; margin-bottom: 5px;">Processing Speed</div>
+                        <div style="font-size: 24px; font-weight: 700; color: #60a5fa;" id="processingSpeed">0ms</div>
+                    </div>
+
+                    <div>
+                        <div style="font-size: 12px; opacity: 0.7; margin-bottom: 5px;">Confidence Level</div>
+                        <div style="font-size: 24px; font-weight: 700; color: #8b5cf6;" id="confidenceLevel">0%</div>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="loadAIStatus()">
+                    🔄 Refresh AI Status
+                </button>
+            </div>
+
+            <!-- Mobile Sports Library -->
+            <div class="feature-card" style="grid-column: 1 / -1;">
+                <div class="feature-icon">🏆</div>
+                <h2>Mobile Sports Library</h2>
+                <p>Access all mobile-optimized sports betting platforms</p>
+                
+                <div class="mobile-sports-grid" id="sportsLibrary">
+                    <!-- Will be populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        let uploadedFiles = [];
+        let downloadedPages = [];
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            loadAIStatus();
+            loadSportsLibrary();
+            initializeUploadZone();
+        });
+
+        // Initialize drag-and-drop upload zone
+        function initializeUploadZone() {
+            const zone = document.getElementById('uploadZone');
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                zone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                zone.addEventListener(eventName, () => zone.classList.add('active'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                zone.addEventListener(eventName, () => zone.classList.remove('active'), false);
+            });
+
+            zone.addEventListener('drop', handleDrop, false);
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            document.getElementById('fileInput').files = files;
+            handleFiles(files);
+        }
+
+        // Handle file input
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            uploadedFiles = Array.from(files);
+            const zone = document.getElementById('uploadZone');
+            zone.innerHTML = `
+                <div style="font-size: 48px; margin-bottom: 10px;">✅</div>
+                <p style="font-size: 16px; font-weight: 700;">${files.length} file(s) selected</p>
+                <p style="font-size: 12px; opacity: 0.7; margin-top: 5px;">Ready for AI processing</p>
+            `;
+        }
+
+        // Process upload with AI
+        async function processUpload() {
+            if (uploadedFiles.length === 0) {
+                alert('Please select files first');
+                return;
+            }
+
+            const progress = document.getElementById('uploadProgress');
+            const progressBar = document.getElementById('uploadProgressBar');
+            const status = document.getElementById('uploadStatus');
+
+            progress.style.display = 'block';
+            progressBar.style.width = '0%';
+            status.textContent = 'Uploading to AI Core...';
+
+            // Simulate upload progress
+            for (let i = 0; i <= 100; i += 10) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                progressBar.style.width = i + '%';
+            }
+
+            status.textContent = 'Processing with AI...';
+
+            try {
+                // Process with AI Core
+                const response = await fetch(`${API_BASE}/ai/process`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        modelId: 'content-generator-v1',
+                        prompt: `Analyze and optimize ${uploadedFiles.length} web pages for mobile sports viewing`
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    status.textContent = '✅ AI Processing Complete!';
+                    setTimeout(() => {
+                        progress.style.display = 'none';
+                        alert('Files processed successfully with AI Core!\n\nConfidence: ' + 
+                              (data.request.confidence * 100).toFixed(1) + '%');
+                    }, 1000);
+                } else {
+                    throw new Error(data.error || 'Processing failed');
+                }
+            } catch (error) {
+                status.textContent = '❌ Processing failed: ' + error.message;
+            }
+        }
+
+        // Download page
+        async function downloadPage() {
+            const url = document.getElementById('downloadUrl').value || 
+                       document.getElementById('pageSelector').value;
+
+            if (!url) {
+                alert('Please enter a URL or select a page');
+                return;
+            }
+
+            const output = document.getElementById('downloadOutput');
+            output.style.display = 'block';
+            output.innerHTML = `<div>📥 Downloading: ${url}</div>`;
+
+            try {
+                const response = await fetch(`${API_BASE}${url}`);
+                const content = await response.text();
+
+                // Create download
+                const blob = new Blob([content], { type: 'text/html' });
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = url.split('/').pop() || 'page.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(downloadUrl);
+
+                output.innerHTML = `<div>✅ Downloaded successfully!</div>`;
+
+                // Add to downloaded list
+                addToDownloadedList(url);
+
+            } catch (error) {
+                output.innerHTML = `<div>❌ Download failed: ${error.message}</div>`;
+            }
+        }
+
+        function addToDownloadedList(url) {
+            const list = document.getElementById('downloadedList');
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span>📄 ${url.split('/').pop()}</span>
+                <span style="font-size: 12px; opacity: 0.7;">${new Date().toLocaleTimeString()}</span>
+            `;
+            list.insertBefore(li, list.firstChild);
+        }
+
+        // Load AI status
+        async function loadAIStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/ai/status`);
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('aiStatus').textContent = 'AI Core Online';
+                    document.getElementById('modelCount').textContent = data.modelsAvailable;
+                    document.getElementById('processingSpeed').textContent = '< 500ms';
+                    document.getElementById('confidenceLevel').textContent = 
+                        ((data.models[0]?.accuracy || 0.85) * 100).toFixed(1) + '%';
+                }
+            } catch (error) {
+                document.getElementById('aiStatus').textContent = 'AI Core Offline';
+                console.error('AI status error:', error);
+            }
+        }
+
+        // Load sports library
+        async function loadSportsLibrary() {
+            const library = document.getElementById('sportsLibrary');
+            
+            const sports = [
+                { icon: '🏈', name: 'NFL Betting', url: '/mobile-sportsbook-hub.html', color: '#ef4444' },
+                { icon: '🏀', name: 'NBA 2K', url: '/ps5-betting.html', color: '#f59e0b' },
+                { icon: '⚽', name: 'Soccer Live', url: '/enhanced-sportsbook.html', color: '#22c55e' },
+                { icon: '🥊', name: 'UFC/Boxing', url: '/betting-zone.html', color: '#8b5cf6' },
+                { icon: '⚾', name: 'MLB Games', url: '/mobile-sportsbook-app.html', color: '#3b82f6' },
+                { icon: '🏒', name: 'NHL Hockey', url: '/sports-radio-hub.html', color: '#06b6d4' }
+            ];
+
+            library.innerHTML = sports.map(sport => `
+                <div class="sport-card" onclick="window.open('${sport.url}', '_blank')">
+                    <div class="sport-icon">${sport.icon}</div>
+                    <h3 style="color: ${sport.color}; margin-bottom: 8px;">${sport.name}</h3>
+                    <p style="font-size: 12px; opacity: 0.7;">Mobile Optimized</p>
+                    <button class="btn" style="margin-top: 10px; font-size: 14px;">
+                        🚀 Launch
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Auto-select from dropdown
+        document.getElementById('pageSelector').addEventListener('change', function() {
+            document.getElementById('downloadUrl').value = this.value;
+        });
+    </script>
+</body>
+</html>

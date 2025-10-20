@@ -1,0 +1,808 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Access Portal | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #312e81 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite;
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .hero {
+            text-align: center;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            border-radius: 28px;
+            padding: 60px 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 25px 70px rgba(59, 130, 246, 0.3),
+                        0 10px 40px rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.05) 50%,
+                transparent 70%
+            );
+            animation: shimmer 3s infinite;
+        }
+        .hero h1 {
+            font-size: 56px;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .hero p {
+            font-size: 22px;
+            opacity: 0.95;
+            margin-bottom: 30px;
+        }
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            margin: 8px;
+            font-weight: 700;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        .section {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+            animation: fadeInUp 0.8s ease-out backwards;
+        }
+        
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #22c55e, #3b82f6, #8b5cf6, #22c55e);
+            background-size: 200% 100%;
+            border-radius: 24px 24px 0 0;
+            animation: shimmer 3s linear infinite;
+        }
+        
+        .section h2 {
+            font-size: 32px;
+            margin-bottom: 25px;
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .section h2::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 80%;
+            background: linear-gradient(180deg, #22c55e, #3b82f6);
+            border-radius: 2px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.8) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: slideInLeft 0.6s ease-out backwards;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(59, 130, 246, 0.1) 0%,
+                rgba(139, 92, 246, 0.1) 100%
+            );
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .card::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, #22c55e, #3b82f6, #8b5cf6);
+            border-radius: 20px;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.4s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(34, 197, 94, 0.8);
+            box-shadow: 0 20px 60px rgba(34, 197, 94, 0.3),
+                        0 10px 30px rgba(59, 130, 246, 0.2);
+        }
+        
+        .card:hover::before {
+            opacity: 1;
+        }
+        
+        .card:hover::after {
+            opacity: 0.3;
+        }
+        
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+        .card:nth-child(5) { animation-delay: 0.5s; }
+        .card:nth-child(6) { animation-delay: 0.6s; }
+        .card-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            display: block;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 4px 20px rgba(34, 197, 94, 0.3));
+        }
+        
+        .card:hover .card-icon {
+            transform: scale(1.1) rotate(5deg);
+            animation: float 2s ease-in-out infinite;
+        }
+        
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #22c55e, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover .card-title {
+            transform: translateX(5px);
+        }
+        .card-desc {
+            font-size: 14px;
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .card-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .stats-banner {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .stat-box {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.8) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid rgba(34, 197, 94, 0.4);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+        
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(34, 197, 94, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .stat-box:hover {
+            transform: translateY(-5px);
+            border-color: rgba(34, 197, 94, 0.8);
+            box-shadow: 0 15px 40px rgba(34, 197, 94, 0.3);
+        }
+        
+        .stat-box:hover::before {
+            opacity: 1;
+        }
+        
+        .stat-box:nth-child(1) { animation-delay: 0.1s; }
+        .stat-box:nth-child(2) { animation-delay: 0.2s; }
+        .stat-box:nth-child(3) { animation-delay: 0.3s; }
+        .stat-box:nth-child(4) { animation-delay: 0.4s; }
+        
+        .stat-value {
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #22c55e, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+        .quick-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(34, 197, 94, 0.5),
+                        0 5px 15px rgba(34, 197, 94, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.5),
+                        0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        
+        .btn-danger:hover {
+            box-shadow: 0 15px 40px rgba(239, 68, 68, 0.5),
+                        0 5px 15px rgba(239, 68, 68, 0.3);
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .feature-tag {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #60a5fa;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 11px;
+            margin: 4px;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .feature-tag:hover {
+            background: rgba(59, 130, 246, 0.3);
+            border-color: rgba(59, 130, 246, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            margin: 8px;
+            font-weight: 700;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .badge:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+        }
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <div style="font-size: 72px; margin-bottom: 20px;">🌐</div>
+            <h1>Public Access Portal</h1>
+            <p>Complete System Access • No Authentication Required</p>
+            <div>
+                <span class="badge">FCC Entity: 20130314143016</span>
+                <span class="badge">Public Access Enabled</span>
+                <span class="badge">All Systems Operational</span>
+            </div>
+        </div>
+
+        <div class="stats-banner">
+            <div class="stat-box">
+                <div class="stat-value" id="totalSystems">0</div>
+                <div class="stat-label">Total Systems</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="activeSystems">0</div>
+                <div class="stat-label">Active Now</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="liveGames">0</div>
+                <div class="stat-label">Live Games</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Uptime</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Primary Services</h2>
+            <div class="grid">
+                <div class="card" onclick="openService('/enhanced-sportsbook.html')">
+                    <span class="card-icon">🏆</span>
+                    <div class="card-title">Live Sportsbook</div>
+                    <div class="card-desc">Real-time betting on NFL, NBA, MLB, NHL with live odds and streaming</div>
+                    <span class="feature-tag">Live Odds</span>
+                    <span class="feature-tag">Radio Streams</span>
+                    <span class="feature-tag">Money Line</span>
+                    <div style="margin-top: 15px;">
+                        <span class="card-status"><span class="pulse"></span> Live</span>
+                    </div>
+                </div>
+
+                <div class="card" onclick="openService('/ps5-betting.html')">
+                    <span class="card-icon">🎮</span>
+                    <div class="card-title">PS5 Sports Gaming</div>
+                    <div class="card-desc">PlayStation 5 sports games with betting integration and tournaments</div>
+                    <span class="feature-tag">Madden NFL</span>
+                    <span class="feature-tag">NBA 2K</span>
+                    <span class="feature-tag">UFC</span>
+                    <div style="margin-top: 15px;">
+                        <span class="card-status"><span class="pulse"></span> Connected</span>
+                    </div>
+                </div>
+
+                <div class="card" onclick="openService('/feed-builder.html')">
+                    <span class="card-icon">📡</span>
+                    <div class="card-title">Feed Builder</div>
+                    <div class="card-desc">Create custom feeds from connected hub sources</div>
+                    <span class="feature-tag">Custom Feeds</span>
+                    <span class="feature-tag">Multi-Source</span>
+                    <span class="feature-tag">Real-Time</span>
+                    <div style="margin-top: 15px;">
+                        <span class="card-status"><span class="pulse"></span> Active</span>
+                    </div>
+                </div>
+
+                <div class="card" onclick="openService('/public-sso-betting-zone.html')">
+                    <span class="card-icon">🔐</span>
+                    <div class="card-title">SSO Betting Zone</div>
+                    <div class="card-desc">Unified authentication and betting platform access</div>
+                    <span class="feature-tag">SSO Login</span>
+                    <span class="feature-tag">Phone Control</span>
+                    <span class="feature-tag">Multi-Platform</span>
+                    <div style="margin-top: 15px;">
+                        <span class="card-status"><span class="pulse"></span> Ready</span>
+                    </div>
+                </div>
+
+                <div class="card" onclick="openService('/sports-radio-hub.html')">
+                    <span class="card-icon">📻</span>
+                    <div class="card-title">Sports Radio</div>
+                    <div class="card-desc">Live sports radio streams from all major networks</div>
+                    <span class="feature-tag">ESPN Radio</span>
+                    <span class="feature-tag">Audacy Sports</span>
+                    <span class="feature-tag">Live Games</span>
+                    <div style="margin-top: 15px;">
+                        <span class="card-status"><span class="pulse"></span> Streaming</span>
+                    </div>
+                </div>
+
+                <div class="card" onclick="openService('/web3-bridge.html')">
+                    <span class="card-icon">🔗</span>
+                    <div class="card-title">Web3 Bridge</div>
+                    <div class="card-desc">Crypto wallet integration and blockchain betting</div>
+                    <span class="feature-tag">Wallet Connect</span>
+                    <span class="feature-tag">Crypto Betting</span>
+                    <span class="feature-tag">NFT Access</span>
+                    <div style="margin-top: 15px;">
+                        <span class="card-status"><span class="pulse"></span> Online</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🛠️ Management & Tools</h2>
+            <div class="grid">
+                <div class="card" onclick="openService('/wifi-plugin-hub.html')">
+                    <span class="card-icon">📡</span>
+                    <div class="card-title">WiFi Plugin Hub</div>
+                    <div class="card-desc">Network control and plugin distribution center</div>
+                    <span class="card-status"><span class="pulse"></span> Connected</span>
+                </div>
+
+                <div class="card" onclick="openService('/phone-network-control.html')">
+                    <span class="card-icon">📱</span>
+                    <div class="card-title">Phone Control</div>
+                    <div class="card-desc">Mobile network management and remote access</div>
+                    <span class="card-status"><span class="pulse"></span> Active</span>
+                </div>
+
+                <div class="card" onclick="openService('/vpn-dashboard.html')">
+                    <span class="card-icon">🔒</span>
+                    <div class="card-title">VPN Service</div>
+                    <div class="card-desc">Secure IP management and anonymous browsing</div>
+                    <span class="card-status"><span class="pulse"></span> Secure</span>
+                </div>
+
+                <div class="card" onclick="openService('/public-troubleshooting.html')">
+                    <span class="card-icon">🔧</span>
+                    <div class="card-title">Troubleshooting</div>
+                    <div class="card-desc">System diagnostics and auto-fix tools</div>
+                    <span class="card-status"><span class="pulse"></span> Available</span>
+                </div>
+
+                <div class="card" onclick="openService('/ai-cloud-streaming.html')">
+                    <span class="card-icon">🤖</span>
+                    <div class="card-title">AI Cloud Streaming</div>
+                    <div class="card-desc">AI-powered cloud streaming and analytics</div>
+                    <span class="card-status"><span class="pulse"></span> Processing</span>
+                </div>
+
+                <div class="card" onclick="openService('/hybrid-control-dashboard.html')">
+                    <span class="card-icon">⚡</span>
+                    <div class="card-title">Hybrid Control</div>
+                    <div class="card-desc">Cloud-to-system hybrid control infrastructure</div>
+                    <span class="card-status"><span class="pulse"></span> Synced</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Monitoring & Analytics</h2>
+            <div class="grid">
+                <div class="card" onclick="openService('/traffic-analytics.html')">
+                    <span class="card-icon">📈</span>
+                    <div class="card-title">Traffic Analytics</div>
+                    <div class="card-desc">Real-time traffic monitoring and visitor insights</div>
+                    <span class="card-status"><span class="pulse"></span> Tracking</span>
+                </div>
+
+                <div class="card" onclick="openService('/link-bridge-dashboard.html')">
+                    <span class="card-icon">🌉</span>
+                    <div class="card-title">Link Bridge</div>
+                    <div class="card-desc">Route management and broken link detection</div>
+                    <span class="card-status"><span class="pulse"></span> Monitoring</span>
+                </div>
+
+                <div class="card" onclick="openService('/smart-system-control.html')">
+                    <span class="card-icon">🧠</span>
+                    <div class="card-title">Smart System</div>
+                    <div class="card-desc">AI-powered system optimization and control</div>
+                    <span class="card-status"><span class="pulse"></span> Learning</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🚀 Quick Actions</h2>
+            <div class="quick-actions">
+                <button class="btn" onclick="runHealthCheck()">🏥 Health Check</button>
+                <button class="btn btn-secondary" onclick="viewAllWorkflows()">📊 View Workflows</button>
+                <button class="btn btn-secondary" onclick="checkDiagnostics()">🔬 Diagnostics</button>
+                <a href="/services-index.html" class="btn btn-secondary">📚 All Services</a>
+                <button class="btn btn-danger" onclick="openTroubleshooting()">🔧 Troubleshoot</button>
+            </div>
+        </div>
+
+        <div id="statusOutput" class="section" style="display: none;">
+            <h2>📟 System Status</h2>
+            <div id="statusContent" style="background: #000; color: #0f0; padding: 20px; border-radius: 12px; font-family: monospace; font-size: 13px; max-height: 400px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        function openService(url) {
+            window.open(url, '_blank');
+        }
+
+        async function loadStats() {
+            try {
+                const [healthRes, gamesRes, workflowsRes] = await Promise.all([
+                    fetch(`${API_BASE}/health`),
+                    fetch(`${API_BASE}/sportsbook/games`),
+                    fetch(`${API_BASE}/streaming/workflows/all`)
+                ]);
+
+                const health = await healthRes.json();
+                const games = await gamesRes.json();
+                const workflows = await workflowsRes.json();
+
+                document.getElementById('totalSystems').textContent = Object.keys(workflows.workflows || {}).length;
+                document.getElementById('activeSystems').textContent = Object.values(workflows.workflows || {}).filter(w => w.status === 'active').length;
+                document.getElementById('liveGames').textContent = games.games?.filter(g => g.status === 'live').length || 0;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function runHealthCheck() {
+            const statusDiv = document.getElementById('statusOutput');
+            const contentDiv = document.getElementById('statusContent');
+            statusDiv.style.display = 'block';
+            contentDiv.textContent = 'Running health check...\n';
+
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                contentDiv.textContent += '\n=== HEALTH CHECK RESULTS ===\n';
+                contentDiv.textContent += `Status: ${data.status}\n`;
+                contentDiv.textContent += `Uptime: ${data.uptime} seconds\n`;
+                contentDiv.textContent += `Memory: ${data.memory?.used}MB / ${data.memory?.total}MB\n`;
+                contentDiv.textContent += `Core: ${data.core?.active}/${data.core?.total} active\n`;
+                contentDiv.textContent += '\n✅ All systems operational\n';
+            } catch (error) {
+                contentDiv.textContent += `\n❌ Error: ${error.message}\n`;
+            }
+        }
+
+        async function viewAllWorkflows() {
+            window.open('/services-index.html', '_blank');
+        }
+
+        async function checkDiagnostics() {
+            const statusDiv = document.getElementById('statusOutput');
+            const contentDiv = document.getElementById('statusContent');
+            statusDiv.style.display = 'block';
+            contentDiv.textContent = 'Running diagnostics...\n';
+
+            try {
+                const response = await fetch(`${API_BASE}/public-access/diagnostics`);
+                const data = await response.json();
+                contentDiv.textContent += '\n=== DIAGNOSTICS RESULTS ===\n';
+                contentDiv.textContent += `Cloud Status: ${data.cloudStatus}\n`;
+                contentDiv.textContent += `Environment: ${data.tests?.environment}\n`;
+                contentDiv.textContent += `Server: ${data.tests?.server?.status}\n`;
+                contentDiv.textContent += `Memory: ${data.tests?.memory?.percentage}%\n`;
+                contentDiv.textContent += '\n✅ Diagnostics complete\n';
+            } catch (error) {
+                contentDiv.textContent += `\n❌ Error: ${error.message}\n`;
+            }
+        }
+
+        function openTroubleshooting() {
+            window.open('/public-troubleshooting.html', '_blank');
+        }
+
+        // Auto-load stats on page load
+        window.addEventListener('load', () => {
+            loadStats();
+            setInterval(loadStats, 30000); // Update every 30 seconds
+        });
+    </script>
+</body>
+</html>

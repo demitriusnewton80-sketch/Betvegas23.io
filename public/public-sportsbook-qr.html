@@ -1,0 +1,192 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Sportsbook - Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        }
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .qr-access-section {
+            max-width: 1200px;
+            margin: -50px auto 40px;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .qr-card {
+            background: white;
+            color: #1f2937;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .qr-display {
+            background: #f9fafb;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .access-methods {
+            display: grid;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .access-btn {
+            padding: 15px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .access-btn:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+        .features-grid {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .feature-card {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+        }
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        @media (max-width: 768px) {
+            .qr-access-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>🏆 Public Sportsbook</h1>
+        <p style="font-size: 20px; margin-top: 10px;">Unified Access with SSO QR Integration</p>
+        <div style="margin-top: 15px;">
+            <span style="background: rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 20px; font-size: 12px;">
+                FCC Entity: 20130314143016
+            </span>
+        </div>
+    </div>
+
+    <div class="qr-access-section">
+        <div class="qr-card">
+            <h2 style="margin-bottom: 20px;">📱 Scan to Access</h2>
+            <div class="qr-display">
+                <canvas id="publicQR" width="280" height="280"></canvas>
+            </div>
+            <p style="color: #6b7280; font-size: 14px; text-align: center;">
+                Scan with any device to access all SSO providers
+            </p>
+        </div>
+
+        <div class="qr-card">
+            <h2 style="margin-bottom: 20px;">🔐 Quick Access</h2>
+            <div class="access-methods">
+                <button class="access-btn" onclick="accessSSO('fcc-sso')">
+                    📡 FCC SSO Login
+                </button>
+                <button class="access-btn" onclick="accessSSO('playstation-network')">
+                    🎮 PlayStation Network
+                </button>
+                <button class="access-btn" onclick="accessSSO('sam-gov-sso')">
+                    🏛️ SAM.gov Portal
+                </button>
+                <button class="access-btn" onclick="openEnhancedSportsbook()">
+                    🏆 Open Sportsbook
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>Live Betting</h3>
+            <p style="opacity: 0.8; margin-top: 10px;">Real-time odds on NFL, NBA, MLB, NHL</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">⭐</div>
+            <h3>Loyalty Points</h3>
+            <p style="opacity: 0.8; margin-top: 10px;">Earn points with every bet placed</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🖼️</div>
+            <h3>Team Logos</h3>
+            <p style="opacity: 0.8; margin-top: 10px;">Official team branding integration</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>SSO Security</h3>
+            <p style="opacity: 0.8; margin-top: 10px;">Multi-provider authentication</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="/js/api-config.js"></script>
+    <script>
+        async function generatePublicQR() {
+            const canvas = document.getElementById('publicQR');
+            const qrUrl = `${window.location.origin}/enhanced-sportsbook.html`;
+            
+            try {
+                await QRCode.toCanvas(canvas, qrUrl, {
+                    width: 280,
+                    margin: 2,
+                    color: {
+                        dark: '#1e3a8a',
+                        light: '#ffffff'
+                    }
+                });
+            } catch (err) {
+                console.error('QR error:', err);
+            }
+        }
+
+        function accessSSO(provider) {
+            window.location.href = `${API_BASE}/sso-plugin/login/${provider}`;
+        }
+
+        function openEnhancedSportsbook() {
+            window.location.href = '/enhanced-sportsbook.html';
+        }
+
+        generatePublicQR();
+    </script>
+</body>
+</html>

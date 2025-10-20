@@ -17,6 +17,14 @@ Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 - `GET /sportsbook/user/:userId/bets` - Get user's bets
 - `POST /sportsbook/cashout/:betId` - Cash out a bet
 
+### DraftKings Integration
+- `GET /draftkings/odds` - Get all DraftKings odds
+- `GET /draftkings/odds/:gameId` - Get specific game odds
+- `POST /draftkings/compare` - Compare odds with other sportsbooks
+- `POST /draftkings/bet` - Place bet using DraftKings odds
+- `GET /draftkings/best-odds/:gameId` - Get best available odds
+- `POST /draftkings/refresh` - Refresh odds data
+
 ### Live Streaming
 - `GET /streaming/stream/:gameId` - SSE live game stream
 - `POST /streaming/stream/:gameId/start` - Start game stream
@@ -37,6 +45,27 @@ Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 - `GET /sso-plugin/login/playstation-network` - PSN SSO login
 - `GET /sportsbook/games?source=psn` - Gaming content betting
 - `GET /ps5-betting.html` - PS5 sports betting interface
+
+### Transformer Bridge (Core to Web3 Delivery)
+- `GET /transformer/status` - Get transformer bridge status
+- `POST /transformer/activate` - Activate transformer bridge
+- `POST /transformer/deactivate` - Deactivate transformer bridge
+- `POST /transformer/transform` - Transform and deliver data to Web3
+- `POST /transformer/transform/batch` - Batch transform data
+- `GET /transformer/rules` - Get transformation rules
+- `GET /transformer/data` - Get transformed data history
+- `GET /transformer/data/:id` - Get specific transformed data
+
+### VPN Service (IP Management & Secure Connections)
+- `GET /vpn/status` - Get VPN service status
+- `GET /vpn/servers` - Get available VPN servers
+- `POST /vpn/connect` - Connect to VPN server
+- `POST /vpn/disconnect/:connectionId` - Disconnect from VPN
+- `GET /vpn/connection/:connectionId` - Get connection details
+- `GET /vpn/user/:userId/connections` - Get user's VPN connections
+- `GET /vpn/active` - Get all active connections
+- `GET /vpn/stats` - Get VPN statistics
+- `GET /vpn-dashboard.html` - VPN dashboard interface
 
 ### Web3 Bridge (Blockchain Integration)
 - `GET /web3/status` - Get Web3 bridge status
@@ -116,6 +145,13 @@ Headless sports betting API with AWS, GitHub, and FCC streaming integration.
 - `GET /sam/cache` - Get cached entities (SSO protected)
 - `GET /sam/profile-link` - Get direct SAM.gov profile link
 
+### SAM.gov API Base
+- `GET /sam/api-base/config` - Get SAM API base configuration
+- `GET /sam/api-base/search?name=` - Search using SAM API base
+- `GET /sam/api-base/young-meeat` - Get Young Meeat LLC via API base
+- `GET /sam/api-base/opportunities` - Search contract opportunities
+- `GET /sam/api-base/test` - Test SAM API base connection
+
 ## Deployment on Replit
 
 1. Set environment variables in Replit Secrets
@@ -144,6 +180,15 @@ curl -H "X-API-Key: your_api_key" https://your-repl.replit.app/api
 
 ## FCC Compliance
 
+- FCC Entity: 20130314143016 inc
+- FCC Registration (FRN): 0024454324
+- Registration Date: 03/25/2015
+- Last Updated: 08/30/2024
+- Contact: Mr Demitrius P Newton
+- Email: gbemeeat@gmail.com
+- Phone: (445) 942-9173
+- Address: 2200 Benjamin Franklin Parkway, Philadelphia, PA 19130-1913
+- Entity Type: State or Local Agency, State
 - FCC-compliant SSO authentication
 - Streaming services meet FCC requirements
 - Full audit trail for regulatory compliance

@@ -209,6 +209,27 @@ router.get('/stats', requireAuth, (req: Request, res: Response) => {
   res.json(stats);
 });
 
+// Get plugin outputs/logs
+router.get('/outputs', (req: Request, res: Response) => {
+  const { pluginId } = req.query;
+  const outputs = ssoPluginService.getOutputs(pluginId as string | undefined);
+  
+  res.json({
+    outputs,
+    count: outputs.length
+  });
+});
+
+// Clear plugin outputs
+router.delete('/outputs', requireAuth, (req: Request, res: Response) => {
+  const { pluginId } = req.query;
+  ssoPluginService.clearOutputs(pluginId as string | undefined);
+  
+  res.json({
+    message: pluginId ? `Outputs cleared for plugin ${pluginId}` : 'All outputs cleared'
+  });
+});
+
 // Get current user's plugin session
 router.get('/session', requireAuth, (req: Request, res: Response) => {
   const userId = (req as any).user.id;

@@ -1,0 +1,374 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feed Builder | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            border: 2px solid rgba(34,197,94,0.3);
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .fcc-badge {
+            display: inline-block;
+            background: rgba(34,197,94,0.2);
+            color: #22c55e;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 800;
+            margin-top: 15px;
+            border: 2px solid #22c55e;
+        }
+
+        .builder-section {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .builder-section h2 {
+            color: #22c55e;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .sources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .source-card {
+            background: rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .source-card:hover {
+            border-color: #22c55e;
+            transform: translateY(-5px);
+        }
+
+        .source-card.selected {
+            border-color: #22c55e;
+            background: rgba(34,197,94,0.1);
+        }
+
+        .source-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .source-name {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .source-type {
+            font-size: 12px;
+            color: #9ca3af;
+            text-transform: uppercase;
+        }
+
+        .feed-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .feed-input:focus {
+            outline: none;
+            border-color: #22c55e;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .my-feeds {
+            margin-top: 30px;
+        }
+
+        .feed-item {
+            background: rgba(0,0,0,0.3);
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .feed-name {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .feed-sources {
+            font-size: 14px;
+            color: #9ca3af;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 32px;
+            }
+            .sources-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📡 Feed Builder</h1>
+            <p style="color: #9ca3af; margin-top: 10px;">Create Your Custom Feed from Connected Hub</p>
+            <span class="fcc-badge">FCC Entity: 20130314143016</span>
+        </div>
+
+        <div class="builder-section">
+            <h2>🔧 Build Your Feed</h2>
+            
+            <input type="text" id="userId" class="feed-input" placeholder="Enter User ID (e.g., user-123)">
+            <input type="text" id="feedName" class="feed-input" placeholder="Feed Name (e.g., My Sports Feed)">
+
+            <h3 style="margin: 20px 0; color: #60a5fa;">Select Sources:</h3>
+            <div class="sources-grid" id="sourcesGrid"></div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-primary" onclick="createFeed()">🚀 Create Feed</button>
+                <button class="btn btn-secondary" onclick="clearSelection()">🔄 Clear Selection</button>
+            </div>
+        </div>
+
+        <div class="builder-section my-feeds">
+            <h2>📋 My Feeds</h2>
+            <div id="feedsList"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let selectedSources = new Set();
+        let currentUserId = '';
+
+        async function loadAvailableSources() {
+            try {
+                const response = await fetch(`${API_BASE}/feed-builder/sources`);
+                const data = await response.json();
+                
+                const grid = document.getElementById('sourcesGrid');
+                grid.innerHTML = data.sources.map(source => `
+                    <div class="source-card" onclick="toggleSource('${source.id}')">
+                        <div class="source-icon">${source.icon}</div>
+                        <div class="source-name">${source.name}</div>
+                        <div class="source-type">${source.type}</div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading sources:', error);
+            }
+        }
+
+        function toggleSource(sourceId) {
+            if (selectedSources.has(sourceId)) {
+                selectedSources.delete(sourceId);
+            } else {
+                selectedSources.add(sourceId);
+            }
+            updateSourceSelection();
+        }
+
+        function updateSourceSelection() {
+            document.querySelectorAll('.source-card').forEach((card, index) => {
+                const sourceId = Array.from(selectedSources)[index];
+                if (selectedSources.has(card.onclick.toString().match(/'([^']+)'/)[1])) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+            });
+        }
+
+        async function createFeed() {
+            const userId = document.getElementById('userId').value;
+            const feedName = document.getElementById('feedName').value;
+
+            if (!userId || !feedName) {
+                alert('Please enter User ID and Feed Name');
+                return;
+            }
+
+            if (selectedSources.size === 0) {
+                alert('Please select at least one source');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/feed-builder/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId,
+                        feedName,
+                        sources: Array.from(selectedSources)
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Feed created successfully!');
+                    currentUserId = userId;
+                    loadUserFeeds(userId);
+                    clearSelection();
+                }
+            } catch (error) {
+                console.error('Error creating feed:', error);
+                alert('Failed to create feed');
+            }
+        }
+
+        async function loadUserFeeds(userId) {
+            try {
+                const response = await fetch(`${API_BASE}/feed-builder/user/${userId}`);
+                const data = await response.json();
+                
+                const feedsList = document.getElementById('feedsList');
+                
+                if (data.feeds.length === 0) {
+                    feedsList.innerHTML = '<p style="color: #9ca3af;">No feeds created yet</p>';
+                    return;
+                }
+                
+                feedsList.innerHTML = data.feeds.map(feed => `
+                    <div class="feed-item">
+                        <div>
+                            <div class="feed-name">${feed.name}</div>
+                            <div class="feed-sources">${feed.sources.length} sources</div>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary" onclick="viewFeed('${feed.feedId}', '${userId}')">View Feed</button>
+                            <button class="btn btn-secondary" onclick="deleteFeed('${feed.feedId}', '${userId}')">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading feeds:', error);
+            }
+        }
+
+        async function viewFeed(feedId, userId) {
+            try {
+                const response = await fetch(`${API_BASE}/feed-builder/data/${feedId}?userId=${userId}`);
+                const data = await response.json();
+                
+                console.log('Feed data:', data);
+                alert(`Feed: ${data.data.name}\nSources: ${data.data.items.length}`);
+            } catch (error) {
+                console.error('Error viewing feed:', error);
+            }
+        }
+
+        async function deleteFeed(feedId, userId) {
+            if (!confirm('Are you sure you want to delete this feed?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/feed-builder/delete/${feedId}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Feed deleted successfully');
+                    loadUserFeeds(userId);
+                }
+            } catch (error) {
+                console.error('Error deleting feed:', error);
+            }
+        }
+
+        function clearSelection() {
+            selectedSources.clear();
+            document.getElementById('feedName').value = '';
+            updateSourceSelection();
+        }
+
+        window.addEventListener('load', () => {
+            loadAvailableSources();
+        });
+    </script>
+</body>
+</html>

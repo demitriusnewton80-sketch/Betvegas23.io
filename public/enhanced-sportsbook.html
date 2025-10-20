@@ -1,0 +1,723 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Enhanced Sportsbook - Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            background-attachment: fixed;
+            color: white;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand h1 {
+            font-size: 24px;
+        }
+        .user-panel {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .points-badge {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .wallet-badge {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+        }
+        .qr-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .qr-btn:hover {
+            background: white;
+            color: #1e3a8a;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+        .games-section {
+            margin-bottom: 30px;
+        }
+        .section-header {
+            font-size: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .game-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .game-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+        }
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .sport-badge {
+            background: #3b82f6;
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .matchup-container {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .team-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .team-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+        }
+        .team-name {
+            font-weight: 700;
+            font-size: 16px;
+            text-align: center;
+        }
+        .vs-divider {
+            font-size: 20px;
+            font-weight: 700;
+            opacity: 0.5;
+        }
+        .odds-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .odds-btn {
+            background: rgba(59, 130, 246, 0.2);
+            border: 2px solid rgba(59, 130, 246, 0.4);
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .odds-btn:hover {
+            background: #3b82f6;
+            border-color: #3b82f6;
+        }
+        .odds-btn.selected {
+            background: #22c55e;
+            border-color: #22c55e;
+        }
+        .odds-label {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+        .odds-value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .bet-controls {
+            margin-top: 15px;
+            display: none;
+        }
+        .bet-controls.active {
+            display: block;
+        }
+        .bet-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .btn-place-bet {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-place-bet:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        .qr-code-container {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin: 20px 0;
+            display: inline-block;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn-secondary {
+            flex: 1;
+            padding: 12px;
+            background: rgba(59, 130, 246, 0.2);
+            border: 2px solid #3b82f6;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .login-section {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .login-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .login-btn {
+            padding: 15px;
+            background: rgba(59, 130, 246, 0.2);
+            border: 2px solid #3b82f6;
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .login-btn:hover {
+            background: #3b82f6;
+            transform: translateY(-2px);
+        }
+        .fcc-badge {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid #22c55e;
+            color: #22c55e;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        @media (max-width: 768px) {
+            .matchup-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .vs-divider {
+                display: none;
+            }
+            .team-logo {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="brand">
+                <span style="font-size: 32px;">🏆</span>
+                <h1>Enhanced Sportsbook</h1>
+            </div>
+            <div class="user-panel" id="userPanel">
+                <button class="qr-btn" onclick="showQRModal()">📱 QR Login</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="login-section" id="loginSection">
+            <h2>🔐 Account Login</h2>
+            <p style="opacity: 0.8; margin: 10px 0 20px;">Sign in to access betting and earn loyalty points</p>
+            <div class="login-options">
+                <button class="login-btn" onclick="loginWithSSO('fcc-sso')">
+                    📡 FCC SSO
+                </button>
+                <button class="login-btn" onclick="loginWithSSO('playstation-network')">
+                    🎮 PlayStation Network
+                </button>
+                <button class="login-btn" onclick="loginWithSSO('sam-gov-sso')">
+                    🏛️ SAM.gov
+                </button>
+                <button class="login-btn" onclick="showQRModal()">
+                    📱 Scan QR Code
+                </button>
+            </div>
+            <div class="fcc-badge">FCC Entity: 20130314143016</div>
+        </div>
+
+        <div id="contentSection" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Loyalty Points</div>
+                    <div class="stat-value" id="loyaltyPoints">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Wallet Balance</div>
+                    <div class="stat-value">$<span id="walletBalance">0.00</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Bets</div>
+                    <div class="stat-value" id="totalBets">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Win Rate</div>
+                    <div class="stat-value"><span id="winRate">0</span>%</div>
+                </div>
+            </div>
+
+            <div class="games-section">
+                <div class="section-header">🏈 Live & Upcoming Games</div>
+                <div id="gamesContainer">
+                    <p style="text-align: center; opacity: 0.7;">Loading games...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div class="modal" id="qrModal">
+        <div class="modal-content">
+            <h2>📱 SSO QR Login</h2>
+            <p style="opacity: 0.8; margin-bottom: 20px;">Scan with your mobile device to login instantly</p>
+            <div class="qr-code-container">
+                <canvas id="qrCanvas" width="280" height="280"></canvas>
+            </div>
+            <p style="font-size: 12px; opacity: 0.7; margin-bottom: 20px;">
+                Access all SSO providers and betting platforms
+            </p>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="downloadQR()">Download QR</button>
+                <button class="btn-secondary" onclick="closeQRModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="/js/api-config.js"></script>
+    <script>
+        let currentUser = null;
+        let selectedBets = new Map();
+
+        async function loginWithSSO(provider) {
+            window.location.href = `${API_BASE}/sso-plugin/login/${provider}`;
+        }
+
+        function showQRModal() {
+            document.getElementById('qrModal').classList.add('active');
+            generateQRCode();
+        }
+
+        function closeQRModal() {
+            document.getElementById('qrModal').classList.remove('active');
+        }
+
+        async function generateQRCode() {
+            const canvas = document.getElementById('qrCanvas');
+            const qrUrl = `${window.location.origin}/personal-sso-login.html`;
+            
+            try {
+                await QRCode.toCanvas(canvas, qrUrl, {
+                    width: 280,
+                    margin: 2,
+                    color: {
+                        dark: '#1e3a8a',
+                        light: '#ffffff'
+                    }
+                });
+            } catch (err) {
+                console.error('QR generation error:', err);
+            }
+        }
+
+        function downloadQR() {
+            const canvas = document.getElementById('qrCanvas');
+            const link = document.createElement('a');
+            link.download = 'sportsbook-qr-login.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        let loadRetries = 0;
+        const MAX_LOAD_RETRIES = 3;
+
+        async function loadGames() {
+            const container = document.getElementById('gamesContainer');
+            container.innerHTML = '<p style="text-align: center; opacity: 0.7;">Loading games...</p>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/sportsbook/games`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: Failed to load games`);
+                }
+
+                const data = await response.json();
+                console.log('✅ Games loaded:', data);
+                
+                if (data.success && data.games) {
+                    displayGames(data.games);
+                    loadRetries = 0;
+                } else {
+                    throw new Error('Invalid response format');
+                }
+            } catch (error) {
+                console.error('❌ Error loading games:', error);
+                
+                const container = document.getElementById('gamesContainer');
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; background: rgba(239, 68, 68, 0.1); border: 2px solid #ef4444; border-radius: 12px;">
+                        <div style="font-size: 48px; margin-bottom: 15px;">⚠️</div>
+                        <p style="font-weight: 700; margin-bottom: 10px;">Failed to load games</p>
+                        <p style="opacity: 0.8; font-size: 14px; margin-bottom: 20px;">${error.message}</p>
+                        <button onclick="retryLoadGames()" style="padding: 12px 24px; background: #3b82f6; border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer;">
+                            Retry (${loadRetries}/${MAX_LOAD_RETRIES})
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function retryLoadGames() {
+            if (loadRetries < MAX_LOAD_RETRIES) {
+                loadRetries++;
+                loadGames();
+            } else {
+                alert('Maximum retries reached. Please refresh the page or check your connection.');
+            }
+        }
+
+        function displayGames(games) {
+            const container = document.getElementById('gamesContainer');
+            
+            if (!games || games.length === 0) {
+                container.innerHTML = '<p style="text-align: center; opacity: 0.7;">No games available</p>';
+                return;
+            }
+
+            container.innerHTML = games.slice(0, 10).map((game, idx) => `
+                <div class="game-card" id="game-${idx}">
+                    <div class="game-header">
+                        <span class="sport-badge">${game.sport}</span>
+                        <span style="opacity: 0.7; font-size: 12px;">${new Date(game.startTime).toLocaleString()}</span>
+                    </div>
+                    <div class="matchup-container">
+                        <div class="team-box">
+                            <img class="team-logo" 
+                                 src="/api/sports-radio/logo/${game.sport}/${encodeURIComponent(game.homeTeam)}" 
+                                 alt="${game.homeTeam}"
+                                 onerror="this.style.display='none'">
+                            <div class="team-name">${game.homeTeam}</div>
+                        </div>
+                        <div class="vs-divider">VS</div>
+                        <div class="team-box">
+                            <img class="team-logo" 
+                                 src="/api/sports-radio/logo/${game.sport}/${encodeURIComponent(game.awayTeam)}" 
+                                 alt="${game.awayTeam}"
+                                 onerror="this.style.display='none'">
+                            <div class="team-name">${game.awayTeam}</div>
+                        </div>
+                    </div>
+                    <div class="odds-container">
+                        <div class="odds-btn" onclick="selectOdds('${idx}', 'home', ${game.odds.home})">
+                            <div class="odds-label">Home</div>
+                            <div class="odds-value">${game.odds.home > 0 ? '+' : ''}${game.odds.home}</div>
+                        </div>
+                        <div class="odds-btn" onclick="selectOdds('${idx}', 'away', ${game.odds.away})">
+                            <div class="odds-label">Away</div>
+                            <div class="odds-value">${game.odds.away > 0 ? '+' : ''}${game.odds.away}</div>
+                        </div>
+                    </div>
+                    <div class="bet-controls" id="bet-${idx}">
+                        <input type="number" class="bet-input" id="amount-${idx}" placeholder="Enter bet amount ($)" min="1">
+                        <button class="btn-place-bet" onclick="placeBet('${game.id}', '${idx}')">
+                            Place Bet (+10 Points)
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectOdds(gameIdx, team, odds) {
+            const card = document.getElementById(`game-${gameIdx}`);
+            card.querySelectorAll('.odds-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.closest('.odds-btn').classList.add('selected');
+            
+            selectedBets.set(gameIdx, { team, odds });
+            document.getElementById(`bet-${gameIdx}`).classList.add('active');
+        }
+
+        async function placeBet(gameId, gameIdx) {
+            if (!currentUser) {
+                alert('Please login to place bets');
+                return;
+            }
+
+            const betInfo = selectedBets.get(gameIdx);
+            if (!betInfo) {
+                alert('Please select odds first');
+                return;
+            }
+
+            const amount = parseFloat(document.getElementById(`amount-${gameIdx}`).value);
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid bet amount');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/sportsbook/bet`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: currentUser.id,
+                        gameId,
+                        team: betInfo.team,
+                        amount
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Award 10 loyalty points
+                    await awardPoints(10);
+                    alert(`✅ Bet placed! You earned 10 loyalty points.\nPotential win: $${data.bet.potentialWin.toFixed(2)}`);
+                    document.getElementById(`amount-${gameIdx}`).value = '';
+                    loadUserStats();
+                } else {
+                    alert('❌ ' + (data.error || 'Failed to place bet'));
+                }
+            } catch (error) {
+                alert('Error placing bet');
+            }
+        }
+
+        async function awardPoints(points) {
+            const current = parseInt(document.getElementById('loyaltyPoints').textContent);
+            document.getElementById('loyaltyPoints').textContent = current + points;
+        }
+
+        async function loadUserStats() {
+            if (!currentUser) return;
+
+            try {
+                const [walletRes, statsRes] = await Promise.all([
+                    fetch(`${API_BASE}/sportsbook/user/${currentUser.id}/wallet`),
+                    fetch(`${API_BASE}/sportsbook/user/${currentUser.id}/stats`)
+                ]);
+
+                const wallet = await walletRes.json();
+                const stats = await statsRes.json();
+
+                document.getElementById('walletBalance').textContent = wallet.balance.toFixed(2);
+                document.getElementById('totalBets').textContent = stats.stats.totalBets;
+                
+                const winRate = stats.stats.totalBets > 0 
+                    ? ((stats.stats.wonBets / stats.stats.totalBets) * 100).toFixed(0) 
+                    : 0;
+                document.getElementById('winRate').textContent = winRate;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function checkAuthStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/auth/me`, {
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    currentUser = data.user;
+                    showAuthenticatedView();
+                }
+            } catch (error) {
+                console.log('Not authenticated');
+            }
+        }
+
+        function showAuthenticatedView() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('contentSection').style.display = 'block';
+            
+            const userPanel = document.getElementById('userPanel');
+            userPanel.innerHTML = `
+                <div class="points-badge">
+                    ⭐ <span id="loyaltyPoints">100</span> Points
+                </div>
+                <div class="wallet-badge">
+                    💰 $<span id="walletBalance">1000.00</span>
+                </div>
+                <button class="qr-btn" onclick="showQRModal()">📱 QR Login</button>
+            `;
+            
+            loadGames();
+            loadUserStats();
+        }
+
+        // Check URL for authentication callback
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('authenticated') === 'true') {
+            currentUser = { id: 'demo-user' };
+            showAuthenticatedView();
+        } else {
+            checkAuthStatus();
+        }
+
+        // Auto-refresh games
+        setInterval(() => {
+            if (currentUser) loadGames();
+        }, 30000);
+    </script>
+</body>
+</html>

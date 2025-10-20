@@ -196,6 +196,23 @@ class BettingService {
 
     return { success: true };
   }
+
+  getAllGames(): any[] {
+    // Import sportsDataService to get all events
+    const { sportsDataService } = require('./SportsDataService.js');
+    const events = sportsDataService.getAllEvents();
+    
+    return events.map(event => ({
+      id: event.id,
+      sport: event.sport,
+      homeTeam: event.homeTeam,
+      awayTeam: event.awayTeam,
+      startTime: event.startTime,
+      odds: event.moneyLine,
+      status: event.status,
+      radioLink: event.radioLink
+    }));
+  }
 }
 
 export const bettingService = new BettingService();

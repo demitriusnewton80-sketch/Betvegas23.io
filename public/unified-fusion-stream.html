@@ -1,0 +1,390 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified Sportsbook Fusion Stream | Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.3);
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .fcc-badge {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid #22c55e;
+            color: #22c55e;
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 15px;
+            font-weight: 700;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .status-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-5px);
+        }
+
+        .status-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: #3b82f6;
+            margin-bottom: 8px;
+        }
+
+        .status-label {
+            font-size: 14px;
+            color: #9ca3af;
+            text-transform: uppercase;
+        }
+
+        .sportsbook-list {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .sportsbook-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stream-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .stream-status.active {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid #22c55e;
+            color: #22c55e;
+        }
+
+        .stream-status.offline {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .cloud-metrics {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+        }
+
+        .metric-bar {
+            background: rgba(0, 0, 0, 0.3);
+            height: 40px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .metric-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #22c55e);
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            font-weight: 700;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
+        }
+
+        .stream-log {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin-top: 20px;
+        }
+
+        .log-entry {
+            padding: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌐 Unified Fusion Stream</h1>
+        <p style="opacity: 0.9; margin-top: 10px;">All Sportsbooks • One Cloud Stream</p>
+        <span class="fcc-badge">FCC Entity: 20130314143016</span>
+    </div>
+
+    <div class="status-grid">
+        <div class="status-card">
+            <div class="status-value" id="totalSportsbooks">0</div>
+            <div class="status-label">Total Sportsbooks</div>
+        </div>
+        <div class="status-card">
+            <div class="status-value" id="activeSportsbooks">0</div>
+            <div class="status-label">Active Streams</div>
+        </div>
+        <div class="status-card">
+            <div class="status-value" id="cloudNodes">0</div>
+            <div class="status-label">Cloud Nodes</div>
+        </div>
+        <div class="status-card">
+            <div class="status-value" id="bandwidth">0 Mbps</div>
+            <div class="status-label">Bandwidth</div>
+        </div>
+    </div>
+
+    <div class="sportsbook-list">
+        <h2 style="margin-bottom: 20px; color: #3b82f6;">📡 Connected Sportsbooks</h2>
+        <div id="sportsbookList"></div>
+    </div>
+
+    <div class="cloud-metrics">
+        <h2 style="margin-bottom: 20px; color: #3b82f6;">☁️ Cloud System Metrics</h2>
+        
+        <div style="margin-bottom: 10px; color: #9ca3af;">Cloud Load</div>
+        <div class="metric-bar">
+            <div class="metric-fill" id="cloudLoadBar" style="width: 0%">
+                <span id="cloudLoadText">0%</span>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 10px; color: #9ca3af;">Latency</div>
+        <div class="metric-bar">
+            <div class="metric-fill" id="latencyBar" style="width: 0%">
+                <span id="latencyText">0 ms</span>
+            </div>
+        </div>
+
+        <button class="btn" onclick="initializeFusionStream()">🚀 Initialize Fusion Stream</button>
+        
+        <div class="stream-log" id="streamLog">
+            <div class="log-entry">[System] Waiting for initialization...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let fusionSession = null;
+        let eventSource = null;
+
+        async function loadFusionStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/streaming/fusion/status`);
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('totalSportsbooks').textContent = data.fusion.totalSportsbooks;
+                    document.getElementById('activeSportsbooks').textContent = data.fusion.activeSportsbooks;
+                    document.getElementById('cloudNodes').textContent = data.fusion.cloudNodes;
+                    document.getElementById('bandwidth').textContent = Math.round(data.fusion.bandwidth / 1000) + ' Mbps';
+
+                    const utilization = Math.round((data.fusion.cloudLoad / data.fusion.cloudCapacity) * 100);
+                    document.getElementById('cloudLoadBar').style.width = utilization + '%';
+                    document.getElementById('cloudLoadText').textContent = utilization + '%';
+
+                    const latencyPercent = Math.min((data.fusion.latency / 200) * 100, 100);
+                    document.getElementById('latencyBar').style.width = latencyPercent + '%';
+                    document.getElementById('latencyText').textContent = data.fusion.latency + ' ms';
+
+                    displaySportsbooks(data.sportsbooks);
+                }
+            } catch (error) {
+                console.error('Error loading status:', error);
+                addLog('Error: Failed to load fusion status', 'error');
+            }
+        }
+
+        function displaySportsbooks(sportsbooks) {
+            const list = document.getElementById('sportsbookList');
+            list.innerHTML = sportsbooks.map(sb => `
+                <div class="sportsbook-item">
+                    <div>
+                        <div style="font-weight: 700; font-size: 18px; margin-bottom: 5px;">${sb.name}</div>
+                        <div style="color: #9ca3af; font-size: 12px;">${sb.webhookUrl}</div>
+                    </div>
+                    <div class="stream-status ${sb.active ? 'active' : 'offline'}">
+                        <span class="pulse"></span>
+                        ${sb.active ? 'STREAMING' : 'OFFLINE'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function initializeFusionStream() {
+            try {
+                addLog('Initializing unified fusion stream...', 'info');
+                
+                const response = await fetch(`${API_BASE}/streaming/fusion/unified-stream`);
+                const data = await response.json();
+
+                if (data.success) {
+                    fusionSession = data.fusion;
+                    addLog(`Fusion stream created: ${fusionSession.sessionId}`, 'success');
+                    addLog(`Connected sportsbooks: ${data.totalSportsbooks}`, 'success');
+                    addLog(`Active sportsbooks: ${data.activeSportsbooks}`, 'success');
+                    
+                    connectToFusionStream(fusionSession.sessionId);
+                }
+            } catch (error) {
+                console.error('Error initializing fusion:', error);
+                addLog('Error: Failed to initialize fusion stream', 'error');
+            }
+        }
+
+        function connectToFusionStream(sessionId) {
+            if (eventSource) {
+                eventSource.close();
+            }
+
+            addLog('Connecting to live fusion stream...', 'info');
+            
+            eventSource = new EventSource(`${API_BASE}/streaming/fusion/live/${sessionId}`);
+
+            eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                
+                if (data.type === 'fusion_connected') {
+                    addLog('Connected to fusion stream', 'success');
+                } else if (data.type === 'fusion_update') {
+                    handleFusionUpdate(data);
+                }
+            };
+
+            eventSource.onerror = () => {
+                addLog('Stream connection error, reconnecting...', 'warning');
+                setTimeout(() => connectToFusionStream(sessionId), 5000);
+            };
+        }
+
+        function handleFusionUpdate(data) {
+            if (data.cloudMetrics) {
+                const utilization = data.cloudMetrics.utilization;
+                document.getElementById('cloudLoadBar').style.width = utilization + '%';
+                document.getElementById('cloudLoadText').textContent = utilization + '%';
+
+                const latencyPercent = Math.min((data.cloudMetrics.latency / 200) * 100, 100);
+                document.getElementById('latencyBar').style.width = latencyPercent + '%';
+                document.getElementById('latencyText').textContent = data.cloudMetrics.latency + ' ms';
+            }
+
+            if (data.streamHealth) {
+                document.getElementById('activeSportsbooks').textContent = data.streamHealth.connectedSportsbooks;
+                document.getElementById('cloudNodes').textContent = data.streamHealth.cloudNodes;
+            }
+        }
+
+        function addLog(message, type = 'info') {
+            const log = document.getElementById('streamLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+            
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<span style="color: #6b7280;">[${timestamp}]</span> ${icon} ${message}`;
+            
+            log.insertBefore(entry, log.firstChild);
+        }
+
+        window.addEventListener('load', () => {
+            loadFusionStatus();
+            setInterval(loadFusionStatus, 10000);
+        });
+
+        window.addEventListener('beforeunload', () => {
+            if (eventSource) {
+                eventSource.close();
+            }
+        });
+    </script>
+</body>
+</html>

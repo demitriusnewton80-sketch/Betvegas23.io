@@ -29,11 +29,76 @@ class SportsRadioService extends EventEmitter {
   private teamLogos: Map<string, TeamLogo> = new Map();
   private updateInterval: NodeJS.Timeout | null = null;
 
+  private linkHealth: Map<string, boolean> = new Map();
+  private backupStreams: Map<string, RadioStream> = new Map();
+
   constructor() {
     super();
     this.initializeTeamLogos();
     this.initializeRadioStreams();
     this.startLiveUpdates();
+    this.startLinkHealthCheck();
+  }
+
+  private startLinkHealthCheck() {
+    setInterval(() => {
+      this.radioStreams.forEach((stream, id) => {
+        try {
+          new URL(stream.streamUrl);
+          this.linkHealth.set(id, true);
+        } catch {
+          this.linkHealth.set(id, false);
+          console.warn(`Broken link detected: ${stream.streamUrl}`);
+        }
+      });
+    }, 60000); // Check every minute
+  }
+
+  createBackup() {
+    this.backupStreams.clear();
+    this.radioStreams.forEach((stream, id) => {
+      this.backupStreams.set(id, { ...stream });
+    });
+  }
+
+  rollbackStreams() {
+    if (this.backupStreams.size > 0) {
+      this.radioStreams.clear();
+      this.backupStreams.forEach((stream, id) => {
+        this.radioStreams.set(id, { ...stream });
+      });
+      return true;
+    }
+    return false;
+  }
+
+  validateAllLinks(): { valid: string[]; broken: string[] } {
+    const valid: string[] = [];
+    const broken: string[] = [];
+    
+    this.radioStreams.forEach(stream => {
+      try {
+        new URL(stream.streamUrl);
+        valid.push(stream.streamUrl);
+      } catch {
+        broken.push(stream.streamUrl);
+      }
+    });
+    
+    return { valid, broken };
+  }
+
+  getMicrosoftHealthStatus() {
+    const streams = Array.from(this.radioStreams.values());
+    const links = this.validateAllLinks();
+    
+    return {
+      totalStreams: streams.length,
+      liveStreams: streams.filter(s => s.status === 'live').length,
+      validLinks: links.valid.length,
+      brokenLinks: links.broken.length,
+      healthPercentage: Math.round((links.valid.length / streams.length) * 100)
+    };
   }
 
   private initializeTeamLogos() {
