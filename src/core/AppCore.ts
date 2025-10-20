@@ -184,9 +184,9 @@ export class AppCore extends EventEmitter {
     return {
       total: this.connections.size,
       active: this.getActiveConnectionCount(),
-      connections: Array.from(this.connections.entries()).map(([id, conn]) => ({
-        id,
-        ...conn
+      connections: Array.from(this.connections.entries()).map(([connId, conn]) => ({
+        ...conn,
+        id: connId
       })),
       config: this.config
     };
@@ -208,6 +208,63 @@ export class AppCore extends EventEmitter {
     this.connections.clear();
     console.log('🛑 App Core shutdown complete');
   }
+
+  // Smart background management
+  getSystemHealth() {
+    const connections = Array.from(this.connections.values());
+    const activeCount = connections.filter(c => c.status === 'connected').length;
+    const errorCount = connections.filter(c => c.status === 'error').length;
+    
+    return {
+      overall: activeCount === this.connections.size ? 'healthy' : errorCount > 0 ? 'degraded' : 'partial',
+      uptime: process.uptime(),
+      memoryUsage: process.memoryUsage(),
+      activeConnections: activeCount,
+      errorConnections: errorCount,
+      totalConnections: this.connections.size,
+      healthScore: Math.round((activeCount / this.connections.size) * 100)
+    };
+  }
+
+  // Background task management
+  async executeBackgroundTask(taskName: string, task: () => Promise<any>) {
+    console.log(`📋 Starting background task: ${taskName}`);
+    try {
+      const result = await task();
+      this.emit('background:task:complete', { taskName, success: true });
+      console.log(`✅ Background task completed: ${taskName}`);
+      return { success: true, result };
+    } catch (error) {
+      this.emit('background:task:error', { taskName, error });
+      console.error(`❌ Background task failed: ${taskName}`, error);
+      return { success: false, error };
+    }
+  }
+
+  // Smart communication hub
+  broadcastMessage(channel: string, message: any) {
+    this.emit(`broadcast:${channel}`, {
+      timestamp: Date.now(),
+      message,
+      source: 'AppCore'
+    });
+  }
+
+  // Register background service
+  registerBackgroundService(serviceId: string, type: ConnectionState['type']) {
+    if (!this.connections.has(serviceId)) {
+      this.connections.set(serviceId, {
+        id: serviceId,
+        type,
+        status: 'connected',
+        lastHeartbeat: Date.now(),
+        metadata: { registered: new Date().toISOString() }
+      });
+      console.log(`🔌 Registered background service: ${serviceId}`);
+    }
+  }
 }
+
+export const appCore = AppCore.getInstance();
 
 export const appCore = AppCore.getInstance();
