@@ -67,6 +67,23 @@ args = "echo \"FCC Entity: 20130314143016\""
 task = "shell.exec"
 args = "echo \"Registration: 0024454324\""
 
+[[workflows.workflow]]
+name = "Run"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run build"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node dist/index.js"
+
 [[ports]]
 localPort = 5000
 externalPort = 5000
