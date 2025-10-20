@@ -96,8 +96,13 @@ app.use('/google-port-launcher', googlePortLauncherRoutes);
 app.use('/fusion-launch', fusionLaunchRoutes);
 app.use('/port-alliance', portAllianceRoutes);
 
-// Static files
-app.use(express.static(path.join(__dirname, '../public')));
+// Serve static files from public directory
+app.use(express.static('public'));
+
+// Main Betting Sites homepage
+app.get('/betting-sites', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/betting-sites-home.html'));
+});
 
 // Smart communication status
 app.get('/smart-communication/status', (req: Request, res: Response) => {
