@@ -79,7 +79,10 @@ router.get('/partners', async (req: Request, res: Response) => {
       name: partner.name,
       status: partner.active ? 'active' : 'inactive',
       endpoint: `/streaming/partner/${partner.id}/stream`,
-      streamCount: streamingService.getActiveStreams().filter(s => s.id.startsWith(partner.id)).length
+      streamCount: streamingService.getActiveStreams().filter(s => s.id.startsWith(partner.id)).length,
+      active: partner.active,
+      webhookUrl: partner.webhookUrl,
+      registeredAt: partner.registeredAt
     }));
 
     res.json({
@@ -603,20 +606,6 @@ router.get('/streaming-endpoints', async (req: Request, res: Response) => {
     res.json({
       success: true,
       endpoints,
-      fccEntity: '20130314143016'
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: 'Failed to fetch streaming endpoints',
-      fccEntity: '20130314143016'
-    });
-  }
-});
-
-    res.json({
-      success: true,
-      endpoints,
       totalEndpoints: endpoints.length,
       fccEntity: '20130314143016'
     });
@@ -634,10 +623,10 @@ router.get('/contracts/:contractId', async (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
   try {
     const { contractId } = req.params;
-    const contracts = await streamingService.getStreamContent();
+    const streams = streamingService.getActiveStreams();
     const partners = await streamingService.getStreamingPartners();
 
-    const contract = contracts.find(c => c.id === contractId);
+    const contract = streams.find(s => s.id === contractId);
 
     if (!contract) {
       return res.status(404).json({
@@ -646,7 +635,7 @@ router.get('/contracts/:contractId', async (req: Request, res: Response) => {
       });
     }
 
-    const partner = contract.partnerId ? partners.find(p => p.id === contract.partnerId) : null;
+    const partner = partners.find(p => p.id === contract.id);
 
     res.json({
       success: true,

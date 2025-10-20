@@ -28,6 +28,7 @@ import fusionAssemblyRouter from './routes/fusion-assembly.js';
 import contractCallbacksRoutes from './routes/contract-callbacks.js';
 import jsonSyncRoutes from './routes/json-sync.js';
 import workflowLandscapeRouter from './routes/workflow-landscape.js';
+import smartCommunicationFusionRouter from './routes/smart-communication-fusion.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -185,5 +186,6 @@ try {
 
 // Mount workflow landscape endpoint
 app.use('/workflow-landscape', workflowLandscapeRouter);
+app.use('/smart-communication-fusion', smartCommunicationFusionRouter);
 
 export default app;

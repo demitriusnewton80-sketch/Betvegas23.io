@@ -34,11 +34,14 @@ router.post('/launch', async (req: Request, res: Response) => {
     const portStatus = portManagementCore.getPortStatus(port);
     
     if (!portStatus) {
-      return res.status(400).json({ error: 'Invalid port' });
+      return res.status(400).json({ 
+        error: 'Invalid port',
+        fccEntity: '20130314143016'
+      });
     }
 
     // Use troubleshooting core to ensure port is operational
-    if (portStatus && portStatus.status !== 'active') {
+    if (portStatus.status !== 'active') {
       console.log(`🔧 Port ${port} not active, using troubleshooting core to recover...`);
       smartTroubleshootingCore.setAutoFix(true);
       
