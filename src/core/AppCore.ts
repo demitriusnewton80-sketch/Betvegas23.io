@@ -117,13 +117,13 @@ export class AppCore extends EventEmitter {
     this.heartbeatInterval = setInterval(() => {
       let recoveredCount = 0;
 
-      this.connections.forEach((conn, id) => {
+      this.connections.forEach((conn, connId) => {
         const timeSinceLastBeat = Date.now() - conn.lastHeartbeat;
 
         if (timeSinceLastBeat > 30000) {
           if (conn.status !== 'error') {
             conn.status = 'error';
-            this.emit('connection:error', { id, connection: conn });
+            this.emit('connection:error', { id: connId, connection: conn });
           }
         } else {
           if (conn.status === 'error') {
@@ -131,6 +131,10 @@ export class AppCore extends EventEmitter {
           }
           conn.status = 'connected';
           conn.lastHeartbeat = Date.now();
+          this.emit('connection:updated', {
+            id: connId,
+            connection: conn
+          });
         }
       });
 

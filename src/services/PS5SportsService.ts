@@ -15,6 +15,9 @@ export interface PS5Game {
   status: 'upcoming' | 'live' | 'completed';
   streamUrl?: string;
   betCount: number;
+  maxPlayers?: number;
+  currentPlayers?: number;
+  entryFee?: number;
 }
 
 export interface PS5Bet {

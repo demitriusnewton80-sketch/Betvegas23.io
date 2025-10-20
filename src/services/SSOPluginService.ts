@@ -9,6 +9,9 @@ export interface SSOUser {
   provider: string;
   avatar?: string;
   metadata?: Record<string, any>;
+  accessToken?: string;
+  refreshToken?: string;
+  expiresAt?: number;
 }
 
 export interface SSOPlugin {
