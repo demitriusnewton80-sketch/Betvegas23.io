@@ -447,8 +447,49 @@ class VPNService {
     
     return true;
   }
-}
 
-export const vpnService = new VPNService();
+  // Create streaming server for VPN connection
+  createStreamingServer(connectionId: string, appPort: number = 5000): {
+    serverUrl: string;
+    vpnIP: string;
+    streamingPort: number;
+    status: string;
+  } {
+    const connection = this.connections.get(connectionId);
+    if (!connection) {
+      throw new Error('Connection not found');
+    }
+
+    const streamingPort = appPort;
+    const serverUrl = `https://${connection.vpnIP}:${streamingPort}`;
+
+    return {
+      serverUrl,
+      vpnIP: connection.vpnIP,
+      streamingPort,
+      status: 'streaming'
+    };
+  }
+
+  // Get streaming server info
+  getStreamingServerInfo(connectionId: string): {
+    appUrl: string;
+    vpnIP: string;
+    publicAccess: string;
+    fccEntity: string;
+  } | null {
+    const connection = this.connections.get(connectionId);
+    if (!connection) {
+      return null;
+    }
+
+    return {
+      appUrl: `https://${connection.vpnIP}:5000`,
+      vpnIP: connection.vpnIP,
+      publicAccess: `https://0.0.0.0:5000`,
+      fccEntity: '20130314143016'
+    };
+  }
+}
 
 export const vpnService = new VPNService();
