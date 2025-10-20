@@ -35,6 +35,7 @@ import { contentIntegrityService } from './services/ContentIntegrityService.js';
 import jsonSyncRoutes from './routes/json-sync.js';
 import workflowLandscapeRouter from './routes/workflow-landscape.js';
 import smartCommunicationFusionRouter from './routes/smart-communication-fusion.js';
+import applePartnershipRouter from './routes/apple-partnership.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -219,5 +220,6 @@ Promise.resolve().then(async () => {
 // Mount workflow landscape endpoint
 app.use('/workflow-landscape', workflowLandscapeRouter);
 app.use('/smart-communication-fusion', smartCommunicationFusionRouter);
+app.use('/apple-partnership', applePartnershipRouter);
 
 export default app;
