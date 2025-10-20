@@ -47,6 +47,7 @@ import streamingPortalRoutes from './routes/streaming-portal.js';
 import googlePortLauncherRoutes from './routes/google-port-launcher.js';
 import fusionLaunchRoutes from './routes/fusion-launch.js';
 import portAllianceRoutes from './routes/port-alliance.js';
+import smartTunnelRoutes from './routes/smart-tunnel.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -95,6 +96,7 @@ app.use('/streaming-portal', streamingPortalRoutes);
 app.use('/google-port-launcher', googlePortLauncherRoutes);
 app.use('/fusion-launch', fusionLaunchRoutes);
 app.use('/port-alliance', portAllianceRoutes);
+app.use('/smart-tunnel', smartTunnelRoutes);
 
 // Serve static files from public directory
 app.use(express.static('public'));
@@ -209,6 +211,11 @@ appCore.initialize();
 import { smartTroubleshootingCore } from './core/SmartTroubleshootingCore.js';
 console.log('🔧 Smart Troubleshooting Core: ACTIVE');
 
+// Initialize smart tunnel
+import { smartTunnelCore } from './core/SmartTunnelCore.js';
+smartTunnelCore.hostAllAspects();
+console.log('🌐 Smart Tunnel Core: ACTIVE');
+
 // Start server with diagnostics
 startupDiagnostics.runDiagnostics().then(diagnostics => {
   if (!diagnostics.success) {
@@ -237,6 +244,7 @@ startupDiagnostics.runDiagnostics().then(diagnostics => {
     console.log(`  • Version: http://${HOST}:${PORT}/version`);
     console.log(`  • AWS Account: http://${HOST}:${PORT}/api/aws-account/status`); // Added endpoint for AWS Account
     console.log(`  • API Troubleshooting: http://${HOST}:${PORT}/api-troubleshooting/status`);
+    console.log(`  • Smart Tunnel: http://${HOST}:${PORT}/smart-tunnel/status`);
     console.log('\n');
   });
 
