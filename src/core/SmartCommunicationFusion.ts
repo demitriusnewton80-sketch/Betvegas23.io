@@ -230,5 +230,3 @@ export class SmartCommunicationFusion extends EventEmitter {
 }
 
 export const smartCommunicationFusion = SmartCommunicationFusion.getInstance();
-
-export const smartCommunicationFusion = SmartCommunicationFusion.getInstance();

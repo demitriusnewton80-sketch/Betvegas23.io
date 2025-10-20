@@ -37,6 +37,7 @@ import workflowLandscapeRouter from './routes/workflow-landscape.js';
 import smartCommunicationFusionRouter from './routes/smart-communication-fusion.js';
 import applePartnershipRouter from './routes/apple-partnership.js';
 import falconBroadcastRouter from './routes/falcon-broadcast.js';
+import partnershipEnrollmentRouter from './routes/partnership-enrollment.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -223,5 +224,6 @@ app.use('/workflow-landscape', workflowLandscapeRouter);
 app.use('/smart-communication-fusion', smartCommunicationFusionRouter);
 app.use('/apple-partnership', applePartnershipRouter);
 app.use('/falcon-broadcast', falconBroadcastRouter);
+app.use('/partnership-enrollment', partnershipEnrollmentRouter);
 
 export default app;
