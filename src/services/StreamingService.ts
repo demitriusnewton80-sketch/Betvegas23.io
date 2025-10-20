@@ -245,6 +245,36 @@ class StreamingService extends EventEmitter {
     return Array.from(this.externalSportsbooks.values());
   }
 
+  // Get active streams for API responses
+  getActiveStreams(): Array<{id: string, name: string, sport: string, status: string, url: string}> {
+    const streams: Array<{id: string, name: string, sport: string, status: string, url: string}> = [];
+    
+    this.activeStreams.forEach((_, gameId) => {
+      streams.push({
+        id: gameId,
+        name: `Game ${gameId}`,
+        sport: 'NBA',
+        status: 'live',
+        url: `/streaming/game/${gameId}`
+      });
+    });
+
+    // Add external sportsbook streams
+    this.externalSportsbooks.forEach(sb => {
+      if (sb.active) {
+        streams.push({
+          id: sb.id,
+          name: sb.name,
+          sport: 'Multi-Sport',
+          status: 'streaming',
+          url: sb.webhookUrl
+        });
+      }
+    });
+
+    return streams;
+  }
+
   stopGameStream(gameId: string): void {
     const interval = this.activeStreams.get(gameId);
     if (interval) {
