@@ -152,8 +152,13 @@ app.get('/public-domain', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/public-domain-builder.html'));
 });
 
-// Root route - serve functional structures sportsbook
+// Root route - serve public sportsbook hub
 app.get('/', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/public-sportsbook-hub.html'));
+});
+
+// Alternative route for functional structures
+app.get('/structures', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../public/functional-sportsbook-structures.html'));
 });
 
