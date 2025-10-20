@@ -87,6 +87,16 @@ app.get('/', (req: Request, res: Response) => {
 
 // Catch-all for SPA
 app.get('*', (req: Request, res: Response) => {
+  // Return JSON for API routes
+  if (req.path.startsWith('/api/') || req.path.startsWith('/streaming/') || req.path.startsWith('/error-recovery/') || req.path.startsWith('/smart-troubleshooting/')) {
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(404).json({
+      success: false,
+      error: 'Endpoint not found',
+      path: req.path
+    });
+  }
+  
   if (req.path.includes('.')) {
     return res.status(404).send('Not found');
   }
@@ -95,10 +105,14 @@ app.get('*', (req: Request, res: Response) => {
 
 // Error handling
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('Server Error:', err.message || err); // Log the error message or the entire error object
+  console.error('Server Error:', err.message || err);
+  
+  // Always return JSON, never HTML
+  res.setHeader('Content-Type', 'application/json');
   res.status(500).json({
+    success: false,
     error: 'Internal server error',
-    message: err.message || 'An unexpected error occurred.', // Provide a user-friendly message
+    message: err.message || 'An unexpected error occurred.',
     fccEntity: '20130314143016'
   });
 });

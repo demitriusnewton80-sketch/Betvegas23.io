@@ -11,10 +11,10 @@ const liveSessions = new Map();
 // Get all streams endpoint with smart error recovery
 router.get('/streams', (req: Request, res: Response) => {
   try {
+    res.setHeader('Content-Type', 'application/json');
     const streams = streamingService.getAllStreams();
 
     // Ensure we always return valid JSON
-    res.setHeader('Content-Type', 'application/json');
     res.json({
       success: true,
       streams: streams || [],
@@ -42,6 +42,7 @@ router.get('/events', (req: Request, res: Response) => {
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders();
 
     // Send initial connection message
     const initialMsg = { type: 'connected', timestamp: Date.now(), fccEntity: '20130314143016' };
@@ -72,12 +73,14 @@ router.get('/events', (req: Request, res: Response) => {
     // Cleanup on connection close
     req.on('close', () => {
       clearInterval(interval);
+      res.end();
     });
 
     // Handle errors
     req.on('error', (error) => {
       console.error('EventSource connection error:', error);
       clearInterval(interval);
+      res.end();
     });
   } catch (error) {
     console.error('EventSource initialization error:', error);
@@ -175,6 +178,7 @@ router.get('/fusion/live/:sessionId', (req: Request, res: Response) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('X-Fusion-Stream', 'true');
   res.setHeader('X-FCC-Entity', '20130314143016');
+  res.flushHeaders();
 
   // Send initial connection message
   res.write(`data: ${JSON.stringify({
