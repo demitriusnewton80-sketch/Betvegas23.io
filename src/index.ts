@@ -141,8 +141,13 @@ try {
 // Static files (must be after API routes)
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Root route - redirect to BettingSites home
+// Root route - serve production sportsbook
 app.get('/', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../public/my-public-sportsbook.html'));
+});
+
+// Legacy routes
+app.get('/bettingsites-home', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../public/bettingsites-home.html'));
 });
 
