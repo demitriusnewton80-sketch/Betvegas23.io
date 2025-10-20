@@ -375,6 +375,15 @@ app.get('/api', (req: Request, res: Response) => {
 // Build and start application (Microsoft-style)
 async function startApplication() {
   try {
+    // Cloud Production Offline Configuration
+    const isProduction = process.env.REPLIT_DEPLOYMENT === '1';
+    const PORT_CONFIG = parseInt(process.env.PORT || '5000');
+    const HOST_CONFIG = '0.0.0.0';
+    
+    console.log('☁️  Cloud Production Mode:', isProduction ? 'LIVE' : 'OFFLINE');
+    console.log('🔌 Port Configuration:', PORT_CONFIG);
+    console.log('🌐 Host Configuration:', HOST_CONFIG);
+    
     // Initialize database
     if (process.env.DATABASE_URL) {
       console.log('🗄️  Initializing database...');
@@ -383,7 +392,7 @@ async function startApplication() {
         await initializeDatabase();
       }
     } else {
-      console.log('⚠️  DATABASE_URL not set - running without database');
+      console.log('⚠️  DATABASE_URL not set - running in offline mode');
     }
 
     // Build application
@@ -391,6 +400,11 @@ async function startApplication() {
 
     // Run startup tasks
     await builder.startup();
+    
+    // Initialize AI Core for troubleshooting
+    console.log('🤖 Initializing AI Core Troubleshooting...');
+    const { coreAIService } = await import('./services/CoreAIService.js');
+    console.log('✅ AI Core ready for diagnostics');
 
     // Create HTTP server with WebSocket support
     const httpServer = createServer(app);
