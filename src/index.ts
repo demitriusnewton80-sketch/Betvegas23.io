@@ -30,6 +30,9 @@ import businessRelationshipsRouter from './routes/business-relationships.js';
 import espnTrackerRoutes from './routes/espn-tracker.js';
 import espnBettingRoutes from './routes/espn-betting.js';
 import versionRoutes from './routes/version.js';
+import awsAccountRoutes from './routes/aws-account.js';
+import accountRoutes from './routes/account.js';
+import authRoutes from './routes/auth.js';
 import smartTroubleshootingRoutes from './routes/smart-troubleshooting.js';
 import functionalRelationshipsBridgeRoutes from './routes/functional-relationships-bridge.js';
 import debugEndpoints from './routes/debug-endpoints.js';
@@ -69,6 +72,9 @@ app.use('/business-relationships', businessRelationshipsRouter);
 app.use('/espn-tracker', espnTrackerRoutes);
 app.use('/espn-betting', espnBettingRoutes);
 app.use('/version', versionRoutes);
+app.use('/api/aws-account', awsAccountRoutes);
+app.use('/api/account', accountRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/smart-troubleshooting', smartTroubleshootingRoutes);
 app.use('/functional-relationships-bridge', functionalRelationshipsBridgeRoutes);
 app.use('/debug', debugEndpoints);
@@ -212,6 +218,7 @@ startupDiagnostics.runDiagnostics().then(diagnostics => {
     console.log(`  • Smart System: http://${HOST}:${PORT}/smart-system/status`);
     console.log(`  • Mobile: http://${HOST}:${PORT}/mobile/stats`);
     console.log(`  • Version: http://${HOST}:${PORT}/version`);
+    console.log(`  • AWS Account: http://${HOST}:${PORT}/api/aws-account/status`); // Added endpoint for AWS Account
     console.log(`  • API Troubleshooting: http://${HOST}:${PORT}/api-troubleshooting/status`);
     console.log('\n');
   });

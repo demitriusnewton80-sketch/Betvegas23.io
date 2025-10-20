@@ -1,8 +1,9 @@
 
 export const APP_VERSION = {
-  version: '2.2.0',
+  version: '2.3.0',
   buildDate: new Date().toISOString(),
   features: [
+    'AWS Account Support & Integration',
     'Betting Sites Production Deployment',
     'System-Controlled Streaming Contracts',
     'ESPN Sportsbook Integration',
@@ -18,6 +19,16 @@ export const APP_VERSION = {
     'FCC Compliance Suite'
   ],
   changelog: {
+    '2.3.0': {
+      date: '2025-01-24',
+      changes: [
+        'Added AWS account support and integration',
+        'Fixed TypeScript errors in version route',
+        'Integrated AWS service monitoring',
+        'Added AWS support tier configuration',
+        'Enhanced cloud infrastructure management'
+      ]
+    },
     '2.2.0': {
       date: '2025-01-24',
       changes: [
