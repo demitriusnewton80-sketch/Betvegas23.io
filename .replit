@@ -53,7 +53,7 @@ args = "Direct contact "
 [[workflows.workflow]]
 name = "Direct FCC Contact"
 author = 48739577
-mode = "sequential"
+mode = "parallel"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
