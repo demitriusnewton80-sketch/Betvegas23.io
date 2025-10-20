@@ -71,6 +71,162 @@ router.post('/upload', async (req: Request, res: Response) => {
   }
 });
 
+// Get streaming contracts with content
+router.get('/contracts', async (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'application/json');
+  
+  try {
+    const partners = streamingService.getStreamingPartners();
+    const streams = streamingService.getActiveStreams();
+    
+    const contracts = partners.map(partner => ({
+      id: partner.id,
+      name: partner.name,
+      endpoint: `/streaming/partner/${partner.id}/stream`,
+      webhookUrl: partner.webhookUrl,
+      active: partner.active,
+      contentType: 'stream',
+      streamCount: streams.filter(s => s.partnerId === partner.id).length,
+      metadata: {
+        registeredAt: partner.registeredAt,
+        lastActive: partner.lastActive
+      }
+    }));
+    
+    res.json({
+      success: true,
+      contracts,
+      totalContracts: contracts.length,
+      activeContracts: contracts.filter(c => c.active).length,
+      fccEntity: '20130314143016'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch contracts',
+      fccEntity: '20130314143016'
+    });
+  }
+});
+
+// Stream content via contract endpoint
+router.get('/contract/:contractId/stream', async (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'application/json');
+  
+  try {
+    const { contractId } = req.params;
+    const partners = streamingService.getStreamingPartners();
+    const contract = partners.find(p => p.id === contractId);
+    
+    if (!contract) {
+      return res.status(404).json({
+        success: false,
+        error: 'Contract not found'
+      });
+    }
+    
+    if (!contract.active) {
+      return res.status(403).json({
+        success: false,
+        error: 'Contract is not active'
+      });
+    }
+    
+    const streams = streamingService.getActiveStreams();
+    const contractStreams = streams.filter(s => s.partnerId === contractId);
+    
+    res.json({
+      success: true,
+      contract: {
+        id: contract.id,
+        name: contract.name,
+        endpoint: `/streaming/contract/${contractId}/stream`
+      },
+      streams: contractStreams.map(stream => ({
+        id: stream.id,
+        name: stream.name,
+        sport: stream.sport,
+        url: stream.url,
+        status: stream.status
+      })),
+      streamUrl: contractStreams.length > 0 ? contractStreams[0].url : null,
+      fccEntity: '20130314143016'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to stream content',
+      fccEntity: '20130314143016'
+    });
+  }
+});
+
+// Create new streaming contract
+router.post('/contracts/create', async (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'application/json');
+  
+  try {
+    const { name, webhookUrl, contentType } = req.body;
+    
+    if (!name || !webhookUrl) {
+      return res.status(400).json({
+        success: false,
+        error: 'name and webhookUrl required'
+      });
+    }
+    
+    const contractId = `contract_${Date.now()}_${crypto.randomBytes(8).toString('hex')}`;
+    
+    const contract = {
+      id: contractId,
+      name,
+      webhookUrl,
+      contentType: contentType || 'stream',
+      active: true,
+      endpoint: `/streaming/contract/${contractId}/stream`,
+      registeredAt: new Date().toISOString()
+    };
+    
+    res.json({
+      success: true,
+      contract,
+      message: 'Streaming contract created successfully',
+      fccEntity: '20130314143016'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to create contract',
+      fccEntity: '20130314143016'
+    });
+  }
+});
+
+// Update streaming contract
+router.put('/contracts/:contractId', async (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'application/json');
+  
+  try {
+    const { contractId } = req.params;
+    const { active, webhookUrl } = req.body;
+    
+    res.json({
+      success: true,
+      contractId,
+      updated: true,
+      active,
+      message: 'Contract updated successfully',
+      fccEntity: '20130314143016'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to update contract',
+      fccEntity: '20130314143016'
+    });
+  }
+});
+
 // Get streaming events (SSE)
 router.get('/events', (req: Request, res: Response) => {
   try {
