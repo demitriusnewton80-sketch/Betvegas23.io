@@ -3,6 +3,7 @@ import { streamingService } from './StreamingService.js';
 import { phoneControlService } from './PhoneControlService.js';
 import { web3BridgeService } from './Web3BridgeService.js';
 import { awsBackupService } from './AWSBackupService.js';
+import { errorRecoverySystem } from '../core/ErrorRecoverySystem.js';
 
 interface ErrorLog {
   id: string;
@@ -74,7 +75,32 @@ export class SmartSystemService extends EventEmitter {
     setInterval(() => {
       this.scanForErrors();
       this.processDeploymentQueue();
+      this.validateUploads();
     }, 5000);
+
+    // Listen to recovery system events
+    errorRecoverySystem.on('upload:deleted', ({ source }) => {
+      this.handleCorruptedUpload(source);
+    });
+  }
+
+  private validateUploads() {
+    this.contentUploads.forEach((upload, uploadId) => {
+      // Check for suspicious uploads
+      if (upload.size > 100000000) { // 100MB limit
+        console.log(`⚠️  Large upload detected: ${uploadId}`);
+        errorRecoverySystem.blockThreat('malware', `upload-${uploadId}`);
+        this.contentUploads.delete(uploadId);
+      }
+    });
+  }
+
+  private handleCorruptedUpload(source: string) {
+    const uploadId = source.replace('upload-', '');
+    if (this.contentUploads.has(uploadId)) {
+      this.contentUploads.delete(uploadId);
+      console.log(`🗑️  Removed corrupted upload: ${uploadId}`);
+    }
   }
 
   private startTrafficMonitoring() {

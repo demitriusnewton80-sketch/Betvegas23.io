@@ -24,6 +24,7 @@ import functionalStructuresRoutes from './routes/functional-structures.js';
 import phoneControlRoutes from './routes/phone-control.js';
 import smartSystemRoutes from './routes/smart-system.js';
 import mobileRoutes from './routes/mobile.js';
+import errorRecoveryRoutes from './routes/error-recovery.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '5000');
@@ -58,6 +59,7 @@ app.use('/functional-structures', functionalStructuresRoutes);
 app.use('/phone-control', phoneControlRoutes);
 app.use('/smart-system', smartSystemRoutes);
 app.use('/mobile', mobileRoutes);
+app.use('/error-recovery', errorRecoveryRoutes);
 
 // Static files
 app.use(express.static(path.join(__dirname, '../public')));
