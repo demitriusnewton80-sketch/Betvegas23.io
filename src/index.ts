@@ -48,6 +48,7 @@ import advancedAnalyticsRoutes from './routes/advanced-analytics.js';
 import dunContentPeersRoutes from './routes/dun-content-peers.js';
 import arnFinderRoutes from './routes/arn-finder.js';
 import leedsExportRoutes from './routes/leeds-export.js';
+import waveStreamAssemblyRoutes from './routes/wave-stream-assembly.js';
 
 // Initialize core systems
 const __filename = fileURLToPath(import.meta.url);
@@ -246,6 +247,7 @@ Promise.resolve().then(async () => {
 // Mount workflow landscape endpoint
 app.use('/workflow-landscape', workflowLandscapeRouter);
 app.use('/terminal-bridge', terminalBridgeRoutes);
+app.use('/wave-stream-assembly', waveStreamAssemblyRoutes);
 
 // Health check endpoint
 // Note: This is a placeholder and might need further implementation
