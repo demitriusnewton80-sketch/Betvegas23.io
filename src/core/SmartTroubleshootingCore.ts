@@ -1,8 +1,8 @@
 
 import { EventEmitter } from 'events';
 import { errorRecoverySystem } from './ErrorRecoverySystem.js';
-import { appCore } from './AppCore.js';
 import { smartCommunication } from '../utils/smart-communication.js';
+import { appCore } from './AppCore.js';
 
 interface TroubleshootingSession {
   id: string;

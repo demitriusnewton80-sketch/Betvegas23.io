@@ -36,7 +36,6 @@ import contentIntegrityRouter from './routes/content-integrity.js';
 import { contentIntegrityService } from './services/ContentIntegrityService.js';
 import jsonSyncRoutes from './routes/json-sync.js';
 import workflowLandscapeRouter from './routes/workflow-landscape.js';
-import productionMappingRoutes from './routes/production-mapping.js';
 import smartCommunicationFusionRouter from './routes/smart-communication-fusion.js';
 import applePartnershipRouter from './routes/apple-partnership.js';
 import falconBroadcastRouter from './routes/falcon-broadcast.js';
@@ -55,8 +54,6 @@ import leedsExportRoutes from './routes/leeds-export.js';
 import waveStreamAssemblyRoutes from './routes/wave-stream-assembly.js';
 import radioBroadcastDeploymentRoutes from './routes/radio-broadcast-deployment.js'; // Import the new route
 import unifiedStylesheetRouter from './routes/unified-stylesheet.js';
-import autoTroubleshootRoutes from './routes/auto-troubleshoot.js';
-import mappingSyncRoutes from './routes/mapping-sync.js';
 
 // Initialize core systems
 const __filename = fileURLToPath(import.meta.url);
@@ -140,9 +137,6 @@ try {
   app.use('/leeds-export', leedsExportRoutes);
   app.use('/wave-stream-assembly', waveStreamAssemblyRoutes);
   app.use('/radio-broadcast-deployment', radioBroadcastDeploymentRoutes); // Mount the new route
-  app.use('/falcon-broadcast', falconBroadcastRouter); // Add Falcon Broadcast route
-  app.use('/auto-troubleshoot', autoTroubleshootRoutes);
-app.use('/mapping-sync', mappingSyncRoutes);
   // Unified Stylesheet API
   app.use('/api/stylesheet', unifiedStylesheetRouter);
   console.log('✅ All API routes registered successfully');
@@ -150,31 +144,11 @@ app.use('/mapping-sync', mappingSyncRoutes);
   console.error('❌ Error registering routes:', error);
 }
 
-// Serve static files
-  app.use(express.static('public'));
+// Static files (must be after API routes)
+app.use(express.static(path.join(__dirname, '../public')));
 
-  // Public broadcast control page
-  app.get('/public-broadcast-control', (req, res) => {
-    res.sendFile(path.join(process.cwd(), 'public', 'public-broadcast-control.html'));
-  });
-
-  // Public broadcasting build
-  app.get('/public-broadcasting-build', (req, res) => {
-    res.sendFile(path.join(process.cwd(), 'public', 'public-broadcasting-build.html'));
-  });
-
-// Public domain builder
-app.get('/public-domain', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/public-domain-builder.html'));
-});
-
-// Root route - serve public sportsbook hub
+// Root route - serve functional structures sportsbook
 app.get('/', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '../public/public-sportsbook-hub.html'));
-});
-
-// Alternative route for functional structures
-app.get('/structures', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../public/functional-sportsbook-structures.html'));
 });
 
@@ -246,10 +220,10 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
-║   🏆 YoungMeaat LLC Sports Book Enterprise Hub          ║
+║   🎯 BettingSites™ - Live Sports Streaming & Betting    ║
 ║                                                           ║
 ║   Powered by Amazon Web Services (AWS)                   ║
-║   FCC Entity: 20130314143016                             ║
+║   Young Meeat LLC | FCC: 20130314143016                  ║
 ║                                                           ║
 ║   Server running on http://0.0.0.0:${PORT}                    ║
 ║                                                           ║
@@ -299,7 +273,6 @@ Promise.resolve().then(async () => {
 
 // Mount workflow landscape endpoint
 app.use('/workflow-landscape', workflowLandscapeRouter);
-app.use('/production-mapping', productionMappingRoutes);
 app.use('/terminal-bridge', terminalBridgeRoutes);
 app.use('/wave-stream-assembly', waveStreamAssemblyRoutes);
 

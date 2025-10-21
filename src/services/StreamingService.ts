@@ -1,151 +1,445 @@
-
 import { EventEmitter } from 'events';
 
-interface StreamingPartner {
-  id: string;
-  name: string;
-  type: string;
-  active: boolean;
+export interface LiveGameUpdate {
+  gameId: string;
+  score: {
+    home: number;
+    away: number;
+  };
+  quarter?: string;
+  period?: string;
+  timeRemaining?: string;
+  lastPlay?: string;
+  timestamp: string;
+  amazonPrimeUrl?: string;
 }
 
-interface ActiveStream {
-  id: string;
-  name: string;
-  sport: string;
-  status: 'active' | 'paused' | 'ended';
-  viewers: number;
-  startTime: number;
+interface StreamAccess {
+  userId: string;
+  gameId: string;
+  accessGrantedAt: string;
+  betId: string;
+  amazonPrimeStreamUrl: string;
 }
 
 interface ExternalSportsbook {
   id: string;
   name: string;
-  url: string;
+  apiKey: string;
+  webhookUrl: string;
   active: boolean;
-  type: 'streaming' | 'betting' | 'gaming';
+  allowedIPs: string[];
+  registeredAt: string;
+  githubProject?: string;
+  fccRegistration?: string; // Added to match usage in constructor
 }
 
-export class StreamingService extends EventEmitter {
-  private static instance: StreamingService;
-  private partners: StreamingPartner[] = [
-    { id: 'partner-1', name: 'ESPN Sportsbook', type: 'video', active: true },
-    { id: 'partner-2', name: 'Unified Sports Hub', type: 'video', active: true },
-    { id: 'partner-3', name: 'Enhanced Sportsbook', type: 'video', active: true },
-    { id: 'partner-4', name: 'Mobile Sportsbook Hub', type: 'mobile', active: true },
-    { id: 'partner-5', name: 'PS5 Betting', type: 'console', active: false },
-    { id: 'partner-6', name: 'Boxing & UFC Hub', type: 'video', active: false }
-  ];
+// Define StreamingContract interface based on usage in getActiveStreams and getAllStreams
+interface StreamingContract {
+  id: string;
+  name: string;
+  sport: string;
+  status: string;
+  url: string;
+  partnerId?: string;
+}
 
-  private activeStreams: Map<string, ActiveStream> = new Map();
-  private externalSportsbooks: ExternalSportsbook[] = [
-    { id: 'draftkings', name: 'DraftKings', url: 'https://sportsbook.draftkings.com', active: true, type: 'betting' },
-    { id: 'fanduel', name: 'FanDuel', url: 'https://sportsbook.fanduel.com', active: true, type: 'betting' },
-    { id: 'betmgm', name: 'BetMGM', url: 'https://sports.betmgm.com', active: true, type: 'betting' }
-  ];
+class StreamingService extends EventEmitter {
+  private activeStreams: Map<string, NodeJS.Timeout> = new Map();
+  private streamFailures: Map<string, number> = new Map();
+  private externalSportsbooks: Map<string, ExternalSportsbook> = new Map();
+  private sharedStreams: Map<string, Set<string>> = new Map(); // gameId -> Set of sportsbook IDs
+  private streamAccess: Map<string, StreamAccess[]> = new Map(); // userId -> StreamAccess[]
+  private contracts: Map<string, StreamingContract> = new Map(); // Added to satisfy getActiveStreams/getAllStreams
 
-  private constructor() {
+  constructor() {
     super();
-    this.initializeStreams();
-  }
-
-  static getInstance(): StreamingService {
-    if (!StreamingService.instance) {
-      StreamingService.instance = new StreamingService();
-    }
-    return StreamingService.instance;
-  }
-
-  private initializeStreams() {
-    console.log('📺 Initializing Streaming Service...');
-    
-    // Create initial active streams
-    const initialStreams: ActiveStream[] = [
-      {
-        id: 'stream-nfl-1',
-        name: 'NFL Sunday Night Football',
-        sport: 'NFL',
-        status: 'active',
-        viewers: 15420,
-        startTime: Date.now()
-      },
-      {
-        id: 'stream-nba-1',
-        name: 'NBA Lakers vs Warriors',
-        sport: 'NBA',
-        status: 'active',
-        viewers: 8930,
-        startTime: Date.now()
-      }
-    ];
-
-    initialStreams.forEach(stream => {
-      this.activeStreams.set(stream.id, stream);
+    // Initialize with sample external sportsbooks
+    this.externalSportsbooks.set('sb-001', {
+      id: 'sb-001',
+      name: 'BetPartner Pro',
+      apiKey: 'demo-key-001',
+      webhookUrl: 'https://api.betpartner.example/streams',
+      active: true,
+      allowedIPs: ['192.168.1.100', '10.0.0.50'],
+      registeredAt: new Date().toISOString(),
+      githubProject: 'https://github.com/betvages23/betvages23.in'
+    });
+    this.externalSportsbooks.set('sb-002', {
+      id: 'sb-002',
+      name: 'OddsExchange',
+      apiKey: 'demo-key-002',
+      webhookUrl: 'https://api.oddsexchange.example/feeds',
+      active: true,
+      allowedIPs: ['203.0.113.45'],
+      registeredAt: new Date().toISOString()
     });
 
-    console.log('✅ Streaming Service initialized');
-  }
+    // Add NBA.com direct integration under FCC registration
+    this.externalSportsbooks.set('nba-direct', {
+      id: 'nba-direct',
+      name: 'NBA Official - 20130314143016',
+      apiKey: 'fcc-0024454324',
+      webhookUrl: 'https://www.nba.com/live',
+      active: true,
+      allowedIPs: [],
+      registeredAt: '03/25/2015',
+      fccRegistration: '0024454324'
+    });
 
-  getStreamingPartners(): StreamingPartner[] {
-    return this.partners;
-  }
-
-  getActiveStreams(): ActiveStream[] {
-    return Array.from(this.activeStreams.values());
-  }
-
-  getExternalSportsbooks(): ExternalSportsbook[] {
-    return this.externalSportsbooks;
-  }
-
-  createStream(name: string, sport: string): string {
-    const streamId = `stream-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
-    const stream: ActiveStream = {
-      id: streamId,
-      name,
-      sport,
+    // Initialize sample contracts for streaming
+    this.contracts.set('contract_sb-001_1678886400000', {
+      id: 'contract_sb-001_1678886400000',
+      name: 'BetPartner Pro Stream',
+      sport: 'NBA',
       status: 'active',
-      viewers: 0,
-      startTime: Date.now()
-    };
-
-    this.activeStreams.set(streamId, stream);
-    this.emit('stream:created', stream);
-    
-    return streamId;
+      url: 'https://api.betpartner.example/streams',
+      partnerId: 'sb-001'
+    });
+    this.contracts.set('contract_nba-direct_1678886400001', {
+      id: 'contract_nba-direct_1678886400001',
+      name: 'NBA Official Stream',
+      sport: 'NBA',
+      status: 'active',
+      url: 'https://www.nba.com/live',
+      partnerId: 'nba-direct'
+    });
   }
 
-  getStream(streamId: string): ActiveStream | undefined {
-    return this.activeStreams.get(streamId);
-  }
-
-  updateStreamViewers(streamId: string, viewers: number): void {
-    const stream = this.activeStreams.get(streamId);
-    if (stream) {
-      stream.viewers = viewers;
-      this.emit('stream:updated', stream);
-    }
-  }
-
-  endStream(streamId: string): void {
-    const stream = this.activeStreams.get(streamId);
-    if (stream) {
-      stream.status = 'ended';
-      this.emit('stream:ended', stream);
-      this.activeStreams.delete(streamId);
-    }
-  }
-
-  getStatus() {
+  // Get NBA direct control access
+  getNBADirectControl(userId: string, gameId: string): any {
     return {
-      totalPartners: this.partners.length,
-      activePartners: this.partners.filter(p => p.active).length,
-      totalStreams: this.activeStreams.size,
-      totalViewers: Array.from(this.activeStreams.values()).reduce((sum, s) => sum + s.viewers, 0),
-      externalSportsbooks: this.externalSportsbooks.length,
-      fccEntity: '20130314143016'
+      userId,
+      gameId,
+      streamUrl: 'https://www.nba.com/live',
+      controlEntity: '20130314143016',
+      fccCompliant: true,
+      accessLevel: 'full',
+      grantedAt: new Date().toISOString()
     };
+  }
+
+  // Validate IP address against sportsbook's allowed IPs
+  validateIPAccess(sportsbookId: string, clientIP: string): boolean {
+    const sportsbook = this.externalSportsbooks.get(sportsbookId);
+    if (!sportsbook || !sportsbook.active) {
+      return false;
+    }
+
+    // Allow access if IP is in allowed list
+    return sportsbook.allowedIPs.includes(clientIP);
+  }
+
+  // Register callback URL with IP whitelist
+  registerCallback(sportsbookId: string, callbackUrl: string, allowedIPs: string[]): boolean {
+    const sportsbook = this.externalSportsbooks.get(sportsbookId);
+    if (sportsbook) {
+      sportsbook.webhookUrl = callbackUrl;
+      sportsbook.allowedIPs = allowedIPs;
+      return true;
+    }
+    return false;
+  }
+
+  startGameStream(gameId: string): void {
+    if (this.activeStreams.has(gameId)) {
+      return;
+    }
+
+    console.log(`Live stream started for game ${gameId}`);
+    this.streamFailures.delete(gameId);
+
+    // Simulate live game updates with proper error handling
+    const interval = setInterval(() => {
+      try {
+        const update: LiveGameUpdate = {
+          gameId,
+          score: {
+            home: Math.floor(Math.random() * 100),
+            away: Math.floor(Math.random() * 100)
+          },
+          quarter: `Q${Math.floor(Math.random() * 4) + 1}`,
+          timeRemaining: `${Math.floor(Math.random() * 12)}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}`,
+          lastPlay: 'Play in progress',
+          timestamp: new Date().toISOString()
+        };
+
+        this.pushGameUpdate(update);
+      } catch (error) {
+        console.error(`Error generating update for game ${gameId}:`, error);
+        this.recordStreamFailure(gameId);
+      }
+    }, 3000);
+
+    this.activeStreams.set(gameId, interval);
+  }
+
+  // Method to push live updates from external source
+  pushGameUpdate(update: LiveGameUpdate): void {
+    this.emit('gameUpdate', update);
+
+    // Share update with external sportsbooks if stream is being shared
+    const sharedWith = this.sharedStreams.get(update.gameId);
+    if (sharedWith && sharedWith.size > 0) {
+      this.distributeToExternalSportsbooks(update, sharedWith);
+    }
+  }
+
+  // Record stream failure and activate sharing if threshold reached
+  recordStreamFailure(gameId: string): void {
+    const failures = (this.streamFailures.get(gameId) || 0) + 1;
+    this.streamFailures.set(gameId, failures);
+
+    console.log(`Stream failure recorded for game ${gameId}. Total failures: ${failures}`);
+
+    // If connection fails, activate stream sharing to external sportsbooks
+    if (failures >= 1) {
+      this.activateStreamSharing(gameId);
+    }
+  }
+
+  // Activate sharing this game's stream with external sportsbooks
+  private activateStreamSharing(gameId: string): void {
+    if (!this.sharedStreams.has(gameId)) {
+      this.sharedStreams.set(gameId, new Set());
+    }
+
+    const activeBooks = Array.from(this.externalSportsbooks.values())
+      .filter(sb => sb.active);
+
+    activeBooks.forEach(sportsbook => {
+      this.sharedStreams.get(gameId)!.add(sportsbook.id);
+    });
+
+    console.log(`Stream sharing activated for game ${gameId} with ${activeBooks.length} external sportsbooks`);
+    this.emit('streamSharingActivated', { gameId, sportsbooksCount: activeBooks.length });
+  }
+
+  // Distribute stream data to external sportsbooks
+  private async distributeToExternalSportsbooks(update: LiveGameUpdate, sportsbookIds: Set<string>): Promise<void> {
+    const promises = Array.from(sportsbookIds).map(async (sbId) => {
+      const sportsbook = this.externalSportsbooks.get(sbId);
+      if (!sportsbook || !sportsbook.active) return;
+
+      try {
+        // In production, send actual HTTP request to webhook
+        console.log(`Sharing stream data for game ${update.gameId} with ${sportsbook.name}`);
+
+        // Simulated webhook call - replace with actual fetch in production
+        // await fetch(sportsbook.webhookUrl, {
+        //   method: 'POST',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //     'X-API-Key': sportsbook.apiKey
+        //   },
+        //   body: JSON.stringify({
+        //     source: 'Young Meeat LLC',
+        //     gameUpdate: update,
+        //     timestamp: new Date().toISOString()
+        //   })
+        // });
+      } catch (error) {
+        console.error(`Failed to share stream with ${sportsbook.name}:`, error);
+      }
+    });
+
+    await Promise.allSettled(promises);
+  }
+
+  // Get sharing status for a game
+  getSharingStatus(gameId: string): { isShared: boolean; sportsbooksCount: number; sportsbooks: string[] } {
+    const sharedWith = this.sharedStreams.get(gameId);
+    if (!sharedWith || sharedWith.size === 0) {
+      return { isShared: false, sportsbooksCount: 0, sportsbooks: [] };
+    }
+
+    const sportsbookNames = Array.from(sharedWith)
+      .map(id => this.externalSportsbooks.get(id)?.name)
+      .filter(name => name !== undefined) as string[];
+
+    return {
+      isShared: true,
+      sportsbooksCount: sharedWith.size,
+      sportsbooks: sportsbookNames
+    };
+  }
+
+  // Add new external sportsbook
+  addExternalSportsbook(sportsbook: ExternalSportsbook): void {
+    this.externalSportsbooks.set(sportsbook.id, sportsbook);
+  }
+
+  // Get all external sportsbooks
+  getExternalSportsbooks(): ExternalSportsbook[] {
+    return Array.from(this.externalSportsbooks.values());
+  }
+
+  // Get streaming partners (alias for external sportsbooks)
+  getStreamingPartners(): Array<{
+    id: string;
+    name: string;
+    active: boolean;
+    webhookUrl: string;
+    registeredAt: string;
+    lastActive?: string;
+    contractType?: string;
+  }> {
+    return Array.from(this.externalSportsbooks.values()).map(sb => ({
+      id: sb.id,
+      name: sb.name,
+      active: sb.active,
+      webhookUrl: sb.webhookUrl,
+      registeredAt: sb.registeredAt,
+      lastActive: new Date().toISOString(),
+      contractType: 'system-controlled'
+    }));
+  }
+
+  // Deploy streaming to betting sites with system contract control
+  deployToBettingSites(): { deployed: number; contracts: string[] } {
+    const activeSites = Array.from(this.externalSportsbooks.values())
+      .filter(sb => sb.active);
+
+    return {
+      deployed: activeSites.length,
+      contracts: activeSites.map(sb => `contract_${sb.id}_${Date.now()}`)
+    };
+  }
+
+  // Get active streams for API responses
+  getActiveStreams(): StreamingContract[] {
+    return Array.from(this.contracts.values()).filter(c => c.status === 'active');
+  }
+
+  // Get all streams (alias for getActiveStreams)
+  getAllStreams(): StreamingContract[] {
+    return Array.from(this.contracts.values());
+  }
+
+  stopGameStream(gameId: string): void {
+    const interval = this.activeStreams.get(gameId);
+    if (interval) {
+      clearInterval(interval);
+      console.log(`Live stream stopped for game ${gameId}`);
+      this.activeStreams.delete(gameId);
+      this.sharedStreams.delete(gameId);
+      this.streamFailures.delete(gameId);
+    }
+  }
+
+  stopAllStreams(): void {
+    this.activeStreams.forEach((interval, gameId) => {
+      if (interval) {
+        clearInterval(interval);
+      }
+      console.log(`Stopping stream for game ${gameId}`);
+    });
+    this.activeStreams.clear();
+    this.sharedStreams.clear();
+    this.streamFailures.clear();
+  }
+
+  // Grant Amazon Prime stream access when user places a bet
+  grantStreamAccess(userId: string, gameId: string, betId: string): StreamAccess {
+    const amazonPrimeStreamUrl = this.generateAmazonPrimeUrl(gameId);
+
+    const access: StreamAccess = {
+      userId,
+      gameId,
+      accessGrantedAt: new Date().toISOString(),
+      betId,
+      amazonPrimeStreamUrl
+    };
+
+    if (!this.streamAccess.has(userId)) {
+      this.streamAccess.set(userId, []);
+    }
+
+    this.streamAccess.get(userId)!.push(access);
+
+    console.log(`Amazon Prime stream access granted to user ${userId} for game ${gameId}`);
+    this.emit('streamAccessGranted', access);
+
+    return access;
+  }
+
+  // Generate Amazon Prime Video URL for game stream
+  private generateAmazonPrimeUrl(gameId: string): string {
+    // In production, this would integrate with Amazon Prime Video API
+    // Using independent writer partnership deal credentials
+    const baseUrl = 'https://www.amazon.com/gp/video/detail';
+    const streamToken = Buffer.from(`youngmeat-${gameId}-${Date.now()}`).toString('base64');
+
+    return `${baseUrl}/${gameId}?autoplay=1&token=${streamToken}&partner=youngmeat-llc`;
+  }
+
+  // Check if user has stream access for a game
+  hasStreamAccess(userId: string, gameId: string): boolean {
+    const userAccess = this.streamAccess.get(userId);
+    if (!userAccess) return false;
+
+    return userAccess.some(access => access.gameId === gameId);
+  }
+
+  // Get Amazon Prime stream URL for user and game
+  getAmazonPrimeUrl(userId: string, gameId: string): string | null {
+    const userAccess = this.streamAccess.get(userId);
+    if (!userAccess) return null;
+
+    const access = userAccess.find(a => a.gameId === gameId);
+    return access ? access.amazonPrimeStreamUrl : null;
+  }
+
+  // Get all stream access for a user
+  getUserStreamAccess(userId: string): StreamAccess[] {
+    return this.streamAccess.get(userId) || [];
+  }
+
+  // Get stream content for contracts
+  async getStreamContent(): Promise<Array<{
+    id: string;
+    name: string;
+    sport: string;
+    status: string;
+    url: string;
+    partnerId?: string;
+  }>> {
+    const content: Array<{
+      id: string;
+      name: string;
+      sport: string;
+      status: string;
+      url: string;
+      partnerId?: string;
+    }> = [];
+
+    // Add active game streams
+    this.activeStreams.forEach((_, gameId) => {
+      content.push({
+        id: gameId,
+        name: `Game ${gameId}`,
+        sport: 'NBA',
+        status: 'live',
+        url: `/streaming/game/${gameId}`
+      });
+    });
+
+    // Add external sportsbook content
+    this.externalSportsbooks.forEach(sb => {
+      if (sb.active) {
+        content.push({
+          id: `content_${sb.id}`,
+          partnerId: sb.id,
+          name: `${sb.name} Stream`,
+          sport: 'Multi-Sport',
+          status: 'active',
+          url: sb.webhookUrl
+        });
+      }
+    });
+
+    return content;
   }
 }
 
-export const streamingService = StreamingService.getInstance();
+export const streamingService = new StreamingService();
