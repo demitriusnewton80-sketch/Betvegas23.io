@@ -189,4 +189,60 @@ router.get('/scan-portal', (req: Request, res: Response) => {
   });
 });
 
+// Public content control view
+router.get('/content-control/public', (req: Request, res: Response) => {
+  try {
+    const publicContent = {
+      domains: [
+        { name: 'steve.walturn.com', status: 'active', type: 'custom' },
+        { name: 'BettingSites™', status: 'active', type: 'brand' },
+        { name: 'Replit Deployment', status: 'active', type: 'platform' }
+      ],
+      content: [
+        {
+          id: 'content_sportsbook_public',
+          title: 'Live Sportsbook Feed',
+          type: 'stream',
+          accessLevel: 'public',
+          fccCompliant: true,
+          encryptionEnabled: false
+        },
+        {
+          id: 'content_espn_public',
+          title: 'ESPN Sports Data',
+          type: 'stream',
+          accessLevel: 'public',
+          fccCompliant: true,
+          encryptionEnabled: false
+        },
+        {
+          id: 'content_radio_public',
+          title: 'Sports Radio Streams',
+          type: 'media',
+          accessLevel: 'public',
+          fccCompliant: true,
+          encryptionEnabled: true
+        }
+      ],
+      stats: {
+        totalContent: 6,
+        publicContent: 4,
+        encryptedContent: 3,
+        fccCompliance: 100
+      },
+      fccEntity: '20130314143016'
+    };
+
+    res.json({
+      success: true,
+      ...publicContent
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to load content'
+    });
+  }
+});
+
 export default router;
