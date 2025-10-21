@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Boxing & UFC Betting Hub - Young Meeat LLC</title>
+    <title>YoungMeaat LLC Sports Book Enterprise Hub - Boxing & UFC Betting</title>
     <link rel="stylesheet" href="/styles/unified-sportsbook.css">
     <style>
         .fight-card {
@@ -326,7 +325,7 @@
             }
 
             const container = document.getElementById('fightsContainer');
-            
+
             if (filteredFights.length === 0) {
                 container.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 40px;">No fights available in this category</p>';
                 return;
@@ -406,13 +405,13 @@
 
         function selectFighter(fightId, fighter, odds) {
             selectedFights.set(fightId, { fighter, odds });
-            
+
             const card = event.target.closest('.fight-card');
             card.querySelectorAll('.odds-option').forEach(opt => opt.classList.remove('selected'));
             event.target.closest('.odds-option').classList.add('selected');
-            
+
             document.getElementById(`bet-${fightId}`).classList.add('active');
-            
+
             const amountInput = document.getElementById(`amount-${fightId}`);
             amountInput.addEventListener('input', () => updatePayout(fightId, odds));
         }
@@ -476,7 +475,7 @@
 
         function renderMyBets() {
             const betsList = document.getElementById('betsList');
-            
+
             if (myBets.length === 0) {
                 betsList.innerHTML = '<p style="color: var(--text-secondary);">No bets placed yet</p>';
                 return;
