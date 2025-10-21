@@ -54,6 +54,7 @@ import leedsExportRoutes from './routes/leeds-export.js';
 import waveStreamAssemblyRoutes from './routes/wave-stream-assembly.js';
 import radioBroadcastDeploymentRoutes from './routes/radio-broadcast-deployment.js'; // Import the new route
 import unifiedStylesheetRouter from './routes/unified-stylesheet.js';
+import phoneAppBridgeRouter from './routes/phone-app-bridge.js'; // Import the new route
 
 // Initialize core systems
 const __filename = fileURLToPath(import.meta.url);
@@ -139,6 +140,8 @@ try {
   app.use('/radio-broadcast-deployment', radioBroadcastDeploymentRoutes); // Mount the new route
   // Unified Stylesheet API
   app.use('/api/stylesheet', unifiedStylesheetRouter);
+  // Mount phone app bridge routes
+  app.use('/api/phone-app-bridge', phoneAppBridgeRouter);
   console.log('✅ All API routes registered successfully');
 } catch (error) {
   console.error('❌ Error registering routes:', error);

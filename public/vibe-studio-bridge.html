@@ -1,0 +1,409 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe Studio Bridge | Young Meeat LLC</title>
+    <script src="/js/api-config.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .fcc-badge {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid #22c55e;
+            color: #22c55e;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .section {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #60a5fa;
+            margin-bottom: 20px;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .app-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .app-card.active {
+            border-color: #22c55e;
+        }
+
+        .app-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .app-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .app-status {
+            font-size: 12px;
+            color: #22c55e;
+            margin-bottom: 10px;
+        }
+
+        .app-status.background {
+            color: #f59e0b;
+        }
+
+        .session-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(59, 130, 246, 0.3);
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Vibe Studio Bridge</h1>
+            <p>Build from your phone apps running in the background</p>
+            <span class="fcc-badge">FCC: 20130314143016</span>
+            <span class="fcc-badge">Phone Integration Active</span>
+        </div>
+
+        <div class="section">
+            <h2>📱 Connected Phone Apps</h2>
+            <div id="appsContainer">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Scanning phone apps...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎬 Vibe Studio Sessions</h2>
+            <div id="sessionsContainer">
+                <p style="opacity: 0.7;">No active sessions</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🚀 Build from Vibe Studio</h2>
+            <div class="input-group">
+                <label>Session ID</label>
+                <select id="sessionSelect">
+                    <option value="">Select a session</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Project Name</label>
+                <input type="text" id="projectName" value="Young Meeat LLC - Mobile Build">
+            </div>
+            <div class="input-group">
+                <label>Assets (comma-separated)</label>
+                <input type="text" id="assets" placeholder="track1.mp3, video1.mp4">
+            </div>
+            <div class="input-group">
+                <label>Output Format</label>
+                <select id="outputFormat">
+                    <option value="mp3">MP3</option>
+                    <option value="wav">WAV</option>
+                    <option value="mp4">MP4</option>
+                    <option value="webm">WebM</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>
+                    <input type="checkbox" id="exportToCloud" checked>
+                    Export to Cloud Storage
+                </label>
+            </div>
+            <button class="btn btn-success" onclick="buildFromVibeStudio()">🎵 Build Project</button>
+            <button class="btn" onclick="exportToReplit()">📤 Export to Replit</button>
+        </div>
+    </div>
+
+    <script>
+        async function loadApps() {
+            try {
+                const response = await fetch(`${API_BASE}/phone-app-bridge/apps`);
+                const data = await response.json();
+
+                const container = document.getElementById('appsContainer');
+
+                if (data.success && data.apps.length > 0) {
+                    container.innerHTML = `
+                        <div class="app-grid">
+                            ${data.apps.map(app => `
+                                <div class="app-card ${app.isRunning ? 'active' : ''}">
+                                    <div class="app-icon">📱</div>
+                                    <div class="app-name">${app.name}</div>
+                                    <div class="app-status ${app.isBackground ? 'background' : ''}">
+                                        ${app.isRunning ? '● Running' : '○ Stopped'}
+                                        ${app.isBackground ? '(Background)' : ''}
+                                    </div>
+                                    <div style="font-size: 12px; opacity: 0.7;">
+                                        v${app.version || 'Unknown'}<br>
+                                        ${app.capabilities.join(', ')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = '<p style="opacity: 0.7;">No apps detected</p>';
+                }
+            } catch (error) {
+                console.error('Error loading apps:', error);
+            }
+        }
+
+        async function loadSessions() {
+            try {
+                const response = await fetch(`${API_BASE}/phone-app-bridge/vibe-studio/sessions`);
+                const data = await response.json();
+
+                const container = document.getElementById('sessionsContainer');
+                const select = document.getElementById('sessionSelect');
+
+                if (data.success && data.sessions.length > 0) {
+                    container.innerHTML = data.sessions.map(session => `
+                        <div class="session-card">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="font-weight: 700; margin-bottom: 5px;">
+                                        ${session.projectName}
+                                    </div>
+                                    <div style="font-size: 12px; opacity: 0.7;">
+                                        Session: ${session.sessionId}<br>
+                                        Status: ${session.status}<br>
+                                        Last Sync: ${new Date(session.lastSync).toLocaleString()}<br>
+                                        Assets: ${session.syncedAssets.length}
+                                    </div>
+                                </div>
+                                <button class="btn" onclick="disconnectSession('${session.sessionId}')">
+                                    Disconnect
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    select.innerHTML = '<option value="">Select a session</option>' +
+                        data.sessions.map(s => `
+                            <option value="${s.sessionId}">${s.projectName} (${s.sessionId})</option>
+                        `).join('');
+                } else {
+                    container.innerHTML = '<p style="opacity: 0.7;">No active sessions</p>';
+                }
+            } catch (error) {
+                console.error('Error loading sessions:', error);
+            }
+        }
+
+        async function buildFromVibeStudio() {
+            const sessionId = document.getElementById('sessionSelect').value;
+            const projectName = document.getElementById('projectName').value;
+            const assets = document.getElementById('assets').value.split(',').map(a => a.trim());
+            const outputFormat = document.getElementById('outputFormat').value;
+            const exportToCloud = document.getElementById('exportToCloud').checked;
+
+            if (!sessionId) {
+                alert('Please select a session');
+                return;
+            }
+
+            if (!projectName || assets.length === 0) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/phone-app-bridge/vibe-studio/build`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId,
+                        projectName,
+                        assets,
+                        outputFormat,
+                        exportToCloud
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Build Complete!\n\nProject: ${data.build.projectName}\nAssets: ${data.build.assets.length}\nFormat: ${data.build.outputFormat}\n\n${exportToCloud ? 'Exported to cloud storage' : 'Build saved locally'}`);
+                    loadSessions();
+                } else {
+                    alert('Build failed: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error building project: ' + error.message);
+            }
+        }
+
+        async function exportToReplit() {
+            const sessionId = document.getElementById('sessionSelect').value;
+
+            if (!sessionId) {
+                alert('Please select a session');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/phone-app-bridge/vibe-studio/export`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId,
+                        targetPath: '/public/vibe-studio-exports'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Exported to Replit!\n\nLocation: ${data.targetPath}`);
+                } else {
+                    alert('Export failed: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error exporting: ' + error.message);
+            }
+        }
+
+        async function disconnectSession(sessionId) {
+            try {
+                const response = await fetch(`${API_BASE}/phone-app-bridge/vibe-studio/session/${sessionId}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+                alert(data.message);
+                loadSessions();
+            } catch (error) {
+                alert('Error disconnecting: ' + error.message);
+            }
+        }
+
+        // Auto-refresh
+        setInterval(() => {
+            loadApps();
+            loadSessions();
+        }, 10000);
+
+        // Initial load
+        window.addEventListener('load', () => {
+            loadApps();
+            loadSessions();
+        });
+    </script>
+</body>
+</html>
