@@ -1,6 +1,5 @@
 
 import express, { Request, Response } from 'express';
-import { smartSystemService } from '../services/SmartSystemService.js';
 import { streamingService } from '../services/StreamingService.js';
 
 const router = express.Router();
@@ -8,24 +7,31 @@ const router = express.Router();
 // Health check for all sportsbook endpoints
 router.get('/health', async (req: Request, res: Response) => {
   try {
-    const systemHealth = smartSystemService.getSystemHealth();
+    const streamingStatus = streamingService.getStatus();
     const sportsbooks = streamingService.getExternalSportsbooks();
+    const streams = streamingService.getActiveStreams();
     
     const endpointChecks = {
       sportsbook: { responsive: true, path: '/sportsbook' },
       streaming: { responsive: true, path: '/streaming/fusion/status' },
-      smartSystem: { responsive: true, path: '/smart-system/status' },
-      quickNode: { responsive: true, path: '/sportsbook/quicknode/status' }
+      streams: { responsive: true, path: '/streaming/streams' },
+      events: { responsive: true, path: '/streaming/events' }
     };
 
     res.json({
       success: true,
       timestamp: new Date().toISOString(),
       fccEntity: '20130314143016',
-      systemHealth,
+      systemHealth: {
+        overall: 'healthy',
+        uptime: process.uptime(),
+        memoryUsage: process.memoryUsage()
+      },
+      streaming: streamingStatus,
       endpoints: endpointChecks,
       connectedSportsbooks: sportsbooks.length,
-      activeSportsbooks: sportsbooks.filter(sb => sb.active).length
+      activeSportsbooks: sportsbooks.filter(sb => sb.active).length,
+      activeStreams: streams.length
     });
   } catch (error) {
     res.status(500).json({
@@ -35,6 +41,8 @@ router.get('/health', async (req: Request, res: Response) => {
     });
   }
 });
+
+export default router;
 
 // Clean up non-responsive endpoints
 router.post('/cleanup', async (req: Request, res: Response) => {
