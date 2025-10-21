@@ -3,6 +3,7 @@ import { smartTroubleshootingCore } from '../core/SmartTroubleshootingCore.js';
 import { errorRecoverySystem } from '../core/ErrorRecoverySystem.js';
 import { productionMappingCore } from '../core/ProductionMappingCore.js';
 import { appCore } from '../core/AppCore.js';
+import { cookieSanitizer } from './cookie-sanitizer.js';
 
 export class AutoTroubleshoot {
   static async runFullDiagnostics() {
@@ -12,8 +13,20 @@ export class AutoTroubleshoot {
       timestamp: new Date().toISOString(),
       issues: [] as string[],
       fixes: [] as string[],
-      errors: [] as any[]
+      errors: [] as any[],
+      cookiesSanitized: 0,
+      badIntelRemoved: 0
     };
+
+    // 0. Sanitize cookies and remove bad intel
+    const cookieStats = cookieSanitizer.getStats();
+    if (cookieStats.blockedCookies > 0) {
+      results.issues.push(`${cookieStats.blockedCookies} bad intel cookie(s) detected`);
+      const cleared = cookieSanitizer.clearBadIntel();
+      results.fixes.push(`Removed ${cleared} bad intel cookie(s)`);
+      results.badIntelRemoved = cleared;
+    }
+    results.cookiesSanitized = cookieStats.sanitizedCookies;
 
     // 1. Check Smart Troubleshooting status
     const troubleStatus = smartTroubleshootingCore.getStatus();
@@ -102,6 +115,10 @@ export class AutoTroubleshoot {
 
   static async fixAll() {
     console.log('🛠️ Running auto-fix for all systems...');
+    
+    // Clear bad intel cookies first
+    console.log('🧹 Clearing bad intel from cookies...');
+    cookieSanitizer.clearBadIntel();
     
     // Enable all auto-recovery
     smartTroubleshootingCore.setAutoFix(true);

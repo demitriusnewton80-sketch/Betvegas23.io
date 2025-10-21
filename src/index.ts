@@ -56,6 +56,7 @@ import waveStreamAssemblyRoutes from './routes/wave-stream-assembly.js';
 import radioBroadcastDeploymentRoutes from './routes/radio-broadcast-deployment.js'; // Import the new route
 import unifiedStylesheetRouter from './routes/unified-stylesheet.js';
 import autoTroubleshootRoutes from './routes/auto-troubleshoot.js';
+import mappingSyncRoutes from './routes/mapping-sync.js';
 
 // Initialize core systems
 const __filename = fileURLToPath(import.meta.url);
@@ -141,6 +142,7 @@ try {
   app.use('/radio-broadcast-deployment', radioBroadcastDeploymentRoutes); // Mount the new route
   app.use('/falcon-broadcast', falconBroadcastRouter); // Add Falcon Broadcast route
   app.use('/auto-troubleshoot', autoTroubleshootRoutes);
+app.use('/mapping-sync', mappingSyncRoutes);
   // Unified Stylesheet API
   app.use('/api/stylesheet', unifiedStylesheetRouter);
   console.log('✅ All API routes registered successfully');
