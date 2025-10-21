@@ -137,6 +137,7 @@ try {
   app.use('/leeds-export', leedsExportRoutes);
   app.use('/wave-stream-assembly', waveStreamAssemblyRoutes);
   app.use('/radio-broadcast-deployment', radioBroadcastDeploymentRoutes); // Mount the new route
+  app.use('/falcon-broadcast', falconBroadcastRouter); // Add Falcon Broadcast route
   // Unified Stylesheet API
   app.use('/api/stylesheet', unifiedStylesheetRouter);
   console.log('✅ All API routes registered successfully');

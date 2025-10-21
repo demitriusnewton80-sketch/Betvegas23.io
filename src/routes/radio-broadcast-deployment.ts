@@ -48,7 +48,7 @@ router.post('/deploy/league/:league', async (req: Request, res: Response) => {
 router.post('/deploy/sportsbook/:sportsbookId', async (req: Request, res: Response) => {
   try {
     const { sportsbookId } = req.params;
-    const deploymentId = await radioBroadcastDeploymentService.deployToSportsbook(sportsbookId);
+    const deploymentId = await radioBroadcastDeploymentService.deploySingleSportsbook(sportsbookId);
 
     if (!deploymentId) {
       return res.status(400).json({

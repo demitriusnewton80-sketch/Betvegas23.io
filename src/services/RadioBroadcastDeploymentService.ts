@@ -128,7 +128,7 @@ export class RadioBroadcastDeploymentService extends EventEmitter {
     return deploymentId;
   }
 
-  async deployToSportsbook(sportsbookId: string): Promise<string | null> {
+  async deploySingleSportsbook(sportsbookId: string): Promise<string | null> {
     const sportsbooks = streamingService.getStreamingPartners();
     const sportsbook = sportsbooks.find(s => s.id === sportsbookId);
 

@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Broadcast Control - Young Meeat LLC</title>
+    <link rel="stylesheet" href="/styles/unified-sportsbook.css">
+</head>
+<body>
+    <div class="sportsbook-header">
+        <h1>📡 Public Broadcast Control</h1>
+        <p>Manage All Broadcasting Channels</p>
+        <div>
+            <span class="badge badge-fcc">FCC: 20130314143016</span>
+            <span class="badge badge-live">
+                <span class="pulse pulse-live"></span>
+                Broadcasting
+            </span>
+        </div>
+    </div>
+
+    <div class="sportsbook-container">
+        <div class="sportsbook-card">
+            <h2>🎙️ Broadcasting Channels</h2>
+            <div id="broadcastChannels" style="margin-top: 20px;">
+                <p style="opacity: 0.7;">Loading broadcast channels...</p>
+            </div>
+        </div>
+
+        <div class="sportsbook-card" style="margin-top: 30px;">
+            <h2>⚙️ Controls</h2>
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button class="btn btn-success" onclick="navigate('/public-broadcasting-build')">
+                    🚀 Build & Deploy
+                </button>
+                <button class="btn btn-primary" onclick="navigate('/falcon-broadcast-dashboard.html')">
+                    🦅 Falcon Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        function navigate(path) {
+            window.location.href = path;
+        }
+
+        async function loadBroadcastChannels() {
+            try {
+                const response = await fetch(`${API_BASE}/streaming/partners`);
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('broadcastChannels').innerHTML = data.partners.map(p => `
+                        <div style="padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px; margin-bottom: 10px;">
+                            <strong>${p.name}</strong>
+                            <span style="float: right; color: ${p.active ? '#22c55e' : '#ef4444'}">
+                                ${p.active ? '● ACTIVE' : '○ INACTIVE'}
+                            </span>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading channels:', error);
+            }
+        }
+
+        window.addEventListener('load', loadBroadcastChannels);
+    </script>
+</body>
+</html>
