@@ -1,0 +1,504 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe Studio Public Publishing | Young Meeat LLC</title>
+    <script src="/js/api-config.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 16px;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .fcc-badge {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid #22c55e;
+            color: #22c55e;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .status-badge {
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid #8b5cf6;
+            color: #a78bfa;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .section {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #60a5fa;
+            margin-bottom: 25px;
+            font-size: 28px;
+        }
+
+        .publish-form {
+            display: grid;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-group label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 14px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+        }
+
+        .published-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .content-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .content-card:hover {
+            border-color: #8b5cf6;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.2);
+        }
+
+        .content-card h3 {
+            color: #a78bfa;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .content-meta {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .content-url {
+            background: rgba(59, 130, 246, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            word-break: break-all;
+            color: #60a5fa;
+            margin-top: 15px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(59, 130, 246, 0.3);
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid #22c55e;
+            color: #22c55e;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid #ef4444;
+            color: #f87171;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Vibe Studio Public Publishing</h1>
+            <p style="font-size: 18px; margin: 15px 0; opacity: 0.9;">Transform your Vibe Studio projects into public content</p>
+            <span class="fcc-badge">FCC: 20130314143016</span>
+            <span class="status-badge">Core System Connected</span>
+        </div>
+
+        <div class="success-message" id="successMessage"></div>
+        <div class="error-message" id="errorMessage"></div>
+
+        <div class="section">
+            <h2>📤 Publish New Content</h2>
+            <form class="publish-form" id="publishForm">
+                <div class="form-group">
+                    <label>Vibe Studio URL</label>
+                    <input type="text" id="vibeStudioUrl" value="https://my.vibe-studio.ai/home?id=68f7aff618b6f61ec93dfa1f" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Project Name</label>
+                    <input type="text" id="projectName" placeholder="My Awesome Project" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="description" placeholder="Describe your project..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Content Type</label>
+                    <select id="contentType">
+                        <option value="audio-visual">Audio/Visual</option>
+                        <option value="music">Music</option>
+                        <option value="video">Video</option>
+                        <option value="podcast">Podcast</option>
+                        <option value="creative">Creative Content</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="makePublic" checked>
+                        Make this content publicly accessible
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-success">🚀 Publish to Public View</button>
+            </form>
+        </div>
+
+        <div class="section">
+            <h2>📺 Published Content</h2>
+            <div id="publishedContent">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading published content...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Core System Status</h2>
+            <div id="coreStatus">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading system status...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSessionId = null;
+
+        async function initializePublishing() {
+            try {
+                // Extract Vibe Studio ID from URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const vibeStudioId = urlParams.get('id') || '68f7aff618b6f61ec93dfa1f';
+
+                // Connect to Vibe Studio
+                const connectResponse = await fetch(`${API_BASE}/vibe-studio-transformer/connect`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: 'public-user',
+                        vibeStudioId: vibeStudioId,
+                        projectName: 'Public Publishing Session'
+                    })
+                });
+
+                const connectData = await connectResponse.json();
+                
+                if (connectData.success) {
+                    currentSessionId = connectData.sessionId;
+                    console.log('✅ Connected to Vibe Studio:', currentSessionId);
+                    showSuccess('Successfully connected to Vibe Studio transformer');
+                }
+            } catch (error) {
+                console.error('Failed to initialize:', error);
+                showError('Failed to connect to Vibe Studio transformer');
+            }
+        }
+
+        async function publishContent(formData) {
+            if (!currentSessionId) {
+                await initializePublishing();
+            }
+
+            try {
+                // Import content from Vibe Studio
+                const importResponse = await fetch(`${API_BASE}/vibe-studio-transformer/import`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: currentSessionId,
+                        sourceUrl: formData.vibeStudioUrl,
+                        contentData: {
+                            projectName: formData.projectName,
+                            description: formData.description,
+                            contentType: formData.contentType,
+                            isPublic: formData.makePublic,
+                            publishedAt: new Date().toISOString()
+                        }
+                    })
+                });
+
+                const importData = await importResponse.json();
+
+                if (importData.success) {
+                    showSuccess(`Content published successfully! Content ID: ${importData.contentId}`);
+                    loadPublishedContent();
+                    document.getElementById('publishForm').reset();
+                } else {
+                    showError('Failed to publish content: ' + importData.error);
+                }
+            } catch (error) {
+                console.error('Publishing error:', error);
+                showError('Error publishing content: ' + error.message);
+            }
+        }
+
+        async function loadPublishedContent() {
+            try {
+                const response = await fetch(`${API_BASE}/vibe-studio-transformer/content`);
+                const data = await response.json();
+
+                const container = document.getElementById('publishedContent');
+
+                if (data.success && data.content.length > 0) {
+                    container.innerHTML = `
+                        <div class="published-content">
+                            ${data.content.map(content => `
+                                <div class="content-card">
+                                    <h3>${content.contentData?.projectName || 'Untitled Project'}</h3>
+                                    <div class="content-meta">
+                                        📁 Type: ${content.contentData?.contentType || 'Unknown'}
+                                    </div>
+                                    <div class="content-meta">
+                                        🔗 Session: ${content.sessionId}
+                                    </div>
+                                    <div class="content-meta">
+                                        ${content.deliveredToCore ? '✅ Delivered to Core' : '⏳ Pending'}
+                                    </div>
+                                    <div class="content-url">
+                                        ${content.sourceUrl}
+                                    </div>
+                                    <div style="margin-top: 15px; font-size: 12px; opacity: 0.7;">
+                                        Published: ${new Date(content.contentData?.publishedAt || content.contentData?.importedAt).toLocaleString()}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = '<p style="text-align: center; opacity: 0.7;">No published content yet</p>';
+                }
+            } catch (error) {
+                console.error('Error loading content:', error);
+                document.getElementById('publishedContent').innerHTML = '<p style="color: #ef4444;">Error loading content</p>';
+            }
+        }
+
+        async function loadCoreStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/vibe-studio-transformer/core-context`);
+                const data = await response.json();
+
+                const container = document.getElementById('coreStatus');
+
+                if (data.success) {
+                    const ctx = data.context;
+                    container.innerHTML = `
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                            <div style="background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: 12px; border: 2px solid rgba(34, 197, 94, 0.3);">
+                                <h3 style="color: #22c55e; margin-bottom: 10px;">System Health</h3>
+                                <div style="font-size: 14px; opacity: 0.9;">
+                                    Status: ${ctx.system.health}<br>
+                                    Health Score: ${ctx.system.healthScore}%<br>
+                                    Active: ${ctx.system.activeConnections}
+                                </div>
+                            </div>
+                            <div style="background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: 12px; border: 2px solid rgba(139, 92, 246, 0.3);">
+                                <h3 style="color: #a78bfa; margin-bottom: 10px;">Transformer</h3>
+                                <div style="font-size: 14px; opacity: 0.9;">
+                                    Active: ${ctx.transformer.isActive ? '✅' : '❌'}<br>
+                                    Transformations: ${ctx.transformer.totalTransformations}<br>
+                                    Delivered: ${ctx.transformer.deliveredCount}
+                                </div>
+                            </div>
+                            <div style="background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: 12px; border: 2px solid rgba(59, 130, 246, 0.3);">
+                                <h3 style="color: #60a5fa; margin-bottom: 10px;">Vibe Studio</h3>
+                                <div style="font-size: 14px; opacity: 0.9;">
+                                    Sessions: ${ctx.vibeStudio.activeSessions}<br>
+                                    Total Content: ${ctx.vibeStudio.totalContent}<br>
+                                    Published: ${ctx.vibeStudio.deliveredContent}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading status:', error);
+            }
+        }
+
+        function showSuccess(message) {
+            const el = document.getElementById('successMessage');
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        }
+
+        function showError(message) {
+            const el = document.getElementById('errorMessage');
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        }
+
+        // Form submission
+        document.getElementById('publishForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                vibeStudioUrl: document.getElementById('vibeStudioUrl').value,
+                projectName: document.getElementById('projectName').value,
+                description: document.getElementById('description').value,
+                contentType: document.getElementById('contentType').value,
+                makePublic: document.getElementById('makePublic').checked
+            };
+
+            await publishContent(formData);
+        });
+
+        // Auto-refresh
+        setInterval(() => {
+            loadPublishedContent();
+            loadCoreStatus();
+        }, 15000);
+
+        // Initial load
+        window.addEventListener('load', () => {
+            initializePublishing();
+            loadPublishedContent();
+            loadCoreStatus();
+        });
+    </script>
+</body>
+</html>
