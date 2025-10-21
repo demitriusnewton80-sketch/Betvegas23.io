@@ -230,10 +230,10 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
-║   🎯 BettingSites™ - Live Sports Streaming & Betting    ║
+║   🏆 YoungMeaat LLC Sports Book Enterprise Hub          ║
 ║                                                           ║
 ║   Powered by Amazon Web Services (AWS)                   ║
-║   Young Meeat LLC | FCC: 20130314143016                  ║
+║   FCC Entity: 20130314143016                             ║
 ║                                                           ║
 ║   Server running on http://0.0.0.0:${PORT}                    ║
 ║                                                           ║
