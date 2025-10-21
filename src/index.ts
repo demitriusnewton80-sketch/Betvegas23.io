@@ -36,6 +36,7 @@ import contentIntegrityRouter from './routes/content-integrity.js';
 import { contentIntegrityService } from './services/ContentIntegrityService.js';
 import jsonSyncRoutes from './routes/json-sync.js';
 import workflowLandscapeRouter from './routes/workflow-landscape.js';
+import productionMappingRoutes from './routes/production-mapping.js';
 import smartCommunicationFusionRouter from './routes/smart-communication-fusion.js';
 import applePartnershipRouter from './routes/apple-partnership.js';
 import falconBroadcastRouter from './routes/falcon-broadcast.js';
@@ -294,6 +295,7 @@ Promise.resolve().then(async () => {
 
 // Mount workflow landscape endpoint
 app.use('/workflow-landscape', workflowLandscapeRouter);
+app.use('/production-mapping', productionMappingRoutes);
 app.use('/terminal-bridge', terminalBridgeRoutes);
 app.use('/wave-stream-assembly', waveStreamAssemblyRoutes);
 
