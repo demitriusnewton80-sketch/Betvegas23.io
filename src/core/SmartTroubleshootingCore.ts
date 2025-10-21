@@ -1,8 +1,8 @@
 
 import { EventEmitter } from 'events';
 import { errorRecoverySystem } from './ErrorRecoverySystem.js';
-import { smartCommunication } from '../utils/smart-communication.js';
 import { appCore } from './AppCore.js';
+import { smartCommunication } from '../utils/smart-communication.js';
 
 interface TroubleshootingSession {
   id: string;
@@ -379,5 +379,7 @@ export class SmartTroubleshootingCore extends EventEmitter {
     }
   }
 }
+
+export const smartTroubleshootingCore = SmartTroubleshootingCore.getInstance();
 
 export const smartTroubleshootingCore = SmartTroubleshootingCore.getInstance();

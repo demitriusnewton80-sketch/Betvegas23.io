@@ -338,3 +338,5 @@ export class ErrorRecoverySystem extends EventEmitter {
 }
 
 export const errorRecoverySystem = ErrorRecoverySystem.getInstance();
+
+export const errorRecoverySystem = ErrorRecoverySystem.getInstance();

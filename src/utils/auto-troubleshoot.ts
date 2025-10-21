@@ -4,6 +4,7 @@ import { errorRecoverySystem } from '../core/ErrorRecoverySystem.js';
 import { productionMappingCore } from '../core/ProductionMappingCore.js';
 import { appCore } from '../core/AppCore.js';
 import { cookieSanitizer } from './cookie-sanitizer.js';
+import { smartTunnelCore } from '../core/SmartTunnelCore.js';
 
 export class AutoTroubleshoot {
   static async runFullDiagnostics() {

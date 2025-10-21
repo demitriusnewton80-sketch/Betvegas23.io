@@ -8,6 +8,7 @@ import { remoteStreamingControlCore } from './RemoteStreamingControlCore.js';
 import { smartTunnelCore } from './SmartTunnelCore.js';
 import { terminalBridgeCore } from './TerminalBridgeCore.js';
 import { appCore } from './AppCore.js';
+import { errorRecoverySystem } from './ErrorRecoverySystem.js';
 
 interface ProductionMapping {
   id: string;
@@ -666,5 +667,7 @@ export class ProductionMappingCore extends EventEmitter {
     console.log('🛑 Production Mapping Core shutdown');
   }
 }
+
+export const productionMappingCore = ProductionMappingCore.getInstance();
 
 export const productionMappingCore = ProductionMappingCore.getInstance();
