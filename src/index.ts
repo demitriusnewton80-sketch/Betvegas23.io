@@ -22,6 +22,8 @@ import parlayRoutes from './routes/parlay.js';
 import smartSystemRoutes from './routes/smart-system.js';
 import smartTroubleshootingRoutes from './routes/smart-troubleshooting.js';
 import fusionTroubleshootingRoutes from './routes/fusion-troubleshooting.js';
+import transformerRoutes from './routes/transformer.js';
+import vibeStudioTransformerRoutes from './routes/vibe-studio-transformer.js';
 import wifiWeb3FusionRoutes from './routes/wifi-web3-fusion.js';
 import errorRecoveryRoutes from './routes/error-recovery.js';
 import apiTroubleshootingRoutes from './routes/api-troubleshooting.js';
@@ -117,6 +119,8 @@ try {
   app.use('/smart-system', smartSystemRoutes);
   app.use('/smart-troubleshooting', smartTroubleshootingRoutes);
   app.use('/fusion-troubleshooting', fusionTroubleshootingRoutes);
+  app.use('/transformer', transformerRoutes);
+  app.use('/vibe-studio-transformer', vibeStudioTransformerRoutes);
   app.use('/wifi-web3-fusion', wifiWeb3FusionRoutes);
   app.use('/error-recovery', errorRecoveryRoutes);
   app.use('/api-troubleshooting', apiTroubleshootingRoutes);

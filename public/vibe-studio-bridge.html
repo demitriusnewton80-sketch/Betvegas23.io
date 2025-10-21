@@ -230,6 +230,83 @@
     </div>
 
     <script>
+        let currentSessionId = null;
+
+        async function loadCoreContext() {
+            try {
+                const response = await fetch(`${API_BASE}/vibe-studio-transformer/core-context`);
+                const data = await response.json();
+
+                if (data.success) {
+                    console.log('Core Context:', data.context);
+                    // Display core context in header
+                    const contextBadge = document.createElement('span');
+                    contextBadge.className = 'fcc-badge';
+                    contextBadge.textContent = `System Health: ${data.context.system.healthScore}%`;
+                    document.querySelector('.header').appendChild(contextBadge);
+                }
+            } catch (error) {
+                console.error('Failed to load core context:', error);
+            }
+        }
+
+        async function connectVibeStudio() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const vibeStudioId = urlParams.get('id') || '68f7aff618b6f61ec93dfa1f';
+            
+            try {
+                const response = await fetch(`${API_BASE}/vibe-studio-transformer/connect`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: 'current-user',
+                        vibeStudioId: vibeStudioId,
+                        projectName: 'Young Meeat LLC - Vibe Studio Integration'
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentSessionId = data.sessionId;
+                    console.log('✅ Vibe Studio connected:', currentSessionId);
+                    
+                    // Import content from Vibe Studio URL
+                    await importVibeStudioContent(vibeStudioId);
+                }
+            } catch (error) {
+                console.error('Failed to connect Vibe Studio:', error);
+            }
+        }
+
+        async function importVibeStudioContent(vibeStudioId) {
+            if (!currentSessionId) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/vibe-studio-transformer/import`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: currentSessionId,
+                        sourceUrl: `https://my.vibe-studio.ai/home?id=${vibeStudioId}`,
+                        contentData: {
+                            vibeStudioId: vibeStudioId,
+                            importType: 'transformer-integration',
+                            coreControl: true
+                        }
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Vibe Studio content imported and delivered to core system!');
+                }
+            } catch (error) {
+                console.error('Failed to import content:', error);
+            }
+        }
+
         async function loadApps() {
             try {
                 const response = await fetch(`${API_BASE}/phone-app-bridge/apps`);
@@ -401,6 +478,8 @@
 
         // Initial load
         window.addEventListener('load', () => {
+            loadCoreContext();
+            connectVibeStudio();
             loadApps();
             loadSessions();
         });
