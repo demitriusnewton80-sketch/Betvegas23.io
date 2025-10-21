@@ -152,6 +152,11 @@ try {
     res.sendFile(path.join(process.cwd(), 'public', 'public-broadcast-control.html'));
   });
 
+  // Public broadcasting build
+  app.get('/public-broadcasting-build', (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'public', 'public-broadcasting-build.html'));
+  });
+
 // Public domain builder
 app.get('/public-domain', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/public-domain-builder.html'));

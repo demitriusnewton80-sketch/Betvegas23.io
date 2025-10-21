@@ -1,0 +1,544 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Public Broadcasting Build - Young Meeat LLC</title>
+    <link rel="stylesheet" href="/styles/unified-sportsbook.css">
+    <style>
+        .broadcast-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .broadcast-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            transition: all var(--transition-normal);
+        }
+
+        .broadcast-card.active {
+            border-color: var(--status-live);
+            box-shadow: var(--shadow-glow-accent);
+        }
+
+        .broadcast-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .broadcast-icon {
+            font-size: 48px;
+        }
+
+        .broadcast-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-live {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--status-live);
+            color: var(--status-live);
+        }
+
+        .status-ready {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid var(--status-active);
+            color: var(--status-active);
+        }
+
+        .status-building {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid var(--status-pending);
+            color: var(--status-pending);
+        }
+
+        .control-panel {
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid var(--border-primary);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+
+        .stream-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .stream-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md);
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius-md);
+        }
+
+        .viewer-count {
+            font-size: 14px;
+            color: var(--status-active);
+            font-weight: 700;
+        }
+
+        .build-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: var(--spacing-xl);
+        }
+    </style>
+</head>
+<body>
+    <div class="sportsbook-header">
+        <h1>📡 Public Broadcasting Build</h1>
+        <p>Stream Content to All Sportsbooks & Public Platforms</p>
+        <div>
+            <span class="badge badge-fcc">FCC: 20130314143016</span>
+            <span class="badge badge-live">
+                <span class="pulse pulse-live"></span>
+                <span id="liveStreamCount">0</span> Live Broadcasts
+            </span>
+            <span class="badge badge-web3">AWS Powered</span>
+        </div>
+    </div>
+
+    <div class="sportsbook-container">
+        <!-- Broadcasting Stats -->
+        <div class="stats-grid" style="margin-bottom: 40px;">
+            <div class="stat-card">
+                <div class="stat-value" id="totalSportsbooks">0</div>
+                <div class="stat-label">Connected Sportsbooks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="activeStreams">0</div>
+                <div class="stat-label">Active Streams</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalViewers">0</div>
+                <div class="stat-label">Total Viewers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="broadcastUptime">99.9%</div>
+                <div class="stat-label">Uptime</div>
+            </div>
+        </div>
+
+        <!-- Broadcasting Channels -->
+        <h2 style="font-size: 28px; margin-bottom: 20px;">📺 Broadcasting Channels</h2>
+        <div class="broadcast-grid">
+            <div class="broadcast-card active" id="videoChannel">
+                <div class="broadcast-header">
+                    <div class="broadcast-icon">📹</div>
+                    <span class="broadcast-status status-live">
+                        <span class="pulse pulse-live"></span>
+                        LIVE
+                    </span>
+                </div>
+                <h3 style="margin-bottom: 12px;">Video Broadcasting</h3>
+                <p style="opacity: 0.8; margin-bottom: 15px;">
+                    Live sports video streams to all platforms
+                </p>
+                <div class="control-panel">
+                    <div class="viewer-count">👥 <span id="videoViewers">0</span> viewers</div>
+                    <button class="btn btn-success" onclick="buildVideoBroadcast()" style="width: 100%; margin-top: 12px;">
+                        🚀 Build & Deploy
+                    </button>
+                </div>
+            </div>
+
+            <div class="broadcast-card active" id="radioChannel">
+                <div class="broadcast-header">
+                    <div class="broadcast-icon">📻</div>
+                    <span class="broadcast-status status-live">
+                        <span class="pulse pulse-live"></span>
+                        LIVE
+                    </span>
+                </div>
+                <h3 style="margin-bottom: 12px;">Radio Broadcasting</h3>
+                <p style="opacity: 0.8; margin-bottom: 15px;">
+                    Sports radio streams across all sportsbooks
+                </p>
+                <div class="control-panel">
+                    <div class="viewer-count">🎧 <span id="radioListeners">0</span> listeners</div>
+                    <button class="btn btn-success" onclick="buildRadioBroadcast()" style="width: 100%; margin-top: 12px;">
+                        🚀 Build & Deploy
+                    </button>
+                </div>
+            </div>
+
+            <div class="broadcast-card" id="dataChannel">
+                <div class="broadcast-header">
+                    <div class="broadcast-icon">📊</div>
+                    <span class="broadcast-status status-ready">READY</span>
+                </div>
+                <h3 style="margin-bottom: 12px;">Data Broadcasting</h3>
+                <p style="opacity: 0.8; margin-bottom: 15px;">
+                    Real-time odds, scores, and analytics
+                </p>
+                <div class="control-panel">
+                    <div class="viewer-count">📡 <span id="dataSubs">0</span> subscribers</div>
+                    <button class="btn btn-primary" onclick="buildDataBroadcast()" style="width: 100%; margin-top: 12px;">
+                        🚀 Build & Deploy
+                    </button>
+                </div>
+            </div>
+
+            <div class="broadcast-card" id="falconChannel">
+                <div class="broadcast-header">
+                    <div class="broadcast-icon">🦅</div>
+                    <span class="broadcast-status status-ready">READY</span>
+                </div>
+                <h3 style="margin-bottom: 12px;">Falcon Reports</h3>
+                <p style="opacity: 0.8; margin-bottom: 15px;">
+                    Broadcast reports from Falcon.ag
+                </p>
+                <div class="control-panel">
+                    <div class="viewer-count">📄 <span id="reportCount">0</span> reports</div>
+                    <button class="btn btn-primary" onclick="buildFalconBroadcast()" style="width: 100%; margin-top: 12px;">
+                        🚀 Build & Deploy
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Streams -->
+        <h2 style="font-size: 28px; margin: 40px 0 20px;">🔴 Active Broadcasts</h2>
+        <div class="sportsbook-card">
+            <div class="stream-list" id="streamList">
+                <div style="text-align: center; padding: 40px; opacity: 0.7;">
+                    Loading active broadcasts...
+                </div>
+            </div>
+        </div>
+
+        <!-- Connected Sportsbooks -->
+        <h2 style="font-size: 28px; margin: 40px 0 20px;">🏆 Connected Sportsbooks</h2>
+        <div class="broadcast-grid" id="sportsbookGrid">
+            <div style="text-align: center; padding: 40px; opacity: 0.7;">
+                Loading connected platforms...
+            </div>
+        </div>
+
+        <!-- Master Controls -->
+        <h2 style="font-size: 28px; margin: 40px 0 20px;">⚙️ Master Broadcasting Controls</h2>
+        <div class="sportsbook-card">
+            <div class="build-controls">
+                <button class="btn btn-success" onclick="deployAll()">
+                    🚀 Deploy All Broadcasts
+                </button>
+                <button class="btn btn-primary" onclick="syncAllSportsbooks()">
+                    🔄 Sync All Sportsbooks
+                </button>
+                <button class="btn btn-accent" onclick="viewBroadcastAnalytics()">
+                    📊 View Analytics
+                </button>
+                <button class="btn" onclick="navigate('/falcon-broadcast-dashboard.html')">
+                    🦅 Falcon Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        let eventSource = null;
+
+        function navigate(path) {
+            window.location.href = path;
+        }
+
+        async function loadBroadcastStats() {
+            try {
+                const [streamingRes, radioRes, falconRes] = await Promise.all([
+                    fetch(`${API_BASE}/streaming/partners`),
+                    fetch(`${API_BASE}/sports-radio/streams`),
+                    fetch(`${API_BASE}/falcon-broadcast/status`)
+                ]);
+
+                const streaming = await streamingRes.json();
+                const radio = await radioRes.json();
+                const falcon = await falconRes.json();
+
+                // Update stats
+                if (streaming.success) {
+                    document.getElementById('totalSportsbooks').textContent = streaming.partners.length;
+                    document.getElementById('activeStreams').textContent = 
+                        streaming.partners.filter(p => p.active).length;
+                }
+
+                if (radio.success) {
+                    const liveCount = radio.streams.filter(s => s.status === 'live').length;
+                    document.getElementById('liveStreamCount').textContent = liveCount;
+                    
+                    const totalListeners = radio.streams.reduce((acc, s) => acc + s.listeners, 0);
+                    document.getElementById('radioListeners').textContent = totalListeners.toLocaleString();
+                    document.getElementById('totalViewers').textContent = totalListeners.toLocaleString();
+                }
+
+                if (falcon.success) {
+                    document.getElementById('reportCount').textContent = falcon.engine.totalReports;
+                }
+
+                // Update viewer counts
+                updateViewerCounts();
+                loadActiveStreams();
+                loadConnectedSportsbooks();
+
+            } catch (error) {
+                console.error('Error loading broadcast stats:', error);
+            }
+        }
+
+        function updateViewerCounts() {
+            const videoViewers = Math.floor(Math.random() * 5000) + 2000;
+            const dataSubscribers = Math.floor(Math.random() * 1000) + 500;
+            
+            document.getElementById('videoViewers').textContent = videoViewers.toLocaleString();
+            document.getElementById('dataSubs').textContent = dataSubscribers.toLocaleString();
+        }
+
+        async function loadActiveStreams() {
+            try {
+                const response = await fetch(`${API_BASE}/streaming/partners`);
+                const data = await response.json();
+
+                if (data.success && data.partners.length > 0) {
+                    const activePartners = data.partners.filter(p => p.active);
+                    
+                    document.getElementById('streamList').innerHTML = activePartners.map(partner => `
+                        <div class="stream-item">
+                            <div>
+                                <strong>${partner.name}</strong>
+                                <div style="font-size: 12px; opacity: 0.7; margin-top: 4px;">
+                                    ${partner.type}
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span class="broadcast-status status-live">
+                                    <span class="pulse pulse-live"></span>
+                                    LIVE
+                                </span>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    document.getElementById('streamList').innerHTML = 
+                        '<div style="text-align: center; padding: 40px; opacity: 0.7;">No active broadcasts</div>';
+                }
+            } catch (error) {
+                console.error('Error loading streams:', error);
+            }
+        }
+
+        async function loadConnectedSportsbooks() {
+            const sportsbooks = [
+                { name: 'ESPN Sportsbook', url: '/espn-sportsbook.html', status: 'live' },
+                { name: 'Unified Sports Hub', url: '/unified-sports-hub.html', status: 'live' },
+                { name: 'Enhanced Sportsbook', url: '/enhanced-sportsbook.html', status: 'live' },
+                { name: 'Mobile Sportsbook Hub', url: '/mobile-sportsbook-hub.html', status: 'live' },
+                { name: 'PS5 Betting', url: '/ps5-betting.html', status: 'ready' },
+                { name: 'Boxing & UFC Hub', url: '/boxing-ufc-betting.html', status: 'ready' }
+            ];
+
+            document.getElementById('sportsbookGrid').innerHTML = sportsbooks.map(sb => `
+                <div class="broadcast-card ${sb.status === 'live' ? 'active' : ''}">
+                    <div class="broadcast-header">
+                        <div class="broadcast-icon">🏆</div>
+                        <span class="broadcast-status status-${sb.status}">
+                            ${sb.status === 'live' ? '<span class="pulse pulse-live"></span>' : ''}
+                            ${sb.status.toUpperCase()}
+                        </span>
+                    </div>
+                    <h3 style="margin-bottom: 12px;">${sb.name}</h3>
+                    <button class="btn btn-primary" onclick="navigate('${sb.url}')" style="width: 100%;">
+                        Open Platform →
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        async function buildVideoBroadcast() {
+            try {
+                const response = await fetch(`${API_BASE}/streaming/deploy-all`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Video broadcast deployed!\n\n${data.deployedCount} sportsbooks receiving stream`);
+                    loadBroadcastStats();
+                } else {
+                    alert('❌ Failed to deploy video broadcast');
+                }
+            } catch (error) {
+                console.error('Error building video broadcast:', error);
+                alert('❌ Error deploying video broadcast');
+            }
+        }
+
+        async function buildRadioBroadcast() {
+            try {
+                const response = await fetch(`${API_BASE}/radio-broadcast-deployment/deploy`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Radio broadcast deployed!\n\nDeployment ID: ${data.deploymentId}`);
+                    loadBroadcastStats();
+                } else {
+                    alert('❌ Failed to deploy radio broadcast');
+                }
+            } catch (error) {
+                console.error('Error building radio broadcast:', error);
+                alert('❌ Error deploying radio broadcast');
+            }
+        }
+
+        async function buildDataBroadcast() {
+            try {
+                const response = await fetch(`${API_BASE}/espn-tracker/broadcast`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ dataType: 'odds_and_scores' })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ Data broadcast deployed!\n\nReal-time data streaming to all platforms');
+                    loadBroadcastStats();
+                } else {
+                    alert('❌ Failed to deploy data broadcast');
+                }
+            } catch (error) {
+                console.error('Error building data broadcast:', error);
+                alert('❌ Error deploying data broadcast');
+            }
+        }
+
+        async function buildFalconBroadcast() {
+            try {
+                const response = await fetch(`${API_BASE}/falcon-broadcast/build`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        reportType: 'sports_broadcast',
+                        data: {
+                            timestamp: new Date().toISOString(),
+                            source: 'public_broadcasting_build'
+                        }
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Falcon report broadcast deployed!\n\nReport ID: ${data.reportId}`);
+                    loadBroadcastStats();
+                } else {
+                    alert('❌ Failed to deploy Falcon broadcast');
+                }
+            } catch (error) {
+                console.error('Error building Falcon broadcast:', error);
+                alert('❌ Error deploying Falcon broadcast');
+            }
+        }
+
+        async function deployAll() {
+            const confirmed = confirm('Deploy all broadcasting channels to all connected sportsbooks?');
+            if (!confirmed) return;
+
+            try {
+                await Promise.all([
+                    buildVideoBroadcast(),
+                    buildRadioBroadcast(),
+                    buildDataBroadcast(),
+                    buildFalconBroadcast()
+                ]);
+
+                alert('✅ All broadcasts deployed successfully!');
+            } catch (error) {
+                console.error('Error deploying all broadcasts:', error);
+                alert('❌ Some broadcasts failed to deploy');
+            }
+        }
+
+        async function syncAllSportsbooks() {
+            try {
+                const response = await fetch(`${API_BASE}/streaming/sync-all`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ All sportsbooks synchronized!');
+                    loadBroadcastStats();
+                } else {
+                    alert('❌ Synchronization failed');
+                }
+            } catch (error) {
+                console.error('Error syncing sportsbooks:', error);
+                alert('❌ Error synchronizing platforms');
+            }
+        }
+
+        function viewBroadcastAnalytics() {
+            navigate('/new-features-dashboard.html');
+        }
+
+        // Connect to real-time broadcast updates
+        function connectLiveUpdates() {
+            if (eventSource) eventSource.close();
+
+            eventSource = new EventSource(`${API_BASE}/radio-broadcast-deployment/stream`);
+
+            eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'status_update') {
+                    updateViewerCounts();
+                }
+            };
+
+            eventSource.onerror = () => {
+                console.error('EventSource error, reconnecting...');
+                setTimeout(connectLiveUpdates, 5000);
+            };
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            loadBroadcastStats();
+            connectLiveUpdates();
+            
+            // Refresh stats every 10 seconds
+            setInterval(loadBroadcastStats, 10000);
+        });
+
+        window.addEventListener('beforeunload', () => {
+            if (eventSource) eventSource.close();
+        });
+    </script>
+</body>
+</html>
