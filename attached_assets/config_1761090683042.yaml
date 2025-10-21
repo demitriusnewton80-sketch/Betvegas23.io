@@ -1,0 +1,14 @@
+---
+system:
+  certificateFilePath: "{{config_dir}}/device.pem.crt"
+  privateKeyPath: "{{config_dir}}/private.pem.key"
+  rootCaPath: "{{config_dir}}/AmazonRootCA1.pem"
+  thingName: "GreengrassQuickStartCore-199cf481b5b"
+services:
+  {{nucleus_component}}:
+    componentType: "NUCLEUS"
+    configuration:
+      awsRegion: "us-east-1"
+      iotRoleAlias: "GreengrassV2TokenExchangeCoreDeviceRoleAlias"
+      iotDataEndpoint: "abgl6ouy4i208-ats.iot.us-east-1.amazonaws.com"
+      iotCredEndpoint: "c30c1ohcui8hkp.credentials.iot.us-east-1.amazonaws.com"
