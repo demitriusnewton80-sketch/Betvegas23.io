@@ -144,8 +144,13 @@ try {
   console.error('❌ Error registering routes:', error);
 }
 
-// Static files (must be after API routes)
-app.use(express.static('public'));
+// Serve static files
+  app.use(express.static('public'));
+
+  // Public broadcast control page
+  app.get('/public-broadcast-control', (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'public', 'public-broadcast-control.html'));
+  });
 
 // Public domain builder
 app.get('/public-domain', (req, res) => {
