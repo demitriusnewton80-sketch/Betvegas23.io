@@ -669,5 +669,3 @@ export class ProductionMappingCore extends EventEmitter {
 }
 
 export const productionMappingCore = ProductionMappingCore.getInstance();
-
-export const productionMappingCore = ProductionMappingCore.getInstance();

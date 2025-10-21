@@ -381,5 +381,3 @@ export class SmartTroubleshootingCore extends EventEmitter {
 }
 
 export const smartTroubleshootingCore = SmartTroubleshootingCore.getInstance();
-
-export const smartTroubleshootingCore = SmartTroubleshootingCore.getInstance();
