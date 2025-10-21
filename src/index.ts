@@ -55,6 +55,8 @@ import waveStreamAssemblyRoutes from './routes/wave-stream-assembly.js';
 import radioBroadcastDeploymentRoutes from './routes/radio-broadcast-deployment.js'; // Import the new route
 import unifiedStylesheetRouter from './routes/unified-stylesheet.js';
 import phoneAppBridgeRouter from './routes/phone-app-bridge.js'; // Import the new route
+import aiRoutes from './routes/ai.js';
+import openaiRoutes from './routes/openai.js';
 
 // Initialize core systems
 const __filename = fileURLToPath(import.meta.url);
@@ -142,6 +144,8 @@ try {
   app.use('/api/stylesheet', unifiedStylesheetRouter);
   // Mount phone app bridge routes
   app.use('/api/phone-app-bridge', phoneAppBridgeRouter);
+  app.use('/ai', aiRoutes);
+  app.use('/openai', openaiRoutes);
   console.log('✅ All API routes registered successfully');
 } catch (error) {
   console.error('❌ Error registering routes:', error);
