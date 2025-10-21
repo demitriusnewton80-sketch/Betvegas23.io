@@ -52,6 +52,8 @@ temp/
 *.key
 github-recovery-codes.txt
 wallet-recovery-*
+*sourceAccessToken*.txt
+attached_assets/*sourceAccessToken*.txt
 
 # Build artifacts
 tsconfig.tsbuildinfo
