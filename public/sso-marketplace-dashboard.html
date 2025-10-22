@@ -1,0 +1,382 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSO Marketplace - Young Meeat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: white;
+        }
+        .header p {
+            opacity: 0.95;
+            font-size: 16px;
+        }
+        .fcc-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 12px;
+            display: inline-block;
+            margin-top: 15px;
+            font-weight: 700;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 42px;
+            font-weight: 700;
+            color: #6366f1;
+            margin-bottom: 10px;
+        }
+        .stat-label {
+            color: #94a3b8;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .section {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .section h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #6366f1;
+        }
+        .appliances-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        .appliance-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .appliance-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(34, 197, 94, 0.6);
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.2);
+        }
+        .appliance-card.inactive {
+            opacity: 0.5;
+            border-color: rgba(107, 114, 128, 0.3);
+        }
+        .appliance-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .appliance-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #e2e8f0;
+        }
+        .appliance-desc {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .appliance-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .appliance-status.active {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+        .appliance-status.inactive {
+            background: rgba(107, 114, 128, 0.2);
+            color: #6b7280;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+        }
+        .btn-deactivate {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        }
+        .endpoints {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(148, 163, 184, 0.2);
+        }
+        .endpoint-tag {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            margin: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏪 SSO Marketplace Dashboard</h1>
+            <p>Unified Appliance Management System</p>
+            <span class="fcc-badge">FCC Entity: 20130314143016</span>
+            <span class="fcc-badge">SSO Integrated</span>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalAppliances">0</div>
+                <div class="stat-label">Total Appliances</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="activeAppliances">0</div>
+                <div class="stat-label">Active Appliances</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="ssoIntegrated">0</div>
+                <div class="stat-label">SSO Integrated</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalAccounts">0</div>
+                <div class="stat-label">Marketplace Accounts</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔐 Account Management</h2>
+            <button class="btn btn-secondary" onclick="createMarketplaceAccount()">
+                Create SSO Marketplace Account
+            </button>
+            <button class="btn btn-secondary" onclick="syncWithSSO()" style="margin-top: 10px;">
+                Sync All Appliances with SSO
+            </button>
+        </div>
+
+        <div class="section">
+            <h2>📦 Available Appliances</h2>
+            <div id="appliancesGrid" class="appliances-grid">
+                <p style="text-align: center; color: #94a3b8;">Loading appliances...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let currentAccountId = null;
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/sso-marketplace/stats`);
+                const data = await response.json();
+
+                document.getElementById('totalAppliances').textContent = data.totalAppliances;
+                document.getElementById('activeAppliances').textContent = data.activeAppliances;
+                document.getElementById('ssoIntegrated').textContent = data.ssoIntegratedAppliances;
+                document.getElementById('totalAccounts').textContent = data.totalAccounts;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function loadAppliances() {
+            try {
+                const response = await fetch(`${API_BASE}/sso-marketplace/appliances`);
+                const data = await response.json();
+
+                const grid = document.getElementById('appliancesGrid');
+                
+                if (data.appliances.length === 0) {
+                    grid.innerHTML = '<p style="text-align: center; color: #94a3b8;">No appliances available</p>';
+                    return;
+                }
+
+                grid.innerHTML = data.appliances.map(app => `
+                    <div class="appliance-card ${app.status === 'inactive' ? 'inactive' : ''}">
+                        <div class="appliance-icon">${app.metadata.icon || '📦'}</div>
+                        <div class="appliance-name">${app.name}</div>
+                        <div class="appliance-desc">${app.metadata.description || 'No description'}</div>
+                        <span class="appliance-status ${app.status}">
+                            <span>${app.status === 'active' ? '●' : '○'}</span>
+                            ${app.status.toUpperCase()}
+                        </span>
+                        <div style="margin-bottom: 15px;">
+                            <span style="font-size: 11px; color: #94a3b8;">
+                                ${app.ssoIntegrated ? '✓ SSO Integrated' : '✗ No SSO'}
+                            </span>
+                        </div>
+                        ${app.status === 'active' ? `
+                            <button class="btn" onclick="activateAppliance('${app.id}')">
+                                Activate for Account
+                            </button>
+                        ` : `
+                            <button class="btn" disabled style="opacity: 0.5; cursor: not-allowed;">
+                                Unavailable
+                            </button>
+                        `}
+                        <div class="endpoints">
+                            <div style="font-size: 11px; color: #94a3b8; margin-bottom: 8px;">ENDPOINTS:</div>
+                            ${app.endpoints.map(e => `<span class="endpoint-tag">${e}</span>`).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading appliances:', error);
+            }
+        }
+
+        async function createMarketplaceAccount() {
+            try {
+                const response = await fetch(`${API_BASE}/sso-marketplace/account/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        ssoProviderId: 'fcc-sso'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentAccountId = data.account.id;
+                    alert(`✅ Marketplace account created!\nID: ${data.account.id}\nAppliances activated: ${data.account.appliances}`);
+                    await loadStats();
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to create account'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Please login with SSO first');
+            }
+        }
+
+        async function activateAppliance(applianceId) {
+            if (!currentAccountId) {
+                alert('Please create a marketplace account first');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/sso-marketplace/account/${currentAccountId}/appliances/${applianceId}/activate`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Appliance activated successfully!`);
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to activate appliance'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to activate appliance');
+            }
+        }
+
+        async function syncWithSSO() {
+            if (!currentAccountId) {
+                alert('Please create a marketplace account first');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/sso-marketplace/account/${currentAccountId}/sync-sso`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ SSO sync completed!\n${data.activatedAppliances} appliances activated`);
+                    await loadStats();
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to sync'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to sync with SSO');
+            }
+        }
+
+        // Load data on page load
+        loadStats();
+        loadAppliances();
+
+        // Refresh every 30 seconds
+        setInterval(() => {
+            loadStats();
+            loadAppliances();
+        }, 30000);
+    </script>
+</body>
+</html>
