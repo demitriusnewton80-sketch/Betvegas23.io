@@ -49,17 +49,17 @@
 
 /* CSS Variables for Consistent Theming */
 :root {
-    /* BettingSites™ Brand Colors */
-    --bettingsites-primary: #3b82f6;
-    --bettingsites-primary-dark: #2563eb;
-    --bettingsites-primary-light: #60a5fa;
-    --bettingsites-glow: rgba(59, 130, 246, 0.5);
-    --bettingsites-secondary: #10b981;
-    --bettingsites-secondary-dark: #059669;
-    --bettingsites-secondary-glow: rgba(16, 185, 129, 0.5);
-    --bettingsites-accent: #ef4444;
-    --bettingsites-accent-dark: #dc2626;
-    --bettingsites-accent-glow: rgba(239, 68, 68, 0.5);
+    /* BettingSites™ Brand Colors - Black & Gold Theme */
+    --bettingsites-primary: #D4AF37;
+    --bettingsites-primary-dark: #B8941F;
+    --bettingsites-primary-light: #F4D03F;
+    --bettingsites-glow: rgba(212, 175, 55, 0.5);
+    --bettingsites-secondary: #FFD700;
+    --bettingsites-secondary-dark: #FFC700;
+    --bettingsites-secondary-glow: rgba(255, 215, 0, 0.5);
+    --bettingsites-accent: #D4AF37;
+    --bettingsites-accent-dark: #B8941F;
+    --bettingsites-accent-glow: rgba(212, 175, 55, 0.5);
     --betting-gold: #FFD700;
     
     /* Legacy aliases for compatibility */
@@ -75,33 +75,33 @@
     --accent-glow: var(--bettingsites-accent-glow);
     
     /* ESPN Colors */
-    --espn-red: #c8102e;
-    --espn-blue: #13274f;
+    --espn-red: #D4AF37;
+    --espn-blue: #1a1a1a;
     
-    /* Background Colors */
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-tertiary: #334155;
-    --bg-card: rgba(30, 41, 59, 0.95);
-    --bg-overlay: rgba(0, 0, 0, 0.3);
+    /* Background Colors - Black Theme */
+    --bg-primary: #000000;
+    --bg-secondary: #0a0a0a;
+    --bg-tertiary: #1a1a1a;
+    --bg-card: rgba(10, 10, 10, 0.95);
+    --bg-overlay: rgba(0, 0, 0, 0.5);
     
     /* Text Colors */
-    --text-primary: #ffffff;
-    --text-secondary: #e2e8f0;
-    --text-muted: #94a3b8;
-    --text-disabled: #64748b;
+    --text-primary: #FFD700;
+    --text-secondary: #F4D03F;
+    --text-muted: #B8941F;
+    --text-disabled: #8B7355;
     
-    /* Border Colors */
-    --border-primary: rgba(59, 130, 246, 0.3);
-    --border-secondary: rgba(255, 255, 255, 0.1);
-    --border-accent: rgba(239, 68, 68, 0.3);
-    --border-success: rgba(34, 197, 94, 0.3);
+    /* Border Colors - Gold */
+    --border-primary: rgba(212, 175, 55, 0.4);
+    --border-secondary: rgba(255, 215, 0, 0.2);
+    --border-accent: rgba(212, 175, 55, 0.5);
+    --border-success: rgba(212, 175, 55, 0.4);
     
     /* Status Colors */
-    --status-live: #ef4444;
-    --status-active: #22c55e;
-    --status-pending: #f59e0b;
-    --status-inactive: #6b7280;
+    --status-live: #D4AF37;
+    --status-active: #FFD700;
+    --status-pending: #F4D03F;
+    --status-inactive: #8B7355;
     
     /* Spacing */
     --spacing-xs: 4px;
@@ -154,7 +154,7 @@ html {
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-    background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 25%, #2d1b69 50%, #1e293b 75%, #0f172a 100%);
+    background: linear-gradient(135deg, #000000 0%, #0a0a0a 25%, #1a1a1a 50%, #0a0a0a 75%, #000000 100%);
     background-size: 400% 400%;
     background-attachment: fixed;
     color: var(--text-primary);
@@ -172,8 +172,8 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+    background: radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 215, 0, 0.08) 0%, transparent 50%);
     pointer-events: none;
     z-index: 0;
 }
@@ -185,16 +185,16 @@ body::before {
 
 /* Header Styles */
 .sportsbook-header {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+    background: linear-gradient(135deg, rgba(10, 10, 10, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%);
     backdrop-filter: blur(30px) saturate(180%);
     -webkit-backdrop-filter: blur(30px) saturate(180%);
     padding: var(--spacing-xl) var(--spacing-lg);
     text-align: center;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 
-                0 0 60px rgba(59, 130, 246, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-bottom: 2px solid rgba(59, 130, 246, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 
+                0 0 60px rgba(212, 175, 55, 0.4),
+                inset 0 1px 0 rgba(212, 175, 55, 0.2);
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    border-bottom: 3px solid rgba(255, 215, 0, 0.6);
     border-radius: 0 0 24px 24px;
     position: relative;
     overflow: hidden;
@@ -207,7 +207,7 @@ body::before {
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, transparent, var(--status-active) 50%, transparent);
+    background: linear-gradient(90deg, transparent, var(--betting-gold) 50%, transparent);
     animation: shimmer 3s infinite;
 }
 
@@ -310,16 +310,16 @@ body::before {
 
 /* Card Styles */
 .sportsbook-card {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+    background: linear-gradient(135deg, rgba(10, 10, 10, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(212, 175, 55, 0.3);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
     transition: all var(--transition-normal);
     position: relative;
     overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
 }
 
 .sportsbook-card::before {
@@ -329,16 +329,16 @@ body::before {
     left: 0;
     width: 100%;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.4), transparent);
 }
 
 .sportsbook-card:hover {
-    border-color: rgba(59, 130, 246, 0.5);
+    border-color: rgba(255, 215, 0, 0.8);
     transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 
-                0 0 60px rgba(59, 130, 246, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 
+                0 0 60px rgba(212, 175, 55, 0.6),
+                inset 0 1px 0 rgba(255, 215, 0, 0.3);
+    background: linear-gradient(135deg, rgba(10, 10, 10, 0.95) 0%, rgba(0, 0, 0, 1) 100%);
 }
 
 .sportsbook-card.live {
@@ -352,16 +352,16 @@ body::before {
 
 /* Game Card Styles */
 .game-card {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+    background: linear-gradient(135deg, rgba(10, 10, 10, 0.9) 0%, rgba(0, 0, 0, 0.95) 100%);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(212, 175, 55, 0.3);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
     transition: all var(--transition-normal);
     position: relative;
     overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
 }
 
 .game-card::before {
@@ -371,7 +371,7 @@ body::before {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2), transparent);
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), rgba(255, 215, 0, 0.2), transparent);
     transition: left 0.8s;
 }
 
@@ -381,7 +381,7 @@ body::before {
     inset: 0;
     border-radius: var(--radius-lg);
     padding: 2px;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.5), rgba(139, 92, 246, 0.5));
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.6), rgba(255, 215, 0, 0.6));
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
