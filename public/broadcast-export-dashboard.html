@@ -1,0 +1,248 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Broadcast Export Dashboard | BettingSites™</title>
+    <link rel="stylesheet" href="/styles/unified-sportsbook.css">
+    <style>
+        .export-controls {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .export-btn {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
+        }
+
+        .format-selector {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .format-option {
+            padding: 10px 20px;
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .format-option.selected {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: #8b5cf6;
+        }
+
+        .export-list {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 30px;
+        }
+
+        .export-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .download-btn {
+            background: #22c55e;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="purple-gold-theme">
+    <div class="container">
+        <div class="header">
+            <h1>📤 Broadcast Export Dashboard</h1>
+            <p>Export Broadcasting Data in Multiple Formats</p>
+            <div class="badges">
+                <span class="badge">FCC Entity: 20130314143016</span>
+                <span class="badge pulse">Live Exports</span>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card purple-gradient">
+                <div class="stat-value" id="totalBroadcasts">0</div>
+                <div class="stat-label">Total Broadcasts</div>
+            </div>
+            <div class="stat-card gold-gradient">
+                <div class="stat-value" id="activeBroadcasts">0</div>
+                <div class="stat-label">Active Broadcasts</div>
+            </div>
+            <div class="stat-card purple-gradient">
+                <div class="stat-value" id="totalListeners">0</div>
+                <div class="stat-label">Total Listeners</div>
+            </div>
+            <div class="stat-card gold-gradient">
+                <div class="stat-value" id="totalSportsbooks">0</div>
+                <div class="stat-label">Sportsbooks</div>
+            </div>
+        </div>
+
+        <div class="export-controls">
+            <h2 style="margin-bottom: 20px;">📦 Export Options</h2>
+            
+            <div class="format-selector">
+                <div class="format-option selected" data-format="json" onclick="selectFormat('json')">
+                    📄 JSON
+                </div>
+                <div class="format-option" data-format="xml" onclick="selectFormat('xml')">
+                    📋 XML
+                </div>
+                <div class="format-option" data-format="csv" onclick="selectFormat('csv')">
+                    📊 CSV
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button class="export-btn" onclick="exportFull()">
+                    🌐 Export Full Broadcast Data
+                </button>
+                <button class="export-btn" onclick="exportStreaming()">
+                    📺 Export Streaming Only
+                </button>
+                <button class="export-btn" onclick="exportRadio()">
+                    📻 Export Radio Only
+                </button>
+            </div>
+        </div>
+
+        <div class="export-list">
+            <h2 style="margin-bottom: 20px;">📚 Export History</h2>
+            <div id="exportHistory"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let selectedFormat = 'json';
+
+        function selectFormat(format) {
+            selectedFormat = format;
+            document.querySelectorAll('.format-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            document.querySelector(`[data-format="${format}"]`).classList.add('selected');
+        }
+
+        async function loadSummary() {
+            try {
+                const response = await fetch(`${API_BASE}/broadcast-export/summary`);
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('totalBroadcasts').textContent = data.summary.totalBroadcasts;
+                    document.getElementById('activeBroadcasts').textContent = data.summary.activeBroadcasts;
+                    document.getElementById('totalListeners').textContent = data.summary.totalListeners.toLocaleString();
+                    document.getElementById('totalSportsbooks').textContent = data.summary.totalSportsbooks;
+                }
+            } catch (error) {
+                console.error('Error loading summary:', error);
+            }
+        }
+
+        async function exportFull() {
+            await performExport('full', 'Full Broadcast');
+        }
+
+        async function exportStreaming() {
+            await performExport('streaming', 'Streaming');
+        }
+
+        async function exportRadio() {
+            await performExport('radio', 'Radio');
+        }
+
+        async function performExport(type, name) {
+            try {
+                const response = await fetch(`${API_BASE}/broadcast-export/export/${type}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ format: selectedFormat })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ ${name} export created successfully!\n\nExport ID: ${data.export.exportId}\nFormat: ${selectedFormat.toUpperCase()}`);
+                    loadExportHistory();
+                } else {
+                    alert('❌ Export failed: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Export error:', error);
+                alert('❌ Export failed');
+            }
+        }
+
+        async function loadExportHistory() {
+            try {
+                const response = await fetch(`${API_BASE}/broadcast-export/exports`);
+                const data = await response.json();
+
+                if (data.success && data.exports.length > 0) {
+                    document.getElementById('exportHistory').innerHTML = data.exports.map(e => `
+                        <div class="export-item">
+                            <div>
+                                <strong>${e.exportType.toUpperCase()} Export</strong>
+                                <div style="font-size: 12px; opacity: 0.8; margin-top: 5px;">
+                                    ${e.timestamp} • ${e.format.toUpperCase()}
+                                </div>
+                                <div style="font-size: 12px; opacity: 0.6; margin-top: 3px;">
+                                    ID: ${e.exportId}
+                                </div>
+                            </div>
+                            <button class="download-btn" onclick="downloadExport('${e.exportId}')">
+                                ⬇️ Download
+                            </button>
+                        </div>
+                    `).join('');
+                } else {
+                    document.getElementById('exportHistory').innerHTML = '<p style="opacity: 0.6;">No exports yet</p>';
+                }
+            } catch (error) {
+                console.error('Error loading exports:', error);
+            }
+        }
+
+        function downloadExport(exportId) {
+            window.open(`${API_BASE}/broadcast-export/download/${exportId}`, '_blank');
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            loadSummary();
+            loadExportHistory();
+            setInterval(loadSummary, 10000);
+        });
+    </script>
+</body>
+</html>

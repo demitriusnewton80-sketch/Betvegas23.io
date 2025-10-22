@@ -42,7 +42,7 @@ import backupRoutes from './routes/backup.js';
 import versionRoutes from './routes/version.js';
 import parlayRoutes from './routes/parlay.js';
 import applePartnershipRouter from './routes/apple-partnership.js';
-import falconBroadcastRouter from './routes/falcon-broadcast.js';
+import falconBroadcastRoutes from './routes/falcon-broadcast.js';
 import partnershipEnrollmentRouter from './routes/partnership-enrollment.js';
 import phoneStreamRoutes from './routes/phone-stream.js';
 import bloombergPhoneBridgeRoutes from './routes/bloomberg-phone-bridge.js';
@@ -66,6 +66,7 @@ import openaiRoutes from './routes/openai.js';
 import githubRecoveryRoutes from './routes/github-recovery.js';
 import firebaseStudioRouter from './routes/firebase-studio.js';
 import firebaseStreamRouter from './routes/firebase-stream.js';
+import broadcastExportRoutes from './routes/broadcast-export.js';
 
 // Initialize core systems
 const __filename = fileURLToPath(import.meta.url);
@@ -155,6 +156,8 @@ try {
   app.use('/leeds-export', leedsExportRoutes);
   app.use('/wave-stream-assembly', waveStreamAssemblyRouter);
   app.use('/radio-broadcast-deployment', radioBroadcastDeploymentRoutes); // Mount the new route
+  app.use('/falcon-broadcast', falconBroadcastRoutes);
+  app.use('/broadcast-export', broadcastExportRoutes);
   // Unified Stylesheet API
   app.use('/api/stylesheet', unifiedStylesheetRouter);
   // Mount phone app bridge routes
