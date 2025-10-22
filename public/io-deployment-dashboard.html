@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>.io Production Deployment | Young Meeat LLC</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        .header {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(59, 130, 246, 0.4);
+        }
+        .header h1 { font-size: 48px; margin-bottom: 10px; }
+        .badge {
+            background: rgba(34, 197, 94, 0.2);
+            border: 2px solid #22c55e;
+            color: #22c55e;
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 5px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: rgba(30, 41, 59, 0.9);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+        }
+        .card h2 {
+            color: #60a5fa;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+        }
+        .deployment-item {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        .status-live { color: #22c55e; }
+        .status-deploying { color: #f59e0b; }
+        .status-error { color: #ef4444; }
+        .instructions {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        .instructions ol {
+            margin-left: 20px;
+            line-height: 2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 .io Production Deployment</h1>
+            <p>Scale Development to Production with Functional Network Bridge</p>
+            <div>
+                <span class="badge">FCC Entity: 20130314143016</span>
+                <span class="badge">Production Ready</span>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>🚀 Deploy to Production</h2>
+                <div class="form-group">
+                    <label>Your .io Domain</label>
+                    <input type="text" id="domain" placeholder="yourdomain.io">
+                </div>
+                <div class="form-group">
+                    <label>Environment</label>
+                    <select id="environment">
+                        <option value="production">Production</option>
+                        <option value="staging">Staging</option>
+                        <option value="development">Development</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Services to Deploy</label>
+                    <select id="services" multiple size="5">
+                        <option value="all" selected>All Services</option>
+                        <option value="gaming-structure">Gaming Infrastructure</option>
+                        <option value="streaming-structure">Streaming Network</option>
+                        <option value="betting-structure">Betting Operations</option>
+                        <option value="network-structure">Network Infrastructure</option>
+                        <option value="cloud-structure">Cloud Services</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="deployToProduction()">🚀 Deploy Now</button>
+            </div>
+
+            <div class="card">
+                <h2>📊 Active Deployments</h2>
+                <div id="deploymentsList"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📋 DNS Configuration Instructions</h2>
+            <div class="instructions">
+                <ol>
+                    <li>After deployment, copy the Replit deployment IP address</li>
+                    <li>Go to your .io domain registrar (e.g., Namecheap, GoDaddy)</li>
+                    <li>Navigate to DNS Management for your domain</li>
+                    <li>Add an A record:
+                        <ul>
+                            <li>Type: A</li>
+                            <li>Host: @ (for root domain)</li>
+                            <li>Value: [Replit IP]</li>
+                            <li>TTL: 3600</li>
+                        </ul>
+                    </li>
+                    <li>Add a CNAME record for www:
+                        <ul>
+                            <li>Type: CNAME</li>
+                            <li>Host: www</li>
+                            <li>Value: yourdomain.io</li>
+                            <li>TTL: 3600</li>
+                        </ul>
+                    </li>
+                    <li>Save DNS changes and wait 5-30 minutes for propagation</li>
+                    <li>SSL certificate will be auto-provisioned by Replit</li>
+                    <li>Verify deployment at https://yourdomain.io</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>⚙️ Scaling Configuration</h2>
+            <div id="scalingConfig"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        async function deployToProduction() {
+            const domain = document.getElementById('domain').value;
+            const environment = document.getElementById('environment').value;
+            const servicesSelect = document.getElementById('services');
+            const services = Array.from(servicesSelect.selectedOptions).map(opt => opt.value);
+
+            if (!domain || !domain.endsWith('.io')) {
+                alert('Please enter a valid .io domain');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/io-deployment/deploy`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ domain, environment, services })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Deployment Initiated!\n\nDomain: ${data.domain}\nURL: ${data.deploymentUrl}\n\nBridge ID: ${data.bridgeId}`);
+                    loadDeployments();
+                } else {
+                    alert('❌ Deployment failed: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Deployment error:', error);
+                alert('❌ Deployment failed');
+            }
+        }
+
+        async function loadDeployments() {
+            try {
+                const response = await fetch(`${API_BASE}/io-deployment/deployments`);
+                const data = await response.json();
+
+                const container = document.getElementById('deploymentsList');
+                
+                if (data.deployments.length === 0) {
+                    container.innerHTML = '<p style="opacity: 0.7;">No deployments yet</p>';
+                    return;
+                }
+
+                container.innerHTML = data.deployments.map(dep => `
+                    <div class="deployment-item">
+                        <strong>${dep.domain}</strong><br>
+                        <span class="status-${dep.status}">${dep.status.toUpperCase()}</span><br>
+                        <small>Environment: ${dep.environment}</small><br>
+                        <small>Health: ${dep.healthChecks}/${dep.totalChecks} checks passing</small><br>
+                        <a href="${dep.url}" target="_blank" style="color: #60a5fa;">${dep.url}</a>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Load error:', error);
+            }
+        }
+
+        // Auto-refresh
+        setInterval(loadDeployments, 10000);
+        window.addEventListener('load', loadDeployments);
+    </script>
+</body>
+</html>

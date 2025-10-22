@@ -68,6 +68,7 @@ import firebaseStudioRouter from './routes/firebase-studio.js';
 import firebaseStreamRouter from './routes/firebase-stream.js';
 import broadcastExportRoutes from './routes/broadcast-export.js';
 import liveMediaGeneratorRoutes from './routes/live-media-generator.js';
+import ioDeploymentRoutes from './routes/io-deployment.js';
 
 // Initialize core systems
 const __filename = fileURLToPath(import.meta.url);
@@ -160,6 +161,7 @@ try {
   app.use('/falcon-broadcast', falconBroadcastRoutes);
   app.use('/broadcast-export', broadcastExportRoutes);
   app.use('/live-media-generator', liveMediaGeneratorRoutes);
+  app.use('/io-deployment', ioDeploymentRoutes);
   // Unified Stylesheet API
   app.use('/api/stylesheet', unifiedStylesheetRouter);
   // Mount phone app bridge routes
