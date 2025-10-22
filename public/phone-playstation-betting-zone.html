@@ -1,0 +1,324 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone-PlayStation Betting Zone Control</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #003087 0%, #0070cc 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #003087;
+            margin-bottom: 10px;
+        }
+        .badge {
+            background: #003087;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin: 5px;
+            font-weight: 700;
+        }
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .section h2 {
+            color: #003087;
+            margin-bottom: 20px;
+        }
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #003087 0%, #0070cc 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,48,135,0.3);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+        .status-box {
+            background: #f0f9ff;
+            border-left: 4px solid #0070cc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .status-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .game-card {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .game-card:hover {
+            background: #003087;
+            color: white;
+            transform: translateY(-5px);
+        }
+        .game-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .connection-status {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-active {
+            background: #22c55e;
+            box-shadow: 0 0 10px #22c55e;
+        }
+        .status-inactive {
+            background: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="icon">📱🎮</div>
+            <h1>Phone-PlayStation Betting Zone</h1>
+            <p style="color: #6b7280; margin-top: 10px;">Complete Control System for PlayStation Sports Betting</p>
+            <div style="margin-top: 15px;">
+                <span class="badge">FCC Entity: 20130314143016</span>
+                <span class="badge">Phone Control Active</span>
+                <span class="badge">PlayStation Connected</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📱 Connect Phone to PlayStation</h2>
+            <input type="text" id="userId" placeholder="Enter User ID">
+            <input type="text" id="psnId" placeholder="Enter PlayStation Network ID">
+            <button class="btn" onclick="connectToPlayStation()">
+                🔗 Connect Phone to PlayStation Betting Zone
+            </button>
+        </div>
+
+        <div id="statusSection" class="section" style="display: none;">
+            <h2>✅ Connection Status</h2>
+            <div class="status-box">
+                <div class="status-item">
+                    <strong>Connection:</strong>
+                    <span class="connection-status status-active"></span>
+                    <span id="connectionStatus">Connected</span>
+                </div>
+                <div class="status-item">
+                    <strong>User ID:</strong> <span id="displayUserId">-</span>
+                </div>
+                <div class="status-item">
+                    <strong>PSN ID:</strong> <span id="displayPsnId">-</span>
+                </div>
+                <div class="status-item">
+                    <strong>Active Plugins:</strong> <span id="activePlugins">0</span>
+                </div>
+                <div class="status-item">
+                    <strong>Benefit Distribution:</strong> <span id="distribution">-</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎮 Available PlayStation Sports</h2>
+            <div class="game-grid">
+                <div class="game-card" onclick="openGame('madden')">
+                    <div class="game-icon">🏈</div>
+                    <strong>Madden NFL</strong>
+                </div>
+                <div class="game-card" onclick="openGame('nba2k')">
+                    <div class="game-icon">🏀</div>
+                    <strong>NBA 2K</strong>
+                </div>
+                <div class="game-card" onclick="openGame('ufc')">
+                    <div class="game-icon">🥋</div>
+                    <strong>UFC</strong>
+                </div>
+                <div class="game-card" onclick="openGame('undisputed')">
+                    <div class="game-icon">🥊</div>
+                    <strong>Undisputed</strong>
+                </div>
+                <div class="game-card" onclick="openGame('5v5')">
+                    <div class="game-icon">⛹️</div>
+                    <strong>5v5 Basketball</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Quick Actions</h2>
+            <button class="btn btn-success" onclick="openPS5Betting()">
+                🎮 Open PS5 Betting Dashboard
+            </button>
+            <button class="btn btn-success" onclick="openBettingZone()">
+                🎯 Open Betting Zone Control
+            </button>
+            <button class="btn btn-success" onclick="checkStatus()">
+                📊 Check Connection Status
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let currentUserId = null;
+        let currentPsnId = null;
+
+        async function connectToPlayStation() {
+            const userId = document.getElementById('userId').value.trim();
+            const psnId = document.getElementById('psnId').value.trim();
+
+            if (!userId || !psnId) {
+                alert('Please enter both User ID and PSN ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/phone-control/playstation/connect`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, psnId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentUserId = userId;
+                    currentPsnId = psnId;
+
+                    document.getElementById('statusSection').style.display = 'block';
+                    document.getElementById('displayUserId').textContent = userId;
+                    document.getElementById('displayPsnId').textContent = psnId;
+                    document.getElementById('activePlugins').textContent = data.connectedPlugins.length;
+                    document.getElementById('distribution').textContent = 'Enabled';
+
+                    alert(`✅ Successfully connected!\n\nAvailable games:\n${data.availableGames.join(', ')}`);
+
+                    // Store in localStorage
+                    localStorage.setItem('ps_userId', userId);
+                    localStorage.setItem('ps_psnId', psnId);
+                } else {
+                    alert('❌ Connection failed: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Connection error:', error);
+                alert('❌ Failed to connect to PlayStation betting zone');
+            }
+        }
+
+        async function checkStatus() {
+            if (!currentUserId) {
+                const savedUserId = localStorage.getItem('ps_userId');
+                if (savedUserId) {
+                    currentUserId = savedUserId;
+                } else {
+                    alert('Please connect first');
+                    return;
+                }
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/phone-control/playstation/status/${currentUserId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`PlayStation Betting Status:\n\nConnected: ${data.connected ? 'Yes' : 'No'}\nDistribution: ${data.distributionEnabled ? 'Enabled' : 'Disabled'}\nBenefit Share: ${data.benefitShare}%\nActive Users: ${data.activeUsers}`);
+                }
+            } catch (error) {
+                console.error('Status check error:', error);
+                alert('Failed to check status');
+            }
+        }
+
+        function openGame(gameType) {
+            window.open(`${API_BASE}/ps5-betting.html?filter=${gameType}`, '_blank');
+        }
+
+        function openPS5Betting() {
+            window.open(`${API_BASE}/ps5-betting.html`, '_blank');
+        }
+
+        function openBettingZone() {
+            window.open(`${API_BASE}/phone-network-control.html`, '_blank');
+        }
+
+        // Auto-load saved connection
+        window.addEventListener('load', () => {
+            const savedUserId = localStorage.getItem('ps_userId');
+            const savedPsnId = localStorage.getItem('ps_psnId');
+
+            if (savedUserId && savedPsnId) {
+                document.getElementById('userId').value = savedUserId;
+                document.getElementById('psnId').value = savedPsnId;
+                currentUserId = savedUserId;
+                currentPsnId = savedPsnId;
+            }
+        });
+    </script>
+</body>
+</html>

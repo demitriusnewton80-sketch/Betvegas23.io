@@ -167,4 +167,51 @@ router.post('/plugin/:pluginId/distribution', (req: Request, res: Response) => {
   }
 });
 
+// Connect phone to PlayStation betting zone
+router.post('/playstation/connect', (req: Request, res: Response) => {
+  try {
+    const { userId, psnId } = req.body;
+
+    if (!userId || !psnId) {
+      return res.status(400).json({
+        success: false,
+        error: 'userId and psnId are required'
+      });
+    }
+
+    const result = phoneControlService.connectPhoneToPlayStation(userId, psnId);
+
+    res.json({
+      success: true,
+      ...result,
+      fccEntity: '20130314143016'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to connect to PlayStation'
+    });
+  }
+});
+
+// Get PlayStation betting status
+router.get('/playstation/status/:userId', (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const status = phoneControlService.getPlayStationBettingStatus(userId);
+
+    res.json({
+      success: true,
+      userId,
+      ...status,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to get status'
+    });
+  }
+});
+
 export default router;

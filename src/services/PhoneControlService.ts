@@ -93,6 +93,16 @@ class PhoneControlService extends EventEmitter {
         connectedUsers: [],
         benefitShare: 5,
         distributionEnabled: true
+      },
+      {
+        id: 'playstation-betting-zone',
+        name: 'PlayStation Betting Zone',
+        type: 'gaming',
+        status: 'active',
+        host: true,
+        connectedUsers: [],
+        benefitShare: 20,
+        distributionEnabled: true
       }
     ];
 
@@ -209,6 +219,38 @@ class PhoneControlService extends EventEmitter {
       connectedUsers: totalUsers,
       totalBenefitsDistributed: totalBenefits,
       activeSessions: this.sessions.size
+    };
+  }
+
+  // Connect phone to PlayStation betting zone
+  connectPhoneToPlayStation(userId: string, psnId: string): any {
+    // Connect to PS5 plugin
+    this.connectUserToPlugin(userId, 'playstation-betting-zone');
+    this.connectUserToPlugin(userId, 'ps5-betting');
+    
+    // Enable betting zone distribution
+    this.setDistribution('playstation-betting-zone', true);
+
+    return {
+      success: true,
+      userId,
+      psnId,
+      connectedPlugins: ['playstation-betting-zone', 'ps5-betting'],
+      message: 'Phone connected to PlayStation betting zone',
+      availableGames: ['madden', 'nba2k', 'ufc', 'undisputed', '5v5-basketball']
+    };
+  }
+
+  // Get PlayStation betting status
+  getPlayStationBettingStatus(userId: string): any {
+    const psPlugin = this.plugins.get('playstation-betting-zone');
+    const isConnected = psPlugin?.connectedUsers.includes(userId) || false;
+
+    return {
+      connected: isConnected,
+      distributionEnabled: psPlugin?.distributionEnabled || false,
+      benefitShare: psPlugin?.benefitShare || 0,
+      activeUsers: psPlugin?.connectedUsers.length || 0
     };
   }
 }
