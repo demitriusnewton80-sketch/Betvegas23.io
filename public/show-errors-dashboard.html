@@ -1,0 +1,441 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Errors Dashboard | BettingSites™</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .error-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ff4444;
+        }
+
+        .error-section.warning {
+            border-left-color: #ffaa00;
+        }
+
+        .error-section.info {
+            border-left-color: #4488ff;
+        }
+
+        .error-section h2 {
+            color: #FFD700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .error-item {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 3px solid #ff4444;
+        }
+
+        .error-item.resolved {
+            border-left-color: #44ff44;
+            opacity: 0.7;
+        }
+
+        .error-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .error-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge-critical { background: #ff0000; }
+        .badge-high { background: #ff4444; }
+        .badge-medium { background: #ffaa00; }
+        .badge-low { background: #4488ff; }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .status-resolved { background: #44ff44; color: #000; }
+        .status-pending { background: #ffaa00; color: #000; }
+        .status-failed { background: #ff4444; }
+
+        .btn {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,215,0,0.4);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #FFD700;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            margin-top: 5px;
+        }
+
+        .timestamp {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+        }
+
+        pre {
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 System Errors Dashboard</h1>
+        
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalErrors">0</div>
+                <div class="stat-label">Total Errors</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="unresolvedErrors">0</div>
+                <div class="stat-label">Unresolved</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="autoFixed">0</div>
+                <div class="stat-label">Auto-Fixed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="blockedThreats">0</div>
+                <div class="stat-label">Blocked Threats</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <button class="btn" onclick="loadErrors()">🔄 Refresh</button>
+            <button class="btn" onclick="loadTroubleshooting()">🔧 Troubleshooting</button>
+            <button class="btn" onclick="loadWorkflowErrors()">⚙️ Workflow Errors</button>
+        </div>
+
+        <div id="errorsContainer">
+            <div class="loading">Loading errors...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://0.0.0.0:5000';
+
+        async function loadErrors() {
+            try {
+                // Load Error Recovery Status
+                const statusRes = await fetch(`${API_BASE}/error-recovery/status`);
+                const status = await statusRes.json();
+
+                // Load All Errors
+                const errorsRes = await fetch(`${API_BASE}/error-recovery/errors`);
+                const errorsData = await errorsRes.json();
+
+                // Load Threats
+                const threatsRes = await fetch(`${API_BASE}/error-recovery/threats`);
+                const threatsData = await threatsRes.json();
+
+                updateStats(status, errorsData, threatsData);
+                displayErrors(errorsData.errors, threatsData.threats);
+            } catch (error) {
+                document.getElementById('errorsContainer').innerHTML = `
+                    <div class="error-section">
+                        <h2>❌ Failed to Load Errors</h2>
+                        <p>${error.message}</p>
+                        <p>Make sure the server is running on port 5000</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadTroubleshooting() {
+            try {
+                const res = await fetch(`${API_BASE}/smart-troubleshooting/status`);
+                const data = await res.json();
+
+                const sessionsRes = await fetch(`${API_BASE}/smart-troubleshooting/sessions`);
+                const sessionsData = await sessionsRes.json();
+
+                displayTroubleshooting(data, sessionsData.sessions);
+            } catch (error) {
+                console.error('Failed to load troubleshooting:', error);
+            }
+        }
+
+        async function loadWorkflowErrors() {
+            try {
+                const res = await fetch(`${API_BASE}/workflow-landscape/status`);
+                const data = await res.json();
+
+                const errorsRes = await fetch(`${API_BASE}/workflow-landscape/errors`);
+                const errorsData = await errorsRes.json();
+
+                displayWorkflowErrors(data, errorsData.errors);
+            } catch (error) {
+                console.error('Failed to load workflow errors:', error);
+            }
+        }
+
+        function updateStats(status, errorsData, threatsData) {
+            document.getElementById('totalErrors').textContent = status.totalErrors || 0;
+            document.getElementById('unresolvedErrors').textContent = status.unresolvedErrors || 0;
+            document.getElementById('autoFixed').textContent = status.autoFixedErrors || 0;
+            document.getElementById('blockedThreats').textContent = status.blockedThreats || 0;
+        }
+
+        function displayErrors(errors, threats) {
+            const container = document.getElementById('errorsContainer');
+            
+            let html = '';
+
+            // Display unresolved errors
+            const unresolved = errors.filter(e => !e.resolved);
+            if (unresolved.length > 0) {
+                html += `
+                    <div class="error-section">
+                        <h2>🔴 Unresolved Errors (${unresolved.length})</h2>
+                        ${unresolved.map(error => `
+                            <div class="error-item">
+                                <div class="error-header">
+                                    <div>
+                                        <span class="error-badge badge-${error.severity}">${error.severity.toUpperCase()}</span>
+                                        <span class="status-badge status-pending">Pending</span>
+                                    </div>
+                                    <span class="timestamp">${new Date(error.timestamp).toLocaleString()}</span>
+                                </div>
+                                <strong>${error.type}</strong>: ${error.message}
+                                <div>Source: ${error.source} | Attempts: ${error.attempts}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Display resolved errors
+            const resolved = errors.filter(e => e.resolved);
+            if (resolved.length > 0) {
+                html += `
+                    <div class="error-section info">
+                        <h2>✅ Resolved Errors (${resolved.length})</h2>
+                        ${resolved.slice(0, 10).map(error => `
+                            <div class="error-item resolved">
+                                <div class="error-header">
+                                    <div>
+                                        <span class="error-badge badge-${error.severity}">${error.severity.toUpperCase()}</span>
+                                        <span class="status-badge status-resolved">RESOLVED</span>
+                                        ${error.autoFixed ? '<span class="status-badge status-resolved">AUTO-FIXED</span>' : ''}
+                                    </div>
+                                    <span class="timestamp">${new Date(error.timestamp).toLocaleString()}</span>
+                                </div>
+                                <strong>${error.type}</strong>: ${error.message}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Display threats
+            if (threats && threats.length > 0) {
+                html += `
+                    <div class="error-section warning">
+                        <h2>🛡️ Security Threats (${threats.length})</h2>
+                        ${threats.map(threat => `
+                            <div class="error-item">
+                                <div class="error-header">
+                                    <div>
+                                        <span class="error-badge badge-critical">${threat.type.toUpperCase()}</span>
+                                        <span class="status-badge ${threat.blocked ? 'status-resolved' : 'status-failed'}">
+                                            ${threat.blocked ? 'BLOCKED' : 'ACTIVE'}
+                                        </span>
+                                    </div>
+                                    <span class="timestamp">${new Date(threat.timestamp).toLocaleString()}</span>
+                                </div>
+                                Source: ${threat.source}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            if (!html) {
+                html = `
+                    <div class="error-section info">
+                        <h2>✅ No Errors Found</h2>
+                        <p>System is running smoothly!</p>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function displayTroubleshooting(status, sessions) {
+            const container = document.getElementById('errorsContainer');
+            
+            let html = `
+                <div class="error-section info">
+                    <h2>🔧 Smart Troubleshooting Status</h2>
+                    <div class="stats-grid">
+                        <div>Total Sessions: ${status.totalSessions}</div>
+                        <div>Active: ${status.activeSessions}</div>
+                        <div>Resolved: ${status.resolvedSessions}</div>
+                        <div>Failed: ${status.failedSessions}</div>
+                    </div>
+                </div>
+            `;
+
+            if (sessions && sessions.length > 0) {
+                html += `
+                    <div class="error-section">
+                        <h2>📋 Troubleshooting Sessions</h2>
+                        ${sessions.map(session => `
+                            <div class="error-item">
+                                <div class="error-header">
+                                    <div>
+                                        <span class="error-badge badge-medium">${session.type}</span>
+                                        <span class="status-badge status-${session.status === 'resolved' ? 'resolved' : 'pending'}">
+                                            ${session.status.toUpperCase()}
+                                        </span>
+                                    </div>
+                                    <span class="timestamp">${new Date(session.detectedAt).toLocaleString()}</span>
+                                </div>
+                                <div>Attempts: ${session.attempts}/${session.maxAttempts}</div>
+                                ${session.errors.length > 0 ? `<div>Errors: ${session.errors.join(', ')}</div>` : ''}
+                                ${session.fixes.length > 0 ? `<div>Fixes Applied: ${session.fixes.join(', ')}</div>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function displayWorkflowErrors(status, errors) {
+            const container = document.getElementById('errorsContainer');
+            
+            let html = `
+                <div class="error-section warning">
+                    <h2>⚙️ Workflow Error Landscape</h2>
+                    <div class="stats-grid">
+                        <div>Total Errors: ${status.totalErrors}</div>
+                        <div>Unrecovered: ${status.unrecoveredErrors}</div>
+                        <div>Auto-Recovered: ${status.autoRecoveredErrors}</div>
+                    </div>
+                </div>
+            `;
+
+            if (errors && errors.length > 0) {
+                const unrecovered = errors.filter(e => !e.recovered);
+                
+                if (unrecovered.length > 0) {
+                    html += `
+                        <div class="error-section">
+                            <h2>🔴 Unrecovered Workflow Errors</h2>
+                            ${unrecovered.map(error => `
+                                <div class="error-item">
+                                    <div class="error-header">
+                                        <div>
+                                            <strong>${error.workflowName}</strong>
+                                            <span class="error-badge badge-${error.errorType === 'timeout' ? 'high' : 'medium'}">
+                                                ${error.stage.toUpperCase()}
+                                            </span>
+                                        </div>
+                                        <span class="timestamp">${new Date(error.timestamp).toLocaleString()}</span>
+                                    </div>
+                                    <div>${error.message}</div>
+                                    <div>Type: ${error.errorType} | Attempts: ${error.attempts}/3</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+            }
+
+            container.innerHTML = html;
+        }
+
+        // Load errors on page load
+        loadErrors();
+
+        // Auto-refresh every 10 seconds
+        setInterval(loadErrors, 10000);
+    </script>
+</body>
+</html>
