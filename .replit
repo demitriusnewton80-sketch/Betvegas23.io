@@ -5,7 +5,7 @@ expertMode = true
 channel = "stable-25_05"
 
 [workflows]
-runButton = "Development Server"
+runButton = "Production Launch"
 
 [[workflows.workflow]]
 name = "Runa"
@@ -122,6 +122,23 @@ mode = "parallel"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm install --legacy-peer-deps"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run build"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "NODE_ENV=production node dist/index.js"
+
+[[workflows.workflow]]
+name = "Production Launch"
+author = 48739577
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install --legacy-peer-deps --production"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
