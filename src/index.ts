@@ -36,6 +36,11 @@ import { contentIntegrityService } from './services/ContentIntegrityService.js';
 import jsonSyncRoutes from './routes/json-sync.js';
 import workflowLandscapeRouter from './routes/workflow-landscape.js';
 import smartCommunicationFusionRouter from './routes/smart-communication-fusion.js';
+import feedBuilderRoutes from './routes/feed-builder.js';
+import phoneControlRoutes from './routes/phone-control.js';
+import backupRoutes from './routes/backup.js';
+import versionRoutes from './routes/version.js';
+import parlayRoutes from './routes/parlay.js';
 import applePartnershipRouter from './routes/apple-partnership.js';
 import falconBroadcastRouter from './routes/falcon-broadcast.js';
 import partnershipEnrollmentRouter from './routes/partnership-enrollment.js';
@@ -155,6 +160,10 @@ try {
   app.use('/ai', aiRoutes);
   app.use('/openai', openaiRoutes);
   app.use('/github-recovery', githubRecoveryRoutes);
+  app.use('/feed-builder', feedBuilderRoutes);
+  app.use('/json-sync', jsonSyncRoutes);
+  app.use('/smart-communication-fusion', smartCommunicationFusionRouter);
+  app.use('/workflow-landscape', workflowLandscapeRouter);
   console.log('✅ All API routes registered successfully');
 } catch (error) {
   console.error('❌ Error registering routes:', error);
@@ -236,25 +245,11 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-// Start server
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`
-╔═══════════════════════════════════════════════════════════╗
-║                                                           ║
-║   🎯 BettingSites™ - Live Sports Streaming & Betting    ║
-║                                                           ║
-║   Powered by Amazon Web Services (AWS)                   ║
-║   Young Meeat LLC | FCC: 20130314143016                  ║
-║                                                           ║
-║   Server running on http://0.0.0.0:${PORT}                    ║
-║                                                           ║
-╚═══════════════════════════════════════════════════════════╝
-  `);
-});
-
-// Initialize core systems with error handling
-Promise.resolve().then(async () => {
+// Initialize core systems BEFORE starting server
+async function initializeAndStartServer() {
   try {
+    console.log('🔄 Initializing core systems...');
+    
     // Load environment from certificate files
     const { environmentLoader } = await import('./services/EnvironmentLoaderService.js');
     await environmentLoader.loadFromCertificate();
@@ -286,16 +281,40 @@ Promise.resolve().then(async () => {
     const { bridgePortFusionCore } = await import('./core/BridgePortFusionCore.js');
     console.log('✅ BridgePortFusion ready');
 
+    console.log('✅ All core systems initialized successfully\n');
+
+    // NOW start the server after everything is ready
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`
+╔═══════════════════════════════════════════════════════════╗
+║                                                           ║
+║   🎯 BettingSites™ - Live Sports Streaming & Betting    ║
+║                                                           ║
+║   Powered by Amazon Web Services (AWS)                   ║
+║   Young Meeat LLC | FCC: 20130314143016                  ║
+║                                                           ║
+║   Server running on http://0.0.0.0:${PORT}                    ║
+║   ✅ All systems operational                             ║
+║                                                           ║
+╚═══════════════════════════════════════════════════════════╝
+      `);
+    });
+
   } catch (error) {
     console.error('❌ Core system initialization error:', error);
-    // Continue running even if some systems fail to initialize
+    console.error('⚠️  Starting server anyway with limited functionality...');
+    
+    // Start server even if initialization fails
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`⚠️  Server running on http://0.0.0.0:${PORT} (degraded mode)`);
+    });
   }
-});
+}
 
-// Mount workflow landscape endpoint
-app.use('/workflow-landscape', workflowLandscapeRouter);
-app.use('/terminal-bridge', terminalBridgeRoutes);
-app.use('/wave-stream-assembly', waveStreamAssemblyRoutes);
+// Start initialization
+initializeAndStartServer();
+
+// Workflow landscape already mounted in routes section above
 
 // Health check endpoint
 // Note: This is a placeholder and might need further implementation
