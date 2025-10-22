@@ -380,6 +380,292 @@
             color: #b8941f;
             text-transform: uppercase;
         }
+
+        /* Dark Mode Styles */
+        .dark-theme body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            color: #e0e0e0;
+        }
+
+        .dark-theme .enterprise-header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            border-bottom-color: #e6c547; /* Softer gold */
+            box-shadow: 0 10px 40px rgba(230, 197, 71, 0.3);
+        }
+
+        .dark-theme .enterprise-header::before {
+            background: linear-gradient(90deg, transparent, rgba(230, 197, 71, 0.05), transparent);
+        }
+
+        .dark-theme .enterprise-title {
+            color: #e6c547;
+            text-shadow: 0 0 30px rgba(230, 197, 71, 0.6);
+        }
+
+        .dark-theme .live-stream-section {
+            background: linear-gradient(135deg, rgba(15, 15, 15, 0.95) 0%, rgba(5, 5, 5, 0.98) 100%);
+            border-color: #e6c547;
+            box-shadow: 0 10px 50px rgba(230, 197, 71, 0.2);
+        }
+
+        .dark-theme .stream-card {
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.9) 0%, rgba(10, 10, 10, 0.95) 100%);
+            border-color: rgba(230, 197, 71, 0.3);
+        }
+
+        .dark-theme .stream-card:hover {
+            border-color: #e6c547;
+            box-shadow: 0 20px 60px rgba(230, 197, 71, 0.4);
+        }
+
+        .dark-theme .team-name {
+            color: #e6c547;
+        }
+
+        .dark-theme .team-score {
+            color: #90ee90; /* Lighter green for dark mode */
+            text-shadow: 0 0 10px rgba(144, 238, 144, 0.4);
+        }
+
+        .dark-theme .vs-separator {
+            color: #e6c547;
+        }
+
+        .dark-theme .video-player {
+            border-color: rgba(230, 197, 71, 0.3);
+        }
+
+        .dark-theme .video-placeholder {
+            background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+        }
+
+        .dark-theme .play-button {
+            background: rgba(230, 197, 71, 0.1);
+            border-color: #e6c547;
+        }
+
+        .dark-theme .play-button:hover {
+            background: rgba(230, 197, 71, 0.25);
+            box-shadow: 0 0 30px rgba(230, 197, 71, 0.5);
+        }
+
+        .dark-theme .play-icon {
+            border-left-color: #e6c547;
+        }
+
+        .dark-theme .game-info {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .dark-theme .bet-button {
+            background: linear-gradient(135deg, rgba(230, 197, 71, 0.1) 0%, rgba(184, 148, 31, 0.1) 100%);
+            border-color: rgba(230, 197, 71, 0.3);
+        }
+
+        .dark-theme .bet-button:hover {
+            background: linear-gradient(135deg, rgba(230, 197, 71, 0.25) 0%, rgba(184, 148, 31, 0.25) 100%);
+            border-color: #e6c547;
+            box-shadow: 0 8px 20px rgba(230, 197, 71, 0.2);
+        }
+
+        .dark-theme .bet-label {
+            color: #cca300; /* Darker gold */
+        }
+
+        .dark-theme .bet-odds {
+            color: #e6c547;
+        }
+
+        .dark-theme .broadcast-badge {
+            background: rgba(255, 100, 100, 0.9); /* Slightly softer red */
+        }
+
+        .dark-theme .stats-bar {
+            margin-bottom: 30px;
+        }
+
+        .dark-theme .stat-box {
+            background: rgba(15, 15, 15, 0.8);
+            border-color: rgba(230, 197, 71, 0.3);
+        }
+
+        .dark-theme .stat-value {
+            color: #e6c547;
+        }
+
+        .dark-theme .stat-label {
+            color: #cca300;
+        }
+
+        .dark-theme .upload-zone {
+            border-color: #e6c547 !important; /* Ensure it's visible in dark mode */
+            background: rgba(255, 215, 0, 0.05) !important;
+        }
+
+        .dark-theme .section {
+            background: rgba(255, 215, 0, 0.05) !important;
+            border-color: rgba(230, 197, 71, 0.2) !important;
+        }
+
+        /* Styles for the theme toggle button */
+        #themeToggle {
+            background-color: #4CAF50; /* Default green */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        #themeToggle:hover {
+            background-color: #45a049; /* Darker green */
+        }
+
+        /* Styles for .fcc-badge */
+        .fcc-badge {
+            display: inline-block;
+            background-color: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 700;
+            margin: 0 5px;
+            border: 1px solid rgba(255, 215, 0, 0.5);
+        }
+
+        /* Styles for the upload progress bar */
+        .upload-progress {
+            width: 100%;
+            height: 20px;
+            background-color: #333;
+            border-radius: 10px;
+            margin-top: 15px;
+            overflow: hidden;
+            display: none; /* Hidden by default */
+        }
+
+        .progress-bar {
+            height: 100%;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            font-size: 12px;
+            border-radius: 10px;
+            transition: width 0.3s ease-in-out;
+        }
+
+        /* Styles for upload list items */
+        .stream-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(26, 26, 26, 0.8);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        /* General section styling for upload and betting */
+        .section {
+            padding: 30px;
+            margin: 30px auto;
+            max-width: 1400px;
+            border-radius: 15px;
+            background-color: rgba(255, 215, 0, 0.05); /* Light gold background */
+            border: 2px solid rgba(255, 215, 0, 0.2); /* Faint gold border */
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.1);
+        }
+
+        .section h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 32px;
+            color: #FFD700;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Upload Zone Specific Styles */
+        .upload-zone {
+            border: 2px dashed #FFD700;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .upload-zone:hover {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: #ffd000;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Responsiveness adjustments */
+        @media (max-width: 768px) {
+            .enterprise-header {
+                padding: 20px 15px;
+            }
+            .brand-logo {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .logo-icon {
+                font-size: 48px;
+            }
+            .stream-grid, .stats-bar {
+                grid-template-columns: 1fr;
+            }
+            .betting-options {
+                grid-template-columns: 1fr;
+            }
+            .section {
+                padding: 20px;
+            }
+        }
+
+        /* Basic styling for .btn and .btn-secondary, .btn-success, .btn-danger if they exist globally */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 <body>
@@ -558,6 +844,8 @@
         </div>
     </div>
 
+    <script src="/js/api-config.js"></script>
+    <script src="/js/theme-toggle.js"></script>
     <script>
         const API_BASE = window.CloudConfig?.getAPIBase() || window.location.origin;
         let uploadedFiles = [];
@@ -572,7 +860,7 @@
                 { id: 'stream4', name: 'NHL - Maple Leafs vs. Canadiens', sport: 'Hockey' },
                 { id: 'stream5', name: 'Soccer - Premier League', sport: 'Football (Soccer)' }
             ];
-            
+
             document.getElementById('activeStreams').textContent = mockStreams.length;
             document.getElementById('liveGames').textContent = mockStreams.length;
             displayStreams(mockStreams);
@@ -745,53 +1033,6 @@
             const activeBetsElement = document.getElementById('activeBets');
             activeBetsElement.textContent = parseInt(activeBetsElement.textContent) + 1;
         }
-
-        // Theme Switching
-        const themeToggle = document.getElementById('themeToggle');
-        const root = document.documentElement;
-
-        function applyTheme(theme) {
-            if (theme === 'gold') {
-                // Applying premium gold theme
-                root.style.setProperty('--primary-color', '#FFD700'); // Gold
-                root.style.setProperty('--primary-dark', '#b8941f'); // Darker Gold
-                root.style.setProperty('--bg-primary', '#1a1a1a'); // Dark background
-                root.style.setProperty('--bg-secondary', '#0a0a0a'); // Even darker background
-                root.style.setProperty('--secondary-color', '#FFD700'); // Gold accent
-                themeToggle.textContent = '🎨 Default Theme';
-                document.body.classList.add('dark-theme'); // Assumes dark-theme styles are also defined for gold
-                 // Override default body gradient for gold theme
-                document.body.style.background = 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)';
-                document.body.style.backgroundSize = '400% 400%';
-                document.body.style.animation = 'gradientShift 15s ease infinite';
-
-
-            } else {
-                // Applying default blue theme (original styles)
-                root.style.setProperty('--primary-color', '#3b82f6'); // Blue
-                root.style.setProperty('--primary-dark', '#2563eb'); // Darker Blue
-                root.style.setProperty('--bg-primary', '#0f172a'); // Dark Blue background
-                root.style.setProperty('--bg-secondary', '#1e293b'); // Slightly lighter dark blue
-                root.style.setProperty('--secondary-color', '#10b981'); // Green accent
-                themeToggle.textContent = '🎨 Gold Theme';
-                document.body.classList.remove('dark-theme');
-                // Reapply original body gradient for blue theme
-                document.body.style.background = 'linear-gradient(135deg, #000000 0%, #1a1a1a 25%, #0d0d0d 50%, #1a1a1a 75%, #000000 100%)';
-                document.body.style.backgroundSize = '400% 400%';
-                document.body.style.animation = 'gradientShift 15s ease infinite';
-            }
-            localStorage.setItem('sportsbook-theme', theme);
-        }
-
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = localStorage.getItem('sportsbook-theme') || 'blue';
-            applyTheme(currentTheme === 'blue' ? 'gold' : 'blue');
-        });
-
-        // Load saved theme
-        const savedTheme = localStorage.getItem('sportsbook-theme');
-        applyTheme(savedTheme || 'blue'); // Apply saved theme or default to blue
-
 
         // Load data on startup
         window.addEventListener('load', () => {
