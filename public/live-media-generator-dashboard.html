@@ -1,0 +1,350 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Media Generator | BettingSites™</title>
+    <link rel="stylesheet" href="/styles/unified-sportsbook.css">
+    <style>
+        .generator-controls {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .create-event-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .form-input {
+            padding: 12px;
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 14px;
+        }
+
+        .create-btn {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .create-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
+        }
+
+        .event-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .media-sources {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .media-source {
+            background: rgba(139, 92, 246, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        .broadcast-outputs {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .output-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .end-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .live-feed {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .feed-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            border-left: 3px solid #8b5cf6;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 4px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body class="purple-gold-theme">
+    <div class="container">
+        <div class="header">
+            <h1>🎬 Live Media Generator</h1>
+            <p>Broadcast Live Events to All Sportsbooks</p>
+            <div class="badges">
+                <span class="badge">FCC Entity: 20130314143016</span>
+                <span class="badge pulse">Broadcasting Live</span>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card purple-gradient">
+                <div class="stat-value" id="totalEvents">0</div>
+                <div class="stat-label">Live Events</div>
+            </div>
+            <div class="stat-card gold-gradient">
+                <div class="stat-value" id="totalViewers">0</div>
+                <div class="stat-label">Total Viewers</div>
+            </div>
+            <div class="stat-card purple-gradient">
+                <div class="stat-value" id="broadcastOutputs">0</div>
+                <div class="stat-label">Broadcast Outputs</div>
+            </div>
+            <div class="stat-card gold-gradient">
+                <div class="stat-value" id="mediaSources">0</div>
+                <div class="stat-label">Media Sources</div>
+            </div>
+        </div>
+
+        <div class="generator-controls">
+            <h2 style="margin-bottom: 20px;">📡 Create Live Event</h2>
+            <div class="create-event-form">
+                <input type="text" id="sportInput" class="form-input" placeholder="Sport (e.g., NBA, NFL)">
+                <input type="text" id="homeTeamInput" class="form-input" placeholder="Home Team">
+                <input type="text" id="awayTeamInput" class="form-input" placeholder="Away Team">
+                <button class="create-btn" onclick="createLiveEvent()">
+                    🎥 Start Broadcasting
+                </button>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+            <div>
+                <h2 style="margin-bottom: 20px;">🔴 Live Events</h2>
+                <div id="liveEvents"></div>
+            </div>
+
+            <div>
+                <h2 style="margin-bottom: 20px;">📊 Live Feed</h2>
+                <div class="live-feed" id="liveFeed"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let eventSource;
+
+        async function loadStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/live-media-generator/status`);
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('totalEvents').textContent = data.status.totalLiveEvents;
+                    document.getElementById('totalViewers').textContent = data.status.totalViewers.toLocaleString();
+                    document.getElementById('broadcastOutputs').textContent = data.status.totalBroadcastOutputs;
+                    document.getElementById('mediaSources').textContent = data.status.totalMediaSources;
+                }
+            } catch (error) {
+                console.error('Error loading status:', error);
+            }
+        }
+
+        async function loadLiveEvents() {
+            try {
+                const response = await fetch(`${API_BASE}/live-media-generator/events`);
+                const data = await response.json();
+
+                if (data.success && data.events.length > 0) {
+                    const eventsHTML = await Promise.all(data.events.map(async event => {
+                        const outputsResponse = await fetch(`${API_BASE}/live-media-generator/events/${event.id}/outputs`);
+                        const outputsData = await outputsResponse.json();
+                        const outputs = outputsData.success ? outputsData.outputs : [];
+
+                        return `
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div>
+                                        <h3>${event.sport}: ${event.homeTeam} vs ${event.awayTeam}</h3>
+                                        <div style="font-size: 14px; opacity: 0.8; margin-top: 5px;">
+                                            👥 ${event.viewerCount.toLocaleString()} viewers
+                                        </div>
+                                    </div>
+                                    <button class="end-btn" onclick="endEvent('${event.id}')">
+                                        End Event
+                                    </button>
+                                </div>
+
+                                <div class="media-sources">
+                                    ${event.mediaSources.map(source => `
+                                        <div class="media-source">
+                                            <strong>${source.type.toUpperCase()}</strong><br>
+                                            Quality: ${source.quality}<br>
+                                            Status: ${source.status}
+                                        </div>
+                                    `).join('')}
+                                </div>
+
+                                <div class="broadcast-outputs">
+                                    <strong>📡 Broadcast Outputs (${outputs.length}):</strong>
+                                    ${outputs.slice(0, 3).map(output => `
+                                        <div class="output-item">
+                                            ${output.format.toUpperCase()} - ${output.resolution} @ ${output.bitrate}kbps
+                                        </div>
+                                    `).join('')}
+                                    ${outputs.length > 3 ? `<div style="opacity: 0.6; font-size: 12px;">+${outputs.length - 3} more outputs</div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }));
+
+                    document.getElementById('liveEvents').innerHTML = eventsHTML.join('');
+                } else {
+                    document.getElementById('liveEvents').innerHTML = '<p style="opacity: 0.6;">No live events broadcasting</p>';
+                }
+            } catch (error) {
+                console.error('Error loading events:', error);
+            }
+        }
+
+        async function createLiveEvent() {
+            const sport = document.getElementById('sportInput').value;
+            const homeTeam = document.getElementById('homeTeamInput').value;
+            const awayTeam = document.getElementById('awayTeamInput').value;
+
+            if (!sport || !homeTeam || !awayTeam) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/live-media-generator/events/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sport, homeTeam, awayTeam })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Live event created!\n\nEvent ID: ${data.eventId}`);
+                    document.getElementById('sportInput').value = '';
+                    document.getElementById('homeTeamInput').value = '';
+                    document.getElementById('awayTeamInput').value = '';
+                    loadLiveEvents();
+                } else {
+                    alert('❌ Failed to create event: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error creating event:', error);
+                alert('❌ Failed to create event');
+            }
+        }
+
+        async function endEvent(eventId) {
+            if (!confirm('Are you sure you want to end this live event?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/live-media-generator/events/${eventId}/end`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('✅ Event ended successfully');
+                    loadLiveEvents();
+                } else {
+                    alert('❌ Failed to end event: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error ending event:', error);
+                alert('❌ Failed to end event');
+            }
+        }
+
+        function addToLiveFeed(message) {
+            const feed = document.getElementById('liveFeed');
+            const item = document.createElement('div');
+            item.className = 'feed-item';
+            item.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+            feed.insertBefore(item, feed.firstChild);
+
+            // Keep only last 20 items
+            while (feed.children.length > 20) {
+                feed.removeChild(feed.lastChild);
+            }
+        }
+
+        function startLiveStream() {
+            if (eventSource) return;
+
+            eventSource = new EventSource(`${API_BASE}/live-media-generator/stream`);
+
+            eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+
+                if (data.type === 'status_update') {
+                    loadStatus();
+                } else if (data.type === 'media_generated') {
+                    addToLiveFeed(`📹 Media generated for event ${data.mediaPacket.eventId.substr(-8)}`);
+                } else if (data.type === 'broadcast_sent') {
+                    addToLiveFeed(`📡 Broadcast sent: ${data.broadcast.format.toUpperCase()}`);
+                }
+            };
+        }
+
+        // Initialize
+        loadStatus();
+        loadLiveEvents();
+        startLiveStream();
+
+        setInterval(() => {
+            loadStatus();
+            loadLiveEvents();
+        }, 5000);
+    </script>
+</body>
+</html>

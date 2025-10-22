@@ -67,6 +67,7 @@ import githubRecoveryRoutes from './routes/github-recovery.js';
 import firebaseStudioRouter from './routes/firebase-studio.js';
 import firebaseStreamRouter from './routes/firebase-stream.js';
 import broadcastExportRoutes from './routes/broadcast-export.js';
+import liveMediaGeneratorRoutes from './routes/live-media-generator.js';
 
 // Initialize core systems
 const __filename = fileURLToPath(import.meta.url);
@@ -158,6 +159,7 @@ try {
   app.use('/radio-broadcast-deployment', radioBroadcastDeploymentRoutes); // Mount the new route
   app.use('/falcon-broadcast', falconBroadcastRoutes);
   app.use('/broadcast-export', broadcastExportRoutes);
+  app.use('/live-media-generator', liveMediaGeneratorRoutes);
   // Unified Stylesheet API
   app.use('/api/stylesheet', unifiedStylesheetRouter);
   // Mount phone app bridge routes
