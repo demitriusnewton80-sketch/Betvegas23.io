@@ -199,6 +199,11 @@ app.get('/api/brand', (req: Request, res: Response) => {
   });
 });
 
+// Unified public sportsbook
+app.get('/unified', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/unified-public-sportsbook-complete.html'));
+});
+
 // SPA fallback for all HTML routes
 app.get('*', (req: Request, res: Response) => {
   if (req.path.endsWith('.html') || !req.path.includes('.')) {
