@@ -16,9 +16,9 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
             background-attachment: fixed;
-            color: white;
+            color: #d4af37;
             min-height: 100vh;
             overflow-x: hidden;
         }
@@ -50,10 +50,11 @@
 
         /* Mobile App Header */
         .mobile-header {
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+            border-bottom: 3px solid #d4af37;
             padding: 20px;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -89,7 +90,7 @@
         .status-dot {
             width: 8px;
             height: 8px;
-            background: #22c55e;
+            background: #d4af37;
             border-radius: 50%;
             animation: pulse 2s infinite;
         }
@@ -120,8 +121,8 @@
         }
 
         .game-card {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
-            border: 2px solid rgba(59, 130, 246, 0.3);
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(10, 10, 10, 0.95) 100%);
+            border: 2px solid rgba(212, 175, 55, 0.3);
             border-radius: 16px;
             padding: 20px;
             transition: all 0.3s ease;
@@ -129,7 +130,8 @@
 
         .game-card:active {
             transform: scale(0.98);
-            border-color: #3b82f6;
+            border-color: #d4af37;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
         }
 
         .game-header {
@@ -140,7 +142,8 @@
         }
 
         .sport-badge {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+            color: #000000;
             padding: 6px 12px;
             border-radius: 12px;
             font-size: 11px;
@@ -192,8 +195,8 @@
         }
 
         .odds-btn {
-            background: rgba(59, 130, 246, 0.2);
-            border: 2px solid rgba(59, 130, 246, 0.4);
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px solid rgba(212, 175, 55, 0.4);
             padding: 12px;
             border-radius: 12px;
             text-align: center;
@@ -202,8 +205,9 @@
         }
 
         .odds-btn:active {
-            background: #3b82f6;
-            border-color: #3b82f6;
+            background: #d4af37;
+            border-color: #d4af37;
+            color: #000000;
         }
 
         .odds-label {

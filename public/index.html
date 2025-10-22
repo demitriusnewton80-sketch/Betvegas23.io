@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fanatics Sportsbook - Live Sports Betting</title>
     <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-dark: #2563eb;
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --secondary-color: #10b981;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -12,7 +19,7 @@
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
             color: white;
             min-height: 100vh;
         }
@@ -22,7 +29,7 @@
             padding: 20px;
         }
         .header {
-            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 50%, #3b82f6 100%);
             padding: 40px 30px;
             border-radius: 20px;
             margin-bottom: 20px;
@@ -32,7 +39,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .header::before {
             content: '';
             position: absolute;
@@ -43,7 +50,7 @@
             background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
             animation: rotate 20s linear infinite;
         }
-        
+
         @keyframes rotate {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -81,12 +88,12 @@
             padding: 25px;
         }
         .section h2 {
-            color: #3b82f6;
+            color: var(--primary-color);
             margin-bottom: 15px;
             font-size: 22px;
         }
         .upload-zone {
-            border: 2px dashed #3b82f6;
+            border: 2px dashed var(--primary-color);
             border-radius: 12px;
             padding: 40px;
             text-align: center;
@@ -109,10 +116,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-left: 4px solid #3b82f6;
+            border-left: 4px solid var(--primary-color);
         }
         .btn {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             color: white;
             border: none;
             padding: 10px 20px;
@@ -130,6 +137,9 @@
         }
         .btn-danger {
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        .btn-secondary {
+            background: var(--secondary-color);
         }
         .live-indicator {
             display: inline-flex;
@@ -178,7 +188,7 @@
         .stat-value {
             font-size: 32px;
             font-weight: 700;
-            color: #3b82f6;
+            color: var(--primary-color);
         }
         .stat-label {
             font-size: 12px;
@@ -199,12 +209,56 @@
         }
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #3b82f6, #22c55e);
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
             transition: width 0.3s;
             display: flex;
             align-items: center;
             padding: 0 15px;
             font-weight: 700;
+        }
+        /* Mobile Sportsbook Theme */
+        body.dark-theme {
+            background: #000;
+            color: #fff;
+        }
+        .dark-theme .header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #333 50%, #555 100%);
+            box-shadow: 0 12px 50px rgba(0,0,0,0.6), 0 0 80px rgba(212, 175, 55, 0.3);
+        }
+        .dark-theme .header::before {
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+        }
+        .dark-theme .section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 2px solid rgba(255, 255, 255, 0.08);
+        }
+        .dark-theme .section h2 {
+            color: #d4af37; /* Gold */
+        }
+        .dark-theme .upload-zone {
+            border: 2px dashed #d4af37;
+        }
+        .dark-theme .stream-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #d4af37;
+        }
+        .dark-theme .btn {
+            background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+        }
+        .dark-theme .btn:hover {
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+        }
+        .dark-theme .btn-success {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+        .dark-theme .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        .dark-theme .stat-value {
+            color: #d4af37;
+        }
+        .dark-theme .progress-bar {
+            background: linear-gradient(90deg, #d4af37, #b8941f);
         }
     </style>
 </head>
@@ -223,6 +277,11 @@
                     <span class="pulse-dot"></span>
                     All Systems Live
                 </span>
+            </div>
+            <div style="margin-top: 15px;">
+                <button id="themeToggle" class="btn btn-secondary" style="padding: 10px 20px; font-size: 14px;">
+                    🎨 Switch Theme
+                </button>
             </div>
         </div>
 
@@ -369,7 +428,7 @@
                         <span class="pulse-dot"></span>
                         LIVE: ${streamName}
                     </div>
-                    <div style="font-size: 24px; color: #3b82f6; margin-top: 20px;">
+                    <div style="font-size: 24px; color: var(--primary-color); margin-top: 20px;">
                         🎥 Streaming ${streamName}
                     </div>
                     <p style="color: #9ca3af; margin-top: 10px;">Stream ID: ${streamId}</p>
@@ -485,6 +544,46 @@
             alert(`Opening ${sport} betting interface...`);
         }
 
+        // Theme Switching
+        const themeToggle = document.getElementById('themeToggle');
+        const root = document.documentElement;
+
+        function applyTheme(theme) {
+            if (theme === 'gold') {
+                root.style.setProperty('--primary-color', '#d4af37');
+                root.style.setProperty('--primary-dark', '#b8941f');
+                root.style.setProperty('--bg-primary', '#1a1a1a');
+                root.style.setProperty('--bg-secondary', '#0a0a0a');
+                root.style.setProperty('--secondary-color', '#d4af37');
+                themeToggle.textContent = '🎨 Blue Theme';
+                document.body.classList.add('dark-theme');
+            } else {
+                root.style.setProperty('--primary-color', '#3b82f6');
+                root.style.setProperty('--primary-dark', '#2563eb');
+                root.style.setProperty('--bg-primary', '#0f172a');
+                root.style.setProperty('--bg-secondary', '#1e293b');
+                root.style.setProperty('--secondary-color', '#10b981');
+                themeToggle.textContent = '🎨 Gold Theme';
+                document.body.classList.remove('dark-theme');
+            }
+            localStorage.setItem('sportsbook-theme', theme);
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = localStorage.getItem('sportsbook-theme') || 'blue';
+            applyTheme(currentTheme === 'blue' ? 'gold' : 'blue');
+        });
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('sportsbook-theme');
+        if (savedTheme) {
+            applyTheme(savedTheme);
+        } else {
+            // Apply default blue theme if no saved theme
+            applyTheme('blue');
+        }
+
+
         // Load data on startup
         window.addEventListener('load', () => {
             loadStreams();
@@ -501,13 +600,13 @@
         });
 
         uploadZone.addEventListener('dragleave', () => {
-            uploadZone.style.borderColor = '#3b82f6';
+            uploadZone.style.borderColor = 'var(--primary-color)';
             uploadZone.style.background = 'transparent';
         });
 
         uploadZone.addEventListener('drop', (e) => {
             e.preventDefault();
-            uploadZone.style.borderColor = '#3b82f6';
+            uploadZone.style.borderColor = 'var(--primary-color)';
             uploadZone.style.background = 'transparent';
 
             const files = Array.from(e.dataTransfer.files);
