@@ -78,27 +78,44 @@ class TeamLogoService {
 
     const { colors, abbreviation } = config;
 
-    // Use player23.ag logo URL with fallback
-    const player23LogoUrl = this.getPlayer23LogoUrl(league, teamName);
-
-    // Generate SVG logo with player23.ag image and team colors
+    // Generate premium SVG logo with enhanced design
     return `
       <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="grad-${abbreviation}" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" style="stop-color:${colors.primary};stop-opacity:1" />
-            <stop offset="100%" style="stop-color:${colors.secondary};stop-opacity:1" />
+            <stop offset="50%" style="stop-color:${colors.secondary};stop-opacity:1" />
+            <stop offset="100%" style="stop-color:${colors.primary};stop-opacity:1" />
+          </linearGradient>
+          <linearGradient id="shine-${abbreviation}" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:rgba(255,255,255,0.3);stop-opacity:1" />
+            <stop offset="100%" style="stop-color:rgba(255,255,255,0);stop-opacity:0" />
           </linearGradient>
           <filter id="shadow-${abbreviation}">
-            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.3"/>
+            <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.5"/>
+          </filter>
+          <filter id="glow-${abbreviation}">
+            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
           </filter>
         </defs>
 
-        <!-- Shield/Circle Background -->
-        <circle cx="100" cy="100" r="90" fill="url(#grad-${abbreviation})" filter="url(#shadow-${abbreviation})"/>
-        <circle cx="100" cy="100" r="85" fill="none" stroke="${colors.accent}" stroke-width="3"/>
-
-        <!-- Team Logo from player23.ag -->
+        <!-- Outer Glow Ring -->
+        <circle cx="100" cy="100" r="92" fill="none" stroke="${colors.secondary}" stroke-width="2" opacity="0.3"/>
+        
+        <!-- Main Shield Background -->
+        <circle cx="100" cy="100" r="88" fill="url(#grad-${abbreviation})" filter="url(#shadow-${abbreviation})"/>
+        
+        <!-- Inner Circle -->
+        <circle cx="100" cy="100" r="82" fill="none" stroke="${colors.accent}" stroke-width="4"/>
+        
+        <!-- Accent Ring -->
+        <circle cx="100" cy="100" r="75" fill="rgba(0,0,0,0.2)"/>
+        
+        <!-- Team Abbreviation -->
         <image href="${player23LogoUrl}" x="50" y="50" width="100" height="100" 
                onerror="this.style.display='none'"/>
 
