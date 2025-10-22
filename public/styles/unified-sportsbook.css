@@ -49,11 +49,11 @@
 
 /* CSS Variables for Consistent Theming */
 :root {
-    /* BettingSites™ Brand Colors - Black & Gold Theme */
-    --bettingsites-primary: #D4AF37;
-    --bettingsites-primary-dark: #B8941F;
-    --bettingsites-primary-light: #F4D03F;
-    --bettingsites-glow: rgba(212, 175, 55, 0.5);
+    /* BettingSites™ Brand Colors - Purple, Gold & Black Theme */
+    --bettingsites-primary: #9333EA;
+    --bettingsites-primary-dark: #7C3AED;
+    --bettingsites-primary-light: #A855F7;
+    --bettingsites-glow: rgba(147, 51, 234, 0.5);
     --bettingsites-secondary: #FFD700;
     --bettingsites-secondary-dark: #FFC700;
     --bettingsites-secondary-glow: rgba(255, 215, 0, 0.5);
@@ -61,6 +61,9 @@
     --bettingsites-accent-dark: #B8941F;
     --bettingsites-accent-glow: rgba(212, 175, 55, 0.5);
     --betting-gold: #FFD700;
+    --betting-purple: #9333EA;
+    --betting-purple-dark: #7C3AED;
+    --betting-purple-light: #C084FC;
     
     /* Legacy aliases for compatibility */
     --primary-color: var(--bettingsites-primary);
@@ -75,10 +78,10 @@
     --accent-glow: var(--bettingsites-accent-glow);
     
     /* ESPN Colors */
-    --espn-red: #D4AF37;
+    --espn-red: #9333EA;
     --espn-blue: #1a1a1a;
     
-    /* Background Colors - Black Theme */
+    /* Background Colors - Black & Purple Theme */
     --bg-primary: #000000;
     --bg-secondary: #0a0a0a;
     --bg-tertiary: #1a1a1a;
@@ -86,16 +89,16 @@
     --bg-overlay: rgba(0, 0, 0, 0.5);
     
     /* Text Colors */
-    --text-primary: #FFD700;
-    --text-secondary: #F4D03F;
-    --text-muted: #B8941F;
-    --text-disabled: #8B7355;
+    --text-primary: #C084FC;
+    --text-secondary: #A855F7;
+    --text-muted: #7C3AED;
+    --text-disabled: #6B21A8;
     
-    /* Border Colors - Gold */
-    --border-primary: rgba(212, 175, 55, 0.4);
-    --border-secondary: rgba(255, 215, 0, 0.2);
-    --border-accent: rgba(212, 175, 55, 0.5);
-    --border-success: rgba(212, 175, 55, 0.4);
+    /* Border Colors - Purple & Gold */
+    --border-primary: rgba(147, 51, 234, 0.4);
+    --border-secondary: rgba(168, 85, 247, 0.2);
+    --border-accent: rgba(255, 215, 0, 0.5);
+    --border-success: rgba(147, 51, 234, 0.4);
     
     /* Status Colors */
     --status-live: #D4AF37;
@@ -191,7 +194,7 @@ html {
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-    background: linear-gradient(135deg, #000000 0%, #0a0a0a 25%, #1a1a1a 50%, #0a0a0a 75%, #000000 100%);
+    background: linear-gradient(135deg, #000000 0%, #0a0a0a 25%, #1a0a2a 50%, #0a0a0a 75%, #000000 100%);
     background-size: 400% 400%;
     background-attachment: fixed;
     color: var(--text-primary);
@@ -209,8 +212,9 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(255, 215, 0, 0.08) 0%, transparent 50%);
+    background: radial-gradient(circle at 20% 50%, rgba(147, 51, 234, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 215, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 20%, rgba(168, 85, 247, 0.06) 0%, transparent 60%);
     pointer-events: none;
     z-index: 0;
 }
@@ -222,16 +226,16 @@ body::before {
 
 /* Header Styles */
 .sportsbook-header {
-    background: linear-gradient(135deg, rgba(10, 10, 10, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%);
+    background: linear-gradient(135deg, rgba(10, 10, 10, 0.95) 0%, rgba(26, 10, 42, 0.95) 50%, rgba(26, 26, 26, 0.95) 100%);
     backdrop-filter: blur(30px) saturate(180%);
     -webkit-backdrop-filter: blur(30px) saturate(180%);
     padding: var(--spacing-xl) var(--spacing-lg);
     text-align: center;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 
-                0 0 60px rgba(212, 175, 55, 0.4),
-                inset 0 1px 0 rgba(212, 175, 55, 0.2);
-    border: 2px solid rgba(212, 175, 55, 0.3);
-    border-bottom: 3px solid rgba(255, 215, 0, 0.6);
+                0 0 60px rgba(147, 51, 234, 0.5),
+                inset 0 1px 0 rgba(147, 51, 234, 0.3);
+    border: 2px solid rgba(147, 51, 234, 0.4);
+    border-bottom: 3px solid rgba(168, 85, 247, 0.7);
     border-radius: 0 0 24px 24px;
     position: relative;
     overflow: hidden;
@@ -244,7 +248,7 @@ body::before {
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, transparent, var(--betting-gold) 50%, transparent);
+    background: linear-gradient(90deg, transparent, var(--betting-purple) 25%, var(--betting-gold) 50%, var(--betting-purple) 75%, transparent);
     animation: shimmer 3s infinite;
 }
 
@@ -562,11 +566,11 @@ body::before {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    background: linear-gradient(135deg, var(--betting-purple) 0%, var(--betting-purple-dark) 100%);
     color: white;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3),
+    box-shadow: 0 4px 15px rgba(147, 51, 234, 0.4),
                 inset 0 1px 0 rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -608,8 +612,8 @@ body::before {
 
 .btn-primary:hover {
     transform: translateY(-3px);
-    box-shadow: 0 12px 40px rgba(59, 130, 246, 0.6),
-                0 0 60px rgba(59, 130, 246, 0.4),
+    box-shadow: 0 12px 40px rgba(147, 51, 234, 0.7),
+                0 0 60px rgba(147, 51, 234, 0.5),
                 inset 0 1px 0 rgba(255, 255, 255, 0.3);
     border-color: rgba(255, 255, 255, 0.3);
 }
@@ -767,15 +771,15 @@ body::before {
 .stat-value {
     font-size: 36px;
     font-weight: 800;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 50%, var(--betting-gold) 100%);
+    background: linear-gradient(135deg, var(--betting-purple) 0%, var(--betting-purple-light) 50%, var(--betting-gold) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     margin-bottom: var(--spacing-sm);
-    text-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+    text-shadow: 0 0 30px rgba(147, 51, 234, 0.5);
     position: relative;
     z-index: 1;
-    filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.4));
+    filter: drop-shadow(0 0 20px rgba(147, 51, 234, 0.5));
 }
 
 .stat-label {

@@ -8,7 +8,7 @@
     <style>
         /* Premium Enterprise Design */
         body {
-            background: linear-gradient(135deg, #000000 0%, #1a1a1a 25%, #0d0d0d 50%, #1a1a1a 75%, #000000 100%);
+            background: linear-gradient(135deg, #000000 0%, #1a0a2a 25%, #0d0d0d 50%, #2a0a3a 75%, #000000 100%);
             background-size: 400% 400%;
             animation: gradientShift 15s ease infinite;
         }
@@ -20,11 +20,11 @@
 
         /* Premium Header with Branding */
         .enterprise-header {
-            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
-            border-bottom: 4px solid #FFD700;
+            background: linear-gradient(135deg, #000000 0%, #1a0a2a 50%, #1a1a1a 100%);
+            border-bottom: 4px solid #9333EA;
             padding: 30px 20px;
             text-align: center;
-            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.4);
+            box-shadow: 0 10px 40px rgba(147, 51, 234, 0.5), 0 5px 20px rgba(255, 215, 0, 0.3);
             position: relative;
             overflow: hidden;
         }
@@ -36,7 +36,7 @@
             left: -100%;
             width: 200%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            background: linear-gradient(90deg, transparent, rgba(147, 51, 234, 0.2), rgba(255, 215, 0, 0.1), rgba(147, 51, 234, 0.2), transparent);
             animation: shimmer 3s infinite;
         }
 
@@ -67,10 +67,14 @@
         .enterprise-title {
             font-size: clamp(32px, 5vw, 56px);
             font-weight: 900;
-            color: #FFD700;
-            text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+            background: linear-gradient(135deg, #9333EA 0%, #C084FC 50%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(147, 51, 234, 0.8);
             margin: 0;
             letter-spacing: 2px;
+            filter: drop-shadow(0 0 20px rgba(147, 51, 234, 0.6));
         }
 
         /* Live Stream Container */
