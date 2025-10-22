@@ -94,6 +94,35 @@ router.get('/news/:league', (req: Request, res: Response) => {
   });
 });
 
+// Get broadcast output for all networks
+router.get('/broadcast-output', (req: Request, res: Response) => {
+  const liveGames = espnTrackerService.getCurrentLiveGames();
+  const networks = ['ESPN', 'FOX Sports', 'NBC Sports', 'CBS Sports', 'Amazon Prime Video', 
+                    'NBA TV', 'NFL Network', 'MLB Network', 'NHL Network', 'Radio Broadcasting'];
+
+  const broadcastOutput = liveGames.map(game => ({
+    gameId: game.gameId,
+    matchup: `${game.awayTeam} @ ${game.homeTeam}`,
+    league: game.league,
+    score: game.score,
+    status: game.status,
+    quarter: game.quarter,
+    timeRemaining: game.timeRemaining,
+    networks: networks,
+    broadcastingTo: networks.length,
+    fccEntity: '20130314143016'
+  }));
+
+  res.json({
+    broadcasts: broadcastOutput,
+    totalGames: liveGames.length,
+    totalBroadcasts: liveGames.length * networks.length,
+    networks: networks,
+    timestamp: new Date().toISOString(),
+    fccEntity: '20130314143016'
+  });
+});
+
 // SSE endpoint for live score updates
 router.get('/stream', (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'text/event-stream');
