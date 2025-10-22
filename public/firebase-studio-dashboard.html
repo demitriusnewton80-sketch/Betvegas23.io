@@ -136,7 +136,8 @@
 
         async function connectStudio() {
             try {
-                const response = await fetch(`${API_BASE}/firebase-studio/connect`, {
+                // First connect to Firebase Studio
+                const connectResponse = await fetch(`${API_BASE}/firebase-studio/connect`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -145,15 +146,32 @@
                     })
                 });
 
-                const data = await response.json();
+                const connectData = await connectResponse.json();
                 
-                if (data.success) {
-                    alert('✅ Successfully connected to Firebase Studio!');
-                    checkStatus();
+                if (connectData.success) {
+                    // Start streaming connection
+                    const streamResponse = await fetch(`${API_BASE}/firebase-stream/start`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            sport: 'Multi-Sport',
+                            teams: ['All Teams']
+                        })
+                    });
+                    
+                    const streamData = await streamResponse.json();
+                    
+                    if (streamData.success) {
+                        alert('✅ Successfully connected to Firebase Studio with streaming!');
+                        checkStatus();
+                    } else {
+                        alert('✅ Connected but streaming failed: ' + streamData.error);
+                    }
                 } else {
-                    alert('❌ Connection failed: ' + data.error);
+                    alert('❌ Connection failed: ' + connectData.error);
                 }
             } catch (error) {
+                console.error('Connection error:', error);
                 alert('❌ Connection error: ' + error.message);
             }
         }

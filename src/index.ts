@@ -65,6 +65,7 @@ import aiRoutes from './routes/ai.js';
 import openaiRoutes from './routes/openai.js';
 import githubRecoveryRoutes from './routes/github-recovery.js';
 import firebaseStudioRouter from './routes/firebase-studio.js';
+import firebaseStreamRouter from './routes/firebase-stream.js';
 
 // Initialize core systems
 const __filename = fileURLToPath(import.meta.url);
@@ -166,6 +167,7 @@ try {
   app.use('/smart-communication-fusion', smartCommunicationFusionRouter);
   app.use('/workflow-landscape', workflowLandscapeRouter);
   app.use('/firebase-studio', firebaseStudioRouter);
+app.use('/firebase-stream', firebaseStreamRouter);
   console.log('✅ All API routes registered successfully');
 } catch (error) {
   console.error('❌ Error registering routes:', error);

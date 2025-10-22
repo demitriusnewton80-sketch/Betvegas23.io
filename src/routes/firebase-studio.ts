@@ -1,11 +1,12 @@
 
 import express, { Request, Response } from 'express';
 import { ssoService } from '../services/SSOService.js';
+import { firebaseStudioBridge } from '../services/FirebaseStudioBridge.js';
 
 const router = express.Router();
 
-// Firebase Studio configuration
-const FIREBASE_STUDIO_URL = 'https://9000-firebase-studio-1761154163858.cluster-4unnw5epovarsrg6rdhhbr2n4s.cloudworkstations.dev';
+// Firebase Studio configuration - Updated to correct port
+const FIREBASE_STUDIO_URL = 'https://6000-firebase-studio-1761154163858.cluster-4unnw5epovarsrg6rdhhbr2n4s.cloudworkstations.dev';
 
 // Connect to Firebase Studio
 router.post('/connect', async (req: Request, res: Response) => {
@@ -19,23 +20,23 @@ router.post('/connect', async (req: Request, res: Response) => {
   try {
     const { projectName, features } = req.body;
 
-    const connection = {
-      id: `firebase-${Date.now()}`,
-      userId: user.id,
-      studioUrl: FIREBASE_STUDIO_URL,
-      projectName: projectName || 'Young Meaat Sportsbook',
-      features: features || ['streaming', 'ai-processing', 'real-time-betting'],
-      status: 'connected',
-      timestamp: new Date().toISOString(),
-      fccEntity: '20130314143016'
-    };
+    const connection = await firebaseStudioBridge.connectToStudio(
+      projectName || 'Young Meaat Sportsbook',
+      features || ['streaming', 'ai-processing', 'real-time-betting']
+    );
 
     res.json({
       success: true,
-      connection,
+      connection: {
+        ...connection,
+        userId: user.id,
+        studioUrl: FIREBASE_STUDIO_URL,
+        fccEntity: '20130314143016'
+      },
       message: 'Successfully connected to Firebase Studio'
     });
   } catch (error) {
+    console.error('Firebase connection error:', error);
     res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : 'Connection failed'
@@ -55,22 +56,22 @@ router.post('/sync', async (req: Request, res: Response) => {
   try {
     const { dataType, payload } = req.body;
 
-    const syncResult = {
-      id: `sync-${Date.now()}`,
-      userId: user.id,
-      dataType,
-      targetUrl: FIREBASE_STUDIO_URL,
-      recordsSynced: Array.isArray(payload) ? payload.length : 1,
-      status: 'completed',
-      timestamp: new Date().toISOString()
-    };
+    const syncResult = await firebaseStudioBridge.syncStreamingData(payload);
 
     res.json({
       success: true,
-      syncResult,
+      syncResult: {
+        ...syncResult,
+        userId: user.id,
+        dataType,
+        targetUrl: FIREBASE_STUDIO_URL,
+        status: 'completed',
+        timestamp: new Date().toISOString()
+      },
       message: 'Data successfully synced to Firebase Studio'
     });
   } catch (error) {
+    console.error('Firebase sync error:', error);
     res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : 'Sync failed'
