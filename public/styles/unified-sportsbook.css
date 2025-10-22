@@ -49,17 +49,30 @@
 
 /* CSS Variables for Consistent Theming */
 :root {
-    /* Brand Colors */
-    --primary-color: #3b82f6;
-    --primary-dark: #2563eb;
-    --primary-light: #60a5fa;
-    --primary-glow: rgba(59, 130, 246, 0.5);
-    --secondary-color: #10b981;
-    --secondary-dark: #059669;
-    --secondary-glow: rgba(16, 185, 129, 0.5);
-    --accent-color: #ef4444;
-    --accent-dark: #dc2626;
-    --accent-glow: rgba(239, 68, 68, 0.5);
+    /* BettingSites™ Brand Colors */
+    --bettingsites-primary: #3b82f6;
+    --bettingsites-primary-dark: #2563eb;
+    --bettingsites-primary-light: #60a5fa;
+    --bettingsites-glow: rgba(59, 130, 246, 0.5);
+    --bettingsites-secondary: #10b981;
+    --bettingsites-secondary-dark: #059669;
+    --bettingsites-secondary-glow: rgba(16, 185, 129, 0.5);
+    --bettingsites-accent: #ef4444;
+    --bettingsites-accent-dark: #dc2626;
+    --bettingsites-accent-glow: rgba(239, 68, 68, 0.5);
+    --betting-gold: #FFD700;
+    
+    /* Legacy aliases for compatibility */
+    --primary-color: var(--bettingsites-primary);
+    --primary-dark: var(--bettingsites-primary-dark);
+    --primary-light: var(--bettingsites-primary-light);
+    --primary-glow: var(--bettingsites-glow);
+    --secondary-color: var(--bettingsites-secondary);
+    --secondary-dark: var(--bettingsites-secondary-dark);
+    --secondary-glow: var(--bettingsites-secondary-glow);
+    --accent-color: var(--bettingsites-accent);
+    --accent-dark: var(--bettingsites-accent-dark);
+    --accent-glow: var(--bettingsites-accent-glow);
     
     /* ESPN Colors */
     --espn-red: #c8102e;

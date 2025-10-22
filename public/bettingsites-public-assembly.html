@@ -1,0 +1,463 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>BettingSites™ - Complete Sports Betting Assembly</title>
+    <link rel="stylesheet" href="/styles/unified-sportsbook.css">
+    <style>
+        .assembly-hero {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #8b5cf6 100%);
+            padding: 60px 20px;
+            text-align: center;
+            box-shadow: 0 12px 50px rgba(0,0,0,0.7);
+            border-bottom: 5px solid var(--primary-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .assembly-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.2) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .assembly-title {
+            font-size: 64px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--betting-gold), var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .assembly-subtitle {
+            font-size: 24px;
+            opacity: 0.95;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .live-assembly-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .assembly-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .assembly-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .assembly-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 60px var(--primary-glow);
+        }
+
+        .assembly-card:hover::before {
+            opacity: 1;
+        }
+
+        .assembly-icon {
+            font-size: 72px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 4px 20px var(--primary-glow));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .content-fusion-stream {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid var(--status-live);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            animation: pulse-glow 2s infinite;
+        }
+
+        .fusion-title {
+            font-size: 32px;
+            color: var(--status-live);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .live-content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .content-stream-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .content-stream-card:hover {
+            border-color: var(--status-live);
+            transform: scale(1.05);
+        }
+
+        .assembly-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .stat-assembly {
+            background: var(--bg-card);
+            border: 2px solid var(--border-success);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-assembly:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px var(--secondary-glow);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="assembly-hero">
+        <div class="assembly-title">BettingSites™</div>
+        <div class="assembly-subtitle">Complete Sports Betting Assembly - Live Content Fusion</div>
+        <div>
+            <span class="badge badge-fcc">FCC: 20130314143016</span>
+            <span class="badge badge-live">
+                <span class="pulse pulse-live"></span>
+                LIVE ASSEMBLY
+            </span>
+            <span class="badge badge-web3">Web3 Enabled</span>
+            <span class="badge badge-espn">ESPN Powered</span>
+            <span class="badge">Young Meeat LLC</span>
+        </div>
+    </div>
+
+    <div class="sportsbook-container">
+        <!-- Assembly Statistics -->
+        <div class="assembly-stats">
+            <div class="stat-assembly">
+                <div class="stat-value" id="totalContent">0</div>
+                <div class="stat-label">Content Sources</div>
+            </div>
+            <div class="stat-assembly">
+                <div class="stat-value" id="liveStreams">0</div>
+                <div class="stat-label">Live Streams</div>
+            </div>
+            <div class="stat-assembly">
+                <div class="stat-value" id="activeBets">0</div>
+                <div class="stat-label">Active Bets</div>
+            </div>
+            <div class="stat-assembly">
+                <div class="stat-value" id="fusionStatus">ACTIVE</div>
+                <div class="stat-label">Fusion Status</div>
+            </div>
+        </div>
+
+        <!-- Live Content Fusion Stream -->
+        <div class="content-fusion-stream">
+            <div class="fusion-title">
+                <span>🔴</span>
+                <span>Live Content Fusion Stream</span>
+            </div>
+            <div class="live-content-grid" id="liveContentGrid"></div>
+        </div>
+
+        <!-- Main Assembly Grid -->
+        <h2 class="section-header">
+            <span>🎯</span>
+            Complete BettingSites Assembly
+        </h2>
+
+        <div class="live-assembly-grid" id="assemblyGrid"></div>
+
+        <!-- Sports Radio Assembly -->
+        <h2 class="section-header">
+            <span>📻</span>
+            Sports Radio Network Assembly
+        </h2>
+        <div class="live-assembly-grid" id="radioAssembly"></div>
+
+        <!-- Gaming Assembly -->
+        <h2 class="section-header">
+            <span>🎮</span>
+            Gaming & Interactive Assembly
+        </h2>
+        <div class="live-assembly-grid" id="gamingAssembly"></div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        const assemblyData = {
+            sportsbook: [
+                {
+                    icon: '🏈',
+                    title: 'Live Sportsbook',
+                    description: 'Real-time betting on NFL, NBA, MLB, NHL with live odds',
+                    endpoint: '/index.html',
+                    type: 'betting'
+                },
+                {
+                    icon: '⭐',
+                    title: 'Enhanced Sportsbook',
+                    description: 'Premium betting with loyalty points and SSO',
+                    endpoint: '/enhanced-sportsbook.html',
+                    type: 'betting'
+                },
+                {
+                    icon: '📺',
+                    title: 'ESPN Sportsbook',
+                    description: 'ESPN-powered betting with live data and scores',
+                    endpoint: '/espn-sportsbook.html',
+                    type: 'betting'
+                },
+                {
+                    icon: '🔗',
+                    title: 'Parlay Builder',
+                    description: 'Multi-leg parlay construction with auto odds',
+                    endpoint: '/parlay-builder.html',
+                    type: 'betting'
+                },
+                {
+                    icon: '🥊',
+                    title: 'Boxing & UFC',
+                    description: 'Combat sports betting on all major fights',
+                    endpoint: '/boxing-ufc-betting.html',
+                    type: 'betting'
+                }
+            ],
+            streaming: [
+                {
+                    icon: '📡',
+                    title: 'All Sports Streams',
+                    description: 'Complete multi-sport streaming coverage',
+                    endpoint: '/all-sports-streams.html',
+                    type: 'streaming'
+                },
+                {
+                    icon: '🎬',
+                    title: 'Streaming Management',
+                    description: 'Comprehensive streaming services platform',
+                    endpoint: '/streaming-management-hub.html',
+                    type: 'streaming'
+                },
+                {
+                    icon: '📺',
+                    title: 'BettingSites Home',
+                    description: 'Live streaming and premium betting experience',
+                    endpoint: '/bettingsites-home.html',
+                    type: 'streaming'
+                }
+            ],
+            radio: [
+                {
+                    icon: '📻',
+                    title: 'Sports Radio Hub',
+                    description: 'Live audio broadcasts for all major sports',
+                    endpoint: '/sports-radio-hub.html',
+                    type: 'radio'
+                },
+                {
+                    icon: '📡',
+                    title: 'Radio Broadcast Deployment',
+                    description: 'Radio network deployment and management',
+                    endpoint: '/radio-broadcast-deployment.html',
+                    type: 'radio'
+                }
+            ],
+            gaming: [
+                {
+                    icon: '🎮',
+                    title: 'PS5 Sports Betting',
+                    description: 'Madden, NBA 2K, UFC gaming integration',
+                    endpoint: '/ps5-betting.html',
+                    type: 'gaming'
+                },
+                {
+                    icon: '🎯',
+                    title: 'PS5 QR Portal',
+                    description: 'Quick access betting portal for PS5',
+                    endpoint: '/ps5-qr-betting-portal.html',
+                    type: 'gaming'
+                }
+            ],
+            web3: [
+                {
+                    icon: '⛓️',
+                    title: 'Web3 Bridge',
+                    description: 'Blockchain integration and crypto betting',
+                    endpoint: '/web3-bridge.html',
+                    type: 'web3'
+                },
+                {
+                    icon: '🌐',
+                    title: 'Unified Sportsbook',
+                    description: 'All sports, all platforms, Web3 integrated',
+                    endpoint: '/unified-public-sportsbook.html',
+                    type: 'web3'
+                }
+            ]
+        };
+
+        function renderAssembly() {
+            const assemblyGrid = document.getElementById('assemblyGrid');
+            const radioAssembly = document.getElementById('radioAssembly');
+            const gamingAssembly = document.getElementById('gamingAssembly');
+
+            // Render main sportsbook assembly
+            assemblyGrid.innerHTML = [...assemblyData.sportsbook, ...assemblyData.streaming, ...assemblyData.web3]
+                .map(item => createAssemblyCard(item)).join('');
+
+            // Render radio assembly
+            radioAssembly.innerHTML = assemblyData.radio
+                .map(item => createAssemblyCard(item)).join('');
+
+            // Render gaming assembly
+            gamingAssembly.innerHTML = assemblyData.gaming
+                .map(item => createAssemblyCard(item)).join('');
+
+            // Update stats
+            document.getElementById('totalContent').textContent = 
+                Object.values(assemblyData).flat().length;
+        }
+
+        function createAssemblyCard(item) {
+            return `
+                <div class="assembly-card" onclick="window.open('${item.endpoint}', '_blank')">
+                    <div class="assembly-icon">${item.icon}</div>
+                    <h3 style="font-size: 24px; margin-bottom: 15px; color: var(--primary-color);">
+                        ${item.title}
+                    </h3>
+                    <p style="opacity: 0.9; line-height: 1.6; margin-bottom: 20px;">
+                        ${item.description}
+                    </p>
+                    <div class="status-indicator status-active">
+                        <span class="pulse pulse-active"></span>
+                        <span>LIVE</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadLiveContent() {
+            try {
+                const [gamesRes, streamsRes, radioRes] = await Promise.all([
+                    fetch(`${API_BASE}/sportsbook/games`),
+                    fetch(`${API_BASE}/streaming/streams`),
+                    fetch(`${API_BASE}/sports-radio/live`)
+                ]);
+
+                const games = await gamesRes.json();
+                const streams = await streamsRes.json();
+                const radio = await radioRes.json();
+
+                // Update live stats
+                document.getElementById('liveStreams').textContent = 
+                    (streams.streams?.length || 0) + (radio.streams?.length || 0);
+                document.getElementById('activeBets').textContent = 
+                    games.games?.length || 0;
+
+                // Render live content
+                renderLiveContent([
+                    ...(games.games || []).slice(0, 3).map(g => ({
+                        type: 'game',
+                        title: `${g.awayTeam} @ ${g.homeTeam}`,
+                        status: g.status,
+                        sport: g.sport
+                    })),
+                    ...(streams.streams || []).slice(0, 3).map(s => ({
+                        type: 'stream',
+                        title: s.name || 'Live Stream',
+                        status: 'streaming',
+                        sport: s.sport || 'Multi-Sport'
+                    }))
+                ]);
+            } catch (error) {
+                console.error('Error loading live content:', error);
+            }
+        }
+
+        function renderLiveContent(content) {
+            const grid = document.getElementById('liveContentGrid');
+            
+            if (content.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; opacity: 0.7;">No live content at the moment</p>';
+                return;
+            }
+
+            grid.innerHTML = content.map(item => `
+                <div class="content-stream-card">
+                    <div style="font-size: 32px; margin-bottom: 10px;">
+                        ${item.type === 'game' ? '🏆' : '📺'}
+                    </div>
+                    <h4 style="font-size: 16px; margin-bottom: 8px;">${item.title}</h4>
+                    <div style="font-size: 12px; opacity: 0.7; margin-bottom: 8px;">
+                        ${item.sport}
+                    </div>
+                    <div class="status-indicator ${item.status === 'live' ? 'status-live' : 'status-active'}">
+                        <span class="pulse ${item.status === 'live' ? 'pulse-live' : 'pulse-active'}"></span>
+                        <span>${item.status.toUpperCase()}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            renderAssembly();
+            loadLiveContent();
+            
+            // Auto-refresh live content
+            setInterval(loadLiveContent, 30000);
+        });
+    </script>
+</body>
+</html>
