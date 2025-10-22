@@ -1,0 +1,223 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Studio Integration | Young Meaat LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .fcc-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin: 5px;
+        }
+        .card {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
+        }
+        .status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #22c55e;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .studio-url {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="font-size: 64px; margin-bottom: 15px;">🔥</div>
+            <h1>Firebase Studio Integration</h1>
+            <p style="opacity: 0.9; margin-top: 8px;">Young Meaat LLC - Cloud Workstation Control</p>
+            <div style="margin-top: 12px;">
+                <span class="fcc-badge">FCC: 20130314143016</span>
+                <span class="fcc-badge">Firebase Connected</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🌐 Firebase Studio URL</h2>
+            <div class="studio-url">
+                https://9000-firebase-studio-1761154163858.cluster-4unnw5epovarsrg6rdhhbr2n4s.cloudworkstations.dev
+            </div>
+            <p><span class="status"></span>Status: <span id="studioStatus">Checking...</span></p>
+        </div>
+
+        <div class="card">
+            <h2>🚀 Quick Actions</h2>
+            <button class="btn" onclick="connectStudio()">🔗 Connect to Firebase Studio</button>
+            <button class="btn" onclick="syncData()">🔄 Sync Sportsbook Data</button>
+            <button class="btn" onclick="deployServices()">📡 Deploy All Services</button>
+        </div>
+
+        <div class="card">
+            <h2>📊 Integration Status</h2>
+            <div id="statusDisplay"></div>
+        </div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        const API_BASE = window.location.origin;
+
+        async function checkStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/firebase-studio/status`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('studioStatus').textContent = data.studio.status;
+                    displayStatus(data.studio);
+                }
+            } catch (error) {
+                document.getElementById('studioStatus').textContent = 'Offline';
+                console.error('Status check failed:', error);
+            }
+        }
+
+        async function connectStudio() {
+            try {
+                const response = await fetch(`${API_BASE}/firebase-studio/connect`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        projectName: 'Young Meaat Sportsbook',
+                        features: ['streaming', 'ai-processing', 'real-time-betting']
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Successfully connected to Firebase Studio!');
+                    checkStatus();
+                } else {
+                    alert('❌ Connection failed: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Connection error: ' + error.message);
+            }
+        }
+
+        async function syncData() {
+            try {
+                const response = await fetch(`${API_BASE}/firebase-studio/sync`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        dataType: 'sportsbook',
+                        payload: { bets: [], streams: [], users: [] }
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`✅ Synced ${data.syncResult.recordsSynced} records!`);
+                } else {
+                    alert('❌ Sync failed: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Sync error: ' + error.message);
+            }
+        }
+
+        async function deployServices() {
+            try {
+                const response = await fetch(`${API_BASE}/firebase-studio/deploy`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        services: ['sportsbook', 'streaming', 'ai-core'],
+                        environment: 'production'
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Services deployed successfully!');
+                } else {
+                    alert('❌ Deployment failed: ' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Deployment error: ' + error.message);
+            }
+        }
+
+        function displayStatus(studio) {
+            const container = document.getElementById('statusDisplay');
+            container.innerHTML = `
+                <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
+                    <p><strong>URL:</strong> ${studio.url}</p>
+                    <p><strong>Status:</strong> ${studio.status}</p>
+                    <p><strong>Services:</strong> ${studio.services.join(', ')}</p>
+                    <p><strong>Integrated:</strong> ${studio.integrated ? 'Yes' : 'No'}</p>
+                    <p><strong>FCC Entity:</strong> ${studio.fccEntity}</p>
+                </div>
+            `;
+        }
+
+        window.addEventListener('load', checkStatus);
+    </script>
+</body>
+</html>

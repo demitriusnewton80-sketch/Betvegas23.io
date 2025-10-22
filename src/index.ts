@@ -64,6 +64,7 @@ import phoneAppBridgeRouter from './routes/phone-app-bridge.js'; // Import the n
 import aiRoutes from './routes/ai.js';
 import openaiRoutes from './routes/openai.js';
 import githubRecoveryRoutes from './routes/github-recovery.js';
+import firebaseStudioRouter from './routes/firebase-studio.js';
 
 // Initialize core systems
 const __filename = fileURLToPath(import.meta.url);
@@ -151,7 +152,7 @@ try {
   app.use('/aws-core-builder', awsCoreBuilderRoutes);
   app.use('/aws-session', awsSessionRoutes);
   app.use('/leeds-export', leedsExportRoutes);
-  app.use('/wave-stream-assembly', waveStreamAssemblyRoutes);
+  app.use('/wave-stream-assembly', waveStreamAssemblyRouter);
   app.use('/radio-broadcast-deployment', radioBroadcastDeploymentRoutes); // Mount the new route
   // Unified Stylesheet API
   app.use('/api/stylesheet', unifiedStylesheetRouter);
@@ -164,6 +165,7 @@ try {
   app.use('/json-sync', jsonSyncRoutes);
   app.use('/smart-communication-fusion', smartCommunicationFusionRouter);
   app.use('/workflow-landscape', workflowLandscapeRouter);
+  app.use('/firebase-studio', firebaseStudioRouter);
   console.log('✅ All API routes registered successfully');
 } catch (error) {
   console.error('❌ Error registering routes:', error);
@@ -249,7 +251,7 @@ process.on('unhandledRejection', (reason, promise) => {
 async function initializeAndStartServer() {
   try {
     console.log('🔄 Initializing core systems...');
-    
+
     // Load environment from certificate files
     const { environmentLoader } = await import('./services/EnvironmentLoaderService.js');
     await environmentLoader.loadFromCertificate();
@@ -303,7 +305,7 @@ async function initializeAndStartServer() {
   } catch (error) {
     console.error('❌ Core system initialization error:', error);
     console.error('⚠️  Starting server anyway with limited functionality...');
-    
+
     // Start server even if initialization fails
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`⚠️  Server running on http://0.0.0.0:${PORT} (degraded mode)`);
