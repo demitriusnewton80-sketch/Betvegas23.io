@@ -21,6 +21,16 @@ export interface MarketplaceAppliance {
   };
 }
 
+export interface AWSOrganizationData {
+  accountId: string;
+  arn: string;
+  email: string;
+  name: string;
+  state: string;
+  joinedMethod: string;
+  joinedTimestamp: string;
+}
+
 export interface MarketplaceAccount {
   id: string;
   email: string;
@@ -30,12 +40,22 @@ export interface MarketplaceAccount {
   permissions: string[];
   createdAt: number;
   lastActive: number;
+  awsOrganization?: AWSOrganizationData;
 }
 
 class SSOMarketplaceService extends EventEmitter {
   private accounts: Map<string, MarketplaceAccount> = new Map();
   private appliances: Map<string, MarketplaceAppliance> = new Map();
   private accountAppliances: Map<string, Set<string>> = new Map();
+  private awsOrganizationData: AWSOrganizationData = {
+    accountId: '805206611738',
+    arn: 'arn:aws:organizations::805206611738:account/o-we4zwcshqs/805206611738',
+    email: 'meaat21555@gmail.com',
+    name: 'YoungMeeat LLC',
+    state: 'ACTIVE',
+    joinedMethod: 'INVITED',
+    joinedTimestamp: 'Sat Sep 27 2025 14:32:08 GMT-0400 (Eastern Daylight Time)'
+  };
 
   constructor() {
     super();
@@ -169,7 +189,8 @@ class SSOMarketplaceService extends EventEmitter {
       appliances: [],
       permissions: ['read', 'write', 'deploy'],
       createdAt: Date.now(),
-      lastActive: Date.now()
+      lastActive: Date.now(),
+      awsOrganization: this.awsOrganizationData
     };
 
     this.accounts.set(accountId, account);
@@ -178,6 +199,10 @@ class SSOMarketplaceService extends EventEmitter {
     this.emit('account:created', account);
 
     return account;
+  }
+
+  getAWSOrganizationData(): AWSOrganizationData {
+    return this.awsOrganizationData;
   }
 
   activateApplianceForAccount(accountId: string, applianceId: string): boolean {
@@ -252,6 +277,7 @@ class SSOMarketplaceService extends EventEmitter {
       activeAppliances: Array.from(this.appliances.values()).filter(a => a.status === 'active').length,
       ssoIntegratedAppliances: Array.from(this.appliances.values()).filter(a => a.ssoIntegrated).length,
       fccEntity: '20130314143016',
+      awsOrganization: this.awsOrganizationData,
       timestamp: new Date().toISOString()
     };
   }

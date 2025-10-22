@@ -186,6 +186,7 @@
             <p>Unified Appliance Management System</p>
             <span class="fcc-badge">FCC Entity: 20130314143016</span>
             <span class="fcc-badge">SSO Integrated</span>
+            <div id="awsOrgInfo" style="margin-top: 15px; font-size: 13px; opacity: 0.9;"></div>
         </div>
 
         <div class="stats-grid">
@@ -228,6 +229,26 @@
     <script>
         const API_BASE = window.location.origin;
         let currentAccountId = null;
+
+        async function loadAWSOrganization() {
+            try {
+                const response = await fetch(`${API_BASE}/sso-marketplace/aws-organization`);
+                const data = await response.json();
+                
+                if (data.success && data.organization) {
+                    const org = data.organization;
+                    document.getElementById('awsOrgInfo').innerHTML = `
+                        <div style="display: inline-block; background: rgba(255,255,255,0.15); padding: 10px 15px; border-radius: 10px;">
+                            <strong>AWS Organization:</strong> ${org.name} | 
+                            <strong>Account:</strong> ${org.accountId} | 
+                            <strong>Status:</strong> ${org.state}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading AWS organization:', error);
+            }
+        }
 
         async function loadStats() {
             try {
@@ -369,6 +390,7 @@
         }
 
         // Load data on page load
+        loadAWSOrganization();
         loadStats();
         loadAppliances();
 

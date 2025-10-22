@@ -157,4 +157,15 @@ router.post('/account/:accountId/sync-sso', requireAuth, (req: Request, res: Res
   });
 });
 
+// Get AWS Organization information
+router.get('/aws-organization', (req: Request, res: Response) => {
+  const awsOrg = ssoMarketplaceService.getAWSOrganizationData();
+  
+  res.json({
+    success: true,
+    organization: awsOrg,
+    fccEntity: '20130314143016'
+  });
+});
+
 export default router;
