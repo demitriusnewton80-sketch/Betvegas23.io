@@ -53,7 +53,7 @@ router.get('/active', (req: Request, res: Response) => {
     success: true,
     streams: connections,
     count: connections.length,
-    studioUrl: 'https://6000-firebase-studio-1761154163858.cluster-4unnw5epovarsrg6rdhhbr2n4s.cloudworkstations.dev'
+    studioUrl: 'https://9000-firebase-studio-1761154163858.cluster-4unnw5epovarsrg6rdhhbr2n4s.cloudworkstations.dev'
   });
 });
 

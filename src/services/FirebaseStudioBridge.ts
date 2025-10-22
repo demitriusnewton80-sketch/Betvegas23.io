@@ -13,7 +13,7 @@ interface FirebaseConnection {
 export class FirebaseStudioBridge extends EventEmitter {
   private static instance: FirebaseStudioBridge;
   private connections: Map<string, FirebaseConnection> = new Map();
-  private readonly STUDIO_URL = 'https://6000-firebase-studio-1761154163858.cluster-4unnw5epovarsrg6rdhhbr2n4s.cloudworkstations.dev';
+  private readonly STUDIO_URL = 'https://9000-firebase-studio-1761154163858.cluster-4unnw5epovarsrg6rdhhbr2n4s.cloudworkstations.dev';
 
   private constructor() {
     super();
