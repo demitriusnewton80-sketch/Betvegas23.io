@@ -1,4 +1,11 @@
 
+# GitHub Recovery Codes - NEVER COMMIT
+github-recovery-codes.txt
+attached_assets/github-recovery-codes_*.txt
+*recovery-codes*.txt
+
+
+
 node_modules
 dist
 .env

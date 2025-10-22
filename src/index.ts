@@ -61,6 +61,7 @@ import unifiedStylesheetRouter from './routes/unified-stylesheet.js';
 import phoneAppBridgeRouter from './routes/phone-app-bridge.js'; // Import the new route
 import aiRoutes from './routes/ai.js';
 import openaiRoutes from './routes/openai.js';
+import githubRecoveryRoutes from './routes/github-recovery.js';
 
 // Initialize core systems
 const __filename = fileURLToPath(import.meta.url);
@@ -154,6 +155,7 @@ try {
   app.use('/api/phone-app-bridge', phoneAppBridgeRouter);
   app.use('/ai', aiRoutes);
   app.use('/openai', openaiRoutes);
+  app.use('/github-recovery', githubRecoveryRoutes);
   console.log('✅ All API routes registered successfully');
 } catch (error) {
   console.error('❌ Error registering routes:', error);
